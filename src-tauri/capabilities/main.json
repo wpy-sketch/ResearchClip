@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-window",
+  "description": "The local main window may read the app version, test Rust IPC, and request workspace diagnostics.",
+  "windows": ["main"],
+  "permissions": ["core:app:allow-version", "allow-test-connection", "allow-get-workspace-status"]
+}
