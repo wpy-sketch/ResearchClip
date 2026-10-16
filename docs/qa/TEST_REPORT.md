@@ -201,3 +201,20 @@ NSIS默认卸载的“删除应用数据”未勾选；本次证明的是默认�
 - C阶段`npm run check:docs` PASS/0：26份Markdown文档、143个本地链接，权限与schema检查一致；`npm run lint`及两份改动Node脚本语法复核PASS/0。报告中的错误证据路径已修正，未删除失败记录。
 - C阶段使用既有Git Credential Manager登录创建公开仓库PASS：`https://github.com/wpy-sketch/ResearchClip`；创建前确认不存在同名仓库，未覆盖旧内容。登录凭据只在进程内存使用，不写入代码或日志。
 - 首次暂存完整源码后`git diff --cached --check` FAIL/2，发现既有对话框脚本和新构建日志副本各一处尾部空行；仅规范结尾换行，不改脚本逻辑或原始构建日志，复验后再提交。此前未暂存检查不覆盖新文件，因此保留这次失败记录。
+
+## 11. C阶段远程发布实际结果（2026-10-16）
+
+| 操作 / 实际命令 | 结果 |
+| --- | --- |
+| 既有凭据账号核验、GitHub REST `POST /user/repos` | PASS/0；新建公开仓库 [wpy-sketch/ResearchClip](https://github.com/wpy-sketch/ResearchClip)，创建前不存在同名仓库；无LICENSE自动添加，无远程覆盖 |
+| `git commit -m 'Prepare ResearchClip Windows preview and systematic QA baseline'` | PASS/0；`fcba7c1275e7d60de8fa38c45071392dca43e74a`，含已有工程、锁文件和QA基线；首次暂存检查空行失败已先修正再提交 |
+| `git tag -a v0.1.0-rc.1 -m 'ResearchClip 0.1.0-rc.1 Windows preview; known QA limitations documented'` | PASS/0，新标签；未替换已有标签 |
+| `git push --atomic origin HEAD:refs/heads/main refs/tags/v0.1.0-rc.1:refs/tags/v0.1.0-rc.1` | PASS/0，main和标签均新增；无force；保留历史 |
+| GitHub REST创建draft/prerelease→上传三个附件→核对size/digest→公开 | PASS/0；[v0.1.0-rc.1](https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.0-rc.1)，`draft=false`、`prerelease=true`、不设置为稳定latest；源码标签仍指向上述提交 |
+| `git ls-remote origin refs/heads/main refs/tags/v0.1.0-rc.1 'refs/tags/v0.1.0-rc.1^{}'` | PASS/0；当时main与解引用标签均为fcba7c1；后续仅补充本节发布验证文档，不移动发布标签 |
+| 无凭据GET公开仓库/Release、逐个HTTP下载三个附件并Get-FileHash | PASS/0；默认分支main；3份附件字节数和SHA-256均与上传前一致；[验证记录](evidence/c-github-public.json) |
+| 拟发布Markdown链接的目标是否Git收录 | PASS/0；当时211个受版本管理文件，0个Markdown链接依赖仅本地ignored文件；未上传屏幕截图/数据库/工具凭据 |
+
+发布使用本机Git Credential Manager的既有登录，通过本地临时发布脚本调用官方REST API；脚本与凭据均未提交。GitHub CLI未安装且连接器最初未返回可访问仓库，未将这些能力缺失伪装成CLI执行成功。上传阶段返回过临时untagged下载地址，公开后重新GET得到规范`v0.1.0-rc.1`地址并完成实际下载核验，最终链接以验证记录为准。
+
+发布说明保留本报告FAIL、未实现项和人工缺口；**公开预发布成功不改变QA-001的FAIL，也不等于正式稳定版验收通过。**

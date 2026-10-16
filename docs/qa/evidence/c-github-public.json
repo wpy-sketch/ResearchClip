@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/wpy-sketch/ResearchClip",
+  "defaultBranch": "main",
+  "release": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.0-rc.1",
+  "prerelease": true,
+  "draft": false,
+  "assets": [
+    {
+      "name": "researchclip.exe",
+      "size": 15311360,
+      "sha256": "0560c796ae12fe0877cb63ac7ee75a2732359dfe691a0bd81c0011d844d9dbdf",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.0-rc.1/researchclip.exe",
+      "verified": true
+    },
+    {
+      "name": "ResearchClip_0.1.0_x64-setup.exe",
+      "size": 3704395,
+      "sha256": "4f0032c89e21f40fbcab742fb77ae6a0c07f5bba211b90e95093e56fd6be0c1e",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.0-rc.1/ResearchClip_0.1.0_x64-setup.exe",
+      "verified": true
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 184,
+      "sha256": "6ce72ed9a8a3b843c005dd586012102fa261496303d3628858b0d5c9a2a4b778",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.0-rc.1/SHA256SUMS.txt",
+      "verified": true
+    }
+  ],
+  "result": "PASS"
+}
