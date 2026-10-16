@@ -14,23 +14,41 @@
       {
         "label": "main",
         "title": "ResearchClip",
-        "width": 960,
-        "height": 680,
+        "width": 1180,
+        "height": 800,
         "minWidth": 480,
         "minHeight": 400,
-        "center": true
+        "center": true,
+        "theme": "Dark"
       }
     ],
     "security": {
       "capabilities": [
-        "main-window"
+        "main-window",
+        "capture-overlay"
       ],
       "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'self'; frame-src 'none'",
       "devCsp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src ipc: http://ipc.localhost http://127.0.0.1:1420 ws://127.0.0.1:1420; object-src 'none'; base-uri 'self'; frame-src 'none'"
     }
   },
   "bundle": {
-    "active": false,
+    "active": true,
+    "targets": ["nsis"],
+    "publisher": "ResearchClip",
+    "category": "Productivity",
+    "shortDescription": "Local research screenshots and knowledge cards",
+    "longDescription": "Capture, annotate and organize research images and Markdown notes locally.",
+    "useLocalToolsDir": true,
+    "windows": {
+      "allowDowngrades": false,
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["SimpChinese", "English"],
+        "installerHooks": "windows/installer-hooks.nsh",
+        "installerIcon": "icons/icon.ico",
+        "uninstallerIcon": "icons/icon.ico"
+      }
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

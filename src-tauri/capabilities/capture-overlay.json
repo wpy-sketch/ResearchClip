@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "capture-overlay",
+  "description": "An overlay may only read its own frozen frame, become ready, submit a selection or cancel. No filesystem, library, app or general window API access.",
+  "windows": ["capture-overlay-*"],
+  "permissions": ["allow-region-overlay-info", "allow-region-overlay-image", "allow-ready-region-overlay", "allow-commit-region-selection", "allow-cancel-region-selection"]
+}

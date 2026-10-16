@@ -1,0 +1,65 @@
+{
+  "mode": "desktop",
+  "version": "0.1.0",
+  "checks": [
+    "navigation, list/grid state, dismiss and reopen guide",
+    "capture controls, search input/clear, Ctrl+K, Escape and modal focus",
+    "real Rust command response, repeated click and window theme permission",
+    "light/dark and settings keep toolbar view selection in sync",
+    "real capture 1: 2560x1440, nine on-screen markers matched, elapsed 2010ms",
+    "real capture 2: 2560x1440, nine on-screen markers matched, elapsed 1756ms",
+    "actual native screenshot opens in editor, rendered image pans 40/30 CSS pixels, editor survives preview release",
+    "real invalid/missing display errors, BUSY gate, recovery, Blob replacement and clear",
+    "region overlay focus, physical boundaries, live size, frozen native pixels and exact PNG resource/preview match",
+    "zero area remains selectable, reverse drag crops correctly, Esc closes/restores without new files",
+    "20 consecutive region sessions: 10 previews, 10 Esc cancellations; no automatic files, unique sessions, no remaining overlays, main focus restored",
+    "pointer capture clamps outside top/left, repeated overlays fully destroyed, capability and resource-ID isolation",
+    "no leaked canvas on idle pages or browser storage writes",
+    "UI interactions do not call database diagnostics; observed: get_preferences, update_preferences, screenshot_page, library_status, list_tags, plugin:window|set_theme, test_connection, list_displays, capture_fullscreen, capture_result_png, discard_capture, capture_region, current_capture, region_overlay_info, region_result_png",
+    "isolated WebView2 test profile",
+    "restart: navigation, list/grid state, dismiss and reopen guide",
+    "restart: capture controls, search input/clear, Ctrl+K, Escape and modal focus",
+    "restart: real Rust command response, repeated click and window theme permission",
+    "restart: light/dark and settings keep toolbar view selection in sync",
+    "restart: real capture 1: 2560x1440, nine on-screen markers matched, elapsed 1749ms",
+    "restart: real capture 2: 2560x1440, nine on-screen markers matched, elapsed 1754ms",
+    "restart: actual native screenshot opens in editor, rendered image pans 40/30 CSS pixels, editor survives preview release",
+    "restart: real invalid/missing display errors, BUSY gate, recovery, Blob replacement and clear",
+    "restart: region overlay focus, physical boundaries, live size, frozen native pixels and exact PNG resource/preview match",
+    "restart: zero area remains selectable, reverse drag crops correctly, Esc closes/restores without new files",
+    "restart: pointer capture clamps outside top/left, repeated overlays fully destroyed, capability and resource-ID isolation",
+    "restart: no leaked canvas on idle pages or browser storage writes",
+    "restart: UI interactions do not call database diagnostics; observed: get_preferences, update_preferences, plugin:window|set_theme, screenshot_page, library_status, list_tags, test_connection, list_displays, capture_fullscreen, capture_result_png, discard_capture, capture_region, current_capture, region_overlay_info, region_result_png",
+    "restart: isolated WebView2 test profile"
+  ],
+  "errors": [],
+  "fixtureTopmost": "test browser PID and title verified; no other windows changed",
+  "fixtureViewport": {
+    "width": 2560,
+    "height": 1440,
+    "dpr": 1,
+    "screenWidth": 2560,
+    "screenHeight": 1440
+  },
+  "displays": [
+    {
+      "id": "\\\\.\\DISPLAY2",
+      "name": "\\\\.\\DISPLAY2",
+      "widthPx": 2560,
+      "heightPx": 1440,
+      "xPx": 0,
+      "yPx": 0,
+      "isPrimary": true
+    },
+    {
+      "id": "\\\\.\\DISPLAY1",
+      "name": "\\\\.\\DISPLAY1",
+      "widthPx": 2560,
+      "heightPx": 1600,
+      "xPx": -2560,
+      "yPx": 0,
+      "isPrimary": false
+    }
+  ],
+  "result": "passed"
+}

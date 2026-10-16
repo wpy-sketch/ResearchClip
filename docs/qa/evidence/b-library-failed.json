@@ -1,0 +1,21 @@
+{
+  "mode": "actual Windows WebView2 + SQLite + managed PNG files, controlled source PNG; no mocked persistence or real screen capture",
+  "checks": [
+    "empty SQLite library renders guidance without inserting demonstration records",
+    "49 actual SQLite records; bounded 24-card grid; thumbnails requested without loading originals or annotation documents",
+    "creation-time ascending/descending sorting; three pages cover all 49 records without duplicates; sort resets to page one",
+    "rename/favorite/unfavorite use real revisions, preserve creation ordering, and refresh the favorites empty state correctly",
+    "single click opens the knowledge card with one original request; explicit image-edit opens existing editor, source PNG stays unchanged",
+    "one deliberately corrupt test thumbnail displays a per-card placeholder without crashing other cards; restoring its file and retrying works",
+    "real native light/list and dark/grid views render the same records with no horizontal document overflow",
+    "16 non-empty theme/grid/list layouts at 480x400, 640x500, 960x680, 1440x900 (CDP viewport emulation inside native WebView; not a hardware DPI test)",
+    "delete cancel keeps row/files; confirmed final-page deletion cleans only its files and automatically clamps to the preceding page",
+    "actual close/restart preserves count, rename, favorite, deletion and immutable original"
+  ],
+  "errors": [
+    "PostMessage failed ; is the messages queue full? Error code 0x80070578 - 无效的窗口句柄。",
+    "PostMessage failed ; is the messages queue full? Error code 0x80070578 - 无效的窗口句柄。"
+  ],
+  "result": "failed",
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 0\n\n    at <workspace>/scripts/library-native-smoke.mjs:158:10\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)"
+}

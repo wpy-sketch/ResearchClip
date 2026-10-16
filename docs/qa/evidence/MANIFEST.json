@@ -1,0 +1,66 @@
+{
+  "exportDate": "2026-10-16",
+  "redaction": "Only local workspace paths replaced with <workspace>; outcomes and assertions unchanged; original reports retained locally.",
+  "reports": [
+    {
+      "source": "artifacts/region-capture-desktop-release-review-20261015-3-smoke.json",
+      "name": "a-screen.json",
+      "sourceSha256": "af2756108b5f88efefe736a58f843ac17cda75d26cff76b1ee801f0a189f5cc6"
+    },
+    {
+      "source": "artifacts/editor-release-review-20261015/report.json",
+      "name": "a-editor-renderer.json",
+      "sourceSha256": "d1e9477e4e8c945fa9232f065f186e2e6a7ab27809e6df2ad4e0dafddc3c3a36"
+    },
+    {
+      "source": "artifacts/storage-release-final-20261015-storage/report.json",
+      "name": "a-storage.json",
+      "sourceSha256": "4db41953442a1dc02549b87ee39e871a6422b2cca6c19bac1d556d8fcb55c2e1"
+    },
+    {
+      "source": "artifacts/knowledge-release-final-20261015-knowledge/report.json",
+      "name": "a-knowledge.json",
+      "sourceSha256": "0440a058f775d76e0b8bf49f6351da431663016840ce52d9d0c648f1f5e4b5fa"
+    },
+    {
+      "source": "artifacts/markdown-release-final-20261015-markdown/report.json",
+      "name": "a-markdown.json",
+      "sourceSha256": "4a36f813fc0a7f4bff103e13f7e82e2141b5e8bf8a5e8b99dc5d44c8bdb67976"
+    },
+    {
+      "source": "artifacts/release-audit-20261015/native-results.json",
+      "name": "a-native-exit-codes.json",
+      "sourceSha256": "e93f50ee9e33572f6d93e1aab49aedb0a9e6dfc15a70c37cc54dfe8f0f32951f"
+    },
+    {
+      "source": "artifacts/desktop-release-final-20261015-desktop/report.json",
+      "name": "a-desktop-failed.json",
+      "sourceSha256": "3b3f03fd36c2f28d56292406d5f6b930665d5d6184f268245bef6426658e4c8b"
+    },
+    {
+      "source": "artifacts/workflow-qa-20261015-workflow/report.json",
+      "name": "b-workflow.json",
+      "sourceSha256": "80069bb22f976b21816f5a42588bf016f46e8af12ceaae254aefc8fc10e25f09"
+    },
+    {
+      "source": "artifacts/editor-native-qa-20261015-editor/report.json",
+      "name": "b-editor.json",
+      "sourceSha256": "a2963a624117cf804adaf5844d357337760de34454055d9d096601525123706c"
+    },
+    {
+      "source": "artifacts/library-qa-20261015-library/report.json",
+      "name": "b-library-failed.json",
+      "sourceSha256": "648967dbe426988ed1d61718414bbad1de21c007ac64f93759ea5403ddaac5c0"
+    },
+    {
+      "source": "artifacts/desktop-qa-20261015-desktop/report.json",
+      "name": "b-desktop.json",
+      "sourceSha256": "412ca342cf44915df94668d53915f505745c1dd20b2847b17d8a19bf571dc6b4"
+    },
+    {
+      "source": "artifacts/installer-qa-20261015-final/report.json",
+      "name": "b-installer.json",
+      "sourceSha256": "09fdf9c673b807a9c3a907f116e411f5395166324b18037d246ce0da1d054f9e"
+    }
+  ]
+}

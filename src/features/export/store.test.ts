@@ -1,0 +1,16 @@
+import {beforeEach,describe,expect,it,vi} from 'vitest';
+import {useMarkdownExportStore} from './store';
+import {useCardStore} from '../notes/store';
+import type {CardSession} from '../notes/store';
+const api=vi.hoisted(()=>({exportKnowledgeMarkdown:vi.fn()}));
+vi.mock('../../shared/api/markdown',async(importOriginal)=>({...await importOriginal<typeof import('../../shared/api/markdown')>(),...api}));
+const a='a'.repeat(32),b='b'.repeat(32),result={directory:'D:\\Export',exportedIds:[a],failures:[],warnings:[]};
+const flush=vi.fn();
+beforeEach(()=>{vi.resetAllMocks();useMarkdownExportStore.setState({busy:false,result:null,error:null,cancelled:false});useCardStore.setState({sessions:{},flush});api.exportKnowledgeMarkdown.mockResolvedValue(result);flush.mockResolvedValue(true);});
+const dirty=(id:string)=>({id,version:2,savedVersion:1} as CardSession);
+describe('save selected drafts before Markdown export',()=>{
+  it('waits for selected dirty drafts, without flushing unrelated cards',async()=>{useCardStore.setState({sessions:{[a]:dirty(a),[b]:dirty(b)}});let finish:(value:boolean)=>void=()=>{};flush.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));const task=useMarkdownExportStore.getState().run([a]);expect(flush).toHaveBeenCalledExactlyOnceWith(a);expect(api.exportKnowledgeMarkdown).not.toHaveBeenCalled();expect(useMarkdownExportStore.getState().busy).toBe(true);finish(true);await task;expect(api.exportKnowledgeMarkdown).toHaveBeenCalledExactlyOnceWith([a]);expect(useMarkdownExportStore.getState().result).toEqual(result);});
+  it('stops before directory selection if a selected draft cannot be saved',async()=>{useCardStore.setState({sessions:{[a]:dirty(a)}});flush.mockResolvedValue(false);await useMarkdownExportStore.getState().run([a]);expect(api.exportKnowledgeMarkdown).not.toHaveBeenCalled();expect(useMarkdownExportStore.getState().error).toContain('草稿');expect(useCardStore.getState().sessions[a].version).toBe(2);});
+  it('prevents duplicate in-flight exports and preserves results after navigation',async()=>{let finish:(value:typeof result)=>void=()=>{};api.exportKnowledgeMarkdown.mockImplementation(()=>new Promise(resolve=>{finish=resolve;}));const task=useMarkdownExportStore.getState().run([a]);await useMarkdownExportStore.getState().run([b]);expect(api.exportKnowledgeMarkdown).toHaveBeenCalledTimes(1);finish(result);await task;expect(useMarkdownExportStore.getState().result).toEqual(result);useMarkdownExportStore.getState().dismiss();expect(useMarkdownExportStore.getState().result).toBeNull();});
+  it('distinguishes cancellation from failure and allows retry',async()=>{api.exportKnowledgeMarkdown.mockResolvedValueOnce(null).mockRejectedValueOnce({message:'目录不可写'}).mockResolvedValueOnce(result);await useMarkdownExportStore.getState().run([a]);expect(useMarkdownExportStore.getState().cancelled).toBe(true);await useMarkdownExportStore.getState().run([a]);expect(useMarkdownExportStore.getState().error).toBe('目录不可写');expect(useMarkdownExportStore.getState().busy).toBe(false);await useMarkdownExportStore.getState().run([a]);expect(useMarkdownExportStore.getState().error).toBeNull();expect(useMarkdownExportStore.getState().result).toEqual(result);});
+});

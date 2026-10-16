@@ -1,24 +1,62 @@
 use super::StorageError;
-use rusqlite::Connection;
+use rusqlite::{Connection, OpenFlags, TransactionBehavior};
+use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 1;
+pub const SCHEMA_VERSION: u32 = 2;
 
 fn apply_migration(
     connection: &mut Connection,
     version: u32,
     sql: &str,
 ) -> Result<(), StorageError> {
-    let transaction = connection.transaction()?;
+    let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
     transaction.execute_batch(sql)?;
+    if version == 2 {
+        validate_schema(&transaction, version)?;
+    }
     transaction.pragma_update(None, "user_version", version)?;
     transaction.commit()?;
     Ok(())
 }
 
-pub fn migrate(connection: &mut Connection) -> Result<(), StorageError> {
+pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), StorageError> {
     let version: u32 = connection.pragma_query_value(None, "user_version", |row| row.get(0))?;
     if version > SCHEMA_VERSION {
         return Err(StorageError::NewerSchema(version));
+    }
+    let integrity: String = connection.query_row("PRAGMA quick_check", [], |r| r.get(0))?;
+    if integrity != "ok" {
+        return Err(StorageError::Invalid("数据库完整性检查失败，未重置资料。"));
+    }
+    if version > 0 {
+        validate_schema(connection, version)?;
+    }
+    if version > 0
+        && version < SCHEMA_VERSION
+        && let Some(root) = root
+    {
+        let folder = root.join("backups");
+        super::files::directory(&folder)?;
+        let id: String =
+            connection.query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))?;
+        let backup = folder.join(format!("schema-{version}-{id}.sqlite3"));
+        if backup.try_exists()? {
+            return Err(StorageError::Invalid("迁移备份文件已存在。"));
+        }
+        // VACUUM INTO is a consistent SQLite snapshot, including committed WAL pages.
+        let stage = tempfile::NamedTempFile::new_in(&folder)?;
+        connection.execute("VACUUM INTO ?1", [stage.path().to_string_lossy().as_ref()])?;
+        stage.as_file().sync_all()?;
+        let check = Connection::open_with_flags(stage.path(), OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+        validate_schema(&check, version)?;
+        let status: String = check.query_row("PRAGMA quick_check", [], |r| r.get(0))?;
+        if status != "ok" {
+            return Err(StorageError::Invalid("迁移备份校验失败，升级未执行。"));
+        }
+        drop(check);
+        stage
+            .persist_noclobber(backup)
+            .map_err(|e| StorageError::Io(e.error))?;
     }
     if version == 0 {
         apply_migration(
@@ -27,12 +65,43 @@ pub fn migrate(connection: &mut Connection) -> Result<(), StorageError> {
             include_str!("../../migrations/001_workspace.sql"),
         )?;
     }
+    if version < 2 {
+        apply_migration(
+            connection,
+            2,
+            include_str!("../../migrations/002_library.sql"),
+        )?;
+    }
+    validate_schema(connection, SCHEMA_VERSION)?;
+    Ok(())
+}
+fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
     // Verify the known schema before reporting storage as ready.
     let _: String = connection.query_row(
         "SELECT value FROM app_metadata WHERE key = 'workspace_initialized_at'",
         [],
         |row| row.get(0),
     )?;
+    if version >= 2 {
+        for sql in [
+            "SELECT id,title,original_image_path,thumbnail_path,annotation_data,width_px,height_px,created_at,updated_at,is_favorite,revision FROM screenshots LIMIT 0",
+            "SELECT id,screenshot_id,content,source_url,created_at,updated_at,revision FROM notes LIMIT 0",
+            "SELECT id,name,normalized_name FROM tags LIMIT 0",
+            "SELECT screenshot_id,tag_id FROM screenshot_tags LIMIT 0",
+            "SELECT id,title,annotation_data,width_px,height_px,created_at FROM pending_screenshots LIMIT 0",
+            "SELECT relative_path,screenshot_id FROM pending_file_deletions LIMIT 0",
+        ] {
+            connection.prepare(sql)?;
+        }
+        if connection
+            .prepare("PRAGMA foreign_key_check")?
+            .query([])?
+            .next()?
+            .is_some()
+        {
+            return Err(StorageError::Invalid("资料外键校验失败，未重置数据库。"));
+        }
+    }
     Ok(())
 }
 
@@ -61,5 +130,103 @@ mod tests {
             )
             .unwrap();
         assert_eq!(tables, 0);
+    }
+    #[test]
+    fn legacy_wal_upgrade_backs_up_metadata_and_never_rewrites_v1_migration() {
+        let tmp = tempfile::tempdir().unwrap();
+        let path = tmp.path().join("researchclip.sqlite3");
+        let mut legacy = Connection::open(&path).unwrap();
+        apply_migration(
+            &mut legacy,
+            1,
+            include_str!("../../migrations/001_workspace.sql"),
+        )
+        .unwrap();
+        legacy.pragma_update(None, "journal_mode", "WAL").unwrap();
+        legacy
+            .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
+            .unwrap();
+        let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
+        assert_eq!(storage.status().unwrap().schema_version, 2);
+        let backup = std::fs::read_dir(tmp.path().join("backups"))
+            .unwrap()
+            .next()
+            .unwrap()
+            .unwrap()
+            .path();
+        let snapshot =
+            Connection::open_with_flags(backup, OpenFlags::SQLITE_OPEN_READ_ONLY).unwrap();
+        assert_eq!(
+            snapshot
+                .pragma_query_value(None, "user_version", |r| r.get::<_, u32>(0))
+                .unwrap(),
+            1
+        );
+        assert_eq!(
+            snapshot
+                .query_row(
+                    "SELECT value FROM app_metadata WHERE key='research'",
+                    [],
+                    |r| r.get::<_, String>(0)
+                )
+                .unwrap(),
+            "保留"
+        );
+        assert_eq!(
+            legacy
+                .query_row(
+                    "SELECT value FROM app_metadata WHERE key='research'",
+                    [],
+                    |r| r.get::<_, String>(0)
+                )
+                .unwrap(),
+            "保留"
+        );
+    }
+    #[test]
+    fn failed_upgrade_preserves_old_version_and_consistent_backup() {
+        let tmp = tempfile::tempdir().unwrap();
+        let path = tmp.path().join("researchclip.sqlite3");
+        let mut conn = Connection::open(path).unwrap();
+        apply_migration(
+            &mut conn,
+            1,
+            include_str!("../../migrations/001_workspace.sql"),
+        )
+        .unwrap();
+        conn.execute_batch("CREATE TABLE screenshots (unexpected TEXT);")
+            .unwrap();
+        assert!(crate::storage::Storage::open(tmp.path().into()).is_err());
+        assert_eq!(
+            conn.pragma_query_value(None, "user_version", |r| r.get::<_, u32>(0))
+                .unwrap(),
+            1
+        );
+        assert_eq!(
+            std::fs::read_dir(tmp.path().join("backups"))
+                .unwrap()
+                .count(),
+            1
+        );
+        assert!(conn.prepare("SELECT * FROM notes").is_err());
+    }
+    #[test]
+    fn backup_failure_stops_upgrade_and_preserves_existing_files() {
+        let tmp = tempfile::tempdir().unwrap();
+        let mut conn = Connection::open(tmp.path().join("researchclip.sqlite3")).unwrap();
+        apply_migration(
+            &mut conn,
+            1,
+            include_str!("../../migrations/001_workspace.sql"),
+        )
+        .unwrap();
+        std::fs::write(tmp.path().join("backups"), b"keep").unwrap();
+        assert!(crate::storage::Storage::open(tmp.path().into()).is_err());
+        assert_eq!(
+            conn.pragma_query_value(None, "user_version", |r| r.get::<_, u32>(0))
+                .unwrap(),
+            1
+        );
+        assert_eq!(std::fs::read(tmp.path().join("backups")).unwrap(), b"keep");
     }
 }

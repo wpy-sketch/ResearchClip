@@ -1,0 +1,26 @@
+[
+  {
+    "command": "node scripts/storage-native-smoke.mjs release-final-20261015-storage",
+    "exitCode": 0
+  },
+  {
+    "command": "node scripts/library-native-smoke.mjs release-final-20261015-library",
+    "exitCode": 1
+  },
+  {
+    "command": "node scripts/knowledge-native-smoke.mjs release-final-20261015-knowledge",
+    "exitCode": 0
+  },
+  {
+    "command": "node scripts/markdown-native-smoke.mjs release-final-20261015-markdown",
+    "exitCode": 0
+  },
+  {
+    "command": "node scripts/desktop-native-smoke.mjs release-final-20261015-desktop",
+    "exitCode": 1
+  },
+  {
+    "command": "node scripts/editor-native-smoke.mjs release-final-20261015-editor",
+    "exitCode": 1
+  }
+]

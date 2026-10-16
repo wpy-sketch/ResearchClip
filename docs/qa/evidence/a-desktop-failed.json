@@ -1,0 +1,9 @@
+{
+  "mode": "actual Windows app, tray popup with scoped synthetic input, OS hotkeys, SQLite and restarts; source PNG is controlled, OS color changes use CDP media emulation",
+  "checks": [
+    "legacy settings load new annotation/close defaults without reset; system preference persists and follows both CDP light/dark media changes (not a physical OS theme toggle)"
+  ],
+  "errors": [],
+  "result": "failed",
+  "failure": "Error: Timed out actual tray callback restores hidden main: \n    at until (<workspace>/scripts/desktop-native-smoke.mjs:17:211)\n    at async <workspace>/scripts/desktop-native-smoke.mjs:41:157"
+}

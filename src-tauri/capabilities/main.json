@@ -1,7 +1,41 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "main-window",
-  "description": "The local main window may read the app version, test Rust IPC, and request workspace diagnostics.",
-  "windows": ["main"],
-  "permissions": ["core:app:allow-version", "allow-test-connection", "allow-get-workspace-status"]
+  "description": "Main may manage SQLite knowledge cards, export selected cards to Markdown via an owned folder picker, consume owned images, open saved http(s) sources, capture, request image clipboard writes and system dialogs through bounded Rust commands, and update allowlisted preferences. No generic filesystem, opener, clipboard-read or shortcut-registration access is granted to the frontend.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:app:allow-version",
+    "core:window:allow-set-theme",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "allow-test-connection",
+    "allow-get-workspace-status",
+    "allow-list-displays",
+    "allow-capture-fullscreen",
+    "allow-capture-region",
+    "allow-region-result-png",
+    "allow-get-preferences",
+    "allow-desktop-status",
+    "allow-desktop-action",
+    "allow-complete-desktop-exit",
+    "allow-update-preferences",
+    "allow-choose-save-directory",
+    "allow-capture-result-png",
+    "allow-current-capture",
+    "allow-discard-capture",
+    "allow-copy-capture-image",
+    "allow-save-capture-png",
+    "allow-save-editor-project",
+    "allow-open-editor-project",
+    "allow-export-editor-png",
+    "allow-copy-editor-png",
+    "allow-screenshot-page",
+    "allow-get-knowledge-card",
+    "allow-export-knowledge-markdown",
+    "allow-save-knowledge-card",
+    "allow-open-card-source",
+    "allow-create-screenshot","allow-library-status","allow-reconcile-library","allow-list-screenshots","allow-get-screenshot","allow-screenshot-image","allow-update-screenshot","allow-delete-screenshot","allow-list-notes","allow-save-note","allow-delete-note","allow-list-tags","allow-save-tag","allow-delete-tag","allow-get-screenshot-tags","allow-set-screenshot-tags"
+  ]
 }

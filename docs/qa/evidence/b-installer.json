@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "mode": "actual NSIS, isolated install path, read-only user-data hashes, process fixture for busy guard",
+  "checks": [
+    "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+    "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+    "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+    "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+  ],
+  "commands": [
+    "<workspace>\\src-tauri\\target\\release-audit\\release\\bundle\\nsis\\ResearchClip_0.1.0_x64-setup.exe /S /NS /D=<workspace>\\artifacts\\installer-qa-20261015-final\\安装验收 Test",
+    "<workspace>\\artifacts\\installer-qa-20261015-final\\安装验收 Test\\uninstall.exe /S _?=<workspace>\\artifacts\\installer-qa-20261015-final\\安装验收 Test",
+    "<workspace>\\src-tauri\\target\\release-audit\\release\\bundle\\nsis\\ResearchClip_0.1.0_x64-setup.exe /S /NS /D=<workspace>\\artifacts\\installer-qa-20261015-final\\安装验收 Test",
+    "<workspace>\\artifacts\\installer-qa-20261015-final\\安装验收 Test\\uninstall.exe /S"
+  ],
+  "result": "passed",
+  "userDataFilesHashed": 8,
+  "installerSha256": "4F0032C89E21F40FBCAB742FB77AE6A0C07F5BBA211B90E95093E56FD6BE0C1E",
+  "signatureStatus": "NotSigned",
+  "installedPayloadSha256": "86D86A460F00AEF8BB54412220B0B3AFCAB5E5CAAD0CB55398C1C027A0C525C7",
+  "metadata": {
+    "publisher": "ResearchClip",
+    "product": "ResearchClip",
+    "hasIcon": true,
+    "version": "0.1.0"
+  },
+  "busyUninstallExit": 2,
+  "busyInstallExit": 2,
+  "installationStillPresent": false
+}

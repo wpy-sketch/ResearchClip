@@ -1,9 +1,14 @@
-use crate::{
-    domain::{ConnectionTestResponse, WorkspaceStatus},
-    storage::Storage,
-};
+use crate::domain::{ConnectionTestResponse, WorkspaceStatus};
 use serde::Serialize;
-use tauri::Manager;
+use std::sync::Arc;
+use tauri::{State, WebviewWindow};
+pub mod capture;
+pub mod desktop;
+pub mod editor;
+pub mod library;
+pub mod markdown;
+pub mod region;
+pub mod workflow;
 
 #[derive(Debug, Serialize)]
 pub struct CommandError {
@@ -19,21 +24,24 @@ pub fn test_connection() -> ConnectionTestResponse {
     }
 }
 
-// Preserve the earlier storage diagnostic without opening or modifying a DB on startup.
 #[tauri::command]
-pub fn get_workspace_status(app: tauri::AppHandle) -> Result<WorkspaceStatus, CommandError> {
-    let data_dir = app.path().app_data_dir().map_err(|_| CommandError {
-        code: "DATA_DIR",
-        message: "无法解析本地工作区目录".into(),
-    })?;
-    let storage = Storage::open(data_dir).map_err(|_| CommandError {
-        code: "STORAGE_OPEN",
-        message: "无法打开本地工作区，请检查目录权限与数据库版本".into(),
-    })?;
-    storage.status().map_err(|_| CommandError {
-        code: "STORAGE_READ",
-        message: "无法读取本地工作区".into(),
-    })
+pub async fn get_workspace_status(
+    window: WebviewWindow,
+    service: State<'_, Arc<library::LibraryService>>,
+) -> Result<WorkspaceStatus, CommandError> {
+    if window.label() != "main" {
+        return Err(CommandError {
+            code: "WINDOW_DENIED",
+            message: "该窗口无权读取工作区。".into(),
+        });
+    }
+    let service = Arc::clone(service.inner());
+    tauri::async_runtime::spawn_blocking(move || service.with(|s| s.status()))
+        .await
+        .map_err(|_| CommandError {
+            code: "STORAGE_TASK",
+            message: "无法读取工作区。".into(),
+        })?
 }
 
 #[cfg(test)]

@@ -1,0 +1,16 @@
+{
+  "mode": "actual Windows WebView2, SQLite and PNG; controlled source image, real autosave/search/source opening; no mocked persistence",
+  "checks": [
+    "real debounced card save persists literal Markdown/HTML, URL, multiple tags and favorite in one write; no script or image HTML executes",
+    "official Rust Opener actually opens the saved local http source in the default browser; generic WebView opener permission is denied",
+    "actual SQLite trigger blocks save atomically, error is visible, fast switching keeps the failed per-card draft, and explicit retry updates the same note",
+    "card autosave and existing editor save cooperate without clobbering annotation state or producing stale metadata revisions",
+    "real top search debounces five keystrokes into one bounded SQLite read, loads no originals, and correctly searches Chinese, ASCII English, percent/underscore/backslash/quotes with friendly zero results",
+    "multiple tags use AND; query + tags + favorite combine correctly, creation sorting stays stable, and clear-all restores the unfiltered 29-record library",
+    "removing a card tag preserves the shared tag; deleting the tag globally removes associations and retains screenshots, notes and source PNG",
+    "8 actual card light/dark responsive content viewports (CDP emulation, not hardware DPI)",
+    "actual app close/restart reloads note/source/favorite/tag removals and search results; original PNG SHA-256 unchanged"
+  ],
+  "errors": [],
+  "result": "passed"
+}

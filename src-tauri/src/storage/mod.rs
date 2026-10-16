@@ -1,4 +1,9 @@
+mod files;
+pub mod knowledge;
+pub mod library;
+pub mod markdown;
 mod migrations;
+pub mod search;
 
 use crate::domain::WorkspaceStatus;
 use rusqlite::Connection;
@@ -13,32 +18,66 @@ pub enum StorageError {
     Database(#[from] rusqlite::Error),
     #[error("数据库版本 {0} 高于当前应用支持版本，请使用较新版本的 ResearchClip")]
     NewerSchema(u32),
+    #[error("{0}")]
+    Invalid(&'static str),
+    #[error("资料不存在或已删除。")]
+    NotFound,
+    #[error("资料已被其他操作修改，当前草稿已保留。请先保留草稿，再重新加载已保存资料。")]
+    Conflict,
 }
 
 pub struct Storage {
     connection: Connection,
     data_dir: PathBuf,
     database_path: PathBuf,
+    recovery_warnings: Vec<String>,
+    _workspace_lock: fs::File,
 }
 
 impl Storage {
     pub fn open(data_dir: PathBuf) -> Result<Self, StorageError> {
+        files::existing_ordinary(&data_dir)?;
         fs::create_dir_all(&data_dir)?;
+        let data_dir = data_dir.canonicalize()?;
+        files::ordinary(&data_dir)?;
+        let lock_path = data_dir.join("workspace.lock");
+        files::existing_ordinary(&lock_path)?;
+        let workspace_lock = fs::OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .truncate(false)
+            .open(lock_path)?;
+        workspace_lock.try_lock().map_err(|_| {
+            StorageError::Invalid(
+                "资料库正被另一个应用实例使用，或无法取得工作区锁；请关闭该实例后重试。",
+            )
+        })?;
         let database_path = data_dir.join("researchclip.sqlite3");
+        files::existing_ordinary(&database_path)?;
+        for suffix in ["-wal", "-shm"] {
+            let path = data_dir.join(format!("researchclip.sqlite3{suffix}"));
+            files::existing_ordinary(&path)?;
+        }
         let mut connection = Connection::open(&database_path)?;
         connection.busy_timeout(Duration::from_secs(5))?;
         // Refuse unknown future schemas before changing any database settings.
-        migrations::migrate(&mut connection)?;
+        migrations::migrate(&mut connection, Some(&data_dir))?;
         connection.pragma_update(None, "foreign_keys", "ON")?;
         connection.pragma_update(None, "journal_mode", "WAL")?;
+        connection.pragma_update(None, "synchronous", "FULL")?;
         for directory in ["originals", "thumbnails", "exports"] {
-            fs::create_dir_all(data_dir.join(directory))?;
+            files::directory(&data_dir.join(directory))?;
         }
-        Ok(Self {
+        let mut storage = Self {
             connection,
             data_dir,
             database_path,
-        })
+            recovery_warnings: Vec::new(),
+            _workspace_lock: workspace_lock,
+        };
+        storage.reconcile()?;
+        Ok(storage)
     }
 
     pub fn status(&self) -> Result<WorkspaceStatus, StorageError> {
@@ -68,7 +107,7 @@ mod tests {
         let root = temporary.path().join("科研工作区");
         let storage = Storage::open(root.clone()).unwrap();
         let status = storage.status().unwrap();
-        assert_eq!(status.schema_version, 1);
+        assert_eq!(status.schema_version, 2);
         assert!(root.join("researchclip.sqlite3").is_file());
         for name in ["originals", "thumbnails", "exports"] {
             assert!(root.join(name).is_dir());
@@ -108,7 +147,7 @@ mod tests {
             )
             .unwrap();
         assert_eq!(note, "keep me");
-        assert_eq!(storage.status().unwrap().schema_version, 1);
+        assert_eq!(storage.status().unwrap().schema_version, 2);
     }
 
     #[test]
@@ -148,7 +187,7 @@ mod tests {
         connection
             .execute_batch("CREATE TABLE app_metadata (unexpected TEXT);")
             .unwrap();
-        assert!(migrations::migrate(&mut connection).is_err());
+        assert!(migrations::migrate(&mut connection, None).is_err());
         let version: u32 = connection
             .pragma_query_value(None, "user_version", |r| r.get(0))
             .unwrap();
@@ -181,7 +220,18 @@ mod tests {
         let storage = Storage::open(temporary.path().to_path_buf()).unwrap();
         let json = serde_json::to_value(storage.status().unwrap()).unwrap();
         assert_eq!(json["appName"], "ResearchClip");
-        assert_eq!(json["schemaVersion"], 1);
+        assert_eq!(json["schemaVersion"], 2);
         assert!(json.get("data_dir").is_none());
+    }
+    #[test]
+    fn a_second_writer_is_refused_and_os_lock_is_released_on_close() {
+        let temporary = tempfile::tempdir().unwrap();
+        let one = Storage::open(temporary.path().into()).unwrap();
+        assert!(matches!(
+            Storage::open(temporary.path().into()),
+            Err(StorageError::Invalid(_))
+        ));
+        drop(one);
+        assert!(Storage::open(temporary.path().into()).is_ok());
     }
 }

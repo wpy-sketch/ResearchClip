@@ -1,0 +1,18 @@
+{
+  "mode": "actual Windows app, tray popup with scoped synthetic input, OS hotkeys, SQLite and restarts; source PNG is controlled, OS color changes use CDP media emulation",
+  "checks": [
+    "legacy settings load new annotation/close defaults without reset; system preference persists and follows both CDP light/dark media changes (not a physical OS theme toggle)",
+    "close-to-tray hides without losing the window; actual native tray callback restores it; three minimize/restore cycles retain one main HWND and one tray",
+    "second real process exits through the official single-instance plugin and restores the first without duplicating windows or tray icons",
+    "actual native tray popup selects Settings through fixed synthetic keyboard input and opens the existing main window",
+    "an actual second process owns the requested hotkey; failed registration preserves original file/binding, then retry succeeds after releasing the conflict",
+    "removing only the empty test default directory produces an explicit warning and keeps its configured path",
+    "changing persisted defaults while an object is selected preserves it; the next object uses the new style; exit warns for unsaved annotations and cancellation retains editable objects",
+    "a real SQLite save failure cancels tray exit and retains the draft; retry saves notes, removes native windows/tray, exits cleanly and releases all tested global hotkeys",
+    "actual tray Region menu enters the existing native capture workflow and returns CANCELLED; Escape is sent only to an owned overlay, cancellation/permission failure is not counted as a successful screenshot",
+    "actual restart restores every changed preference, note and one tray; repeated tray exit releases the single-instance and shortcut resources again"
+  ],
+  "errors": [],
+  "captureOutcome": "CANCELLED",
+  "result": "passed"
+}

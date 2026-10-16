@@ -1,0 +1,878 @@
+{
+  "mode": "actual Windows WebView2 and native folder picker, isolated SQLite, controlled PNG (not physical capture)",
+  "checks": [
+    "single-card UI flushes unsaved Markdown, source and tags before a real native folder selection; notes.md and byte-identical relative assets are created under a Unicode/special-character parent",
+    "batch selection exports two cards into a fresh numbered directory; original export is unchanged and duplicate/special titles produce safe unique relative filenames",
+    "cancelling the real directory picker writes no new files and shows cancellation",
+    "a genuinely missing managed original yields explicit partial success, no dangling image link and a path-free export report; screenshot record remains",
+    "all missing images fail visibly and publish no empty export",
+    "moving the entire generated bundle keeps every Markdown image reference resolvable and byte-identical",
+    "extra frontend path arguments cannot bypass the owned picker; invalid IDs and generic frontend dialog access are denied"
+  ],
+  "errors": [],
+  "dialogControls": [
+    [
+      {
+        "class": "Static",
+        "id": "1092",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1091",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1093",
+        "name": ""
+      },
+      {
+        "class": "ListBox",
+        "id": "1120",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1095",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1090",
+        "name": "文件夹:"
+      },
+      {
+        "class": "Edit",
+        "id": "1152",
+        "name": ""
+      },
+      {
+        "class": "Button",
+        "id": "1",
+        "name": "选择文件夹"
+      },
+      {
+        "class": "Button",
+        "id": "2",
+        "name": "取消"
+      },
+      {
+        "class": "Button",
+        "id": "1038",
+        "name": "帮助(&H)"
+      },
+      {
+        "class": "ScrollBar",
+        "id": "-1",
+        "name": ""
+      },
+      {
+        "class": "WorkerW",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ReBarWindow32",
+        "id": "40965",
+        "name": ""
+      },
+      {
+        "class": "TravelBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "导航按钮"
+      },
+      {
+        "class": "UpBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "上区段"
+      },
+      {
+        "class": "Address Band Root",
+        "id": "41477",
+        "name": ""
+      },
+      {
+        "class": "msctls_progress32",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Breadcrumb Parent",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "1001",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "地址区段"
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "UniversalSearchBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Search Box",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SearchEditBoxWrapperClass",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      }
+    ],
+    [
+      {
+        "class": "Static",
+        "id": "1092",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1091",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1093",
+        "name": ""
+      },
+      {
+        "class": "ListBox",
+        "id": "1120",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1095",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1090",
+        "name": "文件夹:"
+      },
+      {
+        "class": "Edit",
+        "id": "1152",
+        "name": ""
+      },
+      {
+        "class": "Button",
+        "id": "1",
+        "name": "选择文件夹"
+      },
+      {
+        "class": "Button",
+        "id": "2",
+        "name": "取消"
+      },
+      {
+        "class": "Button",
+        "id": "1038",
+        "name": "帮助(&H)"
+      },
+      {
+        "class": "ScrollBar",
+        "id": "-1",
+        "name": ""
+      },
+      {
+        "class": "WorkerW",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ReBarWindow32",
+        "id": "40965",
+        "name": ""
+      },
+      {
+        "class": "TravelBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "导航按钮"
+      },
+      {
+        "class": "UpBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "上区段"
+      },
+      {
+        "class": "Address Band Root",
+        "id": "41477",
+        "name": ""
+      },
+      {
+        "class": "msctls_progress32",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Breadcrumb Parent",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "1001",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "地址区段"
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "UniversalSearchBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Search Box",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SearchEditBoxWrapperClass",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DUIViewWndClassName",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SHELLDLL_DefView",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "CtrlNotifySink",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ScrollBar",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "CtrlNotifySink",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ScrollBar",
+        "id": "0",
+        "name": ""
+      }
+    ],
+    [
+      {
+        "class": "Static",
+        "id": "1092",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1091",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1093",
+        "name": ""
+      },
+      {
+        "class": "ListBox",
+        "id": "1120",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1095",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1090",
+        "name": "文件夹:"
+      },
+      {
+        "class": "Edit",
+        "id": "1152",
+        "name": ""
+      },
+      {
+        "class": "Button",
+        "id": "1",
+        "name": "选择文件夹"
+      },
+      {
+        "class": "Button",
+        "id": "2",
+        "name": "取消"
+      },
+      {
+        "class": "Button",
+        "id": "1038",
+        "name": "帮助(&H)"
+      },
+      {
+        "class": "ScrollBar",
+        "id": "-1",
+        "name": ""
+      },
+      {
+        "class": "WorkerW",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ReBarWindow32",
+        "id": "40965",
+        "name": ""
+      },
+      {
+        "class": "TravelBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "导航按钮"
+      },
+      {
+        "class": "UpBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "上区段"
+      },
+      {
+        "class": "Address Band Root",
+        "id": "41477",
+        "name": ""
+      },
+      {
+        "class": "msctls_progress32",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Breadcrumb Parent",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "1001",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "地址区段"
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "UniversalSearchBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Search Box",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SearchEditBoxWrapperClass",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DUIViewWndClassName",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SHELLDLL_DefView",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      }
+    ],
+    [
+      {
+        "class": "Static",
+        "id": "1092",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1091",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1093",
+        "name": ""
+      },
+      {
+        "class": "ListBox",
+        "id": "1120",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1095",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1090",
+        "name": "文件夹:"
+      },
+      {
+        "class": "Edit",
+        "id": "1152",
+        "name": ""
+      },
+      {
+        "class": "Button",
+        "id": "1",
+        "name": "选择文件夹"
+      },
+      {
+        "class": "Button",
+        "id": "2",
+        "name": "取消"
+      },
+      {
+        "class": "Button",
+        "id": "1038",
+        "name": "帮助(&H)"
+      },
+      {
+        "class": "ScrollBar",
+        "id": "-1",
+        "name": ""
+      },
+      {
+        "class": "WorkerW",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ReBarWindow32",
+        "id": "40965",
+        "name": ""
+      },
+      {
+        "class": "TravelBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "导航按钮"
+      },
+      {
+        "class": "UpBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "上区段"
+      },
+      {
+        "class": "Address Band Root",
+        "id": "41477",
+        "name": ""
+      },
+      {
+        "class": "msctls_progress32",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Breadcrumb Parent",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "1001",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "地址区段"
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "UniversalSearchBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Search Box",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SearchEditBoxWrapperClass",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      }
+    ],
+    [
+      {
+        "class": "Static",
+        "id": "1092",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1091",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1093",
+        "name": ""
+      },
+      {
+        "class": "ListBox",
+        "id": "1120",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1095",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1090",
+        "name": "文件夹:"
+      },
+      {
+        "class": "Edit",
+        "id": "1152",
+        "name": ""
+      },
+      {
+        "class": "Button",
+        "id": "1",
+        "name": "选择文件夹"
+      },
+      {
+        "class": "Button",
+        "id": "2",
+        "name": "取消"
+      },
+      {
+        "class": "Button",
+        "id": "1038",
+        "name": "帮助(&H)"
+      },
+      {
+        "class": "ScrollBar",
+        "id": "-1",
+        "name": ""
+      },
+      {
+        "class": "WorkerW",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ReBarWindow32",
+        "id": "40965",
+        "name": ""
+      },
+      {
+        "class": "TravelBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "导航按钮"
+      },
+      {
+        "class": "UpBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "上区段"
+      },
+      {
+        "class": "Address Band Root",
+        "id": "41477",
+        "name": ""
+      },
+      {
+        "class": "msctls_progress32",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Breadcrumb Parent",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "1001",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "地址区段"
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "UniversalSearchBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "Search Box",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SearchEditBoxWrapperClass",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "DirectUIHWND",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "SeparatorBand",
+        "id": "0",
+        "name": ""
+      }
+    ],
+    [
+      {
+        "class": "Static",
+        "id": "1092",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1091",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1093",
+        "name": ""
+      },
+      {
+        "class": "ListBox",
+        "id": "1120",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1095",
+        "name": ""
+      },
+      {
+        "class": "Static",
+        "id": "1090",
+        "name": "文件夹:"
+      },
+      {
+        "class": "Edit",
+        "id": "1152",
+        "name": ""
+      },
+      {
+        "class": "Button",
+        "id": "1",
+        "name": "选择文件夹"
+      },
+      {
+        "class": "Button",
+        "id": "2",
+        "name": "取消"
+      },
+      {
+        "class": "Button",
+        "id": "1038",
+        "name": "帮助(&H)"
+      },
+      {
+        "class": "ScrollBar",
+        "id": "-1",
+        "name": ""
+      },
+      {
+        "class": "WorkerW",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ReBarWindow32",
+        "id": "40965",
+        "name": ""
+      },
+      {
+        "class": "TravelBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "导航按钮"
+      },
+      {
+        "class": "UpBand",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "上区段"
+      },
+      {
+        "class": "Address Band Root",
+        "id": "41477",
+        "name": ""
+      },
+      {
+        "class": "msctls_progress32",
+        "id": "0",
+        "name": ""
+      },
+      {
+        "class": "ToolbarWindow32",
+        "id": "0",
+        "name": "地址区段"
+      }
+    ]
+  ],
+  "result": "passed"
+}
