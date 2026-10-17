@@ -18,6 +18,7 @@ import {MarkdownExportStatus} from '../features/export/MarkdownExport';
 import {DesktopExperience} from '../features/desktop/DesktopExperience';
 import {useDesktopExperience} from '../features/desktop/use-desktop-experience';
 const EditorView = lazy(() => import('../features/editor/EditorView').then((module) => ({ default: module.EditorView })));
+import {WorkspaceSplit} from '../features/document/WorkspaceSplit';
 
 export function App() {
   const initialize = useAppStore((state) => state.initialize);
@@ -37,6 +38,7 @@ export function App() {
         event.preventDefault();
         useUiStore.getState().openSearch();
       }
+      if(event.defaultPrevented||(event.target instanceof Element&&event.target.closest('[data-markdown-panel]')))return;
       if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='s'&&useUiStore.getState().activeView==='card'){
         event.preventDefault();const id=useCardStore.getState().activeId;if(id)void useCardStore.getState().flush(id);
       }
@@ -54,11 +56,11 @@ export function App() {
         <DesktopExperience/>
         <PendingCardNotice/>
         <MarkdownExportStatus/>
-        <main id="workspace-content" className="workspace-scroll" tabIndex={-1}>
+        <WorkspaceSplit><main id="workspace-content" className="workspace-scroll" tabIndex={-1}>
           {error && <div className="error-banner" role="alert">{error}</div>}
           {settingsError && activeView !== 'settings' && <div className="error-banner" role="alert">{settingsError}<button className="secondary-button ml-3" onClick={() => useUiStore.getState().navigate('settings')}>打开设置</button></div>}
           {activeView === 'editor' ? <Suspense fallback={<p className="p-6 text-sm text-muted" role="status">正在加载编辑器…</p>}><EditorView /></Suspense> : activeView==='card'?<KnowledgeCardView key={cardId}/>:activeView === 'settings' ? <SettingsView /> : activeView === 'tags' ? <TagsView /> : <LibraryView favorites={activeView === 'favorites'} />}
-        </main>
+        </main></WorkspaceSplit>
         <footer className="workspace-footer"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-faint" />本地工作区</span><span>图片与标注保存在本机</span></footer>
       </div>
       <WorkspaceDialogs />

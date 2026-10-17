@@ -43,6 +43,7 @@ try{
   const body='## 几何观察\n\n公式 $x^2+y^2=r^2$\n\n- 中文与 English\n- 保留 Markdown 格式';
   await page.getByRole('textbox',{name:'Markdown 笔记正文'}).fill(body);await page.getByRole('textbox',{name:'来源 URL'}).fill('https://example.org/paper?q=geometry');await page.getByRole('combobox',{name:'添加卡片标签'}).fill('几何方法');await page.getByRole('button',{name:'添加标签',exact:true}).click();
   await page.getByRole('button',{name:'导出 Markdown',exact:true}).click();await choose();await until(async()=>/Markdown 导出完成/.test(await page.locator('[aria-label="Markdown 导出状态"]').textContent()),'single-card export');
+  const actualDirectory=await page.locator('.export-directory').textContent();report.pickerTargetMatched=actualDirectory.includes(destination);assert.ok(report.pickerTargetMatched,'native picker must return the intended artifact parent');
   const single=join(destination,'ResearchClip-Export'),singleText=await verifyBundle(single,1,original);assert.ok(singleText.includes(body)&&singleText.includes('#几何方法')&&singleText.includes('https://example.org/paper?q=geometry')&&singleText.includes('创建时间：'));
   report.checks.push('single-card UI flushes unsaved Markdown, source and tags before a real native folder selection; notes.md and byte-identical relative assets are created under a Unicode/special-character parent');
   const firstHash=hash(await readFile(join(single,'notes.md')));

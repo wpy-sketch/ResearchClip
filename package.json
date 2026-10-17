@@ -27,12 +27,14 @@
     "test:smoke:desktop": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example raise_capture_fixture && node scripts/smoke.mjs --desktop",
     "test:smoke:editor": "node scripts/editor-smoke.mjs",
     "test:smoke:editor:native": "node scripts/editor-native-smoke.mjs",
+    "test:smoke:document:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/document-native-smoke.mjs",
     "test:smoke:workflow": "node scripts/workflow-smoke.mjs",
     "test:smoke:storage:native": "node scripts/storage-native-smoke.mjs",
     "test:smoke:library:native": "node scripts/library-native-smoke.mjs",
     "test:smoke:knowledge:native": "node scripts/knowledge-native-smoke.mjs",
     "test:smoke:markdown:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example markdown_dialog --example workflow_input && node scripts/markdown-native-smoke.mjs",
-    "test:smoke:experience:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example desktop_probe --example knowledge_fault && node scripts/desktop-native-smoke.mjs"
+    "test:smoke:experience:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example desktop_probe --example knowledge_fault && node scripts/desktop-native-smoke.mjs",
+    "test:smoke:split:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/split-native-smoke.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.3",
@@ -41,6 +43,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-konva": "^19.3.0",
+    "react-markdown": "10.1.0",
     "zustand": "^5.0.0"
   },
   "devDependencies": {

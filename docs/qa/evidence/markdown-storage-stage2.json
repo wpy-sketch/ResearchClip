@@ -1,0 +1,17 @@
+{
+  "mode": "actual Windows SQLite/files/restart; explicitly controlled source PNG, not screen capture",
+  "checks": [
+    "actual capture preview save creates real SQLite row, byte-identical original, bounded PNG thumbnail and rendered card; no mock records",
+    "actual editor saves five editable vector types into SQLite; updates existing row and never overwrites original PNG",
+    "real title/favorite updates, parameter-bound note with SQL-like text, tag and screenshot-tag association",
+    "stale write conflict and path-shaped image ID are rejected without modifying data",
+    "actual app close/restart restores screenshot, all annotations, note, tag association, favorite and immutable PNG",
+    "restarted application opens persisted editable canvas and saves subsequent annotation update",
+    "actual delete cancellation preserves data; confirmed delete removes only selected app-owned files and row",
+    "second actual restart retains updated screenshot and completed deletion"
+  ],
+  "errors": [],
+  "result": "passed",
+  "evidenceSource": "artifacts/storage-mdstage2-20261017-storage/report.json",
+  "note": "Actual execution; isolated fixture PNG is not live screen capture."
+}

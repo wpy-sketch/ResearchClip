@@ -1,0 +1,15 @@
+{
+  "mode": "Windows native editor with explicit controlled PNG; screen capture unverified",
+  "checks": [
+    "real raw IPC + Windows Save As writes all five vector types in layer order and byte-identical immutable original PNG",
+    "real Windows Open dialog restores five editable object types; Delete + Ctrl+Z works after reload",
+    "real Windows export dialog writes the requested test-export.png at full 320 × 200 resolution",
+    "official clipboard plugin transfers composite image to separate Edge viewer; every RGBA pixel matches saved PNG",
+    "real save-dialog cancellation leaves existing original/project/export unchanged",
+    "actual app restart and project reopen restore all five annotation types"
+  ],
+  "errors": [],
+  "result": "passed",
+  "evidenceSource": "artifacts/editor-native-mdstage2-20261017-editor/report.json",
+  "note": "Actual execution; isolated fixture PNG is not live screen capture."
+}

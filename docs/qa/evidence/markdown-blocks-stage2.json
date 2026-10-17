@@ -1,0 +1,17 @@
+{
+  "mode": "actual Windows WebView2, real file dialogs, SQLite and filesystem; explicitly controlled source PNG, not screen capture",
+  "checks": [
+    "creates a unique empty document with visible unsaved state in the actual application",
+    "click selection order, whole-block movement, middle deletion and inserted Markdown retain the correct image-caption association; safe live preview renders lists/code without running HTML",
+    "actual system Save cancellation creates no Markdown or assets and retains unsaved state",
+    "real system Save As writes UTF-8 .md and two stable relative assets at original resolution; exported PNG contains actual Konva rectangle pixels, not the unannotated source",
+    "continuing Save atomically updates the opened file, external modification blocks replacement and preserves draft, Save As creates a new file without damaging the external edit",
+    "native Open restores exact block order and editable annotations; close cancellation keeps edits, Save and Close commits them before closing",
+    "actual application restart reopens the document with the same order; original screenshots and all three SQLite records remain unchanged",
+    "real window close warns about unsaved Markdown; Cancel retains the app and explicit Discard exits cleanly"
+  ],
+  "errors": [],
+  "result": "PASS",
+  "evidenceSource": "artifacts/document-stage2-20261017-preview-errors/report.json",
+  "note": "Actual execution; isolated fixture PNG is not live screen capture."
+}

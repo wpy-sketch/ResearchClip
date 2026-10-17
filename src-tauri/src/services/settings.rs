@@ -29,6 +29,11 @@ pub struct Preferences {
     pub annotation_width: u8,
     #[serde(default)]
     pub close_to_tray: bool,
+    #[serde(default = "default_markdown_split_percent")]
+    pub markdown_split_percent: u8,
+}
+fn default_markdown_split_percent() -> u8 {
+    50
 }
 fn default_annotation_color() -> String {
     "#ef6262".into()
@@ -58,6 +63,7 @@ impl Default for Preferences {
             annotation_color: default_annotation_color(),
             annotation_width: default_annotation_width(),
             close_to_tray: false,
+            markdown_split_percent: default_markdown_split_percent(),
         }
     }
 }
@@ -73,6 +79,7 @@ pub struct PreferencesPatch {
     pub annotation_color: Option<String>,
     pub annotation_width: Option<u8>,
     pub close_to_tray: Option<bool>,
+    pub markdown_split_percent: Option<u8>,
     // Paths can only be changed by the Rust folder-dialog command.
 }
 #[derive(Clone, Debug, Serialize)]
@@ -135,6 +142,7 @@ fn validate(value: &Preferences) -> Result<(), CaptureError> {
         || !["grid", "list"].contains(&value.view_mode.as_str())
         || !["system", "sans", "serif"].contains(&value.font_family.as_str())
         || !(12..=20).contains(&value.font_size)
+        || !(20..=80).contains(&value.markdown_split_percent)
         || !(1..=32).contains(&value.annotation_width)
         || value.annotation_color.len() != 7
         || !value.annotation_color.starts_with('#')
@@ -356,6 +364,9 @@ impl SettingsService {
         if let Some(v) = patch.annotation_width {
             next.annotation_width = v;
         }
+        if let Some(v) = patch.markdown_split_percent {
+            next.markdown_split_percent = v;
+        }
         if let Some(v) = patch.close_to_tray {
             next.close_to_tray = v;
         }
@@ -440,6 +451,54 @@ mod tests {
         s
     }
     #[test]
+    fn markdown_split_persists_and_rejects_invalid_values_without_reregistering() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.json");
+        let service = registered_service(path.clone());
+        assert_eq!(
+            service
+                .snapshot()
+                .unwrap()
+                .preferences
+                .markdown_split_percent,
+            50
+        );
+        service
+            .update(
+                PreferencesPatch {
+                    markdown_split_percent: Some(62),
+                    ..Default::default()
+                },
+                None,
+                |_, _| panic!("split must not register shortcuts"),
+            )
+            .unwrap();
+        assert_eq!(
+            SettingsService::load(path.clone())
+                .snapshot()
+                .unwrap()
+                .preferences
+                .markdown_split_percent,
+            62
+        );
+        let bytes = fs::read(&path).unwrap();
+        for value in [0, 19, 81, 255] {
+            assert!(
+                service
+                    .update(
+                        PreferencesPatch {
+                            markdown_split_percent: Some(value),
+                            ..Default::default()
+                        },
+                        None,
+                        |_, _| panic!("invalid split")
+                    )
+                    .is_err()
+            );
+            assert_eq!(fs::read(&path).unwrap(), bytes);
+        }
+    }
+    #[test]
     fn desktop_defaults_persist_reload_without_reregistering_shortcuts() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("settings.json");
@@ -471,7 +530,12 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("settings.json");
         let mut json = serde_json::to_value(Preferences::default()).unwrap();
-        for key in ["annotationColor", "annotationWidth", "closeToTray"] {
+        for key in [
+            "annotationColor",
+            "annotationWidth",
+            "closeToTray",
+            "markdownSplitPercent",
+        ] {
             json.as_object_mut().unwrap().remove(key);
         }
         let bytes = serde_json::to_vec(&json).unwrap();

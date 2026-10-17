@@ -17,6 +17,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || mode == "dialog-save-native"
         || mode == "dialog-confirm"
         || mode == "dialog-open-native"
+        || mode == "dialog-save-md"
+        || mode == "dialog-open-md"
     {
         use windows::Win32::{
             Foundation::{HWND, LPARAM, WPARAM},
@@ -64,13 +66,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             pid: args.get(2).ok_or("expected owned app PID")?.parse()?,
             hwnd: None,
             count: 0,
-            titles: if mode == "dialog-open-native" {
+            titles: if mode == "dialog-save-md" {
+                vec!["保存 Markdown 文档".encode_utf16().collect()]
+            } else if mode == "dialog-open-md" {
+                vec!["打开 Markdown 文档".encode_utf16().collect()]
+            } else if mode == "dialog-open-native" {
                 vec!["打开可编辑项目".encode_utf16().collect()]
             } else if mode == "dialog-confirm" {
                 vec![
                     "保存可编辑项目".encode_utf16().collect(),
                     "导出标注 PNG".encode_utf16().collect(),
                     "打开可编辑项目".encode_utf16().collect(),
+                    "保存 Markdown 文档".encode_utf16().collect(),
+                    "打开 Markdown 文档".encode_utf16().collect(),
                 ]
             } else if mode == "dialog-save-native" {
                 vec!["保存截图 PNG".encode_utf16().collect()]
@@ -80,6 +88,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 vec![
                     "保存截图 PNG".encode_utf16().collect(),
                     "选择截图默认保存目录".encode_utf16().collect(),
+                    "保存 Markdown 文档".encode_utf16().collect(),
+                    "打开 Markdown 文档".encode_utf16().collect(),
                     "保存可编辑项目".encode_utf16().collect(),
                     "导出标注 PNG".encode_utf16().collect(),
                     "打开可编辑项目".encode_utf16().collect(),
@@ -98,7 +108,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if target.count != 1 {
             return Err("expected exactly one owned ResearchClip main window".into());
         }
-        if mode == "dialog-save-native" || mode == "dialog-confirm" || mode == "dialog-open-native"
+        if mode == "dialog-save-native"
+            || mode == "dialog-confirm"
+            || mode == "dialog-open-native"
+            || mode == "dialog-save-md"
+            || mode == "dialog-open-md"
         {
             #[derive(Default)]
             struct Fields {
@@ -145,7 +159,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .ok_or("no parent")?
                     .canonicalize()?
                     .starts_with(root)
-                || !path.extension().is_some_and(|s| s == "png" || s == "json")
+                || !path.extension().is_some_and(|s| {
+                    if mode == "dialog-save-md" || mode == "dialog-open-md" {
+                        s == "md"
+                    } else {
+                        s == "png" || s == "json"
+                    }
+                })
             {
                 return Err("test saves must stay in artifacts".into());
             }
@@ -178,6 +198,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     && (!path.is_file() || path.extension().is_none_or(|s| s != "json"))
                 {
                     return Err("expected existing artifacts project JSON".into());
+                }
+                if mode == "dialog-open-md" && !path.is_file() {
+                    return Err("expected existing artifacts Markdown".into());
                 }
                 SetWindowTextW(edit, windows::core::w!(""))?;
                 // Character messages notify the real file-name controller for both Open and Save.

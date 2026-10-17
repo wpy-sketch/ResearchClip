@@ -1,7 +1,8 @@
-import { ChevronRight, LayoutGrid, List, Moon, Plus, Sun } from 'lucide-react';
+import { ChevronRight, FilePlus2, FileText, FolderOpen, LayoutGrid, List, Moon, Plus, Sun } from 'lucide-react';
 import {QuickSearch} from '../../features/library/QuickSearch';
 import { useUiStore } from '../ui-store';
 import { useSettingsStore } from '../../features/settings/store';
+import {useDocumentStore} from '../../features/document/store';
 
 const titles = { screenshots: '截图素材', favorites: '收藏', tags: '标签', settings: '设置', editor: '图片编辑器',card:'科研知识卡片' };
 
@@ -14,6 +15,9 @@ export function Toolbar() {
     <header className="app-toolbar">
       <div className="toolbar-breadcrumb"><span className="breadcrumb-parent">工作区</span><ChevronRight className="breadcrumb-parent text-faint" size={13} /><span>{titles[activeView]}</span></div>
       <div className="toolbar-actions">
+        <button className="secondary-button" aria-label="新建 Markdown" title="新建图文 Markdown" onClick={()=>void useDocumentStore.getState().request('new')}><FileText size={15}/><span className="markdown-action-label">新建 Markdown</span></button>
+        <button className="secondary-button" aria-label="新建空白 Markdown" title="新建空白 Markdown" onClick={()=>void useDocumentStore.getState().request('blank')}><FilePlus2 size={15}/><span className="markdown-action-label">新建空白 Markdown</span></button>
+        <button className="secondary-button" aria-label="打开 Markdown" title="打开 Markdown" onClick={()=>void useDocumentStore.getState().request('open')}><FolderOpen size={15}/><span className="markdown-action-label">打开 Markdown</span></button>
         <button className="capture-button" aria-label="新建截图" title="新建截图" onClick={openCapture}><Plus size={16} strokeWidth={2} /><span>新建截图</span></button>
         <QuickSearch/>
         <span className="toolbar-divider" aria-hidden="true" />

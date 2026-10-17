@@ -9,6 +9,7 @@ import type { EditorTool, Point } from './types';
 import { exportImage, openProject, saveProject } from './api';
 import { saveEditorToLibrary } from '../../app/library-actions';
 
+import {InsertButton} from '../document/InsertButton';
 const tools = [{id:'select',label:'选择',icon:MousePointer2},{id:'pan',label:'平移',icon:Hand},{id:'rectangle',label:'矩形',icon:Square},{id:'ellipse',label:'椭圆',icon:Circle},{id:'arrow',label:'箭头',icon:ArrowUpRight},{id:'pen',label:'自由画笔',icon:Pencil},{id:'text',label:'文字',icon:Type}] as const;
 export function EditorView() {
   const { sessions, activeId, tool, style, error, activate, close, setTool, fit, zoom, setStyle, removeSelected, select } = useEditorStore();
@@ -38,7 +39,7 @@ export function EditorView() {
     const key=(event:KeyboardEvent)=>{
       if(locked.current)return;
       if(document.querySelector('dialog[open]'))return;
-      const target=event.target;if(target instanceof HTMLElement&&(target.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(target.tagName)))return;
+      const target=event.target;if(target instanceof HTMLElement&&(target.closest('[data-markdown-panel]')||target.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(target.tagName)))return;
       if((event.ctrlKey||event.metaKey)&&!event.altKey){const k=event.key.toLowerCase();if(k==='z'||k==='y'){event.preventDefault();const state=useEditorStore.getState();if(k==='y'||event.shiftKey)state.redo();else state.undo();return;}}
       if(event.key==='Delete'||event.key==='Backspace'){event.preventDefault();useEditorStore.getState().removeSelected();}
       if(event.key==='Escape')useEditorStore.getState().cancelGesture();
@@ -49,7 +50,7 @@ export function EditorView() {
   const textObject=textTarget?.id?session?.document.objects.find((a)=>a.id===textTarget.id):null;
   return <div className="editor-page" inert={busy}>
     <div className="editor-heading"><button className="secondary-button" onClick={() => useUiStore.getState().navigate('screenshots')}><ArrowLeft size={15} />返回截图</button><h2>图片编辑器</h2><span className="text-xs text-muted">原图保持不变</span></div>
-    <div className="editor-toolbar" role="group" aria-label="项目和导出"><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('library')}><Save size={15}/>保存到素材库</button><button className="secondary-button" onClick={()=>void operation('open')}><FolderOpen size={15}/>打开项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('project')}><Save size={15}/>另存可编辑项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('save')}><Download size={15}/>导出标注 PNG</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('copy')}><ClipboardCopy size={15}/>复制合成图片</button></div>
+    <div className="editor-toolbar" role="group" aria-label="项目和导出"><InsertButton editor disabled={!session||Boolean(session.loadError)||Boolean(useEditorStore.getState().gesture)}/><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('library')}><Save size={15}/>保存到素材库</button><button className="secondary-button" onClick={()=>void operation('open')}><FolderOpen size={15}/>打开项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('project')}><Save size={15}/>另存可编辑项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('save')}><Download size={15}/>导出标注 PNG</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('copy')}><ClipboardCopy size={15}/>复制合成图片</button></div>
     {busy&&<p className="mx-3 text-xs text-muted" role="status">正在处理图片或等待系统文件对话框…</p>}
     {ioMessage&&<p className="mx-3 break-all text-xs text-secondary" role="status">{ioMessage}</p>}
     {ioError&&<p className="error-banner m-3" role="alert">{ioError}</p>}

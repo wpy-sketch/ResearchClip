@@ -2,7 +2,7 @@
 #[cfg(target_os = "windows")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     use std::path::PathBuf;
-    use windows::Win32::UI::Input::KeyboardAndMouse::IsWindowEnabled;
+    use windows::Win32::UI::Input::KeyboardAndMouse::*;
     use windows::{
         Win32::{
             Foundation::{HWND, LPARAM, WPARAM},
@@ -138,25 +138,56 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "Native folder controls are hidden; not confirming a different directory".into(),
             );
         }
-        SendMessageW(
-            edits[0].hwnd,
-            WM_SETTEXT,
-            Some(WPARAM(0)),
-            Some(LPARAM(text.as_ptr() as isize)),
-        );
-        let mut observed = vec![0; text.len() + 1];
-        // GetWindowText does not retrieve another process's Edit content.
-        let n = SendMessageW(
-            edits[0].hwnd,
-            WM_GETTEXT,
-            Some(WPARAM(observed.len())),
-            Some(LPARAM(observed.as_mut_ptr() as isize)),
-        )
-        .0 as usize;
-        if observed[..n] != text[..text.len() - 1] {
-            return Err(format!("Native folder field did not accept test path: expected length {}, observed length {}",text.len()-1,n).into());
+        let mut foreground_pid = 0;
+        GetWindowThreadProcessId(GetForegroundWindow(), Some(&mut foreground_pid));
+        if foreground_pid != target.pid {
+            return Err("Owned folder picker is not foreground; refusing keyboard input".into());
         }
-        // The real folder text field now contains the verified artifact path.
+        let key = |vk, flags| INPUT {
+            r#type: INPUT_KEYBOARD,
+            Anonymous: INPUT_0 {
+                ki: KEYBDINPUT {
+                    wVk: vk,
+                    dwFlags: flags,
+                    ..Default::default()
+                },
+            },
+        };
+        // Navigate the actual dialog address bar; changing the folder-name Edit alone
+        // can leave IFileDialog's selected directory unchanged. The JS test also
+        // requires the returned export path to match the intended artifact parent.
+        let mut inputs = vec![
+            key(VK_CONTROL, KEYBD_EVENT_FLAGS(0)),
+            key(VIRTUAL_KEY(b'L' as u16), KEYBD_EVENT_FLAGS(0)),
+            key(VIRTUAL_KEY(b'L' as u16), KEYEVENTF_KEYUP),
+            key(VK_CONTROL, KEYEVENTF_KEYUP),
+        ];
+        for ch in text.iter().take(text.len() - 1) {
+            for flags in [KEYEVENTF_UNICODE, KEYEVENTF_UNICODE | KEYEVENTF_KEYUP] {
+                inputs.push(INPUT {
+                    r#type: INPUT_KEYBOARD,
+                    Anonymous: INPUT_0 {
+                        ki: KEYBDINPUT {
+                            wScan: *ch,
+                            dwFlags: flags,
+                            ..Default::default()
+                        },
+                    },
+                });
+            }
+        }
+        inputs.extend([
+            key(VK_RETURN, KEYBD_EVENT_FLAGS(0)),
+            key(VK_RETURN, KEYEVENTF_KEYUP),
+        ]);
+        if SendInput(&inputs, std::mem::size_of::<INPUT>() as i32) != inputs.len() as u32 {
+            return Err("Scoped folder navigation input failed".into());
+        }
+        std::thread::sleep(std::time::Duration::from_millis(700));
+        GetWindowThreadProcessId(GetForegroundWindow(), Some(&mut foreground_pid));
+        if foreground_pid != target.pid {
+            return Err("Folder picker lost focus; not confirming".into());
+        }
         SendMessageW(buttons[0].hwnd, BM_CLICK, None, None);
     }
     Ok(())

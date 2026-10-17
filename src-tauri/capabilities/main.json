@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "main-window",
-  "description": "Main may manage SQLite knowledge cards, export selected cards to Markdown via an owned folder picker, consume owned images, open saved http(s) sources, capture, request image clipboard writes and system dialogs through bounded Rust commands, and update allowlisted preferences. No generic filesystem, opener, clipboard-read or shortcut-registration access is granted to the frontend.",
+  "description": "Main may manage SQLite cards, export cards to Markdown, open and save selected Markdown documents with bounded immutable image assets, consume owned images, open saved http(s) sources, capture, request clipboard writes and system dialogs through bounded Rust commands, and update allowlisted preferences. No generic filesystem, opener, clipboard-read or shortcut-registration access is granted to the frontend.",
   "windows": [
     "main"
   ],
@@ -31,6 +31,10 @@
     "allow-open-editor-project",
     "allow-export-editor-png",
     "allow-copy-editor-png",
+    "allow-save-markdown-document",
+    "allow-open-markdown-document",
+    "allow-release-markdown-document",
+    "allow-rename-markdown-document",
     "allow-screenshot-page",
     "allow-get-knowledge-card",
     "allow-export-knowledge-markdown",

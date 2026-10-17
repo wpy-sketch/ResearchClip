@@ -1,0 +1,13 @@
+{
+  "mode": "actual Windows WebView2, real file dialogs, SQLite and filesystem; explicitly controlled source PNG, not screen capture",
+  "checks": [
+    "right-click filename opens Rename with basename selected; unsaved custom name gains .md and creates no disk file or body edit",
+    "actual Windows rename moves only the authorized .md, retains dirty draft and image assets, and Ctrl+S writes the new filename using the same native grant",
+    "real same-name collision preserves both files and keeps Rename open; traversal/device names disable submit; Cancel preserves filename and body",
+    "external disk changes block rename while retaining the authorized path and editor draft; Save As recovers a separate copy",
+    "native reopen derives the correct filename and exact Markdown/image references; Escape dismisses the filename menu without closing the document"
+  ],
+  "errors": [],
+  "result": "PASS",
+  "evidenceSource": "artifacts/rename-rename-20261017-a/report.json"
+}

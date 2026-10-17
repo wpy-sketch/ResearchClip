@@ -12,5 +12,5 @@ export default defineConfig({
     watch: { ignored: ['**/src-tauri/**', '**/.tools/**', '**/artifacts/**'] },
   },
   build: { target: ['es2022', 'chrome105', 'safari15.4'] },
-  test: { environment: 'node', include: ['src/**/*.test.ts'], clearMocks: true },
+  test: { environment: 'node', include: ['src/**/*.test.{ts,tsx}'], clearMocks: true },
 });

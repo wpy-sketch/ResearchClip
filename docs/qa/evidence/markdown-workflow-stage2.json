@@ -1,0 +1,27 @@
+{
+  "mode": "native-plugins-controlled-image-fixture",
+  "nativeCaptureVerified": false,
+  "shortcutTrigger": "OS registration/conflict only",
+  "checks": [
+    "real Rust settings writes: serif, 18px, light; selected folder loaded",
+    "Windows registration conflict preserves old setting; changing binding releases old shortcut",
+    "real system folder dialog cancellation preserves chosen directory",
+    "real Windows clipboard pasted via Clipboard API in separate Edge image viewer; all RGBA pixels matched controlled PNG",
+    "locked Windows clipboard produces readable error and preserves screenshot",
+    "native system Save As cancellation and PNG export; file pixels equal native preview",
+    "opaque resource validation, no arbitrary settings paths; cancel releases resource and preserves exported file",
+    "actual app close exits and frees registered shortcut",
+    "restart restores persisted appearance, shortcut and directory; no stale screenshot"
+  ],
+  "errors": [],
+  "initialShortcut": "Ctrl+Shift+2",
+  "clipboard": {
+    "width": 320,
+    "height": 200,
+    "format": "image/png",
+    "allPixelsMatched": true
+  },
+  "result": "passed",
+  "evidenceSource": "artifacts/workflow-mdstage2-20261017-workflow/report.json",
+  "note": "Actual execution; isolated fixture PNG is not live screen capture."
+}

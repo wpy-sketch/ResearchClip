@@ -79,6 +79,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(Arc::new(std::sync::Mutex::new(
+            services::markdown_document::DocumentFiles::default(),
+        )))
         .manage(Arc::new(services::workflow::CaptureWorkflow::default()))
         .manage(std::sync::Arc::new(
             services::screen_capture::ScreenCaptureService::default(),
@@ -182,6 +185,10 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::editor::open_editor_project,
             commands::editor::export_editor_png,
             commands::editor::copy_editor_png,
+            commands::document::save_markdown_document,
+            commands::document::open_markdown_document,
+            commands::document::release_markdown_document,
+            commands::document::rename_markdown_document,
             commands::library::create_screenshot,
             commands::library::library_status,
             commands::library::reconcile_library,

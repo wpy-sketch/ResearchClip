@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+2026-10-16新增图文Markdown文档契约见第14节；与第12节既有卡片原图导出并存，不替换数据库或编辑器数据模型。
+
 正式规划 v1，2026-10-12。本文覆盖首发目标；“当前主界面”与“现有M1”段落描述已有代码，其他接口、业务表和未来目录都是设计，不能视为可调用API、已创建数据库或已验证的截图功能。产品范围见 [PRD](PRD.md)，通过条件见 [ROADMAP](ROADMAP.md)。
 
 ## 1. 技术判断与原则
@@ -465,3 +467,41 @@ main新增三个受限业务命令desktop_status、desktop_action、complete_des
 关闭按钮默认请求真正退出；closeToTray启用且托盘存在时仅隐藏。closeToTray读取AtomicBool，避免UI线程CloseRequested持配置锁造成热键注册死锁。最小化不退出；托盘失败时保留主窗口，关闭仍可退出。退出请求取消当前区域层并恢复窗口，前端先flushAll笔记；保存失败取消退出并保留草稿。EditorSession.savedDocument记录实际成功保存的版本，比较当前可序列化文档和活动绘制动作；有未保存标注则确认放弃或返回保存。保存期间新编辑不会被误标为已保存，导出PNG不更新标注保存点。
 
 确认退出后，Rust工作线程最多等待3秒取得捕获/文件操作许可，忙时取消退出并提示。暂停快捷键动作、拒绝迟到注册、unregister_all成功后先关闭WebView；正常RunEvent::Exit移除托盘，官方插件销毁单实例资源。避免活跃WebView直接app.exit导致Chromium窗口类清理报错。普通日志不记录图片/正文。未存库的截图预览仍是临时资源；进程被强制结束时不能承诺保存草稿。实际检查、失败修复与人工边界见 [桌面体验验收](DESKTOP-EXPERIENCE-VALIDATION.md)。
+
+## 14. Markdown 图文文档（2026-10-16，第一阶段）
+
+features/document 独立管理单文档会话，不增加SQLite表或第二套科研资料库。Document={id,title,blocks}；block为image{id,sourceScreenshotId,assetName,alt,caption}或text{id,markdown}，数组即顺序。文件路径、原生token、Blob/URL、phase和savedFingerprint属于临时工作状态，不写入Markdown；正文由serializeDocument派生，不维护两个可独立修改的正文副本。
+
+素材导入读取现有Screenshot/KnowledgeCard和受管原图，复用editor/export.renderComposite，顺序渲染已有annotationData，拒绝对应会话未保存的标注，原图不变。笔记内容为添加时快照；文档注释独立编辑，不回写已有Note。每块唯一32位hex ID，稳定资源名researchclip-ID.png，与图文块一起移动/删除；添加批次失败全部回退并释放新URL。
+
+标准UTF-8 Markdown包含标题、图片相对引用和紧随其后的注释；普通文本块可置于其间。隐藏的ResearchClip:document/block/end HTML注释携带版本、ID、来源和正文UTF-16长度，只用于重新编辑，不包含原图绝对路径或Blob URL。长度框定使正文中出现相似注释也不误分块。所有正文仍为可独立阅读的普通Markdown；未知版本或损坏结构拒绝替换当前草稿。CRLF/BOM读取正规化；不带标记的外部Markdown作为文本块打开，不承诺任意外部附件管理。第三方编辑破坏结构后的可编辑恢复属于明确限制，不能静默覆盖。
+
+main新增save_markdown_document/open_markdown_document/release_markdown_document三条受限命令。DocumentFiles以Mutex管理最多4个临时路径授权，文件路径只来自原生文件对话框，前端只传不透明token，释放时不删除文件。单份2MiB文本、32图、128MiB总资源；二进制IPC为4字节小端JSON长度、UTF-8头和按声明顺序的PNG，Rust逐张验证PNG、数量、大小及资源引用一致性。overlay权限不增加，无通用文件系统或SQL命令。
+
+首次保存/另存先拒绝已存在.md；继续保存仅允许已有授权且磁盘内容仍匹配读入/保存快照。PNG只写assets/下受限唯一文件名，已有同名同内容可复用，不同内容拒绝覆盖；拒绝重解析/符号链接。完成assets后，同目录临时Markdown写入、sync，再以禁止覆盖提交或原子替换更新已授权文档；提交前再次检测外部修改。文件系统没有跨多文件事务，失败保留已有Markdown和已提交的新资源，允许留下孤立assets，绝不扫描删除旧文件。内容比较不能承诺防御有同等磁盘权限的恶意外部进程的所有竞态。
+
+Zustand只维护当前文档，单任务phase防止保存/导入期间编辑竞态，savedFingerprint仅在实际成功后更新。导航不销毁草稿；新建/打开/关闭替换脏文档时三选一；DesktopExperience退出先处理文档保存，再沿用原笔记flush和标注确认。取消对话框/保存失败继续保留草稿，真正退出仍由原DesktopService释放系统资源。
+
+预览采用react-markdown10.1.0（MIT，React>=18，已核对官方README与安装包API），没有重型编辑器框架、rehype-raw或数学插件。skipHtml启用，链接组件仅显示文字，图片组件仅接受已持有的assets Blob URL。对照自写Markdown解析器的安全/维护成本选用成熟CommonMark解析器；新依赖按需拆包。第一阶段当时未实现分栏；当前第二阶段见第15节。自动保存文档、文档数据库索引、云端或外部附件下载仍未实现。
+
+## 15. Markdown 动态分栏（2026-10-17，第二阶段）
+
+App → WorkspaceSplit：固定的original-workspace始终承载同一个main/左侧页面，活动文档ID存在时才创建separator和MarkdownPanel；关闭时销毁右侧与分隔线，左侧DOM、滚动容器和EditorSession保持。Markdown不再是永久导航路由。MarkdownPanel按document.id重建自身编辑/预览状态，左侧导航不销毁右侧文档。没有新原生窗口。
+
+继续使用features/document/model/store/api和Rust DocumentFiles，不增加文件权限、SQL表、第二套文件服务或依赖。MarkdownDocument可选mode=source：一个TextBlock是完整标准Markdown，serialize直接返回正文，不自动加标题或隐藏标记。createBlankDocument只分配内存，title=untitled.md；无标记的外部.md按source重开；第一阶段带标记文件继续恢复原图文块。图文编排可显式转源文，按标题、图片、紧随注释及文本顺序生成普通Markdown，资源名保持；转为源码后由用户直接维护正文。
+
+会话管理活动ID、路径/授权token、dirty指纹、UTF-16光标选区、phase、图片Blob和有界源码撤销/重做历史（最多100快照，每方向8MiB预算）。不同文件打开清空光标/历史；失败不替换当前草稿。源码只保留一份文本真值；未存盘不创建空文件。右侧键盘事件由面板处理，Ctrl+S/Shift+S、Z/Y不影响左侧图片历史，左侧原有快捷键跳过Markdown面板。document.pending统一三选一，退出协调仍先处理文档，再处理卡片和图片草稿。
+
+分隔线使用组件内pointer capture和ResizeObserver，未注册全局拖动监听。默认50%，偏好20–80%；可用宽度先减8px分隔线，显示最小宽度=min(280px,可用宽度×35%)。窗口变小只clamp显示，不改偏好。pointerup/方向键提交PreferencesPatch.markdownSplitPercent至既有SettingsService原子配置；缺字段旧配置默认50且不自动重写，非法范围拒绝，原全局快捷键不重复注册。浏览器设置仅会话内有效，不冒充重启持久化。
+
+素材卡插入复用addImages已保存标注检查；编辑器插入复用renderComposite当前快照，支持尚未保存的向量，不改原图/保存点。source模式在记住的selectionStart/End替换选区插入相对图片引用及对应注释；blocks模式追加整块。资源只存在会话Blob直到显式保存，继续使用稳定唯一assets文件名与系统对话框/token安全写入。撤销可能仍引用资源，资源至文档关闭才统一释放；32张/128MiB资源预算含撤销保留项。未使用资源不会导出，磁盘旧assets不自动删除。
+
+预览/安全边界沿用第14节，raw Markdown不执行HTML或外部链接。外部普通.md中不是ResearchClip受控命名的附件，仅原样保留文本，不自动导入任意磁盘资源；跨目录另存这类外部附件需人工整理。文件移动应整体携带.md与assets。真实Windows验收和人工边界见 [第二阶段报告](qa/MARKDOWN-SPLIT-STAGE2.md)。
+
+## 16. Markdown 文件命名（2026-10-17）
+
+文档会话增加独立fileName，不修改Document.title/正文/块ID，不把路径放进Markdown。新建图文文档初始“未命名文档.md”，空白文档初始“untitled.md”。DocumentFileName提供可访问的文件名按钮、右键/单击菜单和重命名模态框。未保存改名仅改会话fileName，save_markdown_document封包新增可缺省fileName，系统保存/另存对话框使用该建议名称。保存/打开后以实际路径文件名更新会话。
+
+已保存重命名使用新增main-only rename_markdown_document(token,fileName)；只接收不透明既有授权及单个文件名，不接受任意目录或路径。复用DocumentFiles锁、捕获/文件操作许可和磁盘快照检测，限制在已授权文件的当前父目录；不写正文、不移动assets、不自动提交脏草稿、不改变savedFingerprint。成功更新同一token的路径，使后续保存到新文件；失败保留路径/草稿并在对话框显示错误。
+
+前后端均补.md并验证长度、控制字符、Windows非法字符/保留设备名；目标存在就拒绝覆盖。Windows调用已安装windows0.62.2的MoveFileW（新增启用Win32_Storage_FileSystem feature，无版本变更）；目标即使竞争出现也由原生API拒绝替换。官方 [MoveFileW契约](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-movefilew)及安装源码API已核对。仅大小写变化按同名处理，需先改中间名。非Windows的已保存文件原位重命名尚未启用，返回明确错误，仍可另存；未把Windows测试当作macOS验证。结果见 [命名验收](qa/MARKDOWN-RENAME.md)。

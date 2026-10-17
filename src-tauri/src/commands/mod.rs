@@ -4,6 +4,7 @@ use std::sync::Arc;
 use tauri::{State, WebviewWindow};
 pub mod capture;
 pub mod desktop;
+pub mod document;
 pub mod editor;
 pub mod library;
 pub mod markdown;

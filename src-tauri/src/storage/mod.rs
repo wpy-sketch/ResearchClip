@@ -1,4 +1,4 @@
-mod files;
+pub(crate) mod files;
 pub mod knowledge;
 pub mod library;
 pub mod markdown;

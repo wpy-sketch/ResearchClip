@@ -4,6 +4,8 @@ import { screenshotImage } from '../../shared/api/library';
 import type { ScreenshotSummary } from '../../shared/api/library';
 import { errorMessage } from '../../shared/api/errors';
 
+import {InsertButton} from '../document/InsertButton';
+
 function Thumbnail({item, disabled, onOpen}: {item:ScreenshotSummary; disabled:boolean; onOpen:()=>void}) {
   const [attempt, setAttempt] = useState(0);
   const key = `${item.id}:${attempt}`;
@@ -61,6 +63,7 @@ export function LibraryCard({item, disabled, onOpen, onEdit, onFavorite, onRenam
       <time dateTime={new Date(item.createdAt).toISOString()} title="创建时间">{formatDate.format(item.createdAt)}</time>
       <p className="library-dimensions">{item.widthPx} × {item.heightPx} px</p>
       {!item.imageAvailable && <p className="library-file-warning">原图缺失或不可访问；资料记录已保留。</p>}
+      <InsertButton id={item.id} disabled={disabled}/>
       <div className="library-card-actions">
         <button className="library-edit-button" disabled={disabled} onClick={onEdit}>编辑标注</button>
         <div className="flex gap-1">
