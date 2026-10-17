@@ -1,3 +1,4 @@
+use crate::services::templates::{TemplateFiles, TemplateInfo};
 use crate::{
     capture::{CaptureError, ErrorCode},
     services::{
@@ -14,6 +15,94 @@ use tauri::{
     ipc::{InvokeBody, Request, Response},
 };
 use tauri_plugin_dialog::DialogExt;
+
+async fn template_task<T: Send + 'static>(
+    window: WebviewWindow,
+    captures: &Arc<ScreenCaptureService>,
+    templates: &Arc<Mutex<TemplateFiles>>,
+    action: impl FnOnce(&TemplateFiles) -> Result<T, CaptureError> + Send + 'static,
+) -> Result<T, CaptureError> {
+    check(&window)?;
+    let permit = captures.try_begin()?;
+    let templates = Arc::clone(templates);
+    tauri::async_runtime::spawn_blocking(move || {
+        let _permit = permit;
+        let files = templates
+            .lock()
+            .map_err(|_| failure("模板状态异常，请保留草稿后重启。"))?;
+        action(&files)
+    })
+    .await
+    .map_err(|_| failure("模板任务异常结束，当前文档未修改。"))?
+}
+#[tauri::command]
+pub async fn list_markdown_templates(
+    window: WebviewWindow,
+    captures: State<'_, Arc<ScreenCaptureService>>,
+    templates: State<'_, Arc<Mutex<TemplateFiles>>>,
+) -> Result<Vec<TemplateInfo>, CaptureError> {
+    template_task(window, captures.inner(), templates.inner(), |t| t.list()).await
+}
+#[tauri::command]
+pub async fn load_markdown_template(
+    window: WebviewWindow,
+    captures: State<'_, Arc<ScreenCaptureService>>,
+    templates: State<'_, Arc<Mutex<TemplateFiles>>>,
+    id: String,
+) -> Result<Response, CaptureError> {
+    template_task(window, captures.inner(), templates.inner(), move |t| {
+        t.load(&id).map(Response::new)
+    })
+    .await
+}
+#[tauri::command]
+pub async fn create_markdown_template(
+    window: WebviewWindow,
+    captures: State<'_, Arc<ScreenCaptureService>>,
+    templates: State<'_, Arc<Mutex<TemplateFiles>>>,
+    request: Request<'_>,
+) -> Result<(), CaptureError> {
+    check(&window)?;
+    let bytes = match request.body() {
+        InvokeBody::Raw(bytes) if bytes.len() <= 4 + MAX_HEADER + MAX_ASSETS => bytes.clone(),
+        _ => return Err(failure("模板封包超过限制。")),
+    };
+    // ID is generated in the backend, without accepting any frontend file paths.
+    template_task(window, captures.inner(), templates.inner(), move |t| {
+        let stamp = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|_| failure("无法分配模板 ID。"))?
+            .as_nanos();
+        let id = format!("{stamp:032x}");
+        t.create(&id, &bytes)
+    })
+    .await
+}
+#[tauri::command]
+pub async fn rename_markdown_template(
+    window: WebviewWindow,
+    captures: State<'_, Arc<ScreenCaptureService>>,
+    templates: State<'_, Arc<Mutex<TemplateFiles>>>,
+    id: String,
+    name: String,
+) -> Result<(), CaptureError> {
+    template_task(window, captures.inner(), templates.inner(), move |t| {
+        t.rename(&id, &name)
+    })
+    .await
+}
+#[tauri::command]
+pub async fn delete_markdown_template(
+    window: WebviewWindow,
+    captures: State<'_, Arc<ScreenCaptureService>>,
+    templates: State<'_, Arc<Mutex<TemplateFiles>>>,
+    id: String,
+) -> Result<(), CaptureError> {
+    template_task(window, captures.inner(), templates.inner(), move |t| {
+        t.delete(&id)
+    })
+    .await
+}
 fn check(window: &WebviewWindow) -> Result<(), CaptureError> {
     if window.label() != "main" {
         return Err(CaptureError::new(

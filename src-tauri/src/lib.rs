@@ -107,6 +107,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 None
             }
             .unwrap_or(app.path().app_config_dir()?);
+            app.manage(Arc::new(std::sync::Mutex::new(
+                services::templates::TemplateFiles::new(path.join("templates-v1")),
+            )));
             let settings = Arc::new(services::settings::SettingsService::load(
                 path.join("settings.json"),
             ));
@@ -213,6 +216,11 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::document::open_markdown_document,
             commands::document::release_markdown_document,
             commands::document::rename_markdown_document,
+            commands::document::list_markdown_templates,
+            commands::document::load_markdown_template,
+            commands::document::create_markdown_template,
+            commands::document::rename_markdown_template,
+            commands::document::delete_markdown_template,
             commands::library::create_screenshot,
             commands::library::library_status,
             commands::library::reconcile_library,

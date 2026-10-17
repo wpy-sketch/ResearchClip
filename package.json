@@ -1,7 +1,7 @@
 {
   "name": "researchclip",
   "private": true,
-  "version": "0.1.4",
+  "version": "0.1.5",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -36,7 +36,8 @@
     "test:smoke:experience:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example desktop_probe --example knowledge_fault && node scripts/desktop-native-smoke.mjs",
     "test:smoke:split:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/split-native-smoke.mjs",
     "test:smoke:pins:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example pin_probe --example workflow_input --example desktop_probe && node scripts/pins-native-smoke.mjs",
-    "test:smoke:material": "node scripts/material-ui-smoke.mjs"
+    "test:smoke:material": "node scripts/material-ui-smoke.mjs",
+    "test:smoke:templates:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/templates-native-smoke.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.3",
@@ -46,7 +47,9 @@
     "react-dom": "^19.2.0",
     "react-konva": "^19.3.0",
     "react-markdown": "10.1.0",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.0",
+    "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-to-string": "4.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

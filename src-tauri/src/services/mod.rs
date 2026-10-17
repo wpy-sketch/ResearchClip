@@ -6,4 +6,5 @@ pub mod pins;
 pub mod region_capture;
 pub mod screen_capture;
 pub mod settings;
+pub mod templates;
 pub mod workflow;

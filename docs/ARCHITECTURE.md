@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v0.1.5：`features/document/templates.ts` 提供普通 Markdown 模板种子，复用现有 Zustand 文档会话、未保存确认及文件服务；选择模板后才创建文档，不改变 WorkspaceSplit 的条件挂载。`TemplateDialog` 通过 main-only 的5个有界命令访问 `TemplateFiles`，应用配置目录 `templates-v1/<id>/名称.md + assets` 与 SQLite/用户文档独立。创建在暂存目录校验并提交，重命名复用 DocumentFiles 的禁止覆盖和变更检查；删除采用独立目录改名归档。模板加载的内部文件授权随临时 DocumentFiles 释放，不作为新文档保存路径。`outline.ts` 使用现有 CommonMark 解析链中的 mdast 工具，源文 UTF-16 偏移与预览 heading position 对齐；镜像文本布局处理软换行后的定位，不把导航当作正文编辑。实际契约及验收见 [0.1.5](qa/RELEASE-0.1.5.md)。
+
 v0.1.4：Annotation v1 新增 mosaic/blur/number，由前后端共同校验；effects.ts 共用原像素滤镜、底图区域 clip/copy 替换及矢量上层渲染。复用编辑器 state/history/serialization/export，不改数据库 schema。对象范围、预算、透明度与实际检查见 [高级标注验收](qa/RELEASE-0.1.4.md)。
 
 2026-10-17 v0.1.3：新增本地 `OcrService` 平台边界、main-only 有界 PNG OCR/文字复制命令和 `features/ocr` 单会话面板。Windows.Media.Ocr 经本机探针确认；整图/原图像素选区、标注合成复用和显式 Markdown 插入，不变更数据库或原图。线程门控、语言包、资源释放和真实识别限制见 [OCR 验收](qa/RELEASE-0.1.3.md)。

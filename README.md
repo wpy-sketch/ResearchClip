@@ -2,7 +2,7 @@
 
 面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
 
-当前为 **0.1.4 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+当前为 **0.1.5 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
 
 Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
 
@@ -29,7 +29,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.4_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.5_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc
@@ -95,6 +95,14 @@ scripts/with-rust.mjs 优先使用项目内 .tools 工具链，否则使用 PATH
 - 会话缓存最多20张卡片，满时只回收干净会话，未保存草稿不被淘汰；全部为未完成卡片时提示先保存。草稿仅在当前进程中保留，不承诺崩溃/断电或强制退出时恢复。
 
 ## Markdown 导出
+
+### Markdown 模板与大纲（0.1.5）
+
+顶部“模板”或右侧面板“新建模板文档”选择空白、论文精读、数学定理、科研实验或自定义模板；可设置新文件名。新草稿在内存中编辑，Ctrl+S 仍使用系统保存对话框保存普通 UTF-8 `.md` 和相对 `assets`，原有图文编排与动态分栏保持不变。
+
+右侧“保存为模板”复制当前正文及受管图片到 `app_config_dir/templates-v1/<id>/名称.md` 和 `assets`，不修改或保存当前文件；模板最多100个、名称80字符，沿用每份2 MiB正文/32图/128 MiB资源限制。模板选择框可重命名和两次确认删除；同名不覆盖。删除只将独立目录改为 `deleted-<id>`，不再出现在列表，保留文件以便关闭应用后手动恢复/归档；不会自动清空这些目录。
+
+“显示大纲”识别 CommonMark H1–H6（含 Setext），忽略代码块与不可信 HTML。点击在源文中定位光标并滚动，预览中滚动到对应标题，编辑后自动更新；图文模式跳转到预览，不转换原有内容块。没有文档时不显示 Markdown 面板或大纲。实际结果和人工步骤见 [0.1.5 验收](docs/qa/RELEASE-0.1.5.md)。
 
 ### Markdown 图文文档（当前工作区新增）
 

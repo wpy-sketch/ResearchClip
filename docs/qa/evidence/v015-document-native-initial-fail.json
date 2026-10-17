@@ -1,0 +1,10 @@
+{
+  "mode": "actual Windows WebView2, real file dialogs, SQLite and filesystem; explicitly controlled source PNG, not screen capture",
+  "checks": [
+    "creates a unique empty document with visible unsaved state in the actual application",
+    "click selection order, whole-block movement, middle deletion and inserted Markdown retain the correct image-caption association; safe live preview renders lists/code without running HTML"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok((await page.getByRole('button',{name:'保存 Markdown',exact:true}).boundingBox()).width>=30)\n\n    at file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/document-native-smoke.mjs:36:154"
+}

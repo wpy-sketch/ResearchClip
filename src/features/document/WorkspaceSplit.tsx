@@ -2,10 +2,12 @@ import {lazy,Suspense,useEffect,useRef,useState,type ReactNode} from 'react';
 import {useDocumentStore} from './store';
 import {useSettingsStore} from '../settings/store';
 import {splitPercent,splitWidth} from './split';
+import {TemplateDialog} from './TemplateDialog';
 import {DocumentConfirmation} from './DocumentConfirmation';
 const MarkdownPanel=lazy(()=>import('./MarkdownPanel').then(m=>({default:m.MarkdownPanel})));
 export function WorkspaceSplit({children}:{children:ReactNode}){
   const documentId=useDocumentStore(s=>s.document?.id),open=Boolean(documentId),error=useDocumentStore(s=>s.error),phase=useDocumentStore(s=>s.phase);
+  const templateDialog=useDocumentStore(s=>s.templateDialog);
   const saved=useSettingsStore(s=>s.snapshot.preferences.markdownSplitPercent),[preferred,setPreferred]=useState<number|null>(null),[width,setWidth]=useState(0);
   const host=useRef<HTMLDivElement>(null),drag=useRef<{percent:number;pointer:number}|null>(null),percent=preferred??saved;
   useEffect(()=>{const node=host.current;if(!node)return;const observer=new ResizeObserver(()=>setWidth(node.clientWidth));observer.observe(node);return()=>observer.disconnect();},[]);
@@ -20,5 +22,5 @@ export function WorkspaceSplit({children}:{children:ReactNode}){
       onPointerCancel={()=>{if(drag.current)setPreferred(drag.current.percent);drag.current=null;}}
       onLostPointerCapture={()=>{drag.current=null;}}
       onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home'].includes(event.key)){event.preventDefault();persist(event.key==='Home'?50:Math.max(20,Math.min(80,percent+(event.key==='ArrowLeft'?-2:2))));}if(event.key==='Escape'&&drag.current){setPreferred(drag.current.percent);drag.current=null;}}}/><Suspense fallback={<p role="status">正在加载 Markdown…</p>}><MarkdownPanel key={documentId}/></Suspense></>}
-  </div>{!open&&error&&<p role="alert" className="error-banner">{error}</p>}{!open&&phase==='opening'&&<p role="status">正在等待系统 Markdown 文件对话框…</p>}<DocumentConfirmation/></>;
+  </div>{!open&&error&&<p role="alert" className="error-banner">{error}</p>}{!open&&phase==='opening'&&<p role="status">正在等待系统 Markdown 文件对话框…</p>}<DocumentConfirmation/>{templateDialog&&<TemplateDialog key={templateDialog} mode={templateDialog}/>}</>;
 }

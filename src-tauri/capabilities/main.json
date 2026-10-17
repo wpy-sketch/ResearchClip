@@ -61,6 +61,11 @@
     "allow-set-screenshot-tags",
     "allow-create-pin",
     "allow-recover-pins",
-    "allow-pin-status"
+    "allow-pin-status",
+    "allow-list-markdown-templates",
+    "allow-load-markdown-template",
+    "allow-create-markdown-template",
+    "allow-rename-markdown-template",
+    "allow-delete-markdown-template"
   ]
 }

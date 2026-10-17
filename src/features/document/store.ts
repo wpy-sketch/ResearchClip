@@ -6,12 +6,16 @@ import {errorMessage} from '../../shared/api/errors';
 import {createDocument,newId,moveBlock,parseMarkdown,serializeDocument,MAX_BLOCKS,MAX_IMAGES,MAX_ASSET_BYTES,createBlankDocument,asSource,sourceText,escapeInline} from './model';
 import type {MarkdownDocument,DocumentAsset,ImageBlock} from './model';
 import {saveDocumentFile,openDocumentFile,releaseDocument,renameDocumentFile} from './api';
+import {templateDocument,type TemplateSeed} from './templates';
 import {normalizeMarkdownName} from './file-name';
-export type DocumentAction='new'|'blank'|'open'|'close';
+export type DocumentAction='new'|'blank'|'open'|'close'|'template';
 interface TextEdit {document:MarkdownDocument;caret:{start:number;end:number}}
 const bounded=(items:TextEdit[])=>{let bytes=0;return items.slice(-100).reverse().filter(item=>{bytes+=JSON.stringify(item.document).length*2;return bytes<=8*1024*1024;}).reverse();};
 interface State {
   insertText:(text:string)=>boolean;
+  templateDialog:'choose'|'save'|null; setTemplateDialog:(dialog:'choose'|'save'|null)=>void;
+  templateSeed:TemplateSeed|null; createFromTemplate:(seed:TemplateSeed)=>Promise<void>;
+  jumpToSource:(offset:number)=>void;
   caret:{start:number;end:number};past:TextEdit[];future:TextEdit[];focusRequest:number;
   setCaret:(start:number,end:number)=>void;editSource:(text:string,start?:number,end?:number)=>void;toSource:()=>void;undoText:()=>void;redoText:()=>void;insertEditor:()=>Promise<boolean>;
   document:MarkdownDocument|null;assets:Record<string,DocumentAsset>;token:string|null;path:string|null;fileName:string|null;savedFingerprint:string|null;
@@ -37,8 +41,14 @@ export function createDocumentStore(){
           const old=get();dispose(old.assets);set({document,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,assets,token:disk.token,path:disk.path,fileName:disk.path.split(/[\\/]/).at(-1)??'untitled.md',savedFingerprint:JSON.stringify(document),pending:null,notice:'Markdown 已打开；图片与注释顺序已恢复。'});openedToken=null;await release(old.token);
         }catch(error){set({error:errorMessage(error,'打开失败，当前文档已保留。')});}
         finally{if(openedToken)await release(openedToken);set({phase:'idle'});}
+      }else if(action==='template'){
+        const seed=get().templateSeed;if(!seed)return;
+        const assets:Record<string,DocumentAsset>={};
+        try{const document=templateDocument(seed);for(const [name,blob]of Object.entries(seed.assets))assets[name]={blob,url:URL.createObjectURL(blob)};
+          const old=get();dispose(old.assets);set({document,assets,token:null,path:null,fileName:normalizeMarkdownName(seed.name==='空白文档'?'untitled':seed.name),savedFingerprint:null,pending:null,templateSeed:null,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,error:null,notice:'已从模板创建独立草稿；原文档和模板未改动。'});await release(old.token);
+        }catch(error){dispose(assets);set({error:errorMessage(error,'模板加载失败，当前文档未改动。'),pending:null,templateSeed:null});}
       }else{
-        const old=get();dispose(old.assets);set({document:action==='new'?createDocument():action==='blank'?createBlankDocument():null,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,assets:{},token:null,path:null,fileName:action==='new'?'未命名文档.md':action==='blank'?'untitled.md':null,savedFingerprint:null,pending:null,error:null,notice:null});await release(old.token);
+        const old=get();dispose(old.assets);set({document:action==='new'?createDocument():action==='blank'?createBlankDocument():null,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,assets:{},token:null,path:null,fileName:action==='new'?'未命名文档.md':action==='blank'?'untitled.md':null,savedFingerprint:null,pending:null,templateSeed:null,error:null,notice:null});await release(old.token);
       }
     };
     const change=(fn:(doc:MarkdownDocument)=>MarkdownDocument)=>{const s=get();if(s.document&&s.phase==='idle'){const document=fn(s.document);if(document!==s.document)set({document,notice:null,error:null});}};
@@ -58,6 +68,10 @@ export function createDocumentStore(){
       set({caret:{start:start+inserted.length,end:start+inserted.length},past:bounded([...s.past,{document,caret:s.caret}]),future:[],focusRequest:s.focusRequest+1});return next;
     };
     return {
+      templateDialog:null,setTemplateDialog:(templateDialog)=>set({templateDialog}),
+      templateSeed:null,
+      createFromTemplate:async(seed)=>{if(get().phase!=='idle'||get().pending)return;try{templateDocument(seed);normalizeMarkdownName(seed.name);set({templateSeed:seed});await get().request('template');}catch(error){set({error:errorMessage(error,'模板无效。')});}},
+      jumpToSource:(offset)=>{const s=get();if(!s.document||s.phase!=='idle')return;const document=asSource(s.document),at=Math.max(0,Math.min(offset,sourceText(document).length));set({document,caret:{start:at,end:at},focusRequest:s.focusRequest+1,...(s.document.mode==='source'?{}:{past:[],future:[]})});},
       insertText:(text)=>{
         const s=get();if(!s.document||s.phase!=='idle'||!text.trim())return false;
         try{
@@ -92,7 +106,7 @@ export function createDocumentStore(){
       },
       document:null,assets:{},token:null,path:null,fileName:null,savedFingerprint:null,phase:'idle',error:null,notice:null,pending:null,
       request:async(action)=>{if(get().phase!=='idle'){set({error:'文档正在处理，请等待完成。'});return;}if(documentDirty(get())){set({pending:action});return;}await run(action);},
-      resolvePending:async(choice)=>{const action=get().pending;if(!action||get().phase!=='idle')return;if(choice==='cancel'){set({pending:null});return;}if(choice==='save'&&!await get().save())return;await run(action);},
+      resolvePending:async(choice)=>{const action=get().pending;if(!action||get().phase!=='idle')return;if(choice==='cancel'){set({pending:null,templateSeed:null});return;}if(choice==='save'&&!await get().save())return;await run(action);},
       editTitle:(title)=>change(doc=>({...doc,title})),
       editBlock:(id,text)=>change(doc=>({...doc,blocks:doc.blocks.map(b=>b.id===id?b.type==='image'?{...b,caption:text.replaceAll('\r\n','\n')}:{...b,markdown:text.replaceAll('\r\n','\n')}:b)})),
       addText:(afterId)=>change(doc=>{if(doc.blocks.length>=MAX_BLOCKS){set({error:'每份文档最多100个内容块。'});return doc;}const blocks=[...doc.blocks],index=afterId?blocks.findIndex(b=>b.id===afterId)+1:blocks.length;blocks.splice(index,0,{id:newId(),type:'text',markdown:''});return {...doc,blocks};}),
