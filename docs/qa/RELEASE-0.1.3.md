@@ -78,9 +78,75 @@ OCR 结果必须人工触发复制/插入，绝不自动写回笔记。重新识
 - `npm run test:smoke:pins:native` PASS/0：[13 组证据](evidence/v013-pins-native.json)，真实多窗口、拖动、置顶、透明度、保存、剪贴板、10 次开关与退出。
 - OCR [6 类真实引擎结果](evidence/v013-ocr-engine.json)、[初始 UI 失败](evidence/v013-ocr-initial-failure.json)、[8 组修复复验](evidence/v013-ocr-fixed.json) 均保留。
 - 扩展同进程多图片/ACL 检查时，测试夹具直接等待销毁中 WebView 的 IPC 回执而收到 page closed：[夹具失败](evidence/v013-ocr-harness-failure.json)。改用实际关闭按钮、等待窗口销毁，并明确断言 ACL 拒绝消息；未改业务代码或放宽产品断言。
-- `node scripts/ocr-native-smoke.mjs v013-final-fixed ocr-engine-v013-clean` PASS/0：[最终 10 组证据](evidence/v013-ocr-final.json)，新增**同一原生进程内七次不同图片识别**、空图后重识别及贴图窗口 OCR 权限实际拒绝。原 UI、原图和保存断言全部保留。
+- `node scripts/ocr-native-smoke.mjs v013-final-fixed ocr-engine-v013-clean` PASS/0：[最终 10 组证据](evidence/v013-ocr-final.json)，新增**同一原生进程内七次识别（六种图片，其中混合图重复一次）**、空图后重识别及贴图窗口 OCR 权限实际拒绝。原 UI、原图和保存断言全部保留。
 - 最终 `npm run lint` PASS/0；`npm run check:docs` PASS/0：38 文档、212 本地链接（发布补记若新增链接，将再次检查）。
 
 本轮新增业务文件：`src/features/ocr/{model,api,store,OcrButton,OcrPanel}`（TS/TSX）、`src-tauri/src/services/ocr.rs`、`src-tauri/src/commands/ocr.rs`；接入 App、CapturePanel、EditorView、document/store、CSS、lib/build/mod/capability。新增 OCR model/store 测试、document 插入测试、原生探针和两项 OCR 专项脚本。版本/锁文件、README、CHANGELOG、架构和本轮发布说明同步更新；本报告与八份结果证据提交源码。迁移文件、数据库 schema、原始截图均未改变。
 
 阶段建议：本轮 OCR 工作流的可执行检查已通过，可按用户授权发布 0.1.3；识别质量限制与 NOT_RUN 项必须随发布保留，不表示完整软件/硬件验收完成。
+
+
+## 实际公开发布回执
+
+- 源码及新标签通过普通原子推送上传，tag `v0.1.3` 指向 `6625a44b89ec34c5c4e2461142faae4af38c1f50`；仓库 main 同步源码。本节之后的文档回执为单独提交，不移动源码标签。
+- [GitHub Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.3)，ID `415709850`，发布于 `2026-10-17T09:55:01Z`（香港时间 17:55:01）；实际核验 draft=false、prerelease=false、Latest=true。
+- 附件：`ResearchClip-v0.1.3-windows-x64.exe`（16,224,768 字节）、`SOURCE.txt`（1,119 字节）和 `SHA256SUMS.txt`（179 字节）。三个服务端 digest、尺寸与本地匹配；EXE 从公开下载链接匿名下载，两个文本从 GitHub 官方公共附件 API 匿名下载，全部精确大小/SHA256 匹配：[成功证据](evidence/v013-publication.json)。
+- 已验证四个旧版本的 Release ID、附件 ID/名称及预发布属性保留。没有覆盖旧发布、上传用户图片、测试数据库、浏览器会话、工具链或缓存。有限源码扫描覆盖 299 文件 / 2,056,534 字节，未发现常见凭据模式；不等同全面安全审计。
+- [首轮上传超时](evidence/v013-publication-upload-timeout.json) 和 [首次公开下载超时](evidence/v013-publication-download-timeout.json) 保留。续传前先读取同一个草稿，确认 EXE 在客户端超时后已由服务端完整提交，验证 digest 后采用现有附件；没有盲目重建/覆盖。Windows curl 完成其他附件及发布，最终只读复核全部下载。
+- 主程序本地位置：`src-tauri/target/release/researchclip.exe`。本次没有新 NSIS 包或代码签名，生产版完整手工流程仍 NOT_RUN，实际 UI 测试为相同业务源码的隔离 debug 构建。
+
+最终程序 SHA256：`76c82c8b6b1bbe41e41c30deafdecc89157dfd5ed99bcfd62472c31ddd7ed85f`。上述识别准确性 FAIL、独立英文引擎 BLOCKED 和人工 NOT_RUN 项随版本保留；本轮完成后停止开发。
+
+## 本轮修改文件清单
+
+源码提交及发布回执，共 47 个文件：
+
+```text
+CHANGELOG.md
+README.md
+docs/ARCHITECTURE.md
+docs/RELEASE-NOTES-0.1.3.md
+docs/qa/RELEASE-0.1.3.md
+docs/qa/TEST_PLAN.md
+docs/qa/TEST_REPORT.md
+docs/qa/evidence/v013-editor-native.json
+docs/qa/evidence/v013-ocr-engine.json
+docs/qa/evidence/v013-ocr-final.json
+docs/qa/evidence/v013-ocr-fixed.json
+docs/qa/evidence/v013-ocr-harness-failure.json
+docs/qa/evidence/v013-ocr-initial-failure.json
+docs/qa/evidence/v013-pins-native.json
+docs/qa/evidence/v013-publication-download-timeout.json
+docs/qa/evidence/v013-publication-upload-timeout.json
+docs/qa/evidence/v013-publication.json
+docs/qa/evidence/v013-split-native.json
+package-lock.json
+package.json
+scripts/check-docs.mjs
+scripts/ocr-engine-smoke.mjs
+scripts/ocr-native-smoke.mjs
+src-tauri/Cargo.lock
+src-tauri/Cargo.toml
+src-tauri/build.rs
+src-tauri/capabilities/main.json
+src-tauri/examples/ocr_probe.rs
+src-tauri/src/commands/mod.rs
+src-tauri/src/commands/ocr.rs
+src-tauri/src/lib.rs
+src-tauri/src/services/mod.rs
+src-tauri/src/services/ocr.rs
+src-tauri/tauri.conf.json
+src/app/App.tsx
+src/features/capture/CapturePanel.tsx
+src/features/document/store.test.ts
+src/features/document/store.ts
+src/features/editor/EditorView.tsx
+src/features/ocr/OcrButton.tsx
+src/features/ocr/OcrPanel.tsx
+src/features/ocr/api.ts
+src/features/ocr/model.test.ts
+src/features/ocr/model.ts
+src/features/ocr/store.test.ts
+src/features/ocr/store.ts
+src/styles.css
+```
