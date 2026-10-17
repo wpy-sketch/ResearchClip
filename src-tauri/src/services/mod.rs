@@ -1,6 +1,7 @@
 pub mod desktop;
 pub mod editor;
 pub mod markdown_document;
+pub mod pins;
 pub mod region_capture;
 pub mod screen_capture;
 pub mod settings;

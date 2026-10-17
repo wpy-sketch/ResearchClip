@@ -79,6 +79,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(Arc::new(services::pins::PinManager::default()))
         .manage(Arc::new(std::sync::Mutex::new(
             services::markdown_document::DocumentFiles::default(),
         )))
@@ -90,6 +91,8 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             services::region_capture::RegionCaptureService::default(),
         ))
         .setup(move |app| {
+            app.state::<Arc<services::pins::PinManager>>()
+                .start_watchdog(app.handle());
             if let Some(frame) = fixture {
                 app.state::<Arc<services::workflow::CaptureWorkflow>>()
                     .store(
@@ -131,6 +134,13 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             Ok(())
         })
         .on_window_event(|window, event| {
+            if matches!(event, tauri::WindowEvent::Destroyed) && window.label().starts_with("pin-")
+            {
+                window
+                    .app_handle()
+                    .state::<Arc<services::pins::PinManager>>()
+                    .release(window.label());
+            }
             if window.label() == "main"
                 && let tauri::WindowEvent::CloseRequested { api, .. } = event
                 && !window
@@ -153,12 +163,23 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 }
             }
             if window.label() == "main" && matches!(event, tauri::WindowEvent::Destroyed) {
+                if let Err(error) = window
+                    .state::<Arc<services::pins::PinManager>>()
+                    .close_all(window.app_handle())
+                {
+                    services::desktop::notice(window.app_handle(), &error.message);
+                }
                 window
                     .state::<std::sync::Arc<services::region_capture::RegionCaptureService>>()
                     .cancel_active();
             }
         })
         .invoke_handler(tauri::generate_handler![
+            commands::pins::create_pin,
+            commands::pins::pin_image,
+            commands::pins::pin_action,
+            commands::pins::recover_pins,
+            commands::pins::pin_status,
             commands::test_connection,
             commands::get_workspace_status,
             commands::capture::list_displays,

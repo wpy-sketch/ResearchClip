@@ -8,6 +8,7 @@ pub mod document;
 pub mod editor;
 pub mod library;
 pub mod markdown;
+pub mod pins;
 pub mod region;
 pub mod workflow;
 

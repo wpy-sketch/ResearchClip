@@ -1,4 +1,6 @@
-import { Camera, ClipboardCopy, Download, Pencil, Save, X } from 'lucide-react';
+import { createPin } from '../pins/api';
+import { errorMessage } from '../../shared/api/errors';
+import { Camera, Pin, ClipboardCopy, Download, Pencil, Save, X } from 'lucide-react';
 import { CaptureControls } from './CaptureControls';
 import { useCaptureStore } from './store';
 import { openCaptureEditor } from '../../app/open-editor';
@@ -23,6 +25,7 @@ export function CapturePanel() {
       </figure>
       <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="截图完成操作">
         <button className="capture-button" disabled={busy||Boolean(preview.library)} onClick={()=>void saveCaptureToLibrary()}><Save size={15}/>{preview.library?'已存入素材库':'存入素材库'}</button>
+        <button className="secondary-button" disabled={busy||!preview.blob} onClick={()=>{if(!preview.blob||phase!=='idle')return;useCaptureStore.setState({phase:'working',error:null,notice:null});void createPin(preview.blob).then(()=>useCaptureStore.setState({notice:'桌面贴图已创建，可拖动、滚轮缩放或右键操作。'})).catch(e=>useCaptureStore.setState({error:errorMessage(e,'创建贴图失败。')})).finally(()=>useCaptureStore.setState({phase:'idle'}));}}><Pin size={15}/>贴图</button>
         <button className="secondary-button" disabled={busy} onClick={() => void copyImage()}><ClipboardCopy size={15} />复制图片</button>
         <button className="capture-button" disabled={busy} onClick={() => void savePng()}><Download size={15} />保存 PNG</button>
         <button className="secondary-button" disabled={busy} onClick={() => { try { openCaptureEditor(preview); } catch (error) { useCaptureStore.setState({ error: error instanceof Error ? error.message : '编辑器无法打开。' }); } }}><Pencil size={15} />打开编辑器</button>

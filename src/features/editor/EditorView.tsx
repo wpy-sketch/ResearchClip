@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, Circle, ClipboardCopy, Download, FolderOpen, Hand, MousePointer2, Pencil, Redo2, Save, Square, Trash2, Type, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { pinEditor } from '../pins/api';
+import { ArrowLeft, Pin, ArrowUpRight, Circle, ClipboardCopy, Download, FolderOpen, Hand, MousePointer2, Pencil, Redo2, Save, Square, Trash2, Type, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useUiStore } from '../../app/ui-store';
 import { useEditorStore } from './store';
 import { EditorCanvas } from './EditorCanvas';
@@ -21,14 +22,16 @@ export function EditorView() {
   const session = activeId ? sessions[activeId] : null;
   const selected=session?.document.objects.find((a)=>a.id===session.selectedId);
   const editText=useCallback((point:Point,id?:string)=>setTextTarget({point,id}),[]);
-  const operation = async (action: 'open' | 'project' | 'save' | 'copy' | 'library') => {
+  const operation = async (action: 'open' | 'project' | 'save' | 'copy' | 'library' | 'pin') => {
     if (locked.current) return; locked.current=true; setBusy(true); setIoError(null); setIoMessage(null); useEditorStore.getState().cancelGesture();
     try {
       if (action==='open') {
         const data=await openProject(); if(data) { const id=crypto.randomUUID();useEditorStore.getState().open({id,name:'已加载项目',widthPx:data.widthPx,heightPx:data.heightPx,blob:data.blob},data.project.document); if(useEditorStore.getState().activeId!==id)throw new Error(useEditorStore.getState().error??'无法打开项目。');setIoMessage('项目已恢复，全部标注可以继续编辑。'); }
+      } else if(action==='pin'&&session&&!session.loadError) {
+        await pinEditor(session);setIoMessage('标注合成图已创建为独立桌面贴图。');
       } else if(action==='library'&&session&&!session.loadError) {
         await saveEditorToLibrary(session);setIoMessage('截图与标注已保存到本地素材库，重启后仍可打开。');
-      } else if(session&&!session.loadError&&action!=='library') {
+      } else if(session&&!session.loadError&&action!=='library'&&action!=='pin') {
         const result=action==='project'?await saveProject(session):await exportImage(session,action);
         if(result){if(action==='project')useEditorStore.getState().markSaved(session.image.id,session.document);setIoMessage(action==='copy'?result:action==='project'?`可编辑项目已保存：${result}。请将 JSON 与 original PNG 一起保留。`:`合成 PNG 已导出：${result}`);}
       }
@@ -50,7 +53,7 @@ export function EditorView() {
   const textObject=textTarget?.id?session?.document.objects.find((a)=>a.id===textTarget.id):null;
   return <div className="editor-page" inert={busy}>
     <div className="editor-heading"><button className="secondary-button" onClick={() => useUiStore.getState().navigate('screenshots')}><ArrowLeft size={15} />返回截图</button><h2>图片编辑器</h2><span className="text-xs text-muted">原图保持不变</span></div>
-    <div className="editor-toolbar" role="group" aria-label="项目和导出"><InsertButton editor disabled={!session||Boolean(session.loadError)||Boolean(useEditorStore.getState().gesture)}/><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('library')}><Save size={15}/>保存到素材库</button><button className="secondary-button" onClick={()=>void operation('open')}><FolderOpen size={15}/>打开项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('project')}><Save size={15}/>另存可编辑项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('save')}><Download size={15}/>导出标注 PNG</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('copy')}><ClipboardCopy size={15}/>复制合成图片</button></div>
+    <div className="editor-toolbar" role="group" aria-label="项目和导出"><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('pin')}><Pin size={15}/>贴图</button><InsertButton editor disabled={!session||Boolean(session.loadError)||Boolean(useEditorStore.getState().gesture)}/><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('library')}><Save size={15}/>保存到素材库</button><button className="secondary-button" onClick={()=>void operation('open')}><FolderOpen size={15}/>打开项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('project')}><Save size={15}/>另存可编辑项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('save')}><Download size={15}/>导出标注 PNG</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('copy')}><ClipboardCopy size={15}/>复制合成图片</button></div>
     {busy&&<p className="mx-3 text-xs text-muted" role="status">正在处理图片或等待系统文件对话框…</p>}
     {ioMessage&&<p className="mx-3 break-all text-xs text-secondary" role="status">{ioMessage}</p>}
     {ioError&&<p className="error-banner m-3" role="alert">{ioError}</p>}

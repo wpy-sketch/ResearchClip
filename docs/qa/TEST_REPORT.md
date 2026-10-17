@@ -218,3 +218,15 @@ NSIS默认卸载的“删除应用数据”未勾选；本次证明的是默认�
 发布使用本机Git Credential Manager的既有登录，通过本地临时发布脚本调用官方REST API；脚本与凭据均未提交。GitHub CLI未安装且连接器最初未返回可访问仓库，未将这些能力缺失伪装成CLI执行成功。上传阶段返回过临时untagged下载地址，公开后重新GET得到规范`v0.1.0-rc.1`地址并完成实际下载核验，最终链接以验证记录为准。
 
 发布说明保留本报告FAIL、未实现项和人工缺口；**公开预发布成功不改变QA-001的FAIL，也不等于正式稳定版验收通过。**
+
+## 2026-10-17 桌面贴图增量验收
+
+范围仅用户本轮桌面贴图请求，非整套 MVP 再认证。已实现截图完成页/编辑器按钮、真正独立无边框置顶窗口、多贴图、拖动/缩放/透明度、复制/另存/关闭、恢复位置和退出清理；涉及文件、关键函数/模块、全部修改文件及原生证据详见[贴图报告](../PINS-VALIDATION.md)。
+
+PASS（实际命令退出 0）：`npm run check`（220 测试）、`npm run format:rust`、`npm run check:rust`、`npm run test:rust`（102 测试）、Windows debug 构建与启动、`node scripts/pins-native-smoke.mjs final-20261017`（13 组）、`node scripts/editor-native-smoke.mjs pins-regression-20261017`（6 组）、`npm run desktop:build`（生产 EXE）、`npm run check:docs`。托盘隐藏通过实际 HWND 可见性确认；剪贴板失败通过真正锁定 Windows 剪贴板复现，释放后重试成功；不是 Mock 结果。
+
+初期 FAIL 与修正记录保留在贴图报告及本地 artifacts；最终本模块无尚未修复的自动检查 FAIL。没有已确认新增 P0/P1。历史 QA-001 / QA-002 不在本轮关闭，不能据成功的贴图专项验收宣称全项目已可正式发布。
+
+NOT_RUN：真实屏幕内容的全屏/区域到贴图、高/混合 DPI 和多屏硬件矩阵、画图等人工粘贴、长期堆/显存、超时与原生窗口创建/销毁失败注入、Windows 10/macOS、最终生产 EXE 交互和 NSIS 安装卸载。人工步骤详见贴图报告。未触碰真实用户工作区或删除资料；仅隔离测试目录有写入。
+
+建议：当前请求实现及本轮自动/原生专项检查完成，按用户要求停止；用户可依据人工矩阵验收。完整发布判定仍遵守 TEST_PLAN，不自动推进其他功能或远程发布。

@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+2026-10-17 新增桌面贴图：主窗口上传有界 PNG 快照至 PinManager，独立 `pin-*` WebView 按自身窗口身份读取；截图和编辑器分别复用已有预览 PNG / 原分辨率 renderComposite。`features/pins` 管界面、`commands/pins.rs` 管受限 IPC、`services/pins.rs` 统一管原生窗口和资源；不改 SQLite 或标注格式。主窗口隐藏时保留、退出成功时销毁全部贴图，Destroyed 释放资源。物理尺寸、内存预算、专用 capability、Windows 透明度及实际验收范围见[桌面贴图契约与验收](PINS-VALIDATION.md)。
+
 2026-10-16新增图文Markdown文档契约见第14节；与第12节既有卡片原图导出并存，不替换数据库或编辑器数据模型。
 
 正式规划 v1，2026-10-12。本文覆盖首发目标；“当前主界面”与“现有M1”段落描述已有代码，其他接口、业务表和未来目录都是设计，不能视为可调用API、已创建数据库或已验证的截图功能。产品范围见 [PRD](PRD.md)，通过条件见 [ROADMAP](ROADMAP.md)。

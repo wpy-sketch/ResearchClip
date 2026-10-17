@@ -76,6 +76,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 vec![
                     "保存可编辑项目".encode_utf16().collect(),
                     "导出标注 PNG".encode_utf16().collect(),
+                    "保存贴图 PNG".encode_utf16().collect(),
                     "打开可编辑项目".encode_utf16().collect(),
                     "保存 Markdown 文档".encode_utf16().collect(),
                     "打开 Markdown 文档".encode_utf16().collect(),
@@ -92,6 +93,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "打开 Markdown 文档".encode_utf16().collect(),
                     "保存可编辑项目".encode_utf16().collect(),
                     "导出标注 PNG".encode_utf16().collect(),
+                    "保存贴图 PNG".encode_utf16().collect(),
                     "打开可编辑项目".encode_utf16().collect(),
                 ]
             } else {

@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop-pins",
+  "description": "Pins may only read their own in-memory PNG and manipulate their own native window through bounded commands. No filesystem, window creation, main/library or generic clipboard access.",
+  "windows": ["pin-*"],
+  "permissions": ["allow-pin-image", "allow-pin-action"]
+}

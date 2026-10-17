@@ -40,6 +40,24 @@
     "allow-export-knowledge-markdown",
     "allow-save-knowledge-card",
     "allow-open-card-source",
-    "allow-create-screenshot","allow-library-status","allow-reconcile-library","allow-list-screenshots","allow-get-screenshot","allow-screenshot-image","allow-update-screenshot","allow-delete-screenshot","allow-list-notes","allow-save-note","allow-delete-note","allow-list-tags","allow-save-tag","allow-delete-tag","allow-get-screenshot-tags","allow-set-screenshot-tags"
+    "allow-create-screenshot",
+    "allow-library-status",
+    "allow-reconcile-library",
+    "allow-list-screenshots",
+    "allow-get-screenshot",
+    "allow-screenshot-image",
+    "allow-update-screenshot",
+    "allow-delete-screenshot",
+    "allow-list-notes",
+    "allow-save-note",
+    "allow-delete-note",
+    "allow-list-tags",
+    "allow-save-tag",
+    "allow-delete-tag",
+    "allow-get-screenshot-tags",
+    "allow-set-screenshot-tags",
+    "allow-create-pin",
+    "allow-recover-pins",
+    "allow-pin-status"
   ]
 }

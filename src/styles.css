@@ -345,3 +345,19 @@
 .document-preview pre { overflow: auto; background: var(--rc-sidebar); padding: 1rem; border-radius: .5rem; }
 .document-preview code { font-family: monospace; }
 .document-preview img { max-width: 100%; max-height: 650px; margin: 1rem auto; object-fit: contain; }
+/* Dedicated system-level pin WebViews: no App shell or permanent main overlay. */
+html[data-desktop-pin] body, html[data-desktop-pin] #root { margin: 0; width: 100vw; height: 100vh; overflow: hidden; min-width: 0; background: #17191d; }
+.desktop-pin { position: relative; width: 100vw; height: 100vh; overflow: hidden; color: #eee; background: #17191d; user-select: none; outline: none; }
+.desktop-pin > img { width: 100%; height: 100%; object-fit: contain; cursor: move; display: block; }
+.pin-close { position: absolute; top: 4px; right: 4px; padding: 4px; border-radius: 4px; background: #17191dcc; opacity: 0; }
+.desktop-pin:hover .pin-close, .pin-close:focus-visible { opacity: 1; }
+.pin-hint { position: absolute; bottom: 3px; left: 3px; padding: 2px 4px; background: #17191dcc; font-size: 10px; pointer-events: none; opacity: 0; }
+.desktop-pin:hover .pin-hint { opacity: 1; }
+.pin-menu { position: absolute; inset: 0 auto auto 0; width: min(220px,100%); max-height: 100%; overflow: auto; padding: 5px; border: 1px solid #555; border-radius: 5px; background: #22252bf5; box-shadow: 0 4px 15px #0005; font-size: 12px; }
+.pin-menu button { display: block; width: 100%; padding: 5px 8px; text-align: left; border-radius: 3px; }
+.pin-menu button:hover { background: #ffffff18; }
+.pin-menu label { display: block; padding: 5px 8px; }
+.pin-menu input { display: block; width: 100%; }
+.pin-message { position: absolute; left: 0; bottom: 0; max-width: 100%; max-height: 80%; overflow: auto; padding: 8px; background: #252933f5; font-size: 12px; }
+.pin-message button { display: block; text-decoration: underline; }
+.pin-recover-error { position: absolute; right: 0; top: 32px; width: 240px; z-index: 60; padding: 8px; border: 1px solid var(--color-edge); background: var(--color-surface); font-size: 12px; }

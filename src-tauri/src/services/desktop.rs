@@ -241,6 +241,10 @@ pub fn finish_exit(app: &AppHandle, approved: bool) -> Result<(), CaptureError> 
         return Err(error);
     }
     app.state::<Arc<RegionCaptureService>>().cancel_active();
+    if let Err(error) = app.state::<Arc<super::pins::PinManager>>().close_all(app) {
+        service.phase.store(0, Ordering::Release);
+        return Err(error);
+    }
     // Destroy the main WebView before the last-window Exit event. Exiting the
     // event loop directly can leave Chromium child windows alive during cleanup.
     if let Some(window) = app.get_webview_window("main") {

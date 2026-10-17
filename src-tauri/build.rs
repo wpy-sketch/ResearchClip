@@ -2,6 +2,11 @@ fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
             "test_connection",
+            "create_pin",
+            "pin_image",
+            "pin_action",
+            "recover_pins",
+            "pin_status",
             "get_workspace_status",
             "list_displays",
             "capture_fullscreen",
