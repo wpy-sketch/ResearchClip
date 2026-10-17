@@ -97,3 +97,15 @@ src/features/editor/store.ts
 src/features/editor/types.ts
 src/styles.css
 ```
+
+
+## 公开发布回执
+
+- [v0.1.4 Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.4)，ID `415798601`，UTC `2026-10-17T12:44:05Z`。实际 draft=false、prerelease=false、Latest=true。
+- 源码及 tag `v0.1.4` 指向 `27228f42f5661ca605be0fd9ae18adc400d6dfcc`，正常原子推送到 main。发布回执为后续文档提交，不移动源码标签。
+- 三个附件：`ResearchClip-v0.1.4-windows-x64.exe`（16,232,960 字节）、`SOURCE.txt`（1,143 字节）、`SHA256SUMS.txt`（179 字节）；服务端 digest、字节数及匿名官方附件 API 下载 SHA256 均匹配：[完整证据](evidence/v014-publication.json)。本轮发布一次成功，没有覆盖或重建旧发布。
+- 五个旧版本的 Release ID、预发布属性、附件 ID/名称/尺寸/摘要均保持不变。有限源码扫描 314 文件 / 2,118,986 字节，未发现常见凭据模式；不等同完整安全审计。测试图片、数据库、浏览器会话、工具链和缓存没有上传。
+- 本地启动程序：`src-tauri/target/release/researchclip.exe`；未签名，需要 WebView2。本轮没有新 NSIS 包。
+- 回执同时更新本报告、`docs/qa/TEST_REPORT.md`，新增 `docs/qa/evidence/v014-publication.json`。业务源码与测试在发布后没有改动。
+
+结论：本轮所列可执行检查 PASS，可交付此功能版本。完整硬件/大图性能/长稳/macOS/生产手工矩阵仍 NOT_RUN，历史问题按原报告保留。本阶段结束，不自动开发后续功能。
