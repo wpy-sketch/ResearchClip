@@ -1,0 +1,57 @@
+{
+  "tag": "v0.1.2",
+  "sourceCommit": "1ef9bc49ea5e8bd691995c62fe75a210a5c4a29a",
+  "uploaded": [
+    {
+      "name": "ResearchClip-v0.1.2-windows-x64.exe",
+      "size": 15969792,
+      "digest": "sha256:135453f3381e9008e51648e543042809dfcc03c29a90623c5c0e786369d2b559",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.2/ResearchClip-v0.1.2-windows-x64.exe",
+      "id": 649700935
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 181,
+      "digest": "sha256:ee1f85bf798cdbbd2ffda00ce3cf9ef580e4b2371f8a853ee9331223fd191f78",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.2/SHA256SUMS.txt",
+      "id": 649701400
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 888,
+      "digest": "sha256:2e490cf1ac4bc33bb0511d39207ad5719ab028870524a9e84c07d1a8d669eb8e",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.2/SOURCE.txt",
+      "id": 649701361
+    }
+  ],
+  "published": true,
+  "releaseId": 415617489,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.2",
+  "draft": false,
+  "prerelease": false,
+  "publishedAt": "2026-10-17T06:01:00Z",
+  "isLatest": true,
+  "tagCommitVerified": true,
+  "previousReleasePreserved": true,
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v0.1.2-windows-x64.exe",
+      "size": 15969792,
+      "sha256": "135453f3381e9008e51648e543042809dfcc03c29a90623c5c0e786369d2b559",
+      "matched": true
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 888,
+      "sha256": "2e490cf1ac4bc33bb0511d39207ad5719ab028870524a9e84c07d1a8d669eb8e",
+      "matched": true
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 181,
+      "sha256": "ee1f85bf798cdbbd2ffda00ce3cf9ef580e4b2371f8a853ee9331223fd191f78",
+      "matched": true
+    }
+  ],
+  "result": "PASS"
+}

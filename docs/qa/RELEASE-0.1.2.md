@@ -45,3 +45,9 @@
 版本/文档：`package.json`、`package-lock.json`、`src-tauri/Cargo.toml`、`src-tauri/Cargo.lock`、`src-tauri/tauri.conf.json`、`README.md`、`CHANGELOG.md`、`docs/ARCHITECTURE.md`、本报告、`docs/RELEASE-NOTES-0.1.2.md`。
 
 测试：新增 `scripts/material-ui-smoke.mjs`，更新 `scripts/smoke.mjs` 的截图按钮位置；六份 `docs/qa/evidence/v012-*.json` 保留渲染、原生、初次失败与最终通过。不提交测试图片、AppData 或缓存。
+
+## 公开发布回执
+
+PASS：2026-10-17 14:01:00（Asia/Hong_Kong）公开 [v0.1.2](https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.2)，Release ID 415617489，draft=false、prerelease=false，已验证为 Latest。
+
+源码及标签：`1ef9bc49ea5e8bd691995c62fe75a210a5c4a29a`。三个附件 EXE（15,969,792 字节）、SOURCE.txt（888 字节）、SHA256SUMS.txt（181 字节）匿名公开下载的大小及 SHA256 全部匹配；旧 rc.1/rc.2/v0.1.1 的发布和附件保留。详细 [公开证据](evidence/v012-publication.json)。本回执为后续文档提交，不移动标签或修改编译源码。
