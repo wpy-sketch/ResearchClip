@@ -12,7 +12,7 @@
 | `npm run check:rust` | PASS/0，all-targets -D warnings |
 | `npm run test:rust` | PASS/0，97项、无失败/忽略 |
 | `node scripts/document-rename-native-smoke.mjs publish-rc2-final` | PASS/0，5组，errors=[]；新增原图hash断言，见 [结果](evidence/rc2-rename-prepublish.json) |
-| `git diff --cached --check`首次 | FAIL/2，三个此前未跟踪文档的末尾多余空行，已清理并重跑；不改正文 |
+| `git diff --cached --check`首次 | FAIL/2，三个此前未跟踪文档以及发布结果补记曾有末尾多余空行，均清理并重跑；不改正文 |
 | `npm run check:docs`、`git diff --check` | PASS/0，31文档170条本地链接，权限/版本一致，无diff空白错误 |
 
 复用了此前完成的Windows生产构建，核心业务源码没有新增修改：src-tauri/target/document-rename/release/researchclip.exe，15,634,944字节，SHA256=4DE78777C89F2FBAA3439A04F8E16EF3E2DEF987DA6CDAA06BF5E9C00AFDAF6D。此次修改原生测试脚本及发布文档，不改业务行为。原生测试是隔离debug应用与明确测试PNG，不代替生产版/真实资料或屏幕硬件全流程。
@@ -29,4 +29,12 @@
 
 ## 发布结果
 
-尚待实际推送/上传后记录，不提前标成功。
+PASS：2026-10-17 12:58:58（Asia/Hong_Kong）公开 [v0.1.0-rc.2](https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.0-rc.2)，保留prerelease标识。
+
+- 源码提交：43498ba3ebb99aac66290158ce1ca0f70391e129；250个项目文件，普通快进推送到main，git ls-remote一致。Release标签指向该提交。本核对结果作为后续文档提交，不改变程序源码或标签。
+- 附件：ResearchClip-v0.1.0-rc.2-windows-x64.exe（15,634,944字节）、SHA256SUMS.txt（186字节）、SOURCE.txt（561字节）。
+- EXE SHA256：4de78777c89f2fbaa3439a04f8e16ef3e2def987da6cdaa06bf5e9c00afdaf6d；三附件服务器digest和匿名公开下载重新计算结果均匹配。
+- 首次下载复核FAIL/1：上传时保存的草稿附件URL在公开后仍含untagged临时标识，返回404；没有重传或覆盖附件。重新读取发布后的正式URL并匿名下载全部三附件，PASS/0；保留初次失败记录。
+- rc.1的Release ID和全部附件ID/名称未改变；没有删除或覆盖旧发布、用户资料或本地缓存。
+
+可复核的URL、附件大小、SHA256、标签及初次失败/最终通过见 [公开发布证据](evidence/rc2-publication.json)。本次没有上传39GB完整缓存归档，没有新NSIS安装器；此前人工/硬件/历史问题仍按已知限制保留。

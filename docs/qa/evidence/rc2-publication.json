@@ -1,0 +1,78 @@
+{
+  "result": "PASS",
+  "repository": "https://github.com/wpy-sketch/ResearchClip",
+  "releaseURL": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.0-rc.2",
+  "releaseId": 415591926,
+  "tag": "v0.1.0-rc.2",
+  "sourceCommit": "43498ba3ebb99aac66290158ce1ca0f70391e129",
+  "publishedAtUTC": "2026-10-17T04:58:58Z",
+  "publishedAtHongKong": "2026-10-17T12:58:58+08:00",
+  "prerelease": true,
+  "applicationVersion": "0.1.0",
+  "sourceFiles": 250,
+  "assets": [
+    {
+      "name": "ResearchClip-v0.1.0-rc.2-windows-x64.exe",
+      "id": 649588057,
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.0-rc.2/ResearchClip-v0.1.0-rc.2-windows-x64.exe",
+      "size": 15634944,
+      "digest": "sha256:4de78777c89f2fbaa3439a04f8e16ef3e2def987da6cdaa06bf5e9c00afdaf6d"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "id": 649588844,
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.0-rc.2/SHA256SUMS.txt",
+      "size": 186,
+      "digest": "sha256:d1f21007a39a2f4565eb70dfc612b38f32ef14792ae824aa6c5a1ad8779c9530"
+    },
+    {
+      "name": "SOURCE.txt",
+      "id": 649588885,
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.0-rc.2/SOURCE.txt",
+      "size": 561,
+      "digest": "sha256:bb4de204a08b13990114a99f8f7fe3fedb1eb6abe33cec8f354e53a6239160fb"
+    }
+  ],
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v0.1.0-rc.2-windows-x64.exe",
+      "size": 15634944,
+      "sha256": "4de78777c89f2fbaa3439a04f8e16ef3e2def987da6cdaa06bf5e9c00afdaf6d",
+      "matched": true
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 186,
+      "sha256": "d1f21007a39a2f4565eb70dfc612b38f32ef14792ae824aa6c5a1ad8779c9530",
+      "matched": true
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 561,
+      "sha256": "bb4de204a08b13990114a99f8f7fe3fedb1eb6abe33cec8f354e53a6239160fb",
+      "matched": true
+    }
+  ],
+  "tagCommitVerified": true,
+  "previousReleasePreserved": true,
+  "verificationAttempts": [
+    {
+      "result": "FAIL",
+      "reason": "Draft asset browser URLs use an untagged identifier and were stale after publication; initial public download returned 404."
+    },
+    {
+      "result": "PASS",
+      "reason": "Refetched published asset URLs, downloaded all 3 files anonymously and matched byte counts and SHA256."
+    }
+  ],
+  "excluded": [
+    "node_modules",
+    ".tools",
+    "src-tauri/target",
+    "dist",
+    "artifacts",
+    "browser profiles",
+    "runtime databases",
+    "39GiB full-cache archive"
+  ]
+}
