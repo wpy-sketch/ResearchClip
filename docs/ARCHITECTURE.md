@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v0.1.4：Annotation v1 新增 mosaic/blur/number，由前后端共同校验；effects.ts 共用原像素滤镜、底图区域 clip/copy 替换及矢量上层渲染。复用编辑器 state/history/serialization/export，不改数据库 schema。对象范围、预算、透明度与实际检查见 [高级标注验收](qa/RELEASE-0.1.4.md)。
+
 2026-10-17 v0.1.3：新增本地 `OcrService` 平台边界、main-only 有界 PNG OCR/文字复制命令和 `features/ocr` 单会话面板。Windows.Media.Ocr 经本机探针确认；整图/原图像素选区、标注合成复用和显式 Markdown 插入，不变更数据库或原图。线程门控、语言包、资源释放和真实识别限制见 [OCR 验收](qa/RELEASE-0.1.3.md)。
 
 2026-10-17 v0.1.2：工作区改为左侧主要截图操作、两行顶部搜索/文档工具栏和圆角内容容器，深浅蓝灰主题由既有 CSS 角色及 useAppearance 驱动。不引入新框架或远程字体，设置和编辑会话模型不变；布局、原生回归及发布记录见[0.1.2 验收](qa/RELEASE-0.1.2.md)。

@@ -1,0 +1,70 @@
+{
+  "mode": "editor-renderer-fixture",
+  "nativeCaptureVerified": false,
+  "deviceScaleFactor": 2,
+  "checks": [
+    "pan tool, middle mouse and focused Space drag really change viewport; pointer status uses updated original-pixel transform",
+    "Space activates toolbar Fit; resize refits fit mode, preserves manual view and original-pixel documents",
+    "16384-pixel-wide image fits small window below 2%; zoom out remains monotonic and dimensions unchanged",
+    "real pointer drag creates rectangle in original pixels",
+    "zoom/pan then move and Transformer resize produce correct original-pixel geometry",
+    "Esc during real Transformer resize restores geometry without a history entry",
+    "ellipse resize and independent arrow endpoint handles",
+    "continuous vector pen, text insertion/double-click edit/font size, Delete selection",
+    "Escape and changing tool cancel draft without accidental objects",
+    "independent image sessions; serialization unchanged by tab/view; original immutable Blob preserved",
+    "real Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y and toolbar undo; one drag commits one history entry",
+    "actual PNG pixels: source resolution, transparency, text, arrowhead, ordered layers, no selection handles, invariant under zoom, editable JSON reload",
+    "real reloaded offset arrow endpoint drag under zoom/pan preserves opposite endpoint; one history commit, undo/redo and Esc cancellation",
+    "explicit invalid transform events restore Konva geometry and report errors; model/history stay unchanged",
+    "actual tab-close UI requires explicit discard; cancel preserves unsaved annotations and confirm closes only that tab",
+    "responsive editor layouts and explicit corrupt-image failure"
+  ],
+  "errors": [],
+  "export": {
+    "width": 128,
+    "height": 96,
+    "zoomAndSelectionInvariant": true,
+    "transparent": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "semi": [
+      80,
+      120,
+      159,
+      128
+    ],
+    "sourceSemi": [
+      80,
+      120,
+      159,
+      128
+    ],
+    "rectangle": [
+      255,
+      0,
+      0,
+      255
+    ],
+    "arrowhead": [
+      0,
+      255,
+      0,
+      255
+    ],
+    "topLayer": [
+      0,
+      0,
+      255,
+      255
+    ],
+    "textPixels": 84,
+    "handlePixels": 0,
+    "sourceUnchanged": true,
+    "restored": true
+  },
+  "result": "passed"
+}

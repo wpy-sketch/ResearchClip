@@ -5,6 +5,7 @@ import { screenToImage, validateImageSize } from './geometry';
 import { useEditorStore } from './store';
 import type { EditorSession, Point, Viewport } from './types';
 import { AnnotationNode } from './AnnotationNode';
+import {EffectPatch} from './EffectPatch';
 import { inImage } from './model';
 
 export function EditorCanvas({ session, onSize, onText }: { session: EditorSession; onSize: (size: { width: number; height: number }) => void; onText: (point: Point, id?: string) => void }) {
@@ -50,6 +51,8 @@ export function EditorCanvas({ session, onSize, onText }: { session: EditorSessi
     if (pan.current) { const start = pan.current; const next: Viewport = { ...start.viewport, x: start.viewport.x + point.x - start.start.x, y: start.viewport.y + point.y - start.start.y, mode: 'manual' }; useEditorStore.getState().setViewport(next); setPosition(screenToImage(point,next)); }
     else { setPosition(screenToImage(point, view)); if(!transforming.current) useEditorStore.getState().moveGesture(screenToImage(point,view)); }
   };
+  const visible=session.document.objects.map(a=>gesture?.imageId===image.id&&gesture.draft.id===a.id?gesture.draft:a);
+  if(gesture?.imageId===image.id&&gesture.kind==='draw')visible.push(gesture.draft);
   return <div className="editor-canvas-frame">
     {session.loadError && <p className="error-banner m-3" role="alert">{session.loadError}</p>}
     <div className="editor-canvas-host" ref={host} tabIndex={0} role="application" aria-label="图片编辑画布" style={{ cursor: tool === 'pan'||spaceHeld ? 'grab' : tool==='select'?'default':'crosshair' }}
@@ -66,7 +69,7 @@ export function EditorCanvas({ session, onSize, onText }: { session: EditorSessi
         }}
         onPointerMove={move} onPointerUp={() => { pan.current = null;if(!transforming.current)useEditorStore.getState().finishGesture(); }} onPointerCancel={() => { pan.current = null;useEditorStore.getState().cancelGesture(); }}
         onWheel={(event) => { event.evt.preventDefault();useEditorStore.getState().cancelGesture(); const at = stage.current?.getPointerPosition(); const view=useEditorStore.getState().sessions[image.id].viewport;if(at)useEditorStore.getState().zoom(view.scale * Math.exp(-event.evt.deltaY * 0.001),at); }}>
-        <Layer listening={false}><Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>{loaded && !session.loadError && <CanvasImage image={loaded} width={image.widthPx} height={image.heightPx} />}</Group></Layer>
+        <Layer listening={false}><Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>{loaded && !session.loadError && <CanvasImage image={loaded} width={image.widthPx} height={image.heightPx} />}{loaded&&!session.loadError&&visible.map(a=>(a.type==='mosaic'||a.type==='blur')?<EffectPatch key={a.id} source={loaded} image={image} annotation={a}/>:null)}</Group></Layer>
         <Layer><Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>
           {session.document.objects.map((original)=>{const a=gesture?.imageId===image.id&&gesture.draft.id===original.id?gesture.draft:original;return <AnnotationNode key={a.id} annotation={a} selected={session.selectedId===a.id} scale={viewport.scale} selectable={tool==='select'&&!spaceHeld&&!session.loadError} point={point} editText={(a)=>onText({x:a.x,y:a.y},a.id)} registerTransform={registerTransform} />;})}
           {gesture?.imageId===image.id&&gesture.kind==='draw'&&<AnnotationNode annotation={gesture.draft} selected={false} scale={viewport.scale} selectable={false} point={point} editText={()=>{}} registerTransform={registerTransform} />}

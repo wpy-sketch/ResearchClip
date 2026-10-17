@@ -2,7 +2,7 @@
 
 面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
 
-当前为 **0.1.3 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+当前为 **0.1.4 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
 
 Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
 
@@ -29,7 +29,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.3_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.4_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc
@@ -228,3 +228,8 @@ scripts/ docs/                # 检查、冒烟、架构和验收
 [AGENTS](AGENTS.md)、[PRD](docs/PRD.md)、[ARCHITECTURE](docs/ARCHITECTURE.md)、[ROADMAP](docs/ROADMAP.md) 定义工程规则与阶段目标。[区域历史验收](docs/REGION-CAPTURE-VALIDATION.md)、[全屏历史验收](docs/SCREEN-CAPTURE-VALIDATION.md) 保留以前的实际记录。
 
 下一步建议复验大图库与长笔记的性能、实际系统主题切换及真实科研资料的日常管理。物理快捷键、画图/Word粘贴、剪贴板竞争、只读/磁盘满、多显示器与高DPI等既有硬件场景，以及macOS仍需独立验收。
+
+
+## 高级图片标注
+
+编辑器新增“马赛克”“局部模糊”“编号”。前两者拖动矩形创建，选择对象后移动/调整手柄及强度；编号点击创建，可改颜色、大小和数字，删除不重排其他编号。所有数据按原图像素保存，使用原有撤销/重做、可编辑项目和素材库。滤镜真实应用于导出 PNG，并保留透明度；原图不覆盖。滤镜在原图层处理，其他矢量标注在上方。详细范围、资源上限及实际验收见 [高级标注验收](docs/qa/RELEASE-0.1.4.md)。

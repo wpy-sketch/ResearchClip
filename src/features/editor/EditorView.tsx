@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { pinEditor } from '../pins/api';
-import { ArrowLeft, Pin, ArrowUpRight, Circle, ClipboardCopy, Download, FolderOpen, Hand, MousePointer2, Pencil, Redo2, Save, Square, Trash2, Type, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
+import { ArrowLeft, Grid2X2, Droplets, ListOrdered, Pin, ArrowUpRight, Circle, ClipboardCopy, Download, FolderOpen, Hand, MousePointer2, Pencil, Redo2, Save, Square, Trash2, Type, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useUiStore } from '../../app/ui-store';
 import { useEditorStore } from './store';
 import { EditorCanvas } from './EditorCanvas';
@@ -13,7 +13,7 @@ import { saveEditorToLibrary } from '../../app/library-actions';
 import {InsertButton} from '../document/InsertButton';
 import {OcrButton} from '../ocr/OcrButton';
 import {renderComposite} from './export';
-const tools = [{id:'select',label:'选择',icon:MousePointer2},{id:'pan',label:'平移',icon:Hand},{id:'rectangle',label:'矩形',icon:Square},{id:'ellipse',label:'椭圆',icon:Circle},{id:'arrow',label:'箭头',icon:ArrowUpRight},{id:'pen',label:'自由画笔',icon:Pencil},{id:'text',label:'文字',icon:Type}] as const;
+const tools = [{id:'select',label:'选择',icon:MousePointer2},{id:'pan',label:'平移',icon:Hand},{id:'rectangle',label:'矩形',icon:Square},{id:'ellipse',label:'椭圆',icon:Circle},{id:'arrow',label:'箭头',icon:ArrowUpRight},{id:'pen',label:'自由画笔',icon:Pencil},{id:'text',label:'文字',icon:Type},{id:'mosaic',label:'马赛克',icon:Grid2X2},{id:'blur',label:'局部模糊',icon:Droplets},{id:'number',label:'编号',icon:ListOrdered}] as const;
 export function EditorView() {
   const { sessions, activeId, tool, style, error, activate, close, setTool, fit, zoom, setStyle, removeSelected, select } = useEditorStore();
   const [size, setSize] = useState({ width: 1, height: 1 });
@@ -70,6 +70,13 @@ export function EditorView() {
           <button className="icon-button" aria-label="删除所选标注" title="删除所选标注 (Delete)" disabled={!selected} onClick={removeSelected}><Trash2 size={16}/></button>
         </div>
         <div className="ml-auto flex items-center gap-2"><button className="icon-button" aria-label="缩小画布" onClick={() => zoom(session.viewport.scale / 1.25, { x: size.width / 2, y: size.height / 2 })}><ZoomOut size={16} /></button><span className="min-w-12 text-center text-xs" aria-label="画布缩放比例">{new Intl.NumberFormat('zh-CN',{maximumSignificantDigits:3}).format(session.viewport.scale * 100)}%</span><button className="icon-button" aria-label="放大画布" onClick={() => zoom(session.viewport.scale * 1.25, { x: size.width / 2, y: size.height / 2 })}><ZoomIn size={16} /></button><button className="secondary-button" onClick={() => fit(size.width, size.height)}>适应窗口</button></div>
+      </div>
+      <div className="editor-toolbar" role="group" aria-label="高级标注属性">
+        {(tool==='mosaic'||selected?.type==='mosaic')&&<label className="text-xs text-muted">马赛克块大小 <input className="editor-number" type="number" aria-label="马赛克强度" min={2} max={64} value={selected?.type==='mosaic'?selected.strength:style.mosaicSize??12} onChange={e=>setStyle({mosaicSize:Number(e.target.value)})}/> 像素</label>}
+        {(tool==='blur'||selected?.type==='blur')&&<label className="text-xs text-muted">模糊半径 <input className="editor-number" type="number" aria-label="模糊强度" min={1} max={64} value={selected?.type==='blur'?selected.strength:style.blurRadius??8} onChange={e=>setStyle({blurRadius:Number(e.target.value)})}/> 像素</label>}
+        {(tool==='number'||selected?.type==='number')&&<label className="text-xs text-muted">编号大小 <input className="editor-number" type="number" aria-label="编号大小" min={16} max={200} value={selected?.type==='number'?selected.size:style.numberSize??36} onChange={e=>setStyle({numberSize:Number(e.target.value)})}/></label>}
+        {selected?.type==='number'&&<label className="text-xs text-muted">编号数值 <input className="editor-number" type="number" aria-label="编号数值" min={1} max={9999} value={selected.value} onChange={e=>useEditorStore.getState().update({...selected,value:Number(e.target.value)})}/></label>}
+        <span className="text-xs text-muted">滤镜作用于原图区域，导出 PNG 后应用效果；可编辑项目仍保留原图。</span>
       </div>
       <EditorCanvas key={session.image.id} session={session} onSize={setSize} onText={editText}/>
       <div className="editor-object-list" aria-label="标注对象"><span className="text-xs text-muted">标注 {session.document.objects.length}</span>{session.document.objects.map((a,index)=><button key={a.id} className={session.selectedId===a.id?'is-selected':''} onClick={()=>{setTool('select');select(a.id);}} title={`X ${a.x.toFixed(1)} · Y ${a.y.toFixed(1)}`} data-annotation-id={a.id} aria-pressed={session.selectedId===a.id}>{tools.find((t)=>t.id===a.type)?.label??a.type} {index+1}</button>)}</div>

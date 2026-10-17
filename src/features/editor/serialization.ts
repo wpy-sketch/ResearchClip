@@ -11,6 +11,8 @@ export function parseDocument(value: unknown): AnnotationDocument {
     if (!object(item)) throw new Error('标注对象无效。');
     const base = { id: item.id, x: item.x, y: item.y, color: item.color, strokeWidth: item.strokeWidth };
     if (item.type === 'rectangle' || item.type === 'ellipse') return { ...base, type: item.type, width: item.width, height: item.height };
+    if(item.type==='mosaic'||item.type==='blur')return {...base,type:item.type,width:item.width,height:item.height,strength:item.strength};
+    if(item.type==='number')return {...base,type:item.type,value:item.value,size:item.size};
     if (item.type === 'arrow' || item.type === 'pen') return { ...base, type: item.type, points: Array.isArray(item.points) ? [...item.points] : item.points };
     if (item.type === 'text') return { ...base, type: item.type, text: item.text, fontSize: item.fontSize };
     throw new Error('标注类型不支持。');

@@ -403,3 +403,5 @@ html[data-desktop-pin] body, html[data-desktop-pin] #root { margin: 0; width: 10
 .ocr-selection { position:absolute; pointer-events:none; border:2px solid var(--accent); background:rgb(80 140 240 / 18%); }
 .ocr-result { flex:1; min-height:260px; width:100%; resize:vertical; font-family:ui-monospace,Consolas,monospace; line-height:1.7; }
 @media(max-width:700px) { .ocr-grid { grid-template-columns:minmax(0,1fr); gap:16px; } .ocr-result { min-height:160px; } }
+
+.editor-toolbar[aria-label="高级标注属性"] { height:48px; min-height:48px; flex-shrink:0; flex-wrap:nowrap; overflow-x:auto; white-space:nowrap; }

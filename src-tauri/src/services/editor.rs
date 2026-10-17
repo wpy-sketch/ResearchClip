@@ -47,6 +47,7 @@ pub fn validate_document(doc: &Value) -> Result<(), CaptureError> {
         .ok_or_else(|| invalid("项目标注数量无效。"))?;
     let mut ids = std::collections::HashSet::new();
     let mut total_points = 0;
+    let mut effect_pixels = 0_u64;
     let number = |v: &Value, min: f64, max: f64| {
         v.as_f64()
             .is_some_and(|n| n.is_finite() && n >= min && n <= max)
@@ -77,6 +78,28 @@ pub fn validate_document(doc: &Value) -> Result<(), CaptureError> {
         match a["type"].as_str() {
             Some("rectangle" | "ellipse")
                 if number(&a["width"], 1., 1_000_000.) && number(&a["height"], 1., 1_000_000.) => {}
+            Some(kind @ ("mosaic" | "blur"))
+                if number(&a["width"], 1., 1_000_000.)
+                    && number(&a["height"], 1., 1_000_000.)
+                    && a["strength"]
+                        .as_u64()
+                        .is_some_and(|n| n >= if kind == "mosaic" { 2 } else { 1 } && n <= 64) =>
+            {
+                let x = a["x"].as_f64().unwrap();
+                let y = a["y"].as_f64().unwrap();
+                let left = x.floor().clamp(0., w as f64);
+                let top = y.floor().clamp(0., h as f64);
+                let right = (x + a["width"].as_f64().unwrap())
+                    .ceil()
+                    .clamp(0., w as f64);
+                let bottom = (y + a["height"].as_f64().unwrap())
+                    .ceil()
+                    .clamp(0., h as f64);
+                effect_pixels += ((right - left).max(0.) * (bottom - top).max(0.)) as u64;
+            }
+            Some("number")
+                if a["value"].as_u64().is_some_and(|n| (1..=9999).contains(&n))
+                    && number(&a["size"], 16., 200.) => {}
             Some(kind @ ("arrow" | "pen")) => {
                 let p = a["points"]
                     .as_array()
@@ -103,6 +126,11 @@ pub fn validate_document(doc: &Value) -> Result<(), CaptureError> {
                     && number(&a["fontSize"], 8., 200.) => {}
             _ => return Err(invalid("标注类型或数据不支持。")),
         }
+    }
+    if effect_pixels > 16_777_216 {
+        return Err(invalid(
+            "滤镜区域合计超过16,777,216像素，请缩小或移除部分区域。",
+        ));
     }
     if total_points > 50000
         || serde_json::to_vec(doc)
@@ -262,6 +290,38 @@ pub fn open_project(path: &Path) -> Result<Vec<u8>, CaptureError> {
 mod tests {
     use super::*;
     use crate::{capture::RawFrame, services::screen_capture::encode_png};
+    #[test]
+    fn advanced_annotations_validate_and_roundtrip_without_rewriting_original() {
+        let mut doc = serde_json::json!({"schemaVersion":1,"image":{"widthPx":2,"heightPx":1},"objects":[
+            {"id":"m","type":"mosaic","x":0,"y":0,"width":2,"height":1,"strength":12,"color":"#123456","strokeWidth":2},
+            {"id":"b","type":"blur","x":-1,"y":0,"width":2,"height":1,"strength":8,"color":"#123456","strokeWidth":2},
+            {"id":"n","type":"number","x":0,"y":0,"value":42,"size":36,"color":"#123456","strokeWidth":2}]});
+        validate_document(&doc).unwrap();
+        let root = tempfile::tempdir().unwrap();
+        let file = root.path().join("advanced.researchclip.json");
+        let original = source();
+        save_project(&file, doc.clone(), &original).unwrap();
+        let loaded = open_project(&file).unwrap();
+        let len = u32::from_le_bytes(loaded[..4].try_into().unwrap()) as usize;
+        let project: Project = serde_json::from_slice(&loaded[4..4 + len]).unwrap();
+        assert_eq!(project.document, doc);
+        assert_eq!(&loaded[4 + len..], original);
+        for strength in [0, 65] {
+            doc["objects"][0]["strength"] = strength.into();
+            assert!(validate_document(&doc).is_err());
+        }
+        doc["objects"][0]["strength"] = 12.into();
+        doc["objects"][2]["value"] = 0.into();
+        assert!(validate_document(&doc).is_err());
+        doc["objects"][2]["value"] = 1.into();
+        doc["image"] = serde_json::json!({"widthPx":4096,"heightPx":4096});
+        for i in 0..2 {
+            doc["objects"][i]["x"] = 0.into();
+            doc["objects"][i]["width"] = 4096.into();
+            doc["objects"][i]["height"] = 4096.into();
+        }
+        assert!(validate_document(&doc).is_err());
+    }
     fn source() -> Vec<u8> {
         encode_png(RawFrame {
             width_px: 2,

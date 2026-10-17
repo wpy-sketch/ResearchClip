@@ -3,7 +3,7 @@ import { boundHistory, recordEdit } from './history';
 import { parseDocument } from './serialization';
 import { fitViewport, validateImageSize, zoomViewport } from './geometry';
 import type { Annotation, AnnotationDocument, AnnotationStyle, EditorImage, EditorSession, EditorTool, Point, Viewport } from './types';
-import { clampPoint, createAnnotation, drawAnnotation, inImage, moveArrowEndpoint, nonEmpty, translateAnnotation, validateDocument } from './model';
+import { clampPoint, createAnnotation, drawAnnotation, inImage, moveArrowEndpoint, nonEmpty, translateAnnotation, validateDocument, nextNumber } from './model';
 
 interface Gesture { kind: 'draw' | 'move' | 'endpoint'; imageId: string; start: Point; original: Annotation; draft: Annotation; endpoint?: 0 | 1 }
 
@@ -91,11 +91,12 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   setStyle: (patch) => {
     const style={...get().style,...patch}; if(!/^#[0-9a-f]{6}$/i.test(style.color)||!Number.isFinite(style.strokeWidth)||style.strokeWidth<1||style.strokeWidth>32||!Number.isFinite(style.fontSize)||style.fontSize<8||style.fontSize>200)return;
+    if((style.mosaicSize!==undefined&&(!Number.isInteger(style.mosaicSize)||style.mosaicSize<2||style.mosaicSize>64))||(style.blurRadius!==undefined&&(!Number.isInteger(style.blurRadius)||style.blurRadius<1||style.blurRadius>64))||(style.numberSize!==undefined&&(!Number.isFinite(style.numberSize)||style.numberSize<16||style.numberSize>200)))return;
     set({style});const id=get().activeId;const session=id?get().sessions[id]:null; const selected=session?.document.objects.find((o)=>o.id===session.selectedId);
-    if(selected) get().update({...selected,...(patch.color?{color:style.color}:{}),...(patch.strokeWidth!==undefined?{strokeWidth:style.strokeWidth}:{}),...(selected.type==='text'&&patch.fontSize!==undefined?{fontSize:style.fontSize}:{})});
+    if(selected) get().update({...selected,...(patch.color?{color:style.color}:{}),...(patch.strokeWidth!==undefined?{strokeWidth:style.strokeWidth}:{}),...(selected.type==='mosaic'&&patch.mosaicSize!==undefined?{strength:style.mosaicSize!}:{}),...(selected.type==='blur'&&patch.blurRadius!==undefined?{strength:style.blurRadius!}:{}),...(selected.type==='number'&&patch.numberSize!==undefined?{size:style.numberSize!}:{}),...(selected.type==='text'&&patch.fontSize!==undefined?{fontSize:style.fontSize}:{})});
   },
   beginDraw: (point) => {
-    const id=get().activeId;if(!id||get().gesture||!['rectangle','ellipse','arrow','pen'].includes(get().tool))return;const image=get().sessions[id].image;if(!inImage(point,image.widthPx,image.heightPx))return;
+    const id=get().activeId;if(id&&!get().gesture&&get().tool==='number'){const image=get().sessions[id].image;if(inImage(point,image.widthPx,image.heightPx)){const size=get().style.numberSize??36;get().add({...createAnnotation('number',point,get().style),type:'number',value:nextNumber(get().sessions[id].document.objects),size,x:point.x-size/2,y:point.y-size/2});}return;}if(!id||get().gesture||!['rectangle','ellipse','arrow','pen','mosaic','blur'].includes(get().tool))return;const image=get().sessions[id].image;if(!inImage(point,image.widthPx,image.heightPx))return;
     const annotation=createAnnotation(get().tool,point,get().style);get().select(null);set({gesture:{kind:'draw',imageId:id,start:point,original:annotation,draft:annotation}});
   },
   beginMove: (id,point,endpoint) => {
