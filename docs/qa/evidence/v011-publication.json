@@ -1,0 +1,99 @@
+{
+  "tag": "v0.1.1",
+  "sourceCommit": "d8e24f54093614202a520f90b8b0be02c67a6fbc",
+  "uploaded": [
+    {
+      "name": "ResearchClip-v0.1.1-windows-x64.exe",
+      "size": 15969280,
+      "digest": "sha256:be18bbe376dc79749a43e8c33c96bbb137addad36cbf5f320d2d3453e1332a0b",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.1/ResearchClip-v0.1.1-windows-x64.exe",
+      "id": 649667204
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 181,
+      "digest": "sha256:182c39f9b8a45b25b2a5991df4169733336db568720c32e67e8c658c802246c5",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.1/SHA256SUMS.txt",
+      "id": 649669142
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 653,
+      "digest": "sha256:2f9749b6e9090870b5c40d1e0fafbd578e354a547234df096dc9c97ac0b6912f",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.1.1/SOURCE.txt",
+      "id": 649669040
+    }
+  ],
+  "published": true,
+  "releaseId": 415609781,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.1",
+  "draft": false,
+  "publishedAt": "2026-10-17T05:43:00Z",
+  "tagCommitVerified": true,
+  "previousReleasePreserved": true,
+  "result": "PASS",
+  "prerelease": true,
+  "previousReleases": [
+    {
+      "tag": "v0.1.0-rc.1",
+      "id": 414630853,
+      "assets": [
+        {
+          "id": 646415082,
+          "name": "researchclip.exe"
+        },
+        {
+          "id": 646414559,
+          "name": "ResearchClip_0.1.0_x64-setup.exe"
+        },
+        {
+          "id": 646416086,
+          "name": "SHA256SUMS.txt"
+        }
+      ]
+    },
+    {
+      "tag": "v0.1.0-rc.2",
+      "id": 415591926,
+      "assets": [
+        {
+          "id": 649588057,
+          "name": "ResearchClip-v0.1.0-rc.2-windows-x64.exe"
+        },
+        {
+          "id": 649588844,
+          "name": "SHA256SUMS.txt"
+        },
+        {
+          "id": 649588885,
+          "name": "SOURCE.txt"
+        }
+      ]
+    }
+  ],
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v0.1.1-windows-x64.exe",
+      "size": 15969280,
+      "sha256": "be18bbe376dc79749a43e8c33c96bbb137addad36cbf5f320d2d3453e1332a0b",
+      "matched": true
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 653,
+      "sha256": "2f9749b6e9090870b5c40d1e0fafbd578e354a547234df096dc9c97ac0b6912f",
+      "matched": true
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 181,
+      "sha256": "182c39f9b8a45b25b2a5991df4169733336db568720c32e67e8c658c802246c5",
+      "matched": true
+    }
+  ],
+  "downloadRetries": [],
+  "initialVerificationFailure": {
+    "errorType": "URLError",
+    "error": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1082)>"
+  }
+}

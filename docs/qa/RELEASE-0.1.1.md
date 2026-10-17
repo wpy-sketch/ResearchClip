@@ -33,3 +33,15 @@ Windows 高/混合 DPI、多屏完整矩阵、真实资料端到端、长稳、m
 GitHub API 身份/仓库核验 PASS：wpy-sketch、公开 wpy-sketch/ResearchClip；main 起点 de5f53fee2809e805031b1c90945c15f04cb2532，旧 rc.1/rc.2 均存在，尚无 v0.1.1。Git 直连两次连接重置（FAIL/1），临时读取系统现有代理后只读 ls-remote PASS；不改全局 Git 配置。发布使用普通快进推送，无 force；凭据由系统 Credential Manager 仅在内存使用，不写入文件或输出。
 
 常见私钥/令牌格式、超大文件与误纳缓存/数据库预检查无发现；这不是完整安全审计。测试原始截图、浏览器状态、构建产物和工具链不提交；GitHub Release 单独提供编译程序。
+
+## 发布结果
+
+PASS：2026-10-17 13:43:00（Asia/Hong_Kong）公开 [v0.1.1](https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.1)，Release ID 415609781，prerelease=true、draft=false。
+
+- 源码提交和标签：`d8e24f54093614202a520f90b8b0be02c67a6fbc`；普通原子推送 main + v0.1.1 成功。应用版本、npm/Cargo 锁文件、Tauri 配置及 PE 版本均为 0.1.1。
+- 附件：ResearchClip-v0.1.1-windows-x64.exe（15,969,280 字节）、SOURCE.txt（653 字节）、SHA256SUMS.txt（181 字节）。服务器 digest 与本地 SHA256 一致。
+- 初次公开下载核验 FAIL/1：SSL UNEXPECTED_EOF_WHILE_READING；当时发布和附件上传已完成。没有重传、覆盖或重复发布；保留初次失败于本地 artifacts/publish-v011/publish-initial-attempt.json。
+- 后续只读核验 PASS/0：确认标签精确指向源码提交，三个附件重新匿名公开下载后的字节数及 SHA256 全部一致。旧 rc.1、rc.2 的 Release ID 和附件 ID/名称均未改变。
+- 可复核的公开 URL、时间、大小、SHA256、初次失败及最终通过见[发布回执](evidence/v011-publication.json)。本结果补记作为后续文档提交，不移动发布标签、不改变已编译源码。
+
+本轮完成上传和预发布；人工/硬件矩阵及历史 QA 限制没有因发布而自动变为通过。
