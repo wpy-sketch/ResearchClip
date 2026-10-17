@@ -1,0 +1,15 @@
+{
+  "mode": "actual Windows WebView2 and native local-image dialog; screenshots/pixels, real SQLite and view navigation, isolated controlled images",
+  "checks": [
+    "native chooser loads two same-size local PNGs, displays actual metadata, and side-by-side images share one original-pixel transform",
+    "real screenshot pixels show red A left and blue B right; pointer drag, keyboard clamp and edge positions change the actual split",
+    "25% B opacity produces measured red/blue blended pixels; zoom buttons, wheel and actual pointer pan update identical A/B transforms",
+    "A/B swap changes metadata and images; differently sized images share a top-left transform without stretching; failed local decoding retains the old image; native JPEG metadata and display succeed",
+    "leaving comparison revokes its actual blob URLs and returns to library; list and grid show the same real records with visible row actions",
+    "three real library selection/compare/exit cycles release and reload images without affecting the independent right Markdown session",
+    "complete in-app guide contains all 13 sections, actual outline jump scrolls to data safety instructions, stays within 480px and preserves the right Markdown draft",
+    "single missing test thumbnail yields an isolated placeholder while other cards remain; external and managed source hashes unchanged, and native app exits cleanly"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

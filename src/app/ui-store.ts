@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type NavigationView = 'screenshots' | 'favorites' | 'tags' | 'settings' | 'editor' | 'card';
+export type NavigationView = 'screenshots' | 'favorites' | 'tags' | 'settings' | 'editor' | 'card' | 'compare' | 'guide';
 export type Theme = 'dark' | 'light';
 export type ViewMode = 'grid' | 'list';
 
@@ -36,7 +36,7 @@ export const useUiStore = create<UiState>((set) => ({
   toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
   setViewMode: (viewMode) => set({ viewMode }),
   dismissWelcome: () => set({ showWelcome: false }),
-  openGuide: () => set({ activeView: 'screenshots', showWelcome: true, overlay: null }),
+  openGuide: () => set({ activeView: 'guide', showWelcome: true, overlay: null }),
   openSearch: () => set({ overlay: 'search' }),
   openCapture: () => set({ overlay: 'capture' }),
   closeOverlay: () => set({ overlay: null }),

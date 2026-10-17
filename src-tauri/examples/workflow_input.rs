@@ -17,6 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || mode == "dialog-save-native"
         || mode == "dialog-confirm"
         || mode == "dialog-open-native"
+        || mode == "dialog-open-compare"
         || mode == "dialog-save-md"
         || mode == "dialog-open-md"
     {
@@ -70,6 +71,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 vec!["保存 Markdown 文档".encode_utf16().collect()]
             } else if mode == "dialog-open-md" {
                 vec!["打开 Markdown 文档".encode_utf16().collect()]
+            } else if mode == "dialog-open-compare" {
+                vec!["选择对比图片".encode_utf16().collect()]
             } else if mode == "dialog-open-native" {
                 vec!["打开可编辑项目".encode_utf16().collect()]
             } else if mode == "dialog-confirm" {
@@ -77,6 +80,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "保存可编辑项目".encode_utf16().collect(),
                     "导出标注 PNG".encode_utf16().collect(),
                     "保存贴图 PNG".encode_utf16().collect(),
+                    "选择对比图片".encode_utf16().collect(),
                     "打开可编辑项目".encode_utf16().collect(),
                     "保存 Markdown 文档".encode_utf16().collect(),
                     "打开 Markdown 文档".encode_utf16().collect(),
@@ -94,6 +98,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "保存可编辑项目".encode_utf16().collect(),
                     "导出标注 PNG".encode_utf16().collect(),
                     "保存贴图 PNG".encode_utf16().collect(),
+                    "选择对比图片".encode_utf16().collect(),
                     "打开可编辑项目".encode_utf16().collect(),
                 ]
             } else {
@@ -113,6 +118,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if mode == "dialog-save-native"
             || mode == "dialog-confirm"
             || mode == "dialog-open-native"
+            || mode == "dialog-open-compare"
             || mode == "dialog-save-md"
             || mode == "dialog-open-md"
         {
@@ -165,7 +171,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     if mode == "dialog-save-md" || mode == "dialog-open-md" {
                         s == "md"
                     } else {
-                        s == "png" || s == "json"
+                        s == "png"
+                            || s == "json"
+                            || (mode == "dialog-open-compare"
+                                && ["jpg", "jpeg", "webp", "JPEG"].iter().any(|ext| s == *ext))
                     }
                 })
             {

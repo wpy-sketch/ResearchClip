@@ -39,6 +39,8 @@ assert.deepEqual(overlay.windows, ['capture-overlay-*']);
 const mainCaptureCommands = ['list_displays', 'capture_fullscreen', 'capture_region', 'region_result_png'];
 const overlayCommands = ['region_overlay_info', 'region_overlay_image', 'ready_region_overlay', 'commit_region_selection', 'cancel_region_selection'];
 const workflowCommands = ['get_preferences','update_preferences','choose_save_directory','capture_result_png','current_capture','discard_capture','copy_capture_image','save_capture_png'];
+const importCommands=['choose_comparison_image','import_clipboard_image','import_image_files'];
+assert.equal(config.app.windows.find(w=>w.label==='main').dragDropEnabled,false);
 const ocrCommands=['ocr_status','recognize_ocr','copy_ocr_text'];
 const editorCommands = ['save_editor_project','open_editor_project','export_editor_png','copy_editor_png'];
 const documentCommands = ['save_markdown_document','open_markdown_document','release_markdown_document','rename_markdown_document','list_markdown_templates','load_markdown_template','create_markdown_template','rename_markdown_template','delete_markdown_template'];
@@ -46,13 +48,13 @@ const markdownCommands = ['export_knowledge_markdown'];
 const desktopCommands = ['desktop_status','desktop_action','complete_desktop_exit'];
 const libraryCommands=['create_screenshot','library_status','reconcile_library','list_screenshots','screenshot_page','get_knowledge_card','save_knowledge_card','open_card_source','get_screenshot','screenshot_image','update_screenshot','delete_screenshot','list_notes','save_note','delete_note','list_tags','save_tag','delete_tag','get_screenshot_tags','set_screenshot_tags'];
 const permission = (command) => `allow-${command.replaceAll('_', '-')}`;
-for (const command of [...mainCaptureCommands,...workflowCommands,...editorCommands,...ocrCommands,...libraryCommands,...markdownCommands,...desktopCommands,...documentCommands,...mainPinCommands]) assert.ok(main.permissions.includes(permission(command)));
+for (const command of [...mainCaptureCommands,...workflowCommands,...editorCommands,...ocrCommands,...importCommands,...libraryCommands,...markdownCommands,...desktopCommands,...documentCommands,...mainPinCommands]) assert.ok(main.permissions.includes(permission(command)));
 assert.deepEqual([...pins.permissions].sort(),pinCommands.map(permission).sort());
 assert.deepEqual([...overlay.permissions].sort(), overlayCommands.map(permission).sort());
 assert.equal([...main.permissions, ...overlay.permissions, ...pins.permissions].some((name) => name.startsWith('fs:') || name.startsWith('core:window:allow-create')), false);
-for (const command of [...mainCaptureCommands, ...overlayCommands,...workflowCommands,...editorCommands,...ocrCommands,...libraryCommands,...markdownCommands,...desktopCommands,...documentCommands,...mainPinCommands,...pinCommands]) {
+for (const command of [...mainCaptureCommands, ...overlayCommands,...workflowCommands,...editorCommands,...ocrCommands,...importCommands,...libraryCommands,...markdownCommands,...desktopCommands,...documentCommands,...mainPinCommands,...pinCommands]) {
   assert.ok(read('src-tauri/build.rs').includes(`"${command}"`), `Missing command permission metadata: ${command}`);
-  const module = ocrCommands.includes(command)?'ocr':[...mainPinCommands,...pinCommands].includes(command)?'pins':documentCommands.includes(command)?'document':desktopCommands.includes(command)?'desktop':markdownCommands.includes(command)?'markdown':libraryCommands.includes(command)?'library':editorCommands.includes(command)?'editor':workflowCommands.includes(command)?'workflow':['list_displays', 'capture_fullscreen'].includes(command) ? 'capture' : 'region';
+  const module = importCommands.includes(command)?'import':ocrCommands.includes(command)?'ocr':[...mainPinCommands,...pinCommands].includes(command)?'pins':documentCommands.includes(command)?'document':desktopCommands.includes(command)?'desktop':markdownCommands.includes(command)?'markdown':libraryCommands.includes(command)?'library':editorCommands.includes(command)?'editor':workflowCommands.includes(command)?'workflow':['list_displays', 'capture_fullscreen'].includes(command) ? 'capture' : 'region';
   assert.ok(read('src-tauri/src/lib.rs').includes(`commands::${module}::${command}`), `Missing command registration: ${command}`);
 }
 for(const plugin of ['clipboard-manager','dialog','global-shortcut','opener']) assert.equal(main.permissions.some((p)=>p.startsWith(`${plugin}:`)),false,'Only bounded Rust wrappers are allowed');

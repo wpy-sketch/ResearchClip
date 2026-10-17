@@ -1,5 +1,6 @@
 pub mod desktop;
 pub mod editor;
+pub mod image_import;
 pub mod markdown_document;
 pub mod ocr;
 pub mod pins;

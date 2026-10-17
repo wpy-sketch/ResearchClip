@@ -17,8 +17,11 @@ import {useCardStore} from '../features/notes/store';
 import {MarkdownExportStatus} from '../features/export/MarkdownExport';
 import {DesktopExperience} from '../features/desktop/DesktopExperience';
 import {useDesktopExperience} from '../features/desktop/use-desktop-experience';
+const CompareView=lazy(()=>import('../features/compare/CompareView').then(m=>({default:m.CompareView})));
+const GuideView=lazy(()=>import('../features/guide/GuideView').then(m=>({default:m.GuideView})));
 const EditorView = lazy(() => import('../features/editor/EditorView').then((module) => ({ default: module.EditorView })));
 import {WorkspaceSplit} from '../features/document/WorkspaceSplit';
+import {ImportStatus} from '../features/import/ImportControls';
 import {OcrPanel} from '../features/ocr/OcrPanel';
 
 export function App() {
@@ -49,7 +52,7 @@ export function App() {
   }, []);
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" onDragOver={event=>{if(Array.from(event.dataTransfer.types).includes('Files'))event.preventDefault();}} onDrop={event=>{if(Array.from(event.dataTransfer.types).includes('Files'))event.preventDefault();}}>
       <a className="skip-link" href="#workspace-content">跳到主内容</a>
       <Sidebar />
       <div className="app-main">
@@ -57,10 +60,11 @@ export function App() {
         <DesktopExperience/>
         <PendingCardNotice/>
         <MarkdownExportStatus/>
+        <ImportStatus/>
         <WorkspaceSplit><main id="workspace-content" className="workspace-scroll" tabIndex={-1}>
           {error && <div className="error-banner" role="alert">{error}</div>}
           {settingsError && activeView !== 'settings' && <div className="error-banner" role="alert">{settingsError}<button className="secondary-button ml-3" onClick={() => useUiStore.getState().navigate('settings')}>打开设置</button></div>}
-          {activeView === 'editor' ? <Suspense fallback={<p className="p-6 text-sm text-muted" role="status">正在加载编辑器…</p>}><EditorView /></Suspense> : activeView==='card'?<KnowledgeCardView key={cardId}/>:activeView === 'settings' ? <SettingsView /> : activeView === 'tags' ? <TagsView /> : <LibraryView favorites={activeView === 'favorites'} />}
+          {activeView==='compare'?<Suspense fallback={<p role="status">正在加载对比工作区…</p>}><CompareView/></Suspense>:activeView==='guide'?<Suspense fallback={<p role="status">正在加载使用指南…</p>}><GuideView/></Suspense>:activeView === 'editor' ? <Suspense fallback={<p className="p-6 text-sm text-muted" role="status">正在加载编辑器…</p>}><EditorView /></Suspense> : activeView==='card'?<KnowledgeCardView key={cardId}/>:activeView === 'settings' ? <SettingsView /> : activeView === 'tags' ? <TagsView /> : <LibraryView favorites={activeView === 'favorites'} />}
         </main></WorkspaceSplit>
         <footer className="workspace-footer"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-faint" />本地工作区</span><span>图片与标注保存在本机</span></footer>
       </div>

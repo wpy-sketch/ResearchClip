@@ -1,3 +1,5 @@
+import {useCompareStore} from '../compare/store';
+import {useImageDrop} from '../import/use-image-drop';
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Images, RefreshCw, Star } from 'lucide-react';
 import { isTauri } from '@tauri-apps/api/core';
@@ -20,6 +22,7 @@ import {useMarkdownExportStore} from '../export/store';
 import {addExportSelection,toggleExportSelection} from '../export/selection';
 
 export function LibraryView({favorites}: {favorites:boolean}) {
+  const drop=useImageDrop('library');
   const exporting=useMarkdownExportStore(s=>s.busy);
   const [selected,setSelected]=useState<string[]>([]);
   const {viewMode, showWelcome, openCapture} = useUiStore();
@@ -42,10 +45,11 @@ export function LibraryView({favorites}: {favorites:boolean}) {
   const select=(ids:string[]|string)=>{try{setSelected(typeof ids==='string'?toggleExportSelection(selected,ids):addExportSelection(selected,ids));setOperationError(null);}catch(error){setOperationError(errorMessage(error,'无法选择卡片。'));}};
   const pages = Math.max(1, Math.ceil(total / LIBRARY_PAGE_SIZE));
   const filtered=Boolean(query||tagIds.length||favorite!==null);
-  return <div className="page-container">
+  return <div className={`page-container image-drop-target ${drop.over?'is-drag-over':''}`} data-image-drop-target="library" {...drop.handlers}>
     <div className="page-heading"><div><h2>{favorites ? '收藏' : '截图素材'}</h2>
       <p>{favorites ? '将值得反复回看的图像，留在这里。' : '图像和标注保存在本机应用数据目录中。'}</p>
     </div><span className="subtle-badge">{viewMode === 'grid' ? '网格视图' : '列表视图'}</span></div>
+    <p className="image-drop-hint">拖入 PNG / JPG / JPEG / WebP，或点击顶部剪贴板图标导入。每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。</p>
     {!favorites && <CapturePanel/>}
     {!favorites && showWelcome && !items.length && !loading && !filtered && <HomeView/>}
     {(error || operationError) && <p role="alert" className="error-banner my-3">{operationError ?? error}</p>}
@@ -77,7 +81,7 @@ export function LibraryView({favorites}: {favorites:boolean}) {
             onClick={() => void refresh(favorites)}><RefreshCw size={16}/></button>}
         </div>
       </div>
-      {isTauri()&&<div className="library-export-controls"><span>已选 {selected.length} 张 · 可跨页选择</span><button className="secondary-button" disabled={busy||!items.length} onClick={()=>select(items.map(item=>item.id))}>选择本页</button><button className="secondary-button" disabled={busy||!selected.length} onClick={()=>setSelected([])}>清空选择</button><MarkdownExportButton ids={selected} label="导出所选 Markdown" disabled={busy}/></div>}
+      {isTauri()&&<div className="library-export-controls"><span>已选 {selected.length} 张 · 可跨页选择</span><button className="secondary-button" disabled={busy||!items.length} onClick={()=>select(items.map(item=>item.id))}>选择本页</button><button className="secondary-button" disabled={busy||!selected.length} onClick={()=>setSelected([])}>清空选择</button><button className="secondary-button" disabled={busy||selected.length!==2} onClick={()=>{useCompareStore.getState().enter(useUiStore.getState().activeView);useUiStore.getState().navigate('compare');void useCompareStore.getState().loadPair(selected);}}>对比所选 2 张</button><MarkdownExportButton ids={selected} label="导出所选 Markdown" disabled={busy}/></div>}
       {items.length ? <div className={`library-cards ${viewMode}`}>
         {items.map(item => <LibraryCard key={item.id} item={item} disabled={busy}
           selected={selected.includes(item.id)} onSelect={()=>select(item.id)}

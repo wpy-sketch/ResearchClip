@@ -515,3 +515,16 @@ App → WorkspaceSplit：固定的original-workspace始终承载同一个main/�
 已保存重命名使用新增main-only rename_markdown_document(token,fileName)；只接收不透明既有授权及单个文件名，不接受任意目录或路径。复用DocumentFiles锁、捕获/文件操作许可和磁盘快照检测，限制在已授权文件的当前父目录；不写正文、不移动assets、不自动提交脏草稿、不改变savedFingerprint。成功更新同一token的路径，使后续保存到新文件；失败保留路径/草稿并在对话框显示错误。
 
 前后端均补.md并验证长度、控制字符、Windows非法字符/保留设备名；目标存在就拒绝覆盖。Windows调用已安装windows0.62.2的MoveFileW（新增启用Win32_Storage_FileSystem feature，无版本变更）；目标即使竞争出现也由原生API拒绝替换。官方 [MoveFileW契约](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-movefilew)及安装源码API已核对。仅大小写变化按同名处理，需先改中间名。非Windows的已保存文件原位重命名尚未启用，返回明确错误，仍可另存；未把Windows测试当作macOS验证。结果见 [命名验收](qa/MARKDOWN-RENAME.md)。
+
+
+## v0.1.8 外部图片导入与对比工作区
+
+`features/import` 管理显式导入、HTML5 File drop 与结果，不轮询剪贴板。Windows 主 WebView 关闭 Tauri 原生 drag-drop 拦截以允许 HTML5 文件数据；全局 drop 只阻止导航，实际操作限定素材库/活动 Markdown 目标。前端发送有界二进制文件封包，不传任意磁盘路径。
+
+Rust `services/image_import` 先验证大小和真实格式，再通过 image 0.25.10 解码 PNG/JPEG/WebP、应用 EXIF 方向、转换 RGBA8。单张20 MiB/16,777,216像素/16384边长，每批10张/64 MiB；解码器128 MiB预算为尽力限制，不承诺进程总内存绝对上限。Win32剪贴板仅用户触发读取，PNG优先，支持常见24/32位DIB；先GlobalSize限额再复制，RAII释放锁/句柄，关闭剪贴板后解码。非Windows明确不支持剪贴板适配。
+
+`commands/import` 的两个导入命令和 `choose_comparison_image` 均 main-only，使用现有捕获许可防止并发系统任务；无通用fs、clipboard-read或SQL权限。导入复用 LibraryService/create_screenshot 的唯一PNG、缩略图、pending恢复及参数化SQLite；逐图提交、逐图报错，失败不删除已完成项，不改迁移版本。重复导入产生独立ID。Markdown先预留既有文档会话，完成后复用addImages/合成/受管assets；插入失败保留库资料。
+
+`features/compare` 有独立Zustand状态与Blob生命周期，不与EditorSession混用。素材库使用已保存原图，本地图片经系统对话框选择并有界解码；不自动入库。A/B共享Editor几何变换工具及原像素左上角坐标，DOM图层呈现并排/clip分割/透明叠加，不分配巨幅合并画布、不拉伸或配准。退出撤销URL和代次，过期加载不能污染新会话；ResizeObserver和wheel监听器随组件释放。可选差异图未实施。
+
+GuideView复用仓库USER_GUIDE.md和安全Markdown预览；列表/网格仍使用同一库查询及当前页缩略图。新增页面不改变文档打开才挂载右分栏的规则。

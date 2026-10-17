@@ -1,0 +1,16 @@
+{
+  "mode": "actual Windows clipboard and WebView2, native WinForms/OLE file drops, real SQLite/files/restart; controlled image fixtures, not screen capture",
+  "checks": [
+    "startup/copying does not import automatically; an explicit click reads real Windows image clipboard, creates a real SQLite record and managed original/thumbnail",
+    "locked clipboard and text-only clipboard report clear errors without new records; repeating explicit image import makes a separate ID with the same pixels and never overwrites a prior image",
+    "real external PNG crosses a native Windows OLE drag into the actual HTML5 library target and persists with filename-derived title",
+    "a real multi-file OLE drop decodes JPEG and WebP, saves independent normalized PNGs and thumbnails, and refreshes actual library data",
+    "mixed valid, unsupported and corrupted files return per-file failures while the valid PNG is committed; no page crash or false batch success",
+    "a valid 4096x4096 boundary image imports and produces a 512px thumbnail; valid over-pixel image, >20MiB file and 11-file native drops fail safely with no extra database records",
+    "imported card can use existing rename and Konva annotation editing/save; managed original bytes remain unchanged",
+    "native multi-file drop into Markdown imports library records and inserts standard relative image references in order at the saved caret; annotations/notes remain editable, and a real Save dialog writes persistent PNG assets with no temporary paths",
+    "actual process restart retains imported library records, renamed title, editable annotation JSON and exported document; reopening resolves all assets and external original hashes are unchanged"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

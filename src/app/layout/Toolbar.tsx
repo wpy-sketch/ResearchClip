@@ -1,11 +1,12 @@
 import { BookTemplate, ChevronRight, FilePlus2, FileText, FolderOpen, LayoutGrid, List, Moon, Sun } from 'lucide-react';
+import {ClipboardImportButton} from '../../features/import/ImportControls';
 import { RecoverPinsButton } from '../../features/pins/RecoverPinsButton';
 import {QuickSearch} from '../../features/library/QuickSearch';
 import { useUiStore } from '../ui-store';
 import { useSettingsStore } from '../../features/settings/store';
 import {useDocumentStore} from '../../features/document/store';
 
-const titles = { screenshots: '截图素材', favorites: '收藏', tags: '标签', settings: '设置', editor: '图片编辑器',card:'科研知识卡片' };
+const titles = { screenshots: '截图素材', favorites: '收藏', tags: '标签', settings: '设置', editor: '图片编辑器',card:'科研知识卡片',compare:'图片对比',guide:'使用指南' };
 
 export function Toolbar() {
   const { activeView, theme, viewMode } = useUiStore();
@@ -17,6 +18,7 @@ export function Toolbar() {
       <div className="toolbar-primary-row">
         <QuickSearch/>
         <div className="toolbar-utilities">
+          <ClipboardImportButton/>
           <RecoverPinsButton/>
           <button className="icon-button" aria-label={theme === 'dark' ? '切换为浅色主题' : '切换为深色主题'} title={theme === 'dark' ? '切换为浅色主题' : '切换为深色主题'} onClick={toggleTheme}>{theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}</button>
         </div>

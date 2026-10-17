@@ -20,7 +20,7 @@ describe('workspace UI session state', () => {
   it('can restore the dismissed guide from another page', () => {
     const actions = useUiStore.getState();
     actions.dismissWelcome(); actions.navigate('tags'); actions.openCapture(); actions.openGuide();
-    expect(useUiStore.getState()).toMatchObject({ activeView: 'screenshots', showWelcome: true, overlay: null });
+    expect(useUiStore.getState()).toMatchObject({ activeView: 'guide', showWelcome: true, overlay: null });
   });
 
   it('keeps search text in the session while switching a single overlay', () => {

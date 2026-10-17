@@ -45,7 +45,7 @@ export function createDocumentStore(){
         const seed=get().templateSeed;if(!seed)return;
         const assets:Record<string,DocumentAsset>={};
         try{const document=templateDocument(seed);for(const [name,blob]of Object.entries(seed.assets))assets[name]={blob,url:URL.createObjectURL(blob)};
-          const old=get();dispose(old.assets);set({document,assets,token:null,path:null,fileName:normalizeMarkdownName(seed.name==='空白文档'?'untitled':seed.name),savedFingerprint:null,pending:null,templateSeed:null,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,error:null,notice:'已从模板创建独立草稿；原文档和模板未改动。'});await release(old.token);
+          const old=get();dispose(old.assets);set({document,assets,token:null,path:null,fileName:normalizeMarkdownName(seed.name),savedFingerprint:null,pending:null,templateSeed:null,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,error:null,notice:'已从模板创建独立草稿；原文档和模板未改动。'});await release(old.token);
         }catch(error){dispose(assets);set({error:errorMessage(error,'模板加载失败，当前文档未改动。'),pending:null,templateSeed:null});}
       }else{
         const old=get();dispose(old.assets);set({document:action==='new'?createDocument():action==='blank'?createBlankDocument():null,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,assets:{},token:null,path:null,fileName:action==='new'?'未命名文档.md':action==='blank'?'untitled.md':null,savedFingerprint:null,pending:null,templateSeed:null,error:null,notice:null});await release(old.token);

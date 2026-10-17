@@ -66,6 +66,9 @@
     "allow-load-markdown-template",
     "allow-create-markdown-template",
     "allow-rename-markdown-template",
-    "allow-delete-markdown-template"
+    "allow-delete-markdown-template",
+    "allow-import-clipboard-image",
+    "allow-import-image-files",
+    "allow-choose-comparison-image"
   ]
 }

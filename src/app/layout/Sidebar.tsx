@@ -1,11 +1,13 @@
-import { BookOpen, FlaskConical, HardDrive, Images, Plus, Settings2, Star, Tags } from 'lucide-react';
+import { BookOpen, Columns2, FlaskConical, HardDrive, Images, Plus, Settings2, Star, Tags } from 'lucide-react';
 import { useUiStore } from '../ui-store';
+import {useCompareStore} from '../../features/compare/store';
 import { useAppStore } from '../store';
 
 const items = [
   { id: 'screenshots', label: '截图素材', icon: Images },
   { id: 'favorites', label: '收藏', icon: Star },
   { id: 'tags', label: '标签', icon: Tags },
+  { id: 'compare', label: '图片对比', icon: Columns2 },
   { id: 'settings', label: '设置', icon: Settings2 },
 ] as const;
 
@@ -25,10 +27,10 @@ export function Sidebar() {
       <div className="workspace-label"><HardDrive size={14}/><span className="sidebar-label">本地工作区</span></div>
       <p className="sidebar-section-label">素材管理</p>
       <nav aria-label="主导航" className="space-y-1">
-        {items.map(({ id, label, icon: Icon }) => <button key={id} className={`nav-button ${activeView === id ? 'is-active' : ''}`} aria-label={label} aria-current={activeView === id ? 'page' : undefined} title={label} onClick={() => navigate(id)}><Icon size={20} strokeWidth={1.7} /><span className="sidebar-label">{label}</span></button>)}
+        {items.map(({ id, label, icon: Icon }) => <button key={id} className={`nav-button ${activeView === id ? 'is-active' : ''}`} aria-label={label} aria-current={activeView === id ? 'page' : undefined} title={label} onClick={() => {if(id==='compare'&&activeView!=='compare')useCompareStore.getState().enter(activeView);navigate(id);}}><Icon size={20} strokeWidth={1.7} /><span className="sidebar-label">{label}</span></button>)}
       </nav>
       <div className="sidebar-bottom">
-        <button className="nav-button" aria-label="使用指南" title="使用指南" onClick={openGuide}><BookOpen size={17} strokeWidth={1.7} /><span className="sidebar-label">使用指南</span></button>
+        <button className={`nav-button ${activeView === 'guide' ? 'is-active' : ''}`} aria-current={activeView === 'guide' ? 'page' : undefined} aria-label="使用指南" title="使用指南" onClick={openGuide}><BookOpen size={17} strokeWidth={1.7} /><span className="sidebar-label">使用指南</span></button>
         <div className="sidebar-version"><span className="sidebar-label">ResearchClip</span><span>{version ? `v${version}` : '…'}</span></div>
       </div>
     </aside>

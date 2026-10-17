@@ -1,0 +1,7 @@
+import {describe,it,expect} from 'vitest';
+import {validateFiles,packFiles,parseImportReport,MAX_IMPORT_FILE_BYTES} from './api';
+describe('explicit image import payloads and limits',()=>{
+  it('packs real file bytes in selection order, without transferring disk paths',async()=>{const a=new File([new Uint8Array([1,2,3])],'中文.png'),b=new File([new Uint8Array([4,5])],'note.webp');const body=await packFiles([a,b]),len=new DataView(body).getUint32(0,true),meta=JSON.parse(new TextDecoder().decode(new Uint8Array(body,4,len)));expect(meta).toEqual({files:[{name:'中文.png',size:3},{name:'note.webp',size:2}]});expect(Array.from(new Uint8Array(body,4+len))).toEqual([1,2,3,4,5]);});
+  it('rejects zero, oversize and excessive batches before file reading',()=>{expect(()=>validateFiles([])).toThrow();expect(()=>validateFiles(Array(11).fill({name:'x.png',size:1}))).toThrow();expect(()=>validateFiles([{name:'x.png',size:0}])).toThrow();expect(()=>validateFiles([{name:'x.png',size:MAX_IMPORT_FILE_BYTES+1}])).toThrow('20 MiB');expect(()=>validateFiles(Array(4).fill({name:'x.png',size:MAX_IMPORT_FILE_BYTES}))).toThrow('64 MiB');});
+  it('accepts explicit per-file failures and rejects malformed or contradictory reports',()=>{expect(parseImportReport({items:[{name:'bad.png',screenshot:null,error:'损坏'}]}).items[0].error).toBe('损坏');for(const data of [null,{items:[]},{items:[{name:'x',screenshot:null,error:null}]},{items:[{name:'x',screenshot:{},error:'error'}]}])expect(()=>parseImportReport(data)).toThrow();});
+});

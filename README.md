@@ -2,7 +2,9 @@
 
 面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
 
-当前为 **0.1.5 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+当前为 **0.1.8 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+
+新增剪贴板/文件拖拽导入、独立双图对比、紧凑列表/网格与应用内完整指南。见 [使用指南](docs/USER_GUIDE.md)、[0.1.8 发布说明](docs/RELEASE-NOTES-0.1.8.md) 和 [本轮验收](docs/qa/RELEASE-0.1.8.md)。v0.1.6/0.1.7 请求合并交付为 v0.1.8，不单独制造中间发布。
 
 Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
 
@@ -29,7 +31,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.5_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.8_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc
