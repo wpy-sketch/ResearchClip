@@ -167,3 +167,8 @@ src/styles.css
 ## 最终文档检查
 
 PASS / 0：`npm run check:docs`（48文档/298本地链接，9个项目命令与最小权限一致，v1/v2已发布迁移不变）；`npm run lint`、`git diff --check`。源码与公开下载结果另以发布回执记录。
+
+
+## GitHub发布结果
+
+PASS：v0.2.0普通Latest已发布；源码标签、3附件服务器摘要与匿名公开下载大小/SHA256一致，之前8个Release保留。[发布回执](PUBLICATION-0.2.0.md)记录下载、提交、元数据与校验。回执独立提交，不移动构建源码标签。
