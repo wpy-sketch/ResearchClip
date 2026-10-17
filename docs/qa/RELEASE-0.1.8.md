@@ -132,3 +132,8 @@ src/features/import/use-image-drop.ts
 src/features/library/LibraryView.tsx
 src/styles.css
 ```
+
+
+## 发布结果
+
+已发布普通Latest版本v0.1.8；源码标签、3附件服务器摘要及匿名公开下载哈希均验证PASS，原有7个Release保留。[发布回执](PUBLICATION-0.1.8.md)记录精确提交、下载、SHA256及网络重试。回执和公开元数据作为单独文档提交，不改变构建源码标签。
