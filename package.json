@@ -1,7 +1,7 @@
 {
   "name": "researchclip",
   "private": true,
-  "version": "0.1.8",
+  "version": "0.2.0",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -39,7 +39,8 @@
     "test:smoke:material": "node scripts/material-ui-smoke.mjs",
     "test:smoke:templates:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/templates-native-smoke.mjs",
     "test:smoke:import:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/import-native-smoke.mjs",
-    "test:smoke:compare:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/compare-native-smoke.mjs"
+    "test:smoke:compare:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/compare-native-smoke.mjs",
+    "test:smoke:projects:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/projects-native-smoke.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.3",

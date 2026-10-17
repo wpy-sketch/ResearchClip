@@ -2,9 +2,9 @@
 
 面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
 
-当前为 **0.1.8 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+当前为 **0.2.0 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
 
-新增剪贴板/文件拖拽导入、独立双图对比、紧凑列表/网格与应用内完整指南。见 [使用指南](docs/USER_GUIDE.md)、[0.1.8 发布说明](docs/RELEASE-NOTES-0.1.8.md) 和 [本轮验收](docs/qa/RELEASE-0.1.8.md)。v0.1.6/0.1.7 请求合并交付为 v0.1.8，不单独制造中间发布。
+新增科研项目逻辑分组、截图与Markdown文档关联、跨页筛选全选和批量整理；指南按任务分组并可搜索章节。详见 [0.2.0发布说明](docs/RELEASE-NOTES-0.2.0.md) 与 [项目/批量验收](docs/qa/RELEASE-0.2.0.md)。此前剪贴板/文件拖拽导入、独立双图对比、紧凑列表/网格继续保留。见 [使用指南](docs/USER_GUIDE.md)、[0.1.8 发布说明](docs/RELEASE-NOTES-0.1.8.md) 和 [本轮验收](docs/qa/RELEASE-0.1.8.md)。v0.1.6/0.1.7 请求合并交付为 v0.1.8，不单独制造中间发布。
 
 Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
 
@@ -31,7 +31,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.8_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_0.2.0_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc
@@ -56,7 +56,7 @@ scripts/with-rust.mjs 优先使用项目内 .tools 工具链，否则使用 PATH
 - 文件夹通过系统目录对话框选择。默认保存目录决定“保存 PNG”的系统另存为起始位置，不移动旧截图、不自动保存。目录不可用时设置页和保存操作明确报错并保留配置，请重新选择；权限/空间问题在实际写入时报错。
 - 截图完成后提供复制图片、保存 PNG、打开编辑器、取消。复制使用官方插件的 RGBA 图片 API；保存是原始 PNG，经系统对话框授权，同目录暂存、sync 和禁止覆盖提交。同名文件即使经过系统提示也不会被覆盖，请选择新名称。
 - 全屏和区域均只缓存一张有大小上限的 PNG；前端用不透明 captureId 读取。替换/取消释放资源，不开放任意路径读写。以前的临时 PNG 不被删除。
-- 不上传屏幕内容，不在普通日志打印像素、图片或完整资料路径。SQLite现为schema v2，保留旧app_metadata；主界面通过受限业务命令读取真实素材。
+- 不上传屏幕内容，不在普通日志打印像素、图片或完整资料路径。SQLite现为schema v3，保留旧app_metadata；主界面通过受限业务命令读取真实素材。
 
 使用官方 [global-shortcut](https://docs.rs/tauri-plugin-global-shortcut/2.4.1/tauri_plugin_global_shortcut/)、[clipboard-manager](https://docs.rs/tauri-plugin-clipboard-manager/2.4.2/tauri_plugin_clipboard_manager/struct.Clipboard.html) 与 [dialog](https://docs.rs/tauri-plugin-dialog/2.8.2/tauri_plugin_dialog/struct.FileDialogBuilder.html)，均为 MIT/Apache-2.0。插件仅由受限 Rust 用例调用，前端没有通用文件系统、剪贴板读取或快捷键注册权限。
 
@@ -243,3 +243,14 @@ scripts/ docs/                # 检查、冒烟、架构和验收
 ## 高级图片标注
 
 编辑器新增“马赛克”“局部模糊”“编号”。前两者拖动矩形创建，选择对象后移动/调整手柄及强度；编号点击创建，可改颜色、大小和数字，删除不重排其他编号。所有数据按原图像素保存，使用原有撤销/重做、可编辑项目和素材库。滤镜真实应用于导出 PNG，并保留透明度；原图不覆盖。滤镜在原图层处理，其他矢量标注在上方。详细范围、资源上限及实际验收见 [高级标注验收](docs/qa/RELEASE-0.1.4.md)。
+
+
+## 科研项目与批量整理（v0.2.0）
+
+素材库上方创建/重命名项目，切换全部素材、未分类或具体项目，并显示图片/文档数量。每图最多一个项目，标签跨项目共享；移动只写SQLite关系，不改变原图、ID、标注、笔记或来源。项目仅允许确认删除空项目，不提供隐式删除项目内数据。
+
+Ctrl点击图片/标题多选，Shift选择本页范围，可跨页勾选；全选当前筛选结果包含所有分页（上限5000，超限明确拒绝）。批量添加标签是合并，支持移动、收藏/取消收藏、Markdown导出（每批100）和数量确认删除。批量写入使用带版本校验的事务；删除清理任务先持久提交、失败保留供恢复。取消删除不会删除图片。
+
+Markdown仍为标准外部.md与assets；通过应用打开/保存后登记受限文件引用，可在面板或文档列表关联项目并重开。未保存草稿不登记；应用内重命名保持同一文档ID，另存为独立文档。应用外移动文件需重新打开登记；不扫描磁盘，也不将正文复制进数据库。
+
+SQLite v2→v3升级会先验证并备份，新增projects、screenshot_projects和markdown_documents表及索引；不重写既有迁移、不搬移资料。旧版程序会拒绝写入v3，请保留升级备份并用新版本打开，勿删除数据库解决版本问题。完整操作和数据安全见[指南第5节](docs/USER_GUIDE.md#5-科研项目与批量整理)。

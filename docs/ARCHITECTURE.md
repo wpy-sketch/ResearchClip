@@ -528,3 +528,18 @@ Rust `services/image_import` 先验证大小和真实格式，再通过 image 0.
 `features/compare` 有独立Zustand状态与Blob生命周期，不与EditorSession混用。素材库使用已保存原图，本地图片经系统对话框选择并有界解码；不自动入库。A/B共享Editor几何变换工具及原像素左上角坐标，DOM图层呈现并排/clip分割/透明叠加，不分配巨幅合并画布、不拉伸或配准。退出撤销URL和代次，过期加载不能污染新会话；ResizeObserver和wheel监听器随组件释放。可选差异图未实施。
 
 GuideView复用仓库USER_GUIDE.md和安全Markdown预览；列表/网格仍使用同一库查询及当前页缩略图。新增页面不改变文档打开才挂载右分栏的规则。
+
+
+## v0.2.0 科研项目、文档索引与批量事务
+
+数据库通过003_projects.sql升级至schema v3，001/002保持不可变。现有备份/完整性校验/事务迁移覆盖v1/v2→v3，失败回滚、不重置原库。新表projects（唯一规范名称、创建/更新时间）、screenshot_projects（截图ID主键，project外键RESTRICT）、markdown_documents（唯一文件路径、显示名、可空项目、登记时间）。图片成员删除随截图CASCADE，项目删除仅在两类计数都为0时允许；没有删除项目内资料的隐式入口。共享标签表保持原样，不改Screenshot/Annotation/Note格式及原图路径。
+
+search::LibraryFilter增加可缺省projectId/unclassified，与关键词、标签AND、收藏和排序组合。分页与全选复用同一参数化谓词；select_library_screenshots只返回ID/revision，最多5000，超限整次拒绝，不加载全量图像。Ctrl多选与Shift本页范围保存同一ID/revision快照，跨页可累加；切换筛选清空。原有导出100张/资源预算保持，界面明确限制。
+
+batch_library_screenshots接受显式版本快照及固定动作枚举，不接SQL/任意文件路径。BEGIN IMMEDIATE校验全部版本；移动、追加标签、收藏、删除在同一事务执行，任何失败全部回滚。标签合并保持原关联、全局1000/每卡100上限。元数据变更只递增截图revision，不改标注/笔记/来源。前端先flush所选脏卡，暂时锁卡片输入；成功后同步已知revision的Editor绑定、重新加载干净卡，失败保留选择和草稿，不自动重试。
+
+批量删除必须携带与快照相等的confirmedCount；UI对话框显示N及实际删除范围。事务删除记录并写入既有pending_file_deletions，提交后仅清理受管且已无引用的originals/ID.png和thumbnails/ID.png。一次清理沿用200任务预算，剩余可重试/重启，不删除Markdown、assets或外部源图。打开的编辑草稿解除旧库绑定并保留。真正退出在批量工作期间被门控。
+
+Markdown沿用DocumentFiles与标准.md。前端文件服务在打开/保存/改名后用不透明token调用sync_project_document；后端只能解析已有Grant，不能接任意路径。DocumentFiles记住每个已登记token的前一路径，应用内改名同步同一索引ID及项目；另存为生成新索引。sync失败与文件保存结果分开显示，文件已保存不假装失败或删除，面板允许重试登记。open_project_document只接受数据库ID，经现有普通文件/扩展名/大小/资源校验重开；文档替换仍经过原脏草稿确认。项目仅索引路径，不扫描磁盘，不复制Markdown正文。应用外移动/改名会保留缺失引用，需要重新打开新位置；不跟踪外部文件身份或自动修复路径。
+
+main新增9个项目业务命令，capture-overlay和pin权限不变，无通用fs/SQL或新依赖。GuideView复用同一USER_GUIDE.md，按采集、资料项目、图片工具、Markdown写作、设置安全分组；搜索仅过滤章节目录，正文可持续阅读，不改变动态分栏规则。

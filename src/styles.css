@@ -472,3 +472,40 @@ html[data-desktop-pin] body, html[data-desktop-pin] #root { margin: 0; width: 10
 .library-export-controls { padding:8px 10px; border-radius:10px; background:color-mix(in srgb,var(--rc-accent-soft) 50%,var(--rc-surface)); }
 .library-count { font-variant-numeric:tabular-nums; }
 .library-card .library-title-button h3 { font-weight:600; letter-spacing:.01em; }
+
+
+/* Project grouping is a compact scope above the existing, paged library. */
+.project-workspace { margin:18px 0; border:1px solid var(--rc-edge); border-radius:18px; background:var(--rc-surface); overflow:hidden; }
+.project-filter-row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:12px; }
+.project-filter-row label,.document-project label { display:flex; align-items:center; gap:8px; min-width:0; font-size:12px; color:var(--rc-muted); }
+.project-filter-row select,.document-project select,.project-document-row select { min-width:0; max-width:240px; padding:7px 10px; border:1px solid var(--rc-edge); border-radius:10px; color:var(--rc-primary); background:var(--rc-canvas); }
+.project-scope { display:flex; gap:4px; background:var(--rc-canvas); border-radius:12px; padding:3px; }
+.project-scope .is-selected { background:var(--rc-accent-soft); color:var(--rc-accent); border-color:transparent; }
+.project-document-list { border-top:1px solid var(--rc-edge); padding:10px 14px; }
+.project-document-list summary { display:flex; gap:8px; align-items:center; cursor:pointer; color:var(--rc-muted); font-size:12px; }
+.project-document-list>p { margin:12px 0; }
+.project-document-row { display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--rc-edge); font-size:12px; }
+.project-document-name { flex:1; min-width:100px; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--rc-accent); }
+.project-document-row>span { color:var(--rc-muted); }
+.project-name-input { display:block; width:100%; padding:10px 12px; margin-top:10px; border:1px solid var(--rc-edge); border-radius:12px; background:var(--rc-canvas); }
+.document-project { display:flex; flex-wrap:wrap; align-items:center; gap:6px; padding:4px 10px; flex-shrink:0; border-bottom:1px solid var(--rc-edge); font-size:11px; color:var(--rc-muted); }
+.document-project select { max-width:160px; padding:3px 8px; }
+.bulk-workspace { margin:12px 0 18px; border:1px solid var(--rc-edge); border-radius:14px; background:color-mix(in srgb,var(--rc-accent-soft) 38%,var(--rc-surface)); padding:12px; }
+.bulk-selection-summary { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:10px; font-size:12px; }
+.bulk-selection-summary strong { color:var(--rc-accent); font-variant-numeric:tabular-nums; }
+.bulk-selection-summary span { color:var(--rc-muted); }
+.bulk-actions { display:flex; flex-wrap:wrap; gap:7px; }
+.bulk-actions .secondary-button { font-size:12px; padding:6px 10px; }
+.bulk-notice { color:var(--rc-muted); font-size:12px; margin:10px 0; }
+.library-card.is-selected { border-color:var(--rc-accent); box-shadow:inset 0 0 0 1px var(--rc-accent); }
+.guide-search { display:block; width:100%; background:var(--rc-canvas); border:1px solid var(--rc-edge); border-radius:12px; padding:10px 12px; margin-bottom:16px; font-size:12px; }
+.guide-topic-group { margin-bottom:14px; }
+.guide-topic-group>h3 { font-size:11px; font-weight:600; color:var(--rc-primary); padding:4px 9px; letter-spacing:.04em; }
+.guide-content .document-preview { max-width:80ch; margin:auto; line-height:1.85; }
+.guide-content .document-preview h2 { border-top:1px solid var(--rc-edge); padding-top:24px; margin-top:36px; scroll-margin-top:16px; }
+.guide-content .document-preview blockquote { margin:18px 0; border-left:3px solid var(--rc-accent); background:var(--rc-accent-soft); padding:12px 16px; border-radius:0 12px 12px 0; }
+.guide-content .document-preview li { margin:7px 0; }
+@media(max-width:700px) { .project-filter-row { gap:7px; padding:10px; } .project-filter-row label { flex:1 1 100%; } .project-filter-row select { flex:1; max-width:100%; } .guide-workspace { padding:12px; } .guide-content .document-preview { padding:16px; } }
+@media(max-height:500px) { .document-project { padding-block:2px; } .document-project select { padding-block:1px; } }
+
+@media(max-height:500px) { .markdown-panel-footer { display:none; } .markdown-notice { margin-block:2px !important; } }

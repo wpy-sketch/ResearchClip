@@ -1,0 +1,10 @@
+{
+  "mode": "actual Edge renderer; preview only, no native capture or database claims",
+  "checks": [
+    "single sidebar capture action and separate full-width search row; no duplicate capture entry",
+    "dark theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "page.evaluate: TypeError: Cannot read properties of null (reading 'getBoundingClientRect')\n    at rect (eval at evaluate (:370:30), <anonymous>:1:54)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:239)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at bounds (D:\\文档\\ChatGPT\\ResearchClip\\scripts\\material-ui-smoke.mjs:11:37)\n    at D:\\文档\\ChatGPT\\ResearchClip\\scripts\\material-ui-smoke.mjs:20:140"
+}

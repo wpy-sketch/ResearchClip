@@ -1,3 +1,4 @@
+import type {MouseEvent} from 'react';
 import { useEffect, useState } from 'react';
 import { ImageOff, Pencil, RotateCw, Star, Trash2 } from 'lucide-react';
 import { screenshotImage } from '../../shared/api/library';
@@ -6,7 +7,7 @@ import { errorMessage } from '../../shared/api/errors';
 
 import {InsertButton} from '../document/InsertButton';
 
-function Thumbnail({item, disabled, onOpen}: {item:ScreenshotSummary; disabled:boolean; onOpen:()=>void}) {
+function Thumbnail({item, disabled, onOpen}: {item:ScreenshotSummary; disabled:boolean; onOpen:(event:MouseEvent)=>void}) {
   const [attempt, setAttempt] = useState(0);
   const key = `${item.id}:${attempt}`;
   const [resource, setResource] = useState<{key:string; url?:string; error?:string} | null>(null);
@@ -42,21 +43,21 @@ function Thumbnail({item, disabled, onOpen}: {item:ScreenshotSummary; disabled:b
 interface Props {
   item: ScreenshotSummary;
   disabled: boolean;
-  onOpen: () => void;
+  onOpen: (event:MouseEvent) => void;
   onEdit: () => void;
   onFavorite: () => void;
   onRename: () => void;
   onDelete: () => void;
   selected:boolean;
-  onSelect:()=>void;
+  onSelect:(event:MouseEvent)=>void;
 }
 const formatDate = new Intl.DateTimeFormat('zh-CN', {year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false});
 
 export function LibraryCard({item, disabled, onOpen, onEdit, onFavorite, onRename, onDelete,selected,onSelect}: Props) {
-  return <article data-screenshot-id={item.id} className="library-card">
+  return <article data-screenshot-id={item.id} className={`library-card ${selected?'is-selected':''}`}>
     <Thumbnail item={item} disabled={disabled} onOpen={onOpen}/>
     <div className="library-card-content">
-      <label className="library-export-selection"><input type="checkbox" aria-label={`选择导出 ${item.title}`} checked={selected} disabled={disabled} onChange={onSelect}/>选择导出</label>
+      <label className="library-export-selection"><input type="checkbox" aria-label={`选择导出 ${item.title}`} checked={selected} disabled={disabled} onChange={()=>{}} onClick={onSelect}/>选择素材</label>
       <button className="library-title-button" disabled={disabled} onClick={onOpen} aria-label={`打开素材 ${item.title}`}>
         <h3 title={item.title}>{item.title}</h3>
       </button>

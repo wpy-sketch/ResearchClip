@@ -653,14 +653,14 @@ fn row(r: &Row<'_>) -> rusqlite::Result<Screenshot> {
     })
 }
 impl Storage {
-    fn new_id(&self) -> Result<String, StorageError> {
+    pub(super) fn new_id(&self) -> Result<String, StorageError> {
         Ok(self
             .connection
             .query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))?)
     }
     pub fn library_status(&self) -> Result<LibraryStatus, StorageError> {
         Ok(LibraryStatus {
-            schema_version: 2,
+            schema_version: 3,
             pending_writes: self.connection.query_row(
                 "SELECT count(*) FROM pending_screenshots",
                 [],
@@ -974,7 +974,7 @@ impl Storage {
             pending_cleanup: self.library_status()?.pending_cleanup,
         })
     }
-    fn cleanup(&mut self) -> Result<(), StorageError> {
+    pub(super) fn cleanup(&mut self) -> Result<(), StorageError> {
         let jobs = self
             .connection
             .prepare("SELECT relative_path,screenshot_id FROM pending_file_deletions LIMIT 200")?

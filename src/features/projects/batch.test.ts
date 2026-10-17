@@ -1,0 +1,20 @@
+import type {EditorSession} from '../editor/types';
+import {beforeEach,describe,it,expect,vi} from 'vitest';
+import {useBatchStore} from './batch';
+import {useCardStore} from '../notes/store';
+import {useEditorStore} from '../editor/store';
+import {useSelectionStore} from './selection';
+const api=vi.hoisted(()=>({batchLibraryScreenshots:vi.fn()}));vi.mock('./api',()=>api);
+vi.mock('./store',()=>({useProjectStore:{getState:()=>({refresh:async()=>{}})}}));
+vi.mock('../library/store',()=>({useLibraryStore:{getState:()=>({refresh:async()=>{},projectId:null,unclassified:false})}}));
+vi.mock('../tags/store',()=>({useTagStore:{getState:()=>({refresh:async()=>{}})}}));
+const id='a'.repeat(32),items=[{id,revision:1}];
+beforeEach(()=>{vi.clearAllMocks();useCardStore.setState({sessions:{},deletingIds:[],activeId:null});useEditorStore.setState({sessions:{},activeId:null});useSelectionStore.setState({items});useBatchStore.setState({busy:false,error:null,notice:null});api.batchLibraryScreenshots.mockResolvedValue({affected:1,pendingCleanup:0});});
+describe('batch workflow (mocked IPC; native cancellation tested separately)',()=>{
+ it('does not perform a deletion merely because an item is selected',()=>{expect(useSelectionStore.getState().items).toEqual(items);expect(api.batchLibraryScreenshots).not.toHaveBeenCalled();});
+ it('passes an explicit deletion count, clears selection only after success and releases locks',async()=>{expect(await useBatchStore.getState().run(items,{kind:'delete',confirmedCount:1})).toBe(true);expect(api.batchLibraryScreenshots).toHaveBeenCalledWith(items,{kind:'delete',confirmedCount:1});expect(useSelectionStore.getState().items).toEqual([]);expect(useCardStore.getState().deletingIds).toEqual([]);});
+ it('preserves selection on transaction conflict and does not leave card locks',async()=>{api.batchLibraryScreenshots.mockRejectedValueOnce(new Error('revision conflict'));expect(await useBatchStore.getState().run(items,{kind:'favorite',value:true})).toBe(false);expect(useSelectionStore.getState().items).toEqual(items);expect(useCardStore.getState().deletingIds).toEqual([]);expect(useBatchStore.getState().error).toContain('conflict');});
+ it('stops before IPC when a selected note cannot be flushed',async()=>{useCardStore.setState({sessions:{[id]:{id,card:null,draft:null,version:1,savedVersion:0,status:'error',error:'disk'}}});vi.spyOn(useCardStore.getState(),'flush').mockResolvedValueOnce(false);expect(await useBatchStore.getState().run(items,{kind:'move',projectId:null})).toBe(false);expect(api.batchLibraryScreenshots).not.toHaveBeenCalled();expect(useCardStore.getState().sessions[id].version).toBe(1);});
+ it('rebases only the known editor revision while preserving unsaved vectors and history',async()=>{const session:EditorSession={image:{id:'edit',name:'图片',widthPx:2,heightPx:2,blob:new Blob(),url:'blob:test',libraryId:id,libraryRevision:1},document:{schemaVersion:1,image:{widthPx:2,heightPx:2},objects:[{id:'r',type:'rectangle',x:0,y:0,width:1,height:1,color:'#ffffff',strokeWidth:1}]},viewport:{x:0,y:0,scale:1,mode:'fit'},selectedId:'r',loadError:null,savedDocument:'older',history:{past:[[]],future:[]}};useEditorStore.setState({sessions:{edit:session}});expect(await useBatchStore.getState().run(items,{kind:'favorite',value:true})).toBe(true);const current=useEditorStore.getState().sessions.edit;expect(current.image.libraryRevision).toBe(2);expect(current.document).toBe(session.document);expect(current.history).toBe(session.history);expect(current.savedDocument).toBe('older');});
+ it('prevents concurrent duplicate actions',async()=>{useBatchStore.setState({busy:true});expect(await useBatchStore.getState().run(items,{kind:'favorite',value:true})).toBe(false);expect(api.batchLibraryScreenshots).not.toHaveBeenCalled();});
+});

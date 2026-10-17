@@ -7,10 +7,10 @@ export interface Screenshot extends Omit<ScreenshotSummary,'imageAvailable'|'thu
 export const LIBRARY_PAGE_SIZE = 24;
 export type LibrarySort = 'createdDesc' | 'createdAsc';
 export interface ScreenshotPage {items:ScreenshotSummary[]; total:number; page:number; limit:number; sort:LibrarySort}
-export interface LibraryStatus {schemaVersion:2; pendingWrites:number; pendingCleanup:number; warnings:string[]}
+export interface LibraryStatus {schemaVersion:3; pendingWrites:number; pendingCleanup:number; warnings:string[]}
 export interface Note {id:string;screenshotId:string;content:string;sourceUrl:string|null;createdAt:number;updatedAt:number;revision:number}
 export interface Tag {id:string;name:string}
-export interface LibraryFilter {query:string;tagIds:string[];favorite:boolean|null}
+export interface LibraryFilter {query:string;tagIds:string[];favorite:boolean|null;projectId?:string|null;unclassified?:boolean}
 export interface KnowledgeCard {screenshot:ScreenshotSummary;note:Note|null;tags:Tag[];additionalNoteCount:number}
 export interface CardDraft {title:string;content:string;sourceUrl:string;tagNames:string[];isFavorite:boolean}
 const object=(v:unknown):v is Record<string,unknown>=>Boolean(v)&&typeof v==='object'&&!Array.isArray(v);
@@ -22,7 +22,7 @@ function metadata(v:unknown) {
 }
 export function parseScreenshot(v:unknown):Screenshot {const meta=metadata(v);if(!object(v))throw new Error('素材记录无效。');const annotationData=parseDocument(v.annotationData);if(annotationData.image.widthPx!==meta.widthPx||annotationData.image.heightPx!==meta.heightPx)throw new Error('素材与标注尺寸不一致。');return {...meta,annotationData};}
 export function parseSummary(v:unknown):ScreenshotSummary {const meta=metadata(v);if(!object(v)||typeof v.imageAvailable!=='boolean'||typeof v.thumbnailAvailable!=='boolean')throw new Error('素材列表响应无效。');return {...meta,imageAvailable:v.imageAvailable,thumbnailAvailable:v.thumbnailAvailable};}
-export function parseStatus(v:unknown):LibraryStatus {if(!object(v)||v.schemaVersion!==2||!integer(v.pendingWrites)||!integer(v.pendingCleanup)||!Array.isArray(v.warnings)||v.warnings.some(s=>typeof s!=='string'))throw new Error('工作区状态无效。');return {schemaVersion:2,pendingWrites:v.pendingWrites,pendingCleanup:v.pendingCleanup,warnings:v.warnings as string[]};}
+export function parseStatus(v:unknown):LibraryStatus {if(!object(v)||v.schemaVersion!==3||!integer(v.pendingWrites)||!integer(v.pendingCleanup)||!Array.isArray(v.warnings)||v.warnings.some(s=>typeof s!=='string'))throw new Error('工作区状态无效。');return {schemaVersion:3,pendingWrites:v.pendingWrites,pendingCleanup:v.pendingCleanup,warnings:v.warnings as string[]};}
 function desktop(){if(!isTauri())throw new Error('素材库持久化需要在桌面应用中使用。');}
 async function call(name:string,args?:Record<string,unknown>|ArrayBuffer):Promise<unknown>{desktop();return invoke(name,args);}
 export async function packScreenshot(blob:Blob,title:string,document:AnnotationDocument):Promise<ArrayBuffer>{

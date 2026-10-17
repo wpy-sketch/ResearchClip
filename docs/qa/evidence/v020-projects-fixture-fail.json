@@ -1,0 +1,12 @@
+{
+  "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+  "checks": [
+    "actual startup upgrades a populated v2 SQLite to v3, creates a readable schema-2 backup, retains 32 records and unchanged original file hashes",
+    "real UI creates and renames projects; cancelling empty-project deletion preserves it, confirming removes only the empty logical group",
+    "actual Ctrl clicks toggle independent cards, Shift extends the visible range and those manually selected cards successfully pass the strict bulk-write IPC; select-all resolves all 28 matching records across pages without selecting four nonmatching records",
+    "28 selected images move transactionally into a project, filtered counts agree, nonempty project deletion is refused and no image paths change"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n31 !== 28\n\n    at file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:43:588"
+}

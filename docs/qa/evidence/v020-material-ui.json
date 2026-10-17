@@ -1,0 +1,15 @@
+{
+  "mode": "actual Edge renderer; preview only, no native capture or database claims",
+  "checks": [
+    "single sidebar capture action and separate full-width search row; no duplicate capture entry",
+    "dark theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+    "dark: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+    "light theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+    "light: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+    "moved capture button still opens existing capture dialog; Escape closes it",
+    "Markdown entry, split visibility, draft across navigation, cancel/discard close and full-width restoration still work",
+    "system theme follows OS media changes without resetting the preference"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

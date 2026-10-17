@@ -63,6 +63,7 @@ struct Grant {
 pub struct DocumentFiles {
     grants: HashMap<String, Grant>,
     sequence: u64,
+    indexed: HashMap<String, PathBuf>,
 }
 fn names(markdown: &str) -> Result<BTreeSet<String>, CaptureError> {
     let mut result = BTreeSet::new();
@@ -241,6 +242,19 @@ impl DocumentFiles {
     }
     pub fn release(&mut self, token: &str) {
         self.grants.remove(token);
+        self.indexed.remove(token);
+    }
+    pub fn index_paths(&self, token: &str) -> Result<(PathBuf, Option<PathBuf>), CaptureError> {
+        let path = self
+            .grants
+            .get(token)
+            .ok_or_else(|| failure("文档授权已失效。"))?
+            .path
+            .clone();
+        Ok((path, self.indexed.get(token).cloned()))
+    }
+    pub fn mark_indexed(&mut self, token: &str, path: PathBuf) {
+        self.indexed.insert(token.into(), path);
     }
     pub fn rename(&mut self, token: &str, file_name: &str) -> Result<SavedDocument, CaptureError> {
         let name = normalized_name(file_name)?;

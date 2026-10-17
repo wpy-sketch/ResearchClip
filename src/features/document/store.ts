@@ -8,10 +8,11 @@ import type {MarkdownDocument,DocumentAsset,ImageBlock} from './model';
 import {saveDocumentFile,openDocumentFile,releaseDocument,renameDocumentFile} from './api';
 import {templateDocument,type TemplateSeed} from './templates';
 import {normalizeMarkdownName} from './file-name';
-export type DocumentAction='new'|'blank'|'open'|'close'|'template';
+export type DocumentAction='new'|'blank'|'open'|'close'|'template'|'project';
 interface TextEdit {document:MarkdownDocument;caret:{start:number;end:number}}
 const bounded=(items:TextEdit[])=>{let bytes=0;return items.slice(-100).reverse().filter(item=>{bytes+=JSON.stringify(item.document).length*2;return bytes<=8*1024*1024;}).reverse();};
 interface State {
+  projectOpenId:string|null;openProject:(id:string)=>Promise<void>;
   insertText:(text:string)=>boolean;
   templateDialog:'choose'|'save'|null; setTemplateDialog:(dialog:'choose'|'save'|null)=>void;
   templateSeed:TemplateSeed|null; createFromTemplate:(seed:TemplateSeed)=>Promise<void>;
@@ -30,10 +31,10 @@ export function createDocumentStore(){
   return create<State>((set,get)=>{
     const release=async(token:string|null)=>{try{await releaseDocument(token);}catch{set({error:'旧文档文件授权未能释放；已有文件未改动，请保存当前文档后重启。'});}};
     const run=async(action:DocumentAction)=>{
-      if(action==='open'){
+      if(action==='open'||action==='project'){
         set({phase:'opening',error:null,notice:null,pending:null});let openedToken:string|null=null;
         try{
-          const disk=await openDocumentFile();if(!disk)return;
+          const disk=await openDocumentFile(action==='project'?get().projectOpenId??undefined:undefined);if(!disk)return;
           openedToken=disk.token;const document=parseMarkdown(disk.markdown,disk.path.split(/[\\/]/).at(-1));
           for(const b of document.blocks)if(b.type==='image'&&!disk.assets[b.assetName])throw new Error('文档引用的图片缺失，当前草稿已保留。');
           const assets:Record<string,DocumentAsset>={};
@@ -68,6 +69,7 @@ export function createDocumentStore(){
       set({caret:{start:start+inserted.length,end:start+inserted.length},past:bounded([...s.past,{document,caret:s.caret}]),future:[],focusRequest:s.focusRequest+1});return next;
     };
     return {
+      projectOpenId:null,openProject:async(id)=>{if(get().phase!=='idle'||get().pending)return;set({projectOpenId:id});await get().request('project');},
       templateDialog:null,setTemplateDialog:(templateDialog)=>set({templateDialog}),
       templateSeed:null,
       createFromTemplate:async(seed)=>{if(get().phase!=='idle'||get().pending)return;try{templateDocument(seed);normalizeMarkdownName(seed.name);set({templateSeed:seed});await get().request('template');}catch(error){set({error:errorMessage(error,'模板无效。')});}},

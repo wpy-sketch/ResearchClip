@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 2;
+pub const SCHEMA_VERSION: u32 = 3;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -11,7 +11,7 @@ fn apply_migration(
 ) -> Result<(), StorageError> {
     let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
     transaction.execute_batch(sql)?;
-    if version == 2 {
+    if version >= 2 {
         validate_schema(&transaction, version)?;
     }
     transaction.pragma_update(None, "user_version", version)?;
@@ -72,6 +72,13 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/002_library.sql"),
         )?;
     }
+    if version < 3 {
+        apply_migration(
+            connection,
+            3,
+            include_str!("../../migrations/003_projects.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
@@ -100,6 +107,15 @@ fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageE
             .is_some()
         {
             return Err(StorageError::Invalid("资料外键校验失败，未重置数据库。"));
+        }
+    }
+    if version >= 3 {
+        for sql in [
+            "SELECT id,name,normalized_name,created_at,updated_at FROM projects LIMIT 0",
+            "SELECT screenshot_id,project_id FROM screenshot_projects LIMIT 0",
+            "SELECT id,path,name,project_id,created_at,updated_at FROM markdown_documents LIMIT 0",
+        ] {
+            connection.prepare(sql)?;
         }
     }
     Ok(())
@@ -147,7 +163,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 2);
+        assert_eq!(storage.status().unwrap().schema_version, 3);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()

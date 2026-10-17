@@ -69,6 +69,15 @@
     "allow-delete-markdown-template",
     "allow-import-clipboard-image",
     "allow-import-image-files",
-    "allow-choose-comparison-image"
+    "allow-choose-comparison-image",
+    "allow-list-projects",
+    "allow-save-project",
+    "allow-delete-empty-project",
+    "allow-select-library-screenshots",
+    "allow-batch-library-screenshots",
+    "allow-list-project-documents",
+    "allow-assign-project-document",
+    "allow-sync-project-document",
+    "allow-open-project-document"
   ]
 }

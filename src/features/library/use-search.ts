@@ -15,5 +15,5 @@ export function useDebouncedSearch(enabled:boolean,composing:boolean){
 }
 export function clearLibraryFilters(){
   useUiStore.getState().setSearchQuery('');useUiStore.getState().navigate('screenshots');
-  void useLibraryStore.getState().refresh(false,{query:'',tagIds:[],favorite:null,sort:'createdDesc',page:0});
+  void useLibraryStore.getState().refresh(false,{query:'',tagIds:[],favorite:null,projectId:null,unclassified:false,sort:'createdDesc',page:0});
 }

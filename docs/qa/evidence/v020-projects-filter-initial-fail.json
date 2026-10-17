@@ -1,0 +1,17 @@
+{
+  "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+  "checks": [
+    "actual startup upgrades a populated v2 SQLite to v3, creates a readable schema-2 backup, retains 32 records and unchanged original file hashes",
+    "real UI creates and renames projects; cancelling empty-project deletion preserves it, confirming removes only the empty logical group",
+    "actual Ctrl clicks toggle independent cards and Shift extends the visible range; select-all resolves all 28 matching records across pages without selecting four nonmatching records",
+    "28 selected images move transactionally into a project, filtered counts agree, nonempty project deletion is refused and no image paths change",
+    "bulk tag addition shares the same two tag IDs across 28 images and preserves prior notes/source; bulk favorite updates exactly the selected set",
+    "the real batch-delete dialog names all 28 images; Cancel makes no deletion or file changes",
+    "bulk export uses a real Windows folder picker and creates standard Markdown with 28 valid relative PNG assets",
+    "saved Markdown is indexed without copying body or moving assets, associated with the project, reopened by its database ID through the existing pane with unchanged UTF-8 file bytes",
+    "grouped/searchable 14-section guide and 480px layout work while the right draft remains; actual process restart restores project membership/counts, tags, favorite flags and the indexed Markdown"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "Error: Timed out library page: \n    at until (file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:28:188)\n    at async file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:48:145"
+}

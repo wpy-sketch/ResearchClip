@@ -13,16 +13,21 @@ pub struct LibraryFilter {
     #[serde(default)]
     pub tag_ids: Vec<String>,
     pub favorite: Option<bool>,
+    pub project_id: Option<String>,
+    #[serde(default)]
+    pub unclassified: bool,
 }
 
 pub(super) const SUMMARY_COLUMNS: &str = "id,title,original_image_path,thumbnail_path,width_px,height_px,created_at,updated_at,is_favorite,revision";
-const FILTER: &str = r"(?1=0 OR is_favorite=1) AND (?2 IS NULL OR is_favorite=?2)
+pub(super) const FILTER: &str = r"(?1=0 OR is_favorite=1) AND (?2 IS NULL OR is_favorite=?2)
  AND (?3='' OR lower(title) LIKE lower(?4) ESCAPE '\'
  OR EXISTS(SELECT 1 FROM notes n WHERE n.screenshot_id=screenshots.id AND lower(n.content) LIKE lower(?4) ESCAPE '\'))
  AND NOT EXISTS(SELECT 1 FROM json_each(?5) wanted WHERE NOT EXISTS(
- SELECT 1 FROM screenshot_tags st WHERE st.screenshot_id=screenshots.id AND st.tag_id=wanted.value))";
+ SELECT 1 FROM screenshot_tags st WHERE st.screenshot_id=screenshots.id AND st.tag_id=wanted.value))
+ AND (?8 IS NULL OR EXISTS(SELECT 1 FROM screenshot_projects sp WHERE sp.screenshot_id=screenshots.id AND sp.project_id=?8))
+ AND (?9=0 OR NOT EXISTS(SELECT 1 FROM screenshot_projects sp WHERE sp.screenshot_id=screenshots.id))";
 
-fn pattern(query: &str) -> String {
+pub(super) fn pattern(query: &str) -> String {
     let mut result = String::from("%");
     for c in query.chars() {
         if matches!(c, '%' | '_' | '\\') {
@@ -83,6 +88,12 @@ impl Storage {
                 return Err(StorageError::Invalid("筛选标签不能重复。"));
             }
         }
+        if let Some(id) = &filter.project_id {
+            check_id(id)?;
+        }
+        if filter.project_id.is_some() && filter.unclassified {
+            return Err(StorageError::Invalid("项目筛选冲突。"));
+        }
         let query = filter.query.trim();
         let like = pattern(query);
         let tags = serde_json::to_string(&filter.tag_ids)
@@ -90,7 +101,17 @@ impl Storage {
         let tx = self.connection.unchecked_transaction()?;
         let total: u64 = tx.query_row(
             &format!("SELECT count(*) FROM screenshots WHERE {FILTER}"),
-            params![favorites, filter.favorite, query, like, tags],
+            params![
+                favorites,
+                filter.favorite,
+                query,
+                like,
+                tags,
+                rusqlite::types::Null,
+                rusqlite::types::Null,
+                filter.project_id,
+                filter.unclassified
+            ],
             |r| r.get(0),
         )?;
         let page = u64::from(page).min(total.saturating_sub(1) / u64::from(limit)) as u32;
@@ -108,7 +129,9 @@ impl Storage {
                     like,
                     tags,
                     limit,
-                    page * limit
+                    page * limit,
+                    filter.project_id,
+                    filter.unclassified
                 ],
                 |r| self.summary_row(r),
             )?
@@ -217,6 +240,7 @@ mod tests {
             query: "关键词".into(),
             tag_ids: vec![t.id, u.id],
             favorite: Some(true),
+            ..Default::default()
         };
         let page = s
             .search_screenshot_page(0, 24, false, LibrarySort::CreatedAsc, &filter)

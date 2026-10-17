@@ -17,21 +17,23 @@ interface LibraryState {
   tagIds:string[];
   favorite:boolean|null;
   generation: number;
+  projectId:string|null;unclassified:boolean;
   refresh: (favorites?: boolean, options?: {page?:number; sort?:LibrarySort}&Partial<LibraryFilter>) => Promise<void>;
   retryRecovery: () => Promise<void>;
 }
 
 export const useLibraryStore = create<LibraryState>((set, get) => ({
   items: [], status: null, error: null, loading: false, favorites: false,
-  sort: 'createdDesc', page: 0, total: 0, generation: 0,query:'',tagIds:[],favorite:null,
+  sort: 'createdDesc', page: 0, total: 0, generation: 0,query:'',tagIds:[],favorite:null,projectId:null,unclassified:false,
   refresh: async (favorites = get().favorites, options = {}) => {
     if (!isTauri()) return;
     const current = get(), sort = options.sort ?? current.sort;
-    const filter:LibraryFilter={query:(options.query??current.query).trim(),tagIds:options.tagIds??current.tagIds,favorite:options.favorite===undefined?current.favorite:options.favorite};
-    const changed = favorites !== current.favorites || sort !== current.sort||filter.query!==current.query||filter.favorite!==current.favorite||JSON.stringify(filter.tagIds)!==JSON.stringify(current.tagIds);
+    const projectId=options.projectId===undefined?current.projectId:options.projectId,unclassified=options.unclassified??current.unclassified;
+    const filter:LibraryFilter={query:(options.query??current.query).trim(),tagIds:options.tagIds??current.tagIds,favorite:options.favorite===undefined?current.favorite:options.favorite,...(projectId?{projectId}:unclassified?{unclassified:true}:{})};
+    const changed = projectId!==current.projectId||unclassified!==current.unclassified||favorites !== current.favorites || sort !== current.sort||filter.query!==current.query||filter.favorite!==current.favorite||JSON.stringify(filter.tagIds)!==JSON.stringify(current.tagIds);
     const page = options.page ?? (changed ? 0 : current.page);
     const generation = current.generation + 1;
-    set({generation, loading: true, error: null, favorites, sort,...filter,
+    set({generation, loading: true, error: null, favorites, sort,...filter,projectId,unclassified,
       ...(changed ? {items: [], page: 0, total: 0} : {})});
     try {
       const [result, status] = await Promise.all([readScreenshotPage(page, favorites, sort,filter), libraryStatus()]);

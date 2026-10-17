@@ -57,7 +57,7 @@ pub(super) fn error(e: StorageError) -> CommandError {
     };
     CommandError { code, message }
 }
-fn check(window: &WebviewWindow) -> Result<(), CommandError> {
+pub(super) fn check(window: &WebviewWindow) -> Result<(), CommandError> {
     if window.label() == "main" {
         Ok(())
     } else {
@@ -67,7 +67,7 @@ fn check(window: &WebviewWindow) -> Result<(), CommandError> {
         })
     }
 }
-async fn run<T: Send + 'static>(
+pub(super) async fn run<T: Send + 'static>(
     window: WebviewWindow,
     service: Arc<LibraryService>,
     f: impl FnOnce(&mut Storage) -> Result<T, StorageError> + Send + 'static,

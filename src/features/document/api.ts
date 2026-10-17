@@ -1,3 +1,4 @@
+import {useProjectStore} from '../projects/store';
 import {invoke,isTauri} from '@tauri-apps/api/core';
 import {assetNameValid,MAX_ASSET_BYTES,MAX_IMAGES,MAX_TEXT_BYTES} from './model';
 import {parsePngSize} from '../../shared/api/capture';
@@ -10,6 +11,7 @@ export async function saveDocumentFile(markdown:string,assets:Record<string,Blob
   const result:unknown=await invoke('save_markdown_document',body.buffer);
   if(result===null)return null;
   if(!result||typeof result!=='object'||!('token'in result)||!('path'in result)||typeof result.token!=='string'||typeof result.path!=='string')throw new Error('Markdown 保存响应无效。');
+  await useProjectStore.getState().sync(result.token);
   return {token:result.token,path:result.path};
 }
 export async function packDocument(markdown:string,assets:Record<string,Blob>,token:string|null=null,saveAs=false,fileName='untitled.md'){
@@ -22,10 +24,10 @@ export async function packDocument(markdown:string,assets:Record<string,Blob>,to
   return body;
 }
 export async function renameDocumentFile(token:string,fileName:string):Promise<{token:string;path:string}>{
-  desktop();return invoke('rename_markdown_document',{token,fileName:normalizeMarkdownName(fileName)});
+  desktop();const result:{token:string;path:string}=await invoke('rename_markdown_document',{token,fileName:normalizeMarkdownName(fileName)});await useProjectStore.getState().sync(result.token);return result;
 }
-export async function openDocumentFile():Promise<DiskDocument|null>{
-  desktop();return decodeDocument(await invoke('open_markdown_document'));
+export async function openDocumentFile(projectDocumentId?:string):Promise<DiskDocument|null>{
+  desktop();const disk=decodeDocument(await (projectDocumentId?invoke('open_project_document',{id:projectDocumentId}):invoke('open_markdown_document')));if(disk)await useProjectStore.getState().sync(disk.token);return disk;
 }
 export function decodeDocument(buffer:unknown):DiskDocument|null{
   if(!(buffer instanceof ArrayBuffer))throw new Error('Markdown 文件响应无效。');if(!buffer.byteLength)return null;

@@ -4,7 +4,7 @@ import type {LibrarySort} from '../../shared/api/library';
 const api = vi.hoisted(() => ({readScreenshotPage:vi.fn(), libraryStatus:vi.fn()}));
 vi.mock('../../shared/api/library', () => api);
 vi.mock('@tauri-apps/api/core', () => ({isTauri:() => true}));
-const status = {schemaVersion:2, pendingWrites:0, pendingCleanup:0, warnings:[]};
+const status = {schemaVersion:3, pendingWrites:0, pendingCleanup:0, warnings:[]};
 const item = (n:number, isFavorite=false) => ({id:n.toString(16).padStart(32,'0'), title:`素材 ${n}`,
   originalImagePath:`originals/${n.toString(16).padStart(32,'0')}.png`, thumbnailPath:`thumbnails/${n.toString(16).padStart(32,'0')}.png`,
   widthPx:32, heightPx:24, createdAt:n, updatedAt:n, revision:1, isFavorite, imageAvailable:true, thumbnailAvailable:true});
@@ -79,3 +79,6 @@ describe('bounded native library pages', () => {
     expect(useLibraryStore.getState().items).toHaveLength(1); expect(useLibraryStore.getState().error).toContain('清理失败');
   });
 });
+
+
+describe('project filters reach the actual page query',()=>{it('forwards project and unclassified scopes, then removes both for all materials',async()=>{api.readScreenshotPage.mockResolvedValue(result(0,0));const s=useLibraryStore.getState();await s.refresh(false,{projectId:'a'.repeat(32),unclassified:false});expect(api.readScreenshotPage).toHaveBeenLastCalledWith(0,false,'createdDesc',{query:'',tagIds:[],favorite:null,projectId:'a'.repeat(32)});await s.refresh(false,{projectId:null,unclassified:true});expect(api.readScreenshotPage).toHaveBeenLastCalledWith(0,false,'createdDesc',{query:'',tagIds:[],favorite:null,unclassified:true});await s.refresh(false,{projectId:null,unclassified:false});expect(api.readScreenshotPage).toHaveBeenLastCalledWith(0,false,'createdDesc',{query:'',tagIds:[],favorite:null});});});

@@ -1,5 +1,7 @@
 # ResearchClip 产品需求（PRD）
 
+> v0.2.0增量：科研项目和图片/Markdown关联、批量整理已按当前请求实现；原始MVP规划文字保留为历史目标，实际状态以[本轮验收](qa/RELEASE-0.2.0.md)为准。
+
 版本：正式规划 v1；日期：2026-10-12。本文是目标设计，当前源码仍为 M1 骨架；本轮没有实现业务功能。技术定义见 [ARCHITECTURE](ARCHITECTURE.md)，阶段验收见 [ROADMAP](ROADMAP.md)。
 
 ## 1. 定位与用户

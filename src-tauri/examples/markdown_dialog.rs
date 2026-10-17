@@ -131,7 +131,47 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .encode_utf16()
         .chain(std::iter::once(0))
         .collect();
+    // Only the already PID/title-verified test-owned picker is raised. Never send input
+    // unless it owns foreground; restore its normal z-order even on an early error.
+    struct Raised(HWND);
+    impl Drop for Raised {
+        fn drop(&mut self) {
+            unsafe {
+                let _ = SetWindowPos(
+                    self.0,
+                    Some(HWND_NOTOPMOST),
+                    0,
+                    0,
+                    0,
+                    0,
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE,
+                );
+            }
+        }
+    }
+    let _raised = Raised(target.windows[0]);
     unsafe {
+        use windows::Win32::System::Threading::{AttachThreadInput, GetCurrentThreadId};
+        let foreground = GetWindowThreadProcessId(GetForegroundWindow(), None);
+        let current = GetCurrentThreadId();
+        let attached = foreground != 0
+            && foreground != current
+            && AttachThreadInput(current, foreground, true).as_bool();
+        let _ = ShowWindow(target.windows[0], SW_RESTORE);
+        let raised = SetWindowPos(
+            target.windows[0],
+            Some(HWND_TOPMOST),
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE,
+        );
+        let _ = SetForegroundWindow(target.windows[0]);
+        if attached {
+            let _ = AttachThreadInput(current, foreground, false);
+        }
+        raised?;
         if !IsWindowVisible(edits[0].hwnd).as_bool() || !IsWindowVisible(buttons[0].hwnd).as_bool()
         {
             return Err(

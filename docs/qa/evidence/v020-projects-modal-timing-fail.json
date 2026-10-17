@@ -1,0 +1,11 @@
+{
+  "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+  "checks": [
+    "actual startup upgrades a populated v2 SQLite to v3, creates a readable schema-2 backup, retains 32 records and unchanged original file hashes",
+    "real UI creates and renames projects; cancelling empty-project deletion preserves it, confirming removes only the empty logical group",
+    "actual Ctrl clicks toggle independent cards, Shift extends the visible range and those manually selected cards successfully pass the strict bulk-write IPC; select-all resolves all 28 matching records across pages without selecting four nonmatching records"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "Error: Timed out search page: \n    at until (file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:28:188)\n    at async query (file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:35:94)\n    at async file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:42:293"
+}

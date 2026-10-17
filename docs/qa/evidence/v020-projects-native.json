@@ -1,0 +1,18 @@
+{
+  "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+  "checks": [
+    "actual startup upgrades a populated v2 SQLite to v3, creates a readable schema-2 backup, retains 32 records and unchanged original file hashes",
+    "real UI creates and renames projects; cancelling empty-project deletion preserves it, confirming removes only the empty logical group",
+    "actual Ctrl clicks toggle independent cards, Shift extends the visible range and those manually selected cards successfully pass the strict bulk-write IPC; select-all resolves all 28 matching records across pages without selecting four nonmatching records",
+    "28 selected images move transactionally into a project, filtered counts agree, nonempty project deletion is refused and no image paths change",
+    "bulk tag addition shares the same two tag IDs across 28 images and preserves prior notes/source; bulk favorite updates exactly the selected set",
+    "the real batch-delete dialog names all 28 images; Cancel makes no deletion or file changes",
+    "bulk export uses a real Windows folder picker and creates standard Markdown with 28 valid relative PNG assets",
+    "saved Markdown is indexed without copying body or moving assets, associated with the project, reopened by its database ID through the existing pane with unchanged UTF-8 file bytes; actual context-menu rename preserves the same database ID and project membership",
+    "grouped/searchable 14-section guide and 480px layout work while the right draft remains; actual process restart restores project membership/counts, tags, favorite flags and the indexed Markdown",
+    "the existing individual screenshot delete path also refreshes the project count immediately, while the Markdown membership stays unchanged",
+    "unclassified scope contains only four unrelated images; explicit count-confirmed batch deletion removes their records/files only, leaves 28 project originals, shared tags, source notes and external Markdown intact, then exits cleanly"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

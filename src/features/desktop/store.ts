@@ -1,3 +1,4 @@
+import {useBatchStore} from '../projects/batch';
 import {create} from 'zustand';
 import {getDesktopStatus,desktopAction,completeDesktopExit} from '../../shared/api/desktop';
 import type {DesktopAction,DesktopSnapshot} from '../../shared/api/desktop';
@@ -21,6 +22,7 @@ export const useDesktopStore=create<State>((set,get)=>({snapshot:null,error:null
   requestQuit:async(skipDocument=false)=>{
     if(get().phase!=='idle')return;set({phase:'checking',error:null});
     try{
+      if(useBatchStore.getState().busy)throw new Error('正在批量处理资料，请完成后重试退出。');
       if(useImportStore.getState().busy)throw new Error('正在导入图片，请完成后重试退出。');
       if(useMarkdownExportStore.getState().busy||useSettingsStore.getState().phase==='saving'||useDocumentStore.getState().phase!=='idle')throw new Error('正在导出、处理文档或保存设置，请完成操作后重试退出。');
       if(!skipDocument&&documentDirty(useDocumentStore.getState())){set({phase:'document'});return;}

@@ -60,3 +60,5 @@ mod tests {
         assert!(value.get("app_version").is_none());
     }
 }
+
+pub mod projects;

@@ -1,0 +1,10 @@
+{
+  "mode": "actual Windows clipboard and WebView2, native WinForms/OLE file drops, real SQLite/files/restart; controlled image fixtures, not screen capture",
+  "checks": [
+    "startup/copying does not import automatically; an explicit click reads real Windows image clipboard, creates a real SQLite record and managed original/thumbnail",
+    "locked clipboard and text-only clipboard report clear errors without new records; repeating explicit image import makes a separate ID with the same pixels and never overwrites a prior image"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "Error: Command failed: powershell.exe -STA -NoProfile -File D:\\文档\\ChatGPT\\ResearchClip\\scripts\\image-drop-input.ps1 -TargetProcessId 64044 -RelativeX 0.7055932203389831 -RelativeY 0.5 -FilesJson [\"D:\\\\文档\\\\ChatGPT\\\\ResearchClip\\\\artifacts\\\\import-projects-v020\\\\external\\\\外部图.png\"]\nD:\\�ĵ�\\ChatGPT\\ResearchClip\\scripts\\image-drop-input.ps1 : ʹ�á�4�����������á�Run��ʱ�����쳣:��Drop point obscured: expe\r\ncted 64044, actual 11884��\r\n    + CategoryInfo          : NotSpecified: (:) [image-drop-input.ps1], MethodInvocationException\r\n    + FullyQualifiedErrorId : Exception,image-drop-input.ps1\r\n \r\n\n    at genericNodeError (node:internal/errors:983:15)\n    at wrappedFn (node:internal/errors:537:14)\n    at checkExecSyncError (node:child_process:916:11)\n    at execFileSync (node:child_process:952:15)\n    at drop (file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/import-native-smoke.mjs:22:16)\n    at async file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/import-native-smoke.mjs:30:3"
+}

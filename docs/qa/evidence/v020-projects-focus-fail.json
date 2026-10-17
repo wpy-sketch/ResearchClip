@@ -1,0 +1,14 @@
+{
+  "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+  "checks": [
+    "actual startup upgrades a populated v2 SQLite to v3, creates a readable schema-2 backup, retains 32 records and unchanged original file hashes",
+    "real UI creates and renames projects; cancelling empty-project deletion preserves it, confirming removes only the empty logical group",
+    "actual Ctrl clicks toggle independent cards, Shift extends the visible range and those manually selected cards successfully pass the strict bulk-write IPC; select-all resolves all 28 matching records across pages without selecting four nonmatching records",
+    "28 selected images move transactionally into a project, filtered counts agree, nonempty project deletion is refused and no image paths change",
+    "bulk tag addition shares the same two tag IDs across 28 images and preserves prior notes/source; bulk favorite updates exactly the selected set",
+    "the real batch-delete dialog names all 28 images; Cancel makes no deletion or file changes"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "Error: Timed out foreground owned folder selection: Command failed: D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\debug\\examples\\markdown_dialog.exe folder 60448 D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\projects-v020-verified\\exports\nError: \"Owned folder picker is not foreground; refusing keyboard input\"\n\n    at until (file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:28:188)\n    at async file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/projects-native-smoke.mjs:45:263"
+}

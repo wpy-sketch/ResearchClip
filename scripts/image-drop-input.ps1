@@ -28,6 +28,7 @@ public class ResearchClipNativeDrop {
   [DllImport("user32.dll")] static extern bool ClientToScreen(IntPtr window,ref Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window,out uint process);
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
+  [DllImport("user32.dll",CharSet=CharSet.Unicode)] static extern int GetClassName(IntPtr window,System.Text.StringBuilder buffer,int count);
   [DllImport("user32.dll")] static extern IntPtr GetAncestor(IntPtr window,uint flags);
   public static string Run(int pid,double x,double y,string[] files) {
     SetProcessDPIAware();var process=System.Diagnostics.Process.GetProcessById(pid);IntPtr target=process.MainWindowHandle;
@@ -39,7 +40,7 @@ public class ResearchClipNativeDrop {
     label.MouseDown+=(sender,e)=>{try {var data=new DataObject(DataFormats.FileDrop,files);effect=label.DoDragDrop(data,DragDropEffects.Copy);}catch(Exception ex){error=ex.Message;}finally{form.Close();}};
     form.Shown+=(sender,e)=>{var start=label.PointToScreen(new System.Drawing.Point(60,30));worker=new System.Threading.Thread(()=>{
       try {System.Threading.Thread.Sleep(350);mouse_event(4,0,0,0,UIntPtr.Zero);SetCursorPos(start.X,start.Y);mouse_event(2,0,0,0,UIntPtr.Zero);System.Threading.Thread.Sleep(500);
-        uint owner;GetWindowThreadProcessId(GetAncestor(WindowFromPoint(point),2),out owner);if(owner!=pid&&!IsChild(target,WindowFromPoint(point)))throw new Exception("Drop point obscured: expected "+pid+", actual "+owner);
+        uint owner;GetWindowThreadProcessId(GetAncestor(WindowFromPoint(point),2),out owner);if(owner!=pid&&!IsChild(target,WindowFromPoint(point))){var c=new System.Text.StringBuilder(128);GetClassName(GetAncestor(WindowFromPoint(point),2),c,128);throw new Exception("Drop point obscured: expected "+pid+", actual "+owner+", helper "+System.Diagnostics.Process.GetCurrentProcess().Id+", class "+c);}
         SetCursorPos(point.X,point.Y);System.Threading.Thread.Sleep(1000);
       } catch(Exception ex) {error=ex.Message;} finally {mouse_event(4,0,0,0,UIntPtr.Zero);System.Threading.Thread.Sleep(500);if(!form.IsDisposed)try{form.BeginInvoke((Action)(()=>form.Close()));}catch(InvalidOperationException){}}
     });worker.IsBackground=true;worker.Start();};

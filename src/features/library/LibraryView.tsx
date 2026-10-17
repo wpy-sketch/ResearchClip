@@ -1,4 +1,7 @@
-import {useCompareStore} from '../compare/store';
+import {useSelectionStore} from '../projects/selection';
+import {useBatchStore} from '../projects/batch';
+import {ProjectBar} from '../projects/ProjectBar';
+import {BulkActions} from '../projects/BulkActions';
 import {useImageDrop} from '../import/use-image-drop';
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Images, RefreshCw, Star } from 'lucide-react';
@@ -17,14 +20,15 @@ import { errorMessage } from '../../shared/api/errors';
 import {openKnowledgeCard} from '../../app/card-actions';
 import {useTagStore} from '../tags/store';
 import {clearLibraryFilters} from './use-search';
-import {MarkdownExportButton} from '../export/MarkdownExport';
 import {useMarkdownExportStore} from '../export/store';
-import {addExportSelection,toggleExportSelection} from '../export/selection';
 
 export function LibraryView({favorites}: {favorites:boolean}) {
   const drop=useImageDrop('library');
   const exporting=useMarkdownExportStore(s=>s.busy);
-  const [selected,setSelected]=useState<string[]>([]);
+  const selection=useSelectionStore(),selected=selection.items.map(i=>i.id),batchBusy=useBatchStore(s=>s.busy);
+  const {projectId,unclassified}=useLibraryStore();
+  const filterKey=JSON.stringify([favorites,projectId,unclassified,useLibraryStore(s=>s.query),useLibraryStore(s=>s.tagIds),useLibraryStore(s=>s.favorite)]);
+  useEffect(()=>{useSelectionStore.getState().clear();},[filterKey]);
   const {viewMode, showWelcome, openCapture} = useUiStore();
   const {items, status, error, loading, page, total, sort, query,tagIds,favorite, refresh, retryRecovery} = useLibraryStore();
   const {items:tags,error:tagError}=useTagStore();
@@ -41,14 +45,15 @@ export function LibraryView({favorites}: {favorites:boolean}) {
     catch (error) {setOperationError(errorMessage(error, '资料操作失败，已有资料未重置。'));}
     finally {setWorking(false);}
   };
-  const busy = working || loading || exporting;
-  const select=(ids:string[]|string)=>{try{setSelected(typeof ids==='string'?toggleExportSelection(selected,ids):addExportSelection(selected,ids));setOperationError(null);}catch(error){setOperationError(errorMessage(error,'无法选择卡片。'));}};
+  const busy = working || loading || exporting || batchBusy;
+  const select=(id:string,shift=false)=>selection.choose(items,id,shift);
   const pages = Math.max(1, Math.ceil(total / LIBRARY_PAGE_SIZE));
   const filtered=Boolean(query||tagIds.length||favorite!==null);
   return <div className={`page-container image-drop-target ${drop.over?'is-drag-over':''}`} data-image-drop-target="library" {...drop.handlers}>
     <div className="page-heading"><div><h2>{favorites ? '收藏' : '截图素材'}</h2>
       <p>{favorites ? '将值得反复回看的图像，留在这里。' : '图像和标注保存在本机应用数据目录中。'}</p>
     </div><span className="subtle-badge">{viewMode === 'grid' ? '网格视图' : '列表视图'}</span></div>
+    <ProjectBar/>
     <p className="image-drop-hint">拖入 PNG / JPG / JPEG / WebP，或点击顶部剪贴板图标导入。每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。</p>
     {!favorites && <CapturePanel/>}
     {!favorites && showWelcome && !items.length && !loading && !filtered && <HomeView/>}
@@ -81,11 +86,11 @@ export function LibraryView({favorites}: {favorites:boolean}) {
             onClick={() => void refresh(favorites)}><RefreshCw size={16}/></button>}
         </div>
       </div>
-      {isTauri()&&<div className="library-export-controls"><span>已选 {selected.length} 张 · 可跨页选择</span><button className="secondary-button" disabled={busy||!items.length} onClick={()=>select(items.map(item=>item.id))}>选择本页</button><button className="secondary-button" disabled={busy||!selected.length} onClick={()=>setSelected([])}>清空选择</button><button className="secondary-button" disabled={busy||selected.length!==2} onClick={()=>{useCompareStore.getState().enter(useUiStore.getState().activeView);useUiStore.getState().navigate('compare');void useCompareStore.getState().loadPair(selected);}}>对比所选 2 张</button><MarkdownExportButton ids={selected} label="导出所选 Markdown" disabled={busy}/></div>}
+      {isTauri()&&<BulkActions disabled={busy}/>}
       {items.length ? <div className={`library-cards ${viewMode}`}>
         {items.map(item => <LibraryCard key={item.id} item={item} disabled={busy}
-          selected={selected.includes(item.id)} onSelect={()=>select(item.id)}
-          onOpen={() => openKnowledgeCard(item.id)}
+          selected={selected.includes(item.id)} onSelect={event=>select(item.id,event.shiftKey)}
+          onOpen={event => {if(event.ctrlKey||event.metaKey||event.shiftKey)select(item.id,event.shiftKey);else openKnowledgeCard(item.id);}}
           onEdit={() => void mutate(() => openLibraryEditor(item.id), false)}
           onFavorite={() => void mutate(() => updateScreenshot(item.id, item.revision, {isFavorite:!item.isFavorite}))}
           onRename={() => {setOperationError(null); setTarget({item, mode:'rename'});}}
@@ -112,7 +117,7 @@ export function LibraryView({favorites}: {favorites:boolean}) {
           <button className="secondary-button" disabled={working} onClick={() => setTarget(null)}>保留截图</button>
           <button className="secondary-button text-error" disabled={working} onClick={() => void mutate(async () => {
             const result = await deleteLibraryScreenshot(target.item.id, target.item.revision);
-            setSelected(ids=>ids.filter(id=>id!==target.item.id));
+            useSelectionStore.setState({items:selection.items.filter(i=>i.id!==target.item.id)});
             setTarget(null);
             if (result.pendingCleanup) setNotice('记录已删除；部分图片清理失败，任务已保留供重试。');
           })}>确认删除截图</button>
