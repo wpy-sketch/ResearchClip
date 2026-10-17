@@ -104,3 +104,17 @@ src/features/document/templates.test.ts
 src/features/document/templates.ts
 src/styles.css
 ```
+
+
+## 发布回执（实际执行）
+
+- PASS：源码提交 `339a3ebd1f395ce5bdb765db213e3ff1233423eb` 与 tag `v0.1.5` 已通过 `git push --atomic origin HEAD:refs/heads/main refs/tags/v0.1.5` 推送，未重写旧标签或历史。
+- PASS：GitHub [v0.1.5 Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.1.5)，ID415810941，公开时间2026-10-17T13:12:06Z；draft=false、prerelease=false、Latest=true。
+- PASS：Windows EXE、SOURCE.txt、SHA256SUMS.txt 三个附件实际公开下载均HTTP200，大小与SHA256匹配；EXE 16,545,280字节。旧6个版本的发布ID、标识、附件及哈希未改变。
+- 初次匿名REST资产API下载为FAIL/403；只读诊断确认 remaining=0，改走公开Release下载地址，三个附件最终验证PASS。不是通过忽略失败或重发附件制造成功；[完整回执](evidence/v015-publication.json)保留首次失败及最终结果。
+- 发布工具：`python artifacts/publish-v015/publish_release.py` 使用GCM凭据仅在内存/管道中，附件不含凭据或科研资料；后续只读公开下载校验脚本完成回执。构建命令及检查范围见上文和Release附件SOURCE.txt。
+- 本机启动程序：`src-tauri/target/release/researchclip.exe`。EXE未签名、需WebView2；本轮没有新NSIS或生产完整人工流程验收。
+
+补充代码审查边界（P3 / NOT_RUN Windows专项）：若新文档名称恰为“空白文档”，当前会话使用untitled.md作为初始文件名，可通过已有右键重命名修改；模板名称与正文不受影响。这不是文件覆盖或数据损失，未据此阻止本次用户授权发布。
+
+本回执另行提交，不移动v0.1.5的源码标签。回执新增文件为 `docs/qa/evidence/v015-publication.json`，并更新本报告及TEST_REPORT.md。
