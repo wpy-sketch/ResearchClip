@@ -369,7 +369,7 @@ async function checkUI(page, suffix = '') {
   await page.getByRole('heading', { name: '欢迎使用 ResearchClip' }).waitFor();
   report.checks.push(`${prefix}navigation, list/grid state, dismiss and reopen guide`);
 
-  await toolbar.getByRole('button', { name: '新建截图', exact: true }).click();
+  await page.getByRole('button', { name: '新建截图', exact: true }).click();
   const capture = page.getByRole('dialog', { name: '新建截图', exact: true });
   await capture.waitFor();
   await capture.getByRole('button', { name: '区域截图', exact: true }).waitFor();
@@ -379,7 +379,7 @@ async function checkUI(page, suffix = '') {
   assert.equal(await page.evaluate(() => !!document.activeElement?.closest('dialog')), true);
   await page.keyboard.press('Escape');
   assert.equal(await page.getByRole('dialog').count(), 0);
-  assert.equal(await toolbar.getByRole('button', { name: '新建截图', exact: true }).evaluate((el) => el === document.activeElement), true);
+  assert.equal(await page.getByRole('button', { name: '新建截图', exact: true }).evaluate((el) => el === document.activeElement), true);
   await toolbar.getByRole('button', { name: '搜索素材', exact: true }).click();
   const search = page.getByRole('dialog', { name: '搜索素材与笔记' });
   await search.waitFor();

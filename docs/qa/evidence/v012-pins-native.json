@@ -1,0 +1,54 @@
+{
+  "mode": "actual Windows native windows, Win32 styles/alpha/physical drag, system PNG dialog and separate Edge clipboard receiver; controlled PNG, NOT screen-capture verification",
+  "checks": [
+    "capture completion creates 2 independent visible frameless native HWNDs, each topmost, with unique labels; main remains alive",
+    "actual capability enforcement prevents pin from reading main capture/creating windows and main from reading arbitrary pin resources",
+    "actual Rust IPC rejects malformed PNG, invalid opacity and out-of-range zoom without losing existing pins",
+    "actual wheel resizes native window with aspect ratio; repeated zoom reaches bounded minimum and maximum",
+    "real SendInput drag on test-owned foreground pin moves the actual HWND",
+    "right-click opacity slider changes actual Win32 layered-window alpha 51/255 and never enables click-through",
+    "real native Save As writes byte-identical original PNG; dialog cancellation creates no extra files",
+    "separate Edge application reads real Windows clipboard PNG; all controlled-image RGBA pixels match",
+    "real clipboard lock produces a readable failure while retaining the pin; releasing lock permits retry",
+    "off-screen native position recovers to main monitor; closing main to tray retains the pin and reopening main retains both states",
+    "10 real open/close cycles destroy each HWND/WebView; managed PNG/decoded-image budget returns to zero every cycle (not an OS heap leak proof)",
+    "editor button pins original-resolution composite containing the rectangle; background unchanged and original screenshot bytes immutable; discarding capture leaves independent pin alive",
+    "explicit exit confirms dirty editor, closes all pin HWNDs, and terminates main normally"
+  ],
+  "errors": [],
+  "initialWindows": [
+    {
+      "alpha": 255,
+      "captionStyle": true,
+      "clickThrough": false,
+      "clientFillsWindow": true,
+      "exStyle": 262424,
+      "height": 200,
+      "label": "pin-1",
+      "layered": false,
+      "left": 1096,
+      "style": 348848128,
+      "top": 620,
+      "topmost": true,
+      "visible": true,
+      "width": 320
+    },
+    {
+      "alpha": 255,
+      "captionStyle": true,
+      "clickThrough": false,
+      "clientFillsWindow": true,
+      "exStyle": 262424,
+      "height": 200,
+      "label": "pin-0",
+      "layered": false,
+      "left": 1096,
+      "style": 348848128,
+      "top": 620,
+      "topmost": true,
+      "visible": true,
+      "width": 320
+    }
+  ],
+  "result": "PASS"
+}

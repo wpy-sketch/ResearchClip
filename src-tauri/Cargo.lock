@@ -3032,7 +3032,7 @@ dependencies = [
 
 [[package]]
 name = "researchclip"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "png 0.18.1",
  "rusqlite",

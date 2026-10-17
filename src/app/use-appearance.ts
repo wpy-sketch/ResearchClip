@@ -13,7 +13,7 @@ export function useAppearance() {
   useEffect(() => {
     const cleanup=observeTheme(preference,window.matchMedia('(prefers-color-scheme: dark)'),theme=>{
       document.documentElement.dataset.theme=theme;useUiStore.setState({theme});
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#18191c' : '#f8f9fb');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#131314' : '#f0f4f9');
     });
     let active = true;
     if (isTauri()) {

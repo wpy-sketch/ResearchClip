@@ -1,0 +1,24 @@
+{
+  "mode": "preview",
+  "version": "0.1.2",
+  "checks": [
+    "navigation, list/grid state, dismiss and reopen guide",
+    "capture controls, search input/clear, Ctrl+K, Escape and modal focus",
+    "preview disables native action without a fake success message",
+    "light/dark and settings keep toolbar view selection in sync",
+    "32 responsive page/theme cases at 480x400, 640x500, 960x680 and 1440x900",
+    "no leaked canvas on idle pages or browser storage writes"
+  ],
+  "errors": [],
+  "overlayRenderer": {
+    "mode": "renderer-only-mock",
+    "nativeCaptureVerified": false,
+    "checks": [
+      "mock IPC only, scale 1: isolated entry, one-shot frame, zero area, reverse drag, live pixels, four masks, single commit, Esc",
+      "mock IPC only, scale 1.25: isolated entry, one-shot frame, zero area, reverse drag, live pixels, four masks, single commit, Esc",
+      "mock IPC only, scale 1.5: isolated entry, one-shot frame, zero area, reverse drag, live pixels, four masks, single commit, Esc",
+      "mock IPC only, scale 2: isolated entry, one-shot frame, zero area, reverse drag, live pixels, four masks, single commit, Esc"
+    ]
+  },
+  "result": "passed"
+}

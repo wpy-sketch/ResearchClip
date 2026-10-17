@@ -1,7 +1,7 @@
 {
   "name": "researchclip",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -35,7 +35,8 @@
     "test:smoke:markdown:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example markdown_dialog --example workflow_input && node scripts/markdown-native-smoke.mjs",
     "test:smoke:experience:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example desktop_probe --example knowledge_fault && node scripts/desktop-native-smoke.mjs",
     "test:smoke:split:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/split-native-smoke.mjs",
-    "test:smoke:pins:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example pin_probe --example workflow_input --example desktop_probe && node scripts/pins-native-smoke.mjs"
+    "test:smoke:pins:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example pin_probe --example workflow_input --example desktop_probe && node scripts/pins-native-smoke.mjs",
+    "test:smoke:material": "node scripts/material-ui-smoke.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.3",
