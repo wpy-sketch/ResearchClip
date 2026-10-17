@@ -6,6 +6,9 @@
     "main"
   ],
   "permissions": [
+    "allow-ocr-status",
+    "allow-recognize-ocr",
+    "allow-copy-ocr-text",
     "core:app:allow-version",
     "core:window:allow-set-theme",
     "core:event:allow-listen",

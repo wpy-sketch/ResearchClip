@@ -391,3 +391,15 @@ html[data-desktop-pin] body, html[data-desktop-pin] #root { margin: 0; width: 10
 .pin-message { position: absolute; left: 0; bottom: 0; max-width: 100%; max-height: 80%; overflow: auto; padding: 8px; background: #252933f5; font-size: 12px; }
 .pin-message button { display: block; text-decoration: underline; }
 .pin-recover-error { position: absolute; right: 0; top: 32px; width: 240px; z-index: 60; padding: 8px; border: 1px solid var(--color-edge); background: var(--color-surface); font-size: 12px; }
+
+/* OCR selection coordinates are relative to the displayed image, never the editor viewport. */
+.app-dialog:has(.ocr-content) { max-width:960px; height:min(780px,calc(100dvh - 40px)); display:flex; flex-direction:column; }
+.app-dialog:has(.ocr-content) > div:first-child { flex-shrink:0; }
+.ocr-content { flex:1; min-height:0; overflow:auto; }
+.ocr-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:24px; }
+.ocr-image { position:relative; width:fit-content; max-width:100%; margin-inline:auto; touch-action:none; user-select:none; }
+.ocr-image img { display:block; width:100%; height:auto; }
+.ocr-image[data-selecting=true] { cursor:crosshair; }
+.ocr-selection { position:absolute; pointer-events:none; border:2px solid var(--accent); background:rgb(80 140 240 / 18%); }
+.ocr-result { flex:1; min-height:260px; width:100%; resize:vertical; font-family:ui-monospace,Consolas,monospace; line-height:1.7; }
+@media(max-width:700px) { .ocr-grid { grid-template-columns:minmax(0,1fr); gap:16px; } .ocr-result { min-height:160px; } }

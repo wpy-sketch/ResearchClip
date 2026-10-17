@@ -1,0 +1,133 @@
+{
+  "mode": "actual Windows native OCR; generated text fixtures, no screen access or mocked engine",
+  "languages": "zh-Hans-CN 简体中文(中国大陆)\nmaxDimension=10000",
+  "cases": [
+    {
+      "id": "chinese",
+      "status": "PASS",
+      "milliseconds": 135,
+      "text": "科研笔记与图片管理\n文字识别结果需要人工校对。\n\n第二段研究结论保存在本地。",
+      "language": "zh-Hans-CN",
+      "widthPx": 1100,
+      "heightPx": 500,
+      "matches": [
+        {
+          "term": "科研笔记",
+          "found": true
+        },
+        {
+          "term": "图片管理",
+          "found": true
+        },
+        {
+          "term": "人工校对",
+          "found": true
+        }
+      ],
+      "scope": "required anchors"
+    },
+    {
+      "id": "english",
+      "status": "PASS",
+      "milliseconds": 147,
+      "text": "ResearchClip local research notes\nOpticaI character recognition works offline.\n\nA second paragraph f0 r science and knowledge.",
+      "language": "zh-Hans-CN",
+      "widthPx": 1100,
+      "heightPx": 500,
+      "matches": [
+        {
+          "term": "ResearchClip",
+          "found": true
+        },
+        {
+          "term": "recognition",
+          "found": true
+        },
+        {
+          "term": "offline",
+          "found": true
+        }
+      ],
+      "scope": "required anchors"
+    },
+    {
+      "id": "mixed",
+      "status": "PASS",
+      "milliseconds": 139,
+      "text": "ResearchClip 科研笔记 2026\n中文 English 混合内容\n结果保留本地 local only",
+      "language": "zh-Hans-CN",
+      "widthPx": 1100,
+      "heightPx": 500,
+      "matches": [
+        {
+          "term": "ResearchClip",
+          "found": true
+        },
+        {
+          "term": "科研笔记",
+          "found": true
+        },
+        {
+          "term": "English",
+          "found": true
+        }
+      ],
+      "scope": "required anchors"
+    },
+    {
+      "id": "blank",
+      "status": "PASS",
+      "milliseconds": 100,
+      "text": "",
+      "language": "zh-Hans-CN",
+      "widthPx": 1100,
+      "heightPx": 500,
+      "matches": [],
+      "scope": "required anchors"
+    },
+    {
+      "id": "low-resolution",
+      "status": "PASS",
+      "milliseconds": 71,
+      "text": "Re—chClip \"\nSm 12345",
+      "language": "zh-Hans-CN",
+      "widthPx": 280,
+      "heightPx": 70,
+      "matches": [],
+      "scope": "bounded successful execution; no accuracy guarantee"
+    },
+    {
+      "id": "symbols",
+      "status": "PASS",
+      "milliseconds": 124,
+      "text": "Alpha 123 ： + 一 = ％ @ #\n中文标点：\nGreek symbols: a 阝 ± 〗 oo",
+      "language": "zh-Hans-CN",
+      "widthPx": 1100,
+      "heightPx": 500,
+      "matches": [
+        {
+          "term": "Alpha",
+          "found": true
+        },
+        {
+          "term": "123",
+          "found": true
+        }
+      ],
+      "scope": "ASCII anchor recognition; Unicode symbols evaluated below, not guaranteed"
+    }
+  ],
+  "checks": [
+    "six real image categories executed; anchor assertions and empty-image output verified",
+    "five consecutive image changes give identical corresponding results, including empty and Chinese restart"
+  ],
+  "symbolAccuracy": {
+    "α": false,
+    "β": false,
+    "±": true,
+    "∑": false,
+    "√": false,
+    "∞": false
+  },
+  "result": "PASS"
+}

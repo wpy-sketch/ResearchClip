@@ -11,6 +11,7 @@ export type DocumentAction='new'|'blank'|'open'|'close';
 interface TextEdit {document:MarkdownDocument;caret:{start:number;end:number}}
 const bounded=(items:TextEdit[])=>{let bytes=0;return items.slice(-100).reverse().filter(item=>{bytes+=JSON.stringify(item.document).length*2;return bytes<=8*1024*1024;}).reverse();};
 interface State {
+  insertText:(text:string)=>boolean;
   caret:{start:number;end:number};past:TextEdit[];future:TextEdit[];focusRequest:number;
   setCaret:(start:number,end:number)=>void;editSource:(text:string,start?:number,end?:number)=>void;toSource:()=>void;undoText:()=>void;redoText:()=>void;insertEditor:()=>Promise<boolean>;
   document:MarkdownDocument|null;assets:Record<string,DocumentAsset>;token:string|null;path:string|null;fileName:string|null;savedFingerprint:string|null;
@@ -57,6 +58,20 @@ export function createDocumentStore(){
       set({caret:{start:start+inserted.length,end:start+inserted.length},past:bounded([...s.past,{document,caret:s.caret}]),future:[],focusRequest:s.focusRequest+1});return next;
     };
     return {
+      insertText:(text)=>{
+        const s=get();if(!s.document||s.phase!=='idle'||!text.trim())return false;
+        try{
+          if(s.document.mode==='source'){
+            const current=sourceText(s.document),start=Math.min(s.caret.start,current.length),end=Math.min(s.caret.end,current.length),next=current.slice(0,start)+text+current.slice(end);
+            serializeDocument({...s.document,blocks:[{...s.document.blocks[0],type:'text',markdown:next}]});
+            updateSource(next,start+text.length,start+text.length);set({focusRequest:s.focusRequest+1});
+          }else{
+            if(s.document.blocks.length>=MAX_BLOCKS)throw new Error('每份文档最多100个内容块。');
+            const document={...s.document,blocks:[...s.document.blocks,{id:newId(),type:'text' as const,markdown:text}]};serializeDocument(document);set({document,notice:null,error:null});
+          }
+          return true;
+        }catch(error){set({error:errorMessage(error,'插入文字失败，原文档未改动。')});return false;}
+      },
       caret:{start:0,end:0},past:[],future:[],focusRequest:0,
       setCaret:(start,end)=>{if(Number.isSafeInteger(start)&&Number.isSafeInteger(end)&&start>=0&&end>=start)set({caret:{start,end}});},
       editSource:(text,start=text.length,end=start)=>updateSource(text,start,end),

@@ -1,0 +1,24 @@
+{
+  "mode": "real Windows WebView2 + Windows.Media.Ocr + clipboard + SQLite + Markdown disk save; controlled fixtures, no screen capture claim",
+  "checks": [
+    "actual screenshot-preview entry recognizes the controlled gradient as no text and reports empty success",
+    "real IPC rejects unknown languages, out-of-bounds and zero-area crop, malformed upload",
+    "library opens in existing editor; actual exported annotation text is recognized alongside original Chinese/English pixels",
+    "real pointer drag on scaled image crops only first line in original pixels; a click without area cannot start recognition",
+    "edited result copied via official Rust clipboard plugin and read byte-for-byte by a separate Edge application",
+    "real clipboard contention shows a readable failure and preserves edited text",
+    "explicit insert replaces saved Markdown caret selection; undo/redo and real UTF-8 system-dialog disk save preserve reviewed text",
+    "close/reopen releases previous result and resets region; original PNG and SQLite annotation JSON unchanged"
+  ],
+  "errors": [],
+  "environment": {
+    "languages": [
+      {
+        "tag": "zh-Hans-CN",
+        "name": "简体中文(中国大陆)"
+      }
+    ],
+    "maxDimension": 10000
+  },
+  "result": "PASS"
+}

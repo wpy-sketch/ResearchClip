@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+2026-10-17 v0.1.3：新增本地 `OcrService` 平台边界、main-only 有界 PNG OCR/文字复制命令和 `features/ocr` 单会话面板。Windows.Media.Ocr 经本机探针确认；整图/原图像素选区、标注合成复用和显式 Markdown 插入，不变更数据库或原图。线程门控、语言包、资源释放和真实识别限制见 [OCR 验收](qa/RELEASE-0.1.3.md)。
+
 2026-10-17 v0.1.2：工作区改为左侧主要截图操作、两行顶部搜索/文档工具栏和圆角内容容器，深浅蓝灰主题由既有 CSS 角色及 useAppearance 驱动。不引入新框架或远程字体，设置和编辑会话模型不变；布局、原生回归及发布记录见[0.1.2 验收](qa/RELEASE-0.1.2.md)。
 
 2026-10-17 新增桌面贴图：主窗口上传有界 PNG 快照至 PinManager，独立 `pin-*` WebView 按自身窗口身份读取；截图和编辑器分别复用已有预览 PNG / 原分辨率 renderComposite。`features/pins` 管界面、`commands/pins.rs` 管受限 IPC、`services/pins.rs` 统一管原生窗口和资源；不改 SQLite 或标注格式。主窗口隐藏时保留、退出成功时销毁全部贴图，Destroyed 释放资源。物理尺寸、内存预算、专用 capability、Windows 透明度及实际验收范围见[桌面贴图契约与验收](PINS-VALIDATION.md)。

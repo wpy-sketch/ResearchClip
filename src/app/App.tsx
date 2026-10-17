@@ -19,6 +19,7 @@ import {DesktopExperience} from '../features/desktop/DesktopExperience';
 import {useDesktopExperience} from '../features/desktop/use-desktop-experience';
 const EditorView = lazy(() => import('../features/editor/EditorView').then((module) => ({ default: module.EditorView })));
 import {WorkspaceSplit} from '../features/document/WorkspaceSplit';
+import {OcrPanel} from '../features/ocr/OcrPanel';
 
 export function App() {
   const initialize = useAppStore((state) => state.initialize);
@@ -64,6 +65,7 @@ export function App() {
         <footer className="workspace-footer"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-faint" />本地工作区</span><span>图片与标注保存在本机</span></footer>
       </div>
       <WorkspaceDialogs />
+      <OcrPanel/>
     </div>
   );
 }

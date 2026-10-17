@@ -2,7 +2,7 @@
 
 面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
 
-当前为 **0.1.2 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+当前为 **0.1.3 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
 
 Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
 
@@ -29,7 +29,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.2_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_0.1.3_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc
@@ -57,6 +57,12 @@ scripts/with-rust.mjs 优先使用项目内 .tools 工具链，否则使用 PATH
 - 不上传屏幕内容，不在普通日志打印像素、图片或完整资料路径。SQLite现为schema v2，保留旧app_metadata；主界面通过受限业务命令读取真实素材。
 
 使用官方 [global-shortcut](https://docs.rs/tauri-plugin-global-shortcut/2.4.1/tauri_plugin_global_shortcut/)、[clipboard-manager](https://docs.rs/tauri-plugin-clipboard-manager/2.4.2/tauri_plugin_clipboard_manager/struct.Clipboard.html) 与 [dialog](https://docs.rs/tauri-plugin-dialog/2.8.2/tauri_plugin_dialog/struct.FileDialogBuilder.html)，均为 MIT/Apache-2.0。插件仅由受限 Rust 用例调用，前端没有通用文件系统、剪贴板读取或快捷键注册权限。
+
+## 离线 OCR 文字识别
+
+截图完成区或图片编辑器点击“识别文字”，可识别整张图片，或在图片内拖动框选局部区域。编辑器复用已标注合成图；原图和素材记录不改动。结果可手动修改、复制到其他应用，或明确点击“插入到 Markdown”放入已打开文档的光标/选择处；图文编排模式在末尾新增文本块。请先打开 Markdown 再识别；关闭面板前复制或插入，结果不会自动写入笔记。
+
+使用 Windows 原生本地引擎，不随应用附带/自动下载模型，不上传图片或识别文本。下拉框只显示实际已安装的 OCR 语言；缺少组件时请在 Windows 语言选项中安装后重开面板。当前真机仅有简体中文包，英文/混合关键词测试通过但仍有错字；独立英文引擎未验证。低分辨率小字、特殊符号和复杂公式误差明显，**不能当作 LaTeX 公式识别器**，务必校对再插入。实际测试、限制与人工清单见 [OCR 验收](docs/qa/RELEASE-0.1.3.md)。
 
 ## 托盘与退出
 

@@ -175,6 +175,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            commands::ocr::ocr_status,
+            commands::ocr::recognize_ocr,
+            commands::ocr::copy_ocr_text,
             commands::pins::create_pin,
             commands::pins::pin_image,
             commands::pins::pin_action,

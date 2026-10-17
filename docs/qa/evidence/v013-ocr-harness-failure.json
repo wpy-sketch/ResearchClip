@@ -1,0 +1,63 @@
+{
+  "mode": "real Windows WebView2 + Windows.Media.Ocr + clipboard + SQLite + Markdown disk save; controlled fixtures, no screen capture claim",
+  "checks": [
+    "actual screenshot-preview entry recognizes the controlled gradient as no text and reports empty success",
+    "seven different/consecutive actual OCR requests within one native process match corresponding fixture outputs, with no stale text"
+  ],
+  "errors": [],
+  "environment": {
+    "languages": [
+      {
+        "tag": "zh-Hans-CN",
+        "name": "简体中文(中国大陆)"
+      }
+    ],
+    "maxDimension": 10000
+  },
+  "batch": [
+    {
+      "id": "chinese",
+      "status": "PASS",
+      "widthPx": 1100,
+      "heightPx": 500
+    },
+    {
+      "id": "english",
+      "status": "PASS",
+      "widthPx": 1100,
+      "heightPx": 500
+    },
+    {
+      "id": "mixed",
+      "status": "PASS",
+      "widthPx": 1100,
+      "heightPx": 500
+    },
+    {
+      "id": "blank",
+      "status": "PASS",
+      "widthPx": 1100,
+      "heightPx": 500
+    },
+    {
+      "id": "low-resolution",
+      "status": "PASS",
+      "widthPx": 280,
+      "heightPx": 70
+    },
+    {
+      "id": "symbols",
+      "status": "PASS",
+      "widthPx": 1100,
+      "heightPx": 500
+    },
+    {
+      "id": "mixed",
+      "status": "PASS",
+      "widthPx": 1100,
+      "heightPx": 500
+    }
+  ],
+  "result": "FAIL",
+  "failure": "page.evaluate: Target page, context or browser has been closed\n    at D:\\文档\\ChatGPT\\ResearchClip\\scripts\\ocr-native-smoke.mjs:37:13"
+}

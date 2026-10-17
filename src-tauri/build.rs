@@ -1,6 +1,9 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "ocr_status",
+            "recognize_ocr",
+            "copy_ocr_text",
             "test_connection",
             "create_pin",
             "pin_image",
