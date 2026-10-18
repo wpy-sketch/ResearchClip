@@ -1,7 +1,7 @@
 {
   "name": "researchclip",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -40,19 +40,25 @@
     "test:smoke:templates:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/templates-native-smoke.mjs",
     "test:smoke:import:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/import-native-smoke.mjs",
     "test:smoke:compare:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/compare-native-smoke.mjs",
-    "test:smoke:projects:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/projects-native-smoke.mjs"
+    "test:smoke:projects:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/projects-native-smoke.mjs",
+    "test:smoke:math:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/math-native-smoke.mjs",
+    "test:smoke:open-with:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input --example markdown_open_with_probe && node scripts/markdown-open-with-native-smoke.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.3",
+    "katex": "0.19.0",
     "konva": "^10.0.0",
     "lucide-react": "^1.55.0",
+    "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-math": "3.0.0",
+    "mdast-util-to-string": "4.0.0",
+    "micromark-extension-math": "3.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-konva": "^19.3.0",
     "react-markdown": "10.1.0",
-    "zustand": "^5.0.0",
-    "mdast-util-from-markdown": "2.1.0",
-    "mdast-util-to-string": "4.0.0"
+    "remark-math": "6.0.0",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

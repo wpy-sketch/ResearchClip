@@ -2,6 +2,7 @@ import { BookOpen, Columns2, FlaskConical, HardDrive, Images, Plus, Settings2, S
 import { useUiStore } from '../ui-store';
 import {useCompareStore} from '../../features/compare/store';
 import { useAppStore } from '../store';
+import {ProjectNavigation} from '../../features/projects/ProjectNavigation';
 
 const items = [
   { id: 'screenshots', label: '截图素材', icon: Images },
@@ -27,7 +28,7 @@ export function Sidebar() {
       <div className="workspace-label"><HardDrive size={14}/><span className="sidebar-label">本地工作区</span></div>
       <p className="sidebar-section-label">素材管理</p>
       <nav aria-label="主导航" className="space-y-1">
-        {items.map(({ id, label, icon: Icon }) => <button key={id} className={`nav-button ${activeView === id ? 'is-active' : ''}`} aria-label={label} aria-current={activeView === id ? 'page' : undefined} title={label} onClick={() => {if(id==='compare'&&activeView!=='compare')useCompareStore.getState().enter(activeView);navigate(id);}}><Icon size={20} strokeWidth={1.7} /><span className="sidebar-label">{label}</span></button>)}
+        {items.map(({ id, label, icon: Icon }) => <div key={id}><button className={`nav-button ${activeView === id ? 'is-active' : ''}`} aria-label={label} aria-current={activeView === id ? 'page' : undefined} title={label} onClick={() => {if(id==='compare'&&activeView!=='compare')useCompareStore.getState().enter(activeView);navigate(id);}}><Icon size={20} strokeWidth={1.7} /><span className="sidebar-label">{label}</span></button>{id==='screenshots'&&<ProjectNavigation/>}</div>)}
       </nav>
       <div className="sidebar-bottom">
         <button className={`nav-button ${activeView === 'guide' ? 'is-active' : ''}`} aria-current={activeView === 'guide' ? 'page' : undefined} aria-label="使用指南" title="使用指南" onClick={openGuide}><BookOpen size={17} strokeWidth={1.7} /><span className="sidebar-label">使用指南</span></button>

@@ -2,9 +2,11 @@
 
 面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
 
-当前为 **0.2.0 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+当前为 **0.2.1 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
 
-新增科研项目逻辑分组、截图与Markdown文档关联、跨页筛选全选和批量整理；指南按任务分组并可搜索章节。详见 [0.2.0发布说明](docs/RELEASE-NOTES-0.2.0.md) 与 [项目/批量验收](docs/qa/RELEASE-0.2.0.md)。此前剪贴板/文件拖拽导入、独立双图对比、紧凑列表/网格继续保留。见 [使用指南](docs/USER_GUIDE.md)、[0.1.8 发布说明](docs/RELEASE-NOTES-0.1.8.md) 和 [本轮验收](docs/qa/RELEASE-0.1.8.md)。v0.1.6/0.1.7 请求合并交付为 v0.1.8，不单独制造中间发布。
+新增侧栏项目分类、Markdown离线公式实时预览和Windows“使用其他应用打开”。详见 [0.2.1发布说明](docs/RELEASE-NOTES-0.2.1.md)、[本轮验收](docs/qa/RELEASE-0.2.1.md)。
+
+此前新增科研项目逻辑分组、截图与Markdown文档关联、跨页筛选全选和批量整理；指南按任务分组并可搜索章节。详见 [0.2.0发布说明](docs/RELEASE-NOTES-0.2.0.md) 与 [项目/批量验收](docs/qa/RELEASE-0.2.0.md)。此前剪贴板/文件拖拽导入、独立双图对比、紧凑列表/网格继续保留。见 [使用指南](docs/USER_GUIDE.md)、[0.1.8 发布说明](docs/RELEASE-NOTES-0.1.8.md) 和 [本轮验收](docs/qa/RELEASE-0.1.8.md)。v0.1.6/0.1.7 请求合并交付为 v0.1.8，不单独制造中间发布。
 
 Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
 
@@ -31,7 +33,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_0.2.0_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_0.2.1_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc
@@ -96,6 +98,12 @@ scripts/with-rust.mjs 优先使用项目内 .tools 工具链，否则使用 PATH
 - SQLite参数化LIKE适合当前MVP规模，无独立搜索服务器；仍按24条分页，搜索只读摘要并加载当前页缩略图。关键词最多200字符、筛选标签最多100个。1000卡/大量长笔记的p95尚未验收，后续根据测量考虑版本化FTS迁移。
 - 会话缓存最多20张卡片，满时只回收干净会话，未保存草稿不被淘汰；全部为未完成卡片时提示先保存。草稿仅在当前进程中保留，不承诺崩溃/断电或强制退出时恢复。
 
+## 数学公式与外部 Markdown 应用
+
+右侧文档源码支持 `$V(x)=x^TPx$`、独立 `$$...$$`、矩阵和多行公式，默认下方实时预览，可切换完整预览。公式错误显示“公式错误”及原始内容；保存/重开保留 LaTeX 文本，渲染不会把公式改成图片。KaTeX 和字体随应用离线打包；不执行文档 HTML、公式链接或外部资源命令。每式8192字符、每次预览256式/131072公式字符、宏展开500次；超限提示，原文保留。
+
+面板“使用其他应用打开”先保存当前修改，再调用 Windows 系统选择器选择已安装的 Obsidian、Typora、VS Code 等；取消保存不会启动其他应用。外部修改后 ResearchClip 拒绝覆盖，请重新打开或另存。不同编辑器的公式语法扩展可能不同；移动文件请连同 assets 一起移动。本轮没有将第三方应用逐个实测结果标记为通过。
+
 ## Markdown 导出
 
 ### Markdown 模板与大纲（0.1.5）
@@ -110,7 +118,7 @@ scripts/with-rust.mjs 优先使用项目内 .tools 工具链，否则使用 PATH
 
 顶部“新建 Markdown”创建图文编排文档，自动在右侧分栏打开，左侧原页面保留。选择素材图片后，使用编辑器相同的Konva合成逻辑把已保存标注烘焙进独立PNG，按勾选顺序添加，每张图片下方紧跟自己的注释。已有笔记作为添加时快照，之后修改文档不回写素材或笔记；未保存的图片标注须先保存到素材库。
 
-可编辑标题和注释，用上移/下移调整整个图文块，在任意块后插入Markdown文本，或删除内容块。“实时预览”与编辑区在同一页面上下排列；支持CommonMark标题、粗斜体、列表和代码。LaTeX源码保留，不渲染公式；预览不执行HTML、不加载远程图像或打开链接。
+可编辑标题和注释，用上移/下移调整整个图文块，在任意块后插入Markdown文本，或删除内容块。“实时预览”与编辑区在同一页面上下排列；支持CommonMark标题、粗斜体、列表和代码。LaTeX源码保留，使用离线KaTeX渲染行内 `$...$` 和独立 `$$...$$` 公式；预览不执行HTML、不加载远程图像或打开链接。
 
 “保存 Markdown”或Ctrl+S首次选择.md位置，之后更新当前已打开文件；“另存为 Markdown”或Ctrl+Shift+S选择新文件。新目标拒绝同名覆盖；继续保存前检测外部修改，冲突时保留草稿并提示另存。PNG放在同目录assets/，稳定唯一命名、相对引用且不覆盖既有不同内容。移动时请保留整个文档文件夹。
 

@@ -1,0 +1,17 @@
+{
+  "mode": "actual Windows WebView2, native Markdown dialog, isolated files and process restart; controlled PNG, not screen capture",
+  "checks": [
+    "no document means no panel/divider; opening and cancelling template selection creates no session, file or reserved width",
+    "paper template is immediately editable and unsaved; CommonMark H6 jump changes the real textarea caret and scroll with long wrapped CJK text while ignoring fenced pseudo-headings",
+    "editing headings refreshes the outline; preview navigation scrolls the matching rendered heading into the actual viewport; hiding outline removes its DOM",
+    "real system dialog writes standard UTF-8 .md plus assets; Save as Template separately copies exact Markdown and PNG bytes without modifying or dirtying the saved document",
+    "duplicate template name is rejected visibly and existing template bytes remain intact",
+    "a real process restart restores the custom template, creates a separate unsaved session with its PNG preview, and edits do not change the template or original .md",
+    "switching templates uses existing dirty-document confirmation: Cancel retains the whole draft; Discard creates the requested theorem without cross-session content",
+    "custom rename preserves body and PNG; two-step Delete removes the active template and retains a recoverable independent archive without touching the original .md; closing selection leaves the original full-width workspace",
+    "experiment and blank templates work; navigating the outline of an existing structured document leaves its original editable block model intact",
+    "malformed template directories show a clear load error without deleting or resetting files; all owned processes and WebViews exit cleanly"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

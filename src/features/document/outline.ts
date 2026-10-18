@@ -1,5 +1,7 @@
 import {fromMarkdown} from 'mdast-util-from-markdown';
 import {toString} from 'mdast-util-to-string';
+import {math} from 'micromark-extension-math';
+import {mathFromMarkdown} from 'mdast-util-math';
 export interface Heading {depth:number;text:string;offset:number;line:number}
 export function documentOutline(markdown:string):Heading[]{
   const headings:Heading[]=[];
@@ -7,7 +9,7 @@ export function documentOutline(markdown:string):Heading[]{
     if(node.type==='heading'&&node.position)headings.push({depth:node.depth,text:toString(node,{includeHtml:false})||'（空标题）',offset:node.position.start.offset??0,line:node.position.start.line});
     if('children'in node)for(const child of node.children)walk(child as ReturnType<typeof fromMarkdown>['children'][number]);
   };
-  walk(fromMarkdown(markdown));return headings;
+  walk(fromMarkdown(markdown,{extensions:[math()],mdastExtensions:[mathFromMarkdown()]}));return headings;
 }
 // A same-width mirror accounts for soft wrapping, tabs and CJK text in the textarea.
 export function revealSourceHeading(node:HTMLTextAreaElement,offset:number){

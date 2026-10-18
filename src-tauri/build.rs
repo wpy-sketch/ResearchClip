@@ -37,6 +37,7 @@ fn main() {
             "copy_editor_png",
             "save_markdown_document",
             "open_markdown_document",
+            "open_markdown_external",
             "release_markdown_document",
             "rename_markdown_document",
             "list_markdown_templates",

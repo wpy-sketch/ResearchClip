@@ -44,7 +44,7 @@ const importCommands=['choose_comparison_image','import_clipboard_image','import
 assert.equal(config.app.windows.find(w=>w.label==='main').dragDropEnabled,false);
 const ocrCommands=['ocr_status','recognize_ocr','copy_ocr_text'];
 const editorCommands = ['save_editor_project','open_editor_project','export_editor_png','copy_editor_png'];
-const documentCommands = ['save_markdown_document','open_markdown_document','release_markdown_document','rename_markdown_document','list_markdown_templates','load_markdown_template','create_markdown_template','rename_markdown_template','delete_markdown_template'];
+const documentCommands = ['open_markdown_external','save_markdown_document','open_markdown_document','release_markdown_document','rename_markdown_document','list_markdown_templates','load_markdown_template','create_markdown_template','rename_markdown_template','delete_markdown_template'];
 const markdownCommands = ['export_knowledge_markdown'];
 const desktopCommands = ['desktop_status','desktop_action','complete_desktop_exit'];
 const libraryCommands=['create_screenshot','library_status','reconcile_library','list_screenshots','screenshot_page','get_knowledge_card','save_knowledge_card','open_card_source','get_screenshot','screenshot_image','update_screenshot','delete_screenshot','list_notes','save_note','delete_note','list_tags','save_tag','delete_tag','get_screenshot_tags','set_screenshot_tags'];
@@ -62,7 +62,8 @@ for(const plugin of ['clipboard-manager','dialog','global-shortcut','opener']) a
 assert.ok(main.permissions.includes('core:event:allow-listen'));assert.ok(main.permissions.includes('core:event:allow-unlisten'));
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/001_workspace.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/002_library.sql'], { cwd: root, stdio: 'pipe' });
+execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_projects.sql'], { cwd: root, stdio: 'pipe' });
 assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 3;'),true);
 assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pending_file_deletions'));
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v3; published v1/v2 migrations unchanged' }, null, 2));
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v3; published v1/v2/v3 migrations unchanged' }, null, 2));

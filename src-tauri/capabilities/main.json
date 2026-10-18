@@ -78,6 +78,7 @@
     "allow-list-project-documents",
     "allow-assign-project-document",
     "allow-sync-project-document",
-    "allow-open-project-document"
+    "allow-open-project-document",
+    "allow-open-markdown-external"
   ]
 }

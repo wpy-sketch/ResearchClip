@@ -51,7 +51,7 @@ export function parseMarkdown(input:string, fallbackTitle='已打开文档'):Mar
   if(new TextEncoder().encode(text).length>MAX_TEXT_BYTES)throw new Error('Markdown 文档超过2 MiB上限。');
   if(!text.startsWith('<!-- ResearchClip:document ')){
     if(text.startsWith('<!-- ResearchClip:'))throw new Error('不支持的 ResearchClip 文档版本。');
-    return {id:newId(),title:fallbackTitle.slice(0,200)||'已打开文档',mode:'source',blocks:[{id:newId(),type:'text',markdown:text}]};
+    return {id:newId(),title:fallbackTitle.slice(0,200)||'已打开文档',mode:'source',blocks:[{id:newId(),type:'text',markdown:input}]};
   }
   const takeHeader=(start:number,kind:string):{meta:Record<string,unknown>;next:number}=>{
     const prefix=`<!-- ResearchClip:${kind} `,end=text.indexOf(' -->\n',start);

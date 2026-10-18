@@ -1,0 +1,15 @@
+{
+  "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+  "checks": [
+    "real SQLite sidebar switches two projects, unclassified and all with correct counts; initially no Markdown pane",
+    "actual WebView offline KaTeX fonts load; inline/display formulas, matrix, Greek, aligned lines, sum/integral update live and survive source/preview switches",
+    "exact malformed matrix shows error without rewriting; hostile TeX URL, raw HTML and remote image remain inert",
+    "left navigation/compact project selector preserve document; live toggle and 480x400 layout retain an 80px source editor",
+    "native Save preserves exact UTF-8 LaTeX in .md; association and outline keep source unchanged; guide images show actual controlled UI",
+    "external-open rejects arbitrary paths/invalid grants and modified documents before launching; file bytes remain untouched",
+    "process restart reopens saved equations; existing CRLF Markdown is opened/saved with byte-exact LaTeX and newlines",
+    "bundled task guide retains 14 searchable chapters, loads both controlled screenshots and preserves copyable LaTeX examples as code"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

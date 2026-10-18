@@ -543,3 +543,16 @@ batch_library_screenshots接受显式版本快照及固定动作枚举，不接S
 Markdown沿用DocumentFiles与标准.md。前端文件服务在打开/保存/改名后用不透明token调用sync_project_document；后端只能解析已有Grant，不能接任意路径。DocumentFiles记住每个已登记token的前一路径，应用内改名同步同一索引ID及项目；另存为生成新索引。sync失败与文件保存结果分开显示，文件已保存不假装失败或删除，面板允许重试登记。open_project_document只接受数据库ID，经现有普通文件/扩展名/大小/资源校验重开；文档替换仍经过原脏草稿确认。项目仅索引路径，不扫描磁盘，不复制Markdown正文。应用外移动/改名会保留缺失引用，需要重新打开新位置；不跟踪外部文件身份或自动修复路径。
 
 main新增9个项目业务命令，capture-overlay和pin权限不变，无通用fs/SQL或新依赖。GuideView复用同一USER_GUIDE.md，按采集、资料项目、图片工具、Markdown写作、设置安全分组；搜索仅过滤章节目录，正文可持续阅读，不改变动态分栏规则。
+
+
+## v0.2.1 项目侧栏、公式与外部应用
+
+ProjectNavigation 复用 ProjectStore 和 LibraryStore 参数化分页，用既有 projectId/unclassified 筛选；切换清除批量选择，保留活动 Markdown 会话。图片数量来自 SQLite，不引入分类副本、数据迁移或磁盘移动。窄窗提供同语义选择器。
+
+MarkdownPreview 继续使用 react-markdown 10.1.0；remark-math 6.0.0 在同一次 MDAST 解析识别 math/inlineMath。code 渲染边界仅将具有 math-inline/math-display 的节点交给 MathFormula/KaTeX 0.19.0，代码围栏仍为纯文本。outline 同步启用 micromark-extension-math 3.1.0 与 mdast-util-math 3.0.0，避免公式内部 # 被误判为标题。没有引入第二套 Markdown 渲染器或 rehype-raw。MarkdownPanel 源文使用 deferred 实时预览；图文模式复用既有预览切换。
+
+KaTeX 及字体本地打包，MIT；与较重的 MathJax 相比，本轮所需静态排版使用 KaTeX 即可。trust 始终拒绝，strict=error，throwOnError=true，maxExpand=500、maxSize=20；每个公式新建宏字典，阻止全局定义污染下一式。单式8192字符，每份预览最多256式且公式字符总计131072，超限显示错误。仅引擎生成的 HTML 在专用组件注入；用户 HTML 始终 skipHtml，Markdown 链接惰性、远程图片不加载。GuideView 只为两张静态打包的指南图片提供自有 key 映射，不扩展用户文件访问权限。数学语法错误保留源码，不自动改正含混反斜杠。普通外部源文打开/无修改保存保留输入换行字节，图文块版本契约不变。
+
+open_markdown_external 是 main-only 业务命令，只接受已打开文档的不透明 token；DocumentFiles::external_path 验证授权、磁盘快照和源文件未变，再调用 Windows SHOpenWithDialog/OAIF_EXEC。Windows 使用 UTF-16 路径，去除规范化扩展前缀供 Shell 使用，保留 UNC/中文。操作使用捕获任务许可避免重复选择器，前端未保存或脏文档先 await save，失败不启动其他应用。没有通用 opener/fs/shell 权限、任意程序名或命令行输入。系统选择器在主窗口所属线程运行；取消作为正常结果。应用外修改会触发原有拒绝覆盖机制。非 Windows 默认应用分支尚未整机验证。
+
+依赖/API核对：[react-markdown 官方数学示例](https://github.com/remarkjs/react-markdown)、[remark-math](https://github.com/remarkjs/remark-math)、[KaTeX配置](https://katex.org/docs/options)、[安全说明](https://katex.org/docs/security)、[Windows SHOpenWithDialog](https://learn.microsoft.com/en-us/windows/win32/api/shlobj_core/nf-shlobj_core-shopenwithdialog)。本轮实际结果与限制见 [v0.2.1验收](qa/RELEASE-0.2.1.md)。

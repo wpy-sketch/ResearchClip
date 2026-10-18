@@ -17,6 +17,22 @@ pub const MAX_HEADER: usize = MAX_TEXT * 2;
 pub fn failure(message: &str) -> CaptureError {
     CaptureError::new(ErrorCode::SaveFailed, message)
 }
+#[cfg(target_os = "windows")]
+pub fn shell_path(path: &Path) -> Vec<u16> {
+    use std::os::windows::ffi::OsStrExt;
+    let wide: Vec<u16> = path.as_os_str().encode_wide().collect();
+    let prefix: Vec<u16> = "\\\\?\\".encode_utf16().collect();
+    let unc: Vec<u16> = "\\\\?\\UNC\\".encode_utf16().collect();
+    let mut result = if wide.starts_with(&unc) {
+        [vec![92, 92], wide[unc.len()..].to_vec()].concat()
+    } else if wide.starts_with(&prefix) {
+        wide[prefix.len()..].to_vec()
+    } else {
+        wide
+    };
+    result.push(0);
+    result
+}
 fn io_error() -> CaptureError {
     failure(
         "Markdown 文件操作失败，请检查文件、权限或磁盘空间；原文件未主动删除，可能留下本次未引用的assets。",
@@ -253,6 +269,18 @@ impl DocumentFiles {
             .clone();
         Ok((path, self.indexed.get(token).cloned()))
     }
+    pub fn external_path(&self, token: &str) -> Result<PathBuf, CaptureError> {
+        if token.len() > 64 {
+            return Err(failure("文档授权无效。"));
+        }
+        self.unchanged(token)?;
+        Ok(self
+            .grants
+            .get(token)
+            .ok_or_else(|| failure("文档授权已失效。"))?
+            .path
+            .clone())
+    }
     pub fn mark_indexed(&mut self, token: &str, path: PathBuf) {
         self.indexed.insert(token.into(), path);
     }
@@ -432,6 +460,44 @@ impl DocumentFiles {
 mod tests {
     use super::*;
     use crate::{capture::RawFrame, services::screen_capture::encode_png};
+    #[test]
+    fn external_open_requires_live_unchanged_grant() {
+        let temp = tempfile::tempdir().unwrap();
+        let path = temp.path().join("数学 研究.md");
+        let source = "# 中文\r\n\r\n$\\dot{x}=Ax+Bu$\r\n\n$$\n\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}\n$$\n";
+        let mut files = DocumentFiles::default();
+        assert!(files.external_path("../not-authorized.md").is_err());
+        let mut data = input();
+        data.markdown = source.into();
+        let saved = files.save(Some(&path), &data, &[]).unwrap();
+        assert_eq!(
+            files.external_path(&saved.token).unwrap(),
+            path.canonicalize().unwrap()
+        );
+        assert_eq!(fs::read_to_string(&path).unwrap(), source);
+        fs::write(&path, "changed externally").unwrap();
+        assert!(files.external_path(&saved.token).is_err());
+        assert_eq!(fs::read_to_string(&path).unwrap(), "changed externally");
+        files.release(&saved.token);
+        assert!(files.external_path(&saved.token).is_err());
+        assert!(files.external_path(&"x".repeat(65)).is_err());
+    }
+    #[cfg(target_os = "windows")]
+    #[test]
+    fn shell_paths_preserve_unicode_and_unc_without_extended_prefix() {
+        for (input, expected) in [
+            (r"\\?\C:\研究 文件\数学.md", r"C:\研究 文件\数学.md"),
+            (r"\\?\UNC\server\share\文档.md", r"\\server\share\文档.md"),
+            (r"C:\normal.md", r"C:\normal.md"),
+        ] {
+            let value = shell_path(Path::new(input));
+            assert_eq!(
+                String::from_utf16(&value[..value.len() - 1]).unwrap(),
+                expected
+            );
+            assert_eq!(value.last(), Some(&0));
+        }
+    }
     fn png() -> Vec<u8> {
         encode_png(RawFrame {
             width_px: 2,

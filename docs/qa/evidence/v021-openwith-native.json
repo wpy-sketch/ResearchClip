@@ -1,0 +1,9 @@
+{
+  "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+  "checks": [
+    "SHOpenWithDialog displays a real Windows chooser: a newly created System32/OpenWith.exe host has exactly one visible popup",
+    "cancelling the actual native chooser returns control without changing the .md source or showing an error; no default association changed"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

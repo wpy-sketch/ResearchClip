@@ -113,6 +113,76 @@ fn check(window: &WebviewWindow) -> Result<(), CaptureError> {
     Ok(())
 }
 #[tauri::command]
+pub async fn open_markdown_external(
+    window: WebviewWindow,
+    app: AppHandle,
+    captures: State<'_, Arc<ScreenCaptureService>>,
+    files: State<'_, Arc<Mutex<DocumentFiles>>>,
+    token: String,
+) -> Result<(), CaptureError> {
+    check(&window)?;
+    let _permit = captures.try_begin()?;
+    let path = files
+        .lock()
+        .map_err(|_| failure("文档状态异常。"))?
+        .external_path(&token)?;
+    #[cfg(target_os = "windows")]
+    {
+        let _ = app;
+        let owner = window.clone();
+        let (sender, receiver) = std::sync::mpsc::sync_channel(1);
+        window
+            .run_on_main_thread(move || {
+                use windows::{
+                    Win32::UI::Shell::{
+                        OAIF_EXEC, OAIF_HIDE_REGISTRATION, OPENASINFO, SHOpenWithDialog,
+                    },
+                    core::PCWSTR,
+                };
+                let wide = crate::services::markdown_document::shell_path(&path);
+                let info = OPENASINFO {
+                    pcszFile: PCWSTR(wide.as_ptr()),
+                    pcszClass: PCWSTR::null(),
+                    oaifInFlags: OAIF_EXEC | OAIF_HIDE_REGISTRATION,
+                };
+                let result = owner
+                    .hwnd()
+                    .map_err(|_| failure("主窗口不可用。"))
+                    .and_then(|hwnd| {
+                        unsafe {
+                            SHOpenWithDialog(Some(windows::Win32::Foundation::HWND(hwnd.0)), &info)
+                        }
+                        .or_else(|e| {
+                            if e.code().0 == 0x800704c7u32 as i32 {
+                                Ok(())
+                            } else {
+                                Err(e)
+                            }
+                        })
+                        .map_err(|_| {
+                            failure("Windows 无法打开应用选择器，请检查可用的 Markdown 应用。")
+                        })
+                    });
+                let _ = sender.send(result);
+            })
+            .map_err(|_| failure("无法显示 Windows 应用选择器。"))?;
+        tauri::async_runtime::spawn_blocking(move || {
+            receiver
+                .recv()
+                .map_err(|_| failure("应用选择器异常结束。"))?
+        })
+        .await
+        .map_err(|_| failure("应用选择任务异常结束。"))?
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        use tauri_plugin_opener::OpenerExt;
+        app.opener()
+            .open_path(path.to_string_lossy(), None::<&str>)
+            .map_err(|_| failure("无法使用默认应用打开 Markdown。"))
+    }
+}
+#[tauri::command]
 pub async fn save_markdown_document(
     window: WebviewWindow,
     app: AppHandle,

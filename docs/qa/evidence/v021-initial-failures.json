@@ -1,0 +1,56 @@
+[
+  {
+    "run": "math-v021-first",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 0,
+    "failure": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '新建项目', exact: true }) to be visible\u001b[22m\n"
+  },
+  {
+    "run": "math-v021-second",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 1,
+    "failure": "Error: Timed out live six equations: "
+  },
+  {
+    "run": "math-v021-final",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 7,
+    "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 14\n"
+  },
+  {
+    "run": "math-v021-release",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 7,
+    "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(await guide.locator('.katex').count()>0)\n"
+  },
+  {
+    "run": "openwith-v021-first",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 0,
+    "failure": "Error: Timed out owned Windows Open With popup: "
+  },
+  {
+    "run": "openwith-v021-diagnostic",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 0,
+    "failure": "Error: Timed out owned Windows Open With popup: "
+  },
+  {
+    "run": "openwith-v021-host",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 0,
+    "failure": "Error: Timed out Windows Open With popup in verified host: "
+  },
+  {
+    "run": "import-v021-accepted",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 4,
+    "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n5 !== 6\n"
+  },
+  {
+    "run": "import-v021-wait-result",
+    "result": "FAIL",
+    "passedGroupsBeforeFailure": 3,
+    "failure": "Native Windows OLE drop returned None (multi-file JPEG/WebP); helper refused acceptance, process exited 1."
+  }
+]

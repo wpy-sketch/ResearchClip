@@ -1,0 +1,18 @@
+{
+  "mode": "actual Windows WebView2, real file dialogs, SQLite and filesystem; explicitly controlled source PNG, not screen capture",
+  "checks": [
+    "initial document session is absent: no Markdown panel or separator DOM and original workspace owns full width",
+    "new blank untitled.md opens a focused right source editor without creating any disk file",
+    "Chinese/English/LaTeX Markdown and undo/redo work while left navigation changes without losing the right document",
+    "left library inserts an annotated image and matching note at the saved right caret selection, using controlled relative assets; preview resolves the image",
+    "Ctrl+S opens a real Windows Save dialog and writes exact standard UTF-8 source plus full-resolution annotated PNG assets",
+    "real pointer drag and keyboard divider adjust both widths, enforce minimum sizes and persist the ratio through the existing native settings service",
+    "after live split resize the actual left Konva canvas creates original-pixel coordinates correctly; right Ctrl+Z does not undo left annotations; real SQLite save preserves vectors",
+    "clean document close truly unmounts the pane and divider, restores full width, and preserves the same left canvas DOM and selected editor session",
+    "native Open restores saved content and split preference; current editor composite can be inserted and saved with a second stable relative asset",
+    "dirty Close Cancel retains content; external-write conflict keeps panel and pending dialog open; Save As recovers, and Save/Close closes only after disk commit",
+    "480px layout has no document-level horizontal overflow; real restart restores split ratio and disk source, repeated blank/create/discard/close leaves no pane or listener error; original PNG hashes unchanged"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

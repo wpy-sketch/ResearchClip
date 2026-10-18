@@ -226,6 +226,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::import::import_image_files,
             commands::document::save_markdown_document,
             commands::document::open_markdown_document,
+            commands::document::open_markdown_external,
             commands::document::release_markdown_document,
             commands::document::rename_markdown_document,
             commands::document::list_markdown_templates,
