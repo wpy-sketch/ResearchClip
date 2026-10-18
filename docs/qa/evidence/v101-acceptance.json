@@ -334,7 +334,7 @@
     "QA-002 historical intermittent tray timeout"
   ],
   "installerFollowup": {
-    "id": "QA-003",
+    "id": "QA-008",
     "priority": "P2",
     "state": "OPEN",
     "cause": "not established; no claim that quiescence timing fixes production root cause",
@@ -365,6 +365,7 @@
   "sourceNotes": [
     "Early steady fixture omitted required preference fields, so defaults were used; separate healthy setup-only run passes with valid preferences",
     "10-screen case passed actual sampled pixels, but its enclosing suite remains FAIL due to later obsolete button locator",
-    "Private-temp retry does not substitute for the final two default-temp install/uninstall tests"
+    "Private-temp retry does not substitute for the final two default-temp install/uninstall tests",
+    "Post-tag documentation correction: installer issue is QA-008; the source tag and immutable SOURCE.txt used QA-003 in error, distinct from historical resolved QA-003. Binary and release assets unchanged."
   ]
 }

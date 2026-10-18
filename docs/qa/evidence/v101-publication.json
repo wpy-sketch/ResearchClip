@@ -1,0 +1,107 @@
+{
+  "result": "PASS",
+  "releaseId": 416461690,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.1",
+  "publishedAt": "2026-10-18T13:19:07Z",
+  "draft": false,
+  "prerelease": false,
+  "isLatest": true,
+  "sourceCommit": "c04678f95e39e29d31555bdb2821d648d8d9273c",
+  "tag": "v1.0.1",
+  "previousReleasePreserved": true,
+  "previousReleaseCount": 11,
+  "tagCommitVerified": true,
+  "assets": [
+    {
+      "name": "ResearchClip-v1.0.1-windows-x64.exe",
+      "size": 20113920,
+      "id": 653534438,
+      "digest": "sha256:eed8912073448f3d41a4489b137e672a57921319dfd8edcc2fc41eed1795c164",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.1/ResearchClip-v1.0.1-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip_1.0.1_x64-setup.exe",
+      "size": 6396745,
+      "id": 653534845,
+      "digest": "sha256:b6ebd9876dd69ebbf15d5830aee2fe0265f52f98d0c5c5534ca7f0b97717b2af",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.1/ResearchClip_1.0.1_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 278,
+      "id": 653534356,
+      "digest": "sha256:e0c3d9134b2cf8f8dc44d29e4313d477efa7aae04358787275fddc502f26bc34",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.1/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1718,
+      "id": 653534283,
+      "digest": "sha256:6e0e5726129c2fd5d71e0d6749153eabc29013b4bc085a8219256eff9aeed8b2",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.1/SOURCE.txt"
+    }
+  ],
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v1.0.1-windows-x64.exe",
+      "size": 20113920,
+      "sha256": "eed8912073448f3d41a4489b137e672a57921319dfd8edcc2fc41eed1795c164",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 20113920,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip_1.0.1_x64-setup.exe",
+      "size": 6396745,
+      "sha256": "b6ebd9876dd69ebbf15d5830aee2fe0265f52f98d0c5c5534ca7f0b97717b2af",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 6396745,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1718,
+      "sha256": "6e0e5726129c2fd5d71e0d6749153eabc29013b4bc085a8219256eff9aeed8b2",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 1718,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 278,
+      "sha256": "e0c3d9134b2cf8f8dc44d29e4313d477efa7aae04358787275fddc502f26bc34",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 278,
+          "matched": true
+        }
+      ]
+    }
+  ],
+  "issueNumberCorrection": "QA-008 is the installer follow-up; historical QA-003 remains resolved. Tag/SOURCE text is immutable and retains the earlier duplicate number."
+}
