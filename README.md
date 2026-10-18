@@ -279,3 +279,5 @@ SQLite v2→v3升级会先验证并备份，新增projects、screenshot_projects
 
 
 v1.0.0 已发布为正式 Latest：[附件与匿名下载校验回执](docs/qa/PUBLICATION-1.0.0.md)。
+
+后续分阶段开发遵守[ResearchClip Pro规范](docs/PRO-DEVELOPMENT.md)。当前仅记录约束；不开发PDF导出或独立备份恢复系统，不自动实施WebDAV或截图版本历史。[规范记录验收](docs/qa/PRO-CONSTRAINTS.md)。
