@@ -49,12 +49,12 @@ export function LibraryView({favorites}: {favorites:boolean}) {
   const select=(id:string,shift=false)=>selection.choose(items,id,shift);
   const pages = Math.max(1, Math.ceil(total / LIBRARY_PAGE_SIZE));
   const filtered=Boolean(query||tagIds.length||favorite!==null);
-  return <div className={`page-container image-drop-target ${drop.over?'is-drag-over':''}`} data-image-drop-target="library" {...drop.handlers}>
+  return <div className={`page-container library-page image-drop-target ${drop.over?'is-drag-over':''}`} data-image-drop-target="library" {...drop.handlers}>
     <div className="page-heading"><div><h2>{favorites ? '收藏' : '截图素材'}</h2>
       <p>{favorites ? '将值得反复回看的图像，留在这里。' : '图像和标注保存在本机应用数据目录中。'}</p>
     </div><span className="subtle-badge">{viewMode === 'grid' ? '网格视图' : '列表视图'}</span></div>
     <ProjectBar/>
-    <p className="image-drop-hint">拖入 PNG / JPG / JPEG / WebP，或点击顶部剪贴板图标导入。每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。</p>
+    <p className="image-drop-hint" title="每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。详见使用指南。">拖入图片或点击顶部剪贴板图标导入。支持 PNG、JPG / JPEG、WebP。</p>
     {!favorites && <CapturePanel/>}
     {!favorites && showWelcome && !items.length && !loading && !filtered && <HomeView/>}
     {(error || operationError) && <p role="alert" className="error-banner my-3">{operationError ?? error}</p>}

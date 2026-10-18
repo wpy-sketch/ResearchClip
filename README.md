@@ -1,22 +1,32 @@
 # ResearchClip
 
-面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.0 Windows 正式版**。
 
-当前为 **0.2.1 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
+[下载正式版](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [v1.0.0实际验收](docs/qa/RELEASE-1.0.0.md)
 
-新增侧栏项目分类、Markdown离线公式实时预览和Windows“使用其他应用打开”。详见 [0.2.1发布说明](docs/RELEASE-NOTES-0.2.1.md)、[本轮验收](docs/qa/RELEASE-0.2.1.md)。
+## 从这里开始
 
-此前新增科研项目逻辑分组、截图与Markdown文档关联、跨页筛选全选和批量整理；指南按任务分组并可搜索章节。详见 [0.2.0发布说明](docs/RELEASE-NOTES-0.2.0.md) 与 [项目/批量验收](docs/qa/RELEASE-0.2.0.md)。此前剪贴板/文件拖拽导入、独立双图对比、紧凑列表/网格继续保留。见 [使用指南](docs/USER_GUIDE.md)、[0.1.8 发布说明](docs/RELEASE-NOTES-0.1.8.md) 和 [本轮验收](docs/qa/RELEASE-0.1.8.md)。v0.1.6/0.1.7 请求合并交付为 v0.1.8，不单独制造中间发布。
+1. **获取程序**：在 Release 下载 Windows x64 EXE 或 NSIS 安装包。需要 WebView2；程序未签名，请核对随发布提供的 SHA256。先保存并退出旧实例。
+2. **采集与整理**：截图后点击「存入素材库」，或主动从剪贴板/本地图片导入；用项目、标签、收藏和搜索组织资料。
+3. **标注与写作**：保存可编辑标注，再插入 Markdown；文档保存为标准 `.md` 与相对 `assets`，可交给其他 Markdown 软件。
 
-v0.2.1 [直接下载 Windows x64 EXE](https://github.com/wpy-sketch/ResearchClip/releases/download/v0.2.1/ResearchClip-v0.2.1-windows-x64.exe)，[发布及下载校验回执](docs/qa/PUBLICATION-0.2.1.md)。
+核心资料留在本机，没有账号、遥测、云同步或自动上传。升级不会清空 SQLite 或原图；备份请保留完整资料目录与外部 Markdown 文件夹。
 
-Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
+## 主要工作区
 
-本轮主题、标注默认样式、托盘、单实例和退出保护的实际结果见 [桌面体验验收](docs/DESKTOP-EXPERIENCE-VALIDATION.md)。
+- **采集**：Windows 全屏/区域截图、两组可配置全局快捷键、图片剪贴板与文件拖拽导入。
+- **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
+- **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
+- **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
+- **帮助**：14节任务式说明、详细分步注释、10张离线界面图和原尺寸放大查看。
 
-最新知识卡片、标签与搜索的保存规则和实际Windows结果见 [笔记与搜索验收](docs/KNOWLEDGE-SEARCH-VALIDATION.md)。
+v1.0.0 优化素材首屏密度、批量操作显示层级和指南导航。完整高DPI/多屏、macOS与第三方应用矩阵仍需专项验证；旧退出/托盘问题与本轮复验分别记录在 [QA总表](docs/qa/TEST_REPORT.md)，不把正式Release标识等同于未运行项目通过。
 
-最新素材库页面、分页、排序、损坏图片处理与实际重启结果见 [素材库验收](docs/LIBRARY-VALIDATION.md)；存储实体、迁移与文件一致性见 [存储验收](docs/STORAGE-VALIDATION.md)。原生持久化验收使用明确标记的测试PNG，不证明实时屏幕读取。此前编辑器与快捷键结果见 [标注与导出复验](docs/EDITOR-COMPLETION-VALIDATION.md) 和 [双快捷键验收](docs/SHORTCUT-VALIDATION.md)；历史原生截图成功/拒绝均保留，完整硬件矩阵尚未验收。
+## 实现与历史记录
+
+当前版本说明：[1.0.0](docs/RELEASE-NOTES-1.0.0.md)。此前 [0.2.1项目分类与公式](docs/RELEASE-NOTES-0.2.1.md)、[0.2.0项目/批量](docs/RELEASE-NOTES-0.2.0.md)、[0.1.8导入/对比](docs/RELEASE-NOTES-0.1.8.md)、[0.1.5模板](docs/RELEASE-NOTES-0.1.5.md)、[0.1.4高级标注](docs/RELEASE-NOTES-0.1.4.md)、[0.1.3OCR](docs/RELEASE-NOTES-0.1.3.md)、[0.1.1贴图](docs/RELEASE-NOTES-0.1.1.md)。旧发布内容保留。
+
+存储和既有模块证据：[存储](docs/STORAGE-VALIDATION.md)、[素材库](docs/LIBRARY-VALIDATION.md)、[笔记与搜索](docs/KNOWLEDGE-SEARCH-VALIDATION.md)、[标注与导出](docs/EDITOR-COMPLETION-VALIDATION.md)、[桌面体验](docs/DESKTOP-EXPERIENCE-VALIDATION.md)。历史记录不充当本轮测试结果。
 
 ## 运行
 
@@ -35,7 +45,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_0.2.1_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_1.0.0_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc

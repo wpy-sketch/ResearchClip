@@ -1,0 +1,355 @@
+{
+  "date": "2026-10-18",
+  "environment": "Windows 11 x64 NT 10.0.26200; Node 22.22.2; Rust MSVC 1.99; actual isolated WebView2/SQLite/native dialogs unless stated otherwise",
+  "frontend": {
+    "exitCode": 0,
+    "files": 43,
+    "tests": 300
+  },
+  "rust": {
+    "exitCode": 0,
+    "tests": 125,
+    "ignored": 0
+  },
+  "nativePassedGroups": 88,
+  "nativePassedSuites": 11,
+  "unresolved": "QA-001/P2: library suite exits 1 after two PostMessage 0x80070578 messages; data assertions completed, overall suite failed",
+  "initialFailures": [
+    {
+      "suite": "guide-v100-images",
+      "result": "FAIL",
+      "completedGroups": 1,
+      "failure": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: '添加卡片标签', exact: true })\u001b[22m\n"
+    },
+    {
+      "suite": "desktop-v100-release",
+      "result": "failed",
+      "completedGroups": 7,
+      "failure": "Error: Command failed: D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\debug\\examples\\knowledge_fault.exe block-save D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\desktop-v100-release\\settings\\workspace\nError: \"unexpected test schema\"\n"
+    },
+    {
+      "suite": "openwith-v100-release",
+      "result": "FAIL",
+      "completedGroups": 0,
+      "failure": "Error: Timed out Windows Open With popup in verified host: "
+    }
+  ],
+  "initialBatchExits": [
+    {
+      "suite": "guide",
+      "exitCode": 0
+    },
+    {
+      "suite": "library",
+      "exitCode": 1
+    },
+    {
+      "suite": "desktop",
+      "exitCode": 1
+    },
+    {
+      "suite": "projects",
+      "exitCode": 0
+    },
+    {
+      "suite": "split",
+      "exitCode": 0
+    },
+    {
+      "suite": "document",
+      "exitCode": 0
+    },
+    {
+      "suite": "templates",
+      "exitCode": 0
+    },
+    {
+      "suite": "import",
+      "exitCode": 0
+    },
+    {
+      "suite": "compare",
+      "exitCode": 0
+    },
+    {
+      "suite": "math",
+      "exitCode": 0
+    },
+    {
+      "suite": "markdown-open-with",
+      "exitCode": 1
+    },
+    {
+      "suite": "editor",
+      "exitCode": 0
+    },
+    {
+      "suite": "material",
+      "exitCode": 0
+    }
+  ],
+  "finalSuites": [
+    {
+      "suite": "guide-v100-release",
+      "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+      "checks": [
+        "real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+        "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+        "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+        "all 10 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+        "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 14 chapters; 1180/760/480 layouts do not overflow"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "projects-v100-release",
+      "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+      "checks": [
+        "actual startup upgrades a populated v2 SQLite to v3, creates a readable schema-2 backup, retains 32 records and unchanged original file hashes",
+        "real UI creates and renames projects; cancelling empty-project deletion preserves it, confirming removes only the empty logical group",
+        "actual Ctrl clicks toggle independent cards, Shift extends the visible range and those manually selected cards successfully pass the strict bulk-write IPC; select-all resolves all 28 matching records across pages without selecting four nonmatching records",
+        "28 selected images move transactionally into a project, filtered counts agree, nonempty project deletion is refused and no image paths change",
+        "bulk tag addition shares the same two tag IDs across 28 images and preserves prior notes/source; bulk favorite updates exactly the selected set",
+        "the real batch-delete dialog names all 28 images; Cancel makes no deletion or file changes",
+        "bulk export uses a real Windows folder picker and creates standard Markdown with 28 valid relative PNG assets",
+        "saved Markdown is indexed without copying body or moving assets, associated with the project, reopened by its database ID through the existing pane with unchanged UTF-8 file bytes; actual context-menu rename preserves the same database ID and project membership",
+        "grouped/searchable 14-section guide and 480px layout work while the right draft remains; actual process restart restores project membership/counts, tags, favorite flags and the indexed Markdown",
+        "the existing individual screenshot delete path also refreshes the project count immediately, while the Markdown membership stays unchanged",
+        "unclassified scope contains only four unrelated images; explicit count-confirmed batch deletion removes their records/files only, leaves 28 project originals, shared tags, source notes and external Markdown intact, then exits cleanly"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "split-v100-release",
+      "mode": "actual Windows WebView2, real file dialogs, SQLite and filesystem; explicitly controlled source PNG, not screen capture",
+      "checks": [
+        "initial document session is absent: no Markdown panel or separator DOM and original workspace owns full width",
+        "new blank untitled.md opens a focused right source editor without creating any disk file",
+        "Chinese/English/LaTeX Markdown and undo/redo work while left navigation changes without losing the right document",
+        "left library inserts an annotated image and matching note at the saved right caret selection, using controlled relative assets; preview resolves the image",
+        "Ctrl+S opens a real Windows Save dialog and writes exact standard UTF-8 source plus full-resolution annotated PNG assets",
+        "real pointer drag and keyboard divider adjust both widths, enforce minimum sizes and persist the ratio through the existing native settings service",
+        "after live split resize the actual left Konva canvas creates original-pixel coordinates correctly; right Ctrl+Z does not undo left annotations; real SQLite save preserves vectors",
+        "clean document close truly unmounts the pane and divider, restores full width, and preserves the same left canvas DOM and selected editor session",
+        "native Open restores saved content and split preference; current editor composite can be inserted and saved with a second stable relative asset",
+        "dirty Close Cancel retains content; external-write conflict keeps panel and pending dialog open; Save As recovers, and Save/Close closes only after disk commit",
+        "480px layout has no document-level horizontal overflow; real restart restores split ratio and disk source, repeated blank/create/discard/close leaves no pane or listener error; original PNG hashes unchanged"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "document-v100-release",
+      "mode": "actual Windows WebView2, real file dialogs, SQLite and filesystem; explicitly controlled source PNG, not screen capture",
+      "checks": [
+        "creates a unique empty document with visible unsaved state in the actual application",
+        "click selection order, whole-block movement, middle deletion and inserted Markdown retain the correct image-caption association; safe live preview renders lists/code without running HTML",
+        "actual system Save cancellation creates no Markdown or assets and retains unsaved state",
+        "real system Save As writes UTF-8 .md and two stable relative assets at original resolution; exported PNG contains actual Konva rectangle pixels, not the unannotated source",
+        "continuing Save atomically updates the opened file, external modification blocks replacement and preserves draft, Save As creates a new file without damaging the external edit",
+        "native Open restores exact block order and editable annotations; close cancellation keeps edits, Save and Close commits them before closing",
+        "actual application restart reopens the document with the same order; original screenshots and all three SQLite records remain unchanged",
+        "real window close warns about unsaved Markdown; Cancel retains the app and explicit Discard exits cleanly"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "templates-v100-release",
+      "mode": "actual Windows WebView2, native Markdown dialog, isolated files and process restart; controlled PNG, not screen capture",
+      "checks": [
+        "no document means no panel/divider; opening and cancelling template selection creates no session, file or reserved width",
+        "paper template is immediately editable and unsaved; CommonMark H6 jump changes the real textarea caret and scroll with long wrapped CJK text while ignoring fenced pseudo-headings",
+        "editing headings refreshes the outline; preview navigation scrolls the matching rendered heading into the actual viewport; hiding outline removes its DOM",
+        "real system dialog writes standard UTF-8 .md plus assets; Save as Template separately copies exact Markdown and PNG bytes without modifying or dirtying the saved document",
+        "duplicate template name is rejected visibly and existing template bytes remain intact",
+        "a real process restart restores the custom template, creates a separate unsaved session with its PNG preview, and edits do not change the template or original .md",
+        "switching templates uses existing dirty-document confirmation: Cancel retains the whole draft; Discard creates the requested theorem without cross-session content",
+        "custom rename preserves body and PNG; two-step Delete removes the active template and retains a recoverable independent archive without touching the original .md; closing selection leaves the original full-width workspace",
+        "experiment and blank templates work; navigating the outline of an existing structured document leaves its original editable block model intact",
+        "malformed template directories show a clear load error without deleting or resetting files; all owned processes and WebViews exit cleanly"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "import-v100-release",
+      "mode": "actual Windows clipboard and WebView2, native WinForms/OLE file drops, real SQLite/files/restart; controlled image fixtures, not screen capture",
+      "checks": [
+        "startup/copying does not import automatically; an explicit click reads real Windows image clipboard, creates a real SQLite record and managed original/thumbnail",
+        "locked clipboard and text-only clipboard report clear errors without new records; repeating explicit image import makes a separate ID with the same pixels and never overwrites a prior image",
+        "real external PNG crosses a native Windows OLE drag into the actual HTML5 library target and persists with filename-derived title",
+        "a real multi-file OLE drop decodes JPEG and WebP, saves independent normalized PNGs and thumbnails, and refreshes actual library data",
+        "mixed valid, unsupported and corrupted files return per-file failures while the valid PNG is committed; no page crash or false batch success",
+        "a valid 4096x4096 boundary image imports and produces a 512px thumbnail; valid over-pixel image, >20MiB file and 11-file native drops fail safely with no extra database records",
+        "imported card can use existing rename and Konva annotation editing/save; managed original bytes remain unchanged",
+        "native multi-file drop into Markdown imports library records and inserts standard relative image references in order at the saved caret; annotations/notes remain editable, and a real Save dialog writes persistent PNG assets with no temporary paths",
+        "actual process restart retains imported library records, renamed title, editable annotation JSON and exported document; reopening resolves all assets and external original hashes are unchanged"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "compare-v100-release",
+      "mode": "actual Windows WebView2 and native local-image dialog; screenshots/pixels, real SQLite and view navigation, isolated controlled images",
+      "checks": [
+        "native chooser loads two same-size local PNGs, displays actual metadata, and side-by-side images share one original-pixel transform",
+        "real screenshot pixels show red A left and blue B right; pointer drag, keyboard clamp and edge positions change the actual split",
+        "25% B opacity produces measured red/blue blended pixels; zoom buttons, wheel and actual pointer pan update identical A/B transforms",
+        "A/B swap changes metadata and images; differently sized images share a top-left transform without stretching; failed local decoding retains the old image; native JPEG metadata and display succeed",
+        "leaving comparison revokes its actual blob URLs and returns to library; list and grid show the same real records with visible row actions",
+        "three real library selection/compare/exit cycles release and reload images without affecting the independent right Markdown session",
+        "complete in-app guide contains all 14 sections, actual outline jump scrolls to data safety instructions, stays within 480px and preserves the right Markdown draft",
+        "single missing test thumbnail yields an isolated placeholder while other cards remain; external and managed source hashes unchanged, and native app exits cleanly"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "math-v100-release",
+      "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+      "checks": [
+        "real SQLite sidebar switches two projects, unclassified and all with correct counts; initially no Markdown pane",
+        "actual WebView offline KaTeX fonts load; inline/display formulas, matrix, Greek, aligned lines, sum/integral update live and survive source/preview switches",
+        "exact malformed matrix shows error without rewriting; hostile TeX URL, raw HTML and remote image remain inert",
+        "left navigation/compact project selector preserve document; live toggle and 480x400 layout retain an 80px source editor",
+        "native Save preserves exact UTF-8 LaTeX in .md; association and outline keep source unchanged",
+        "external-open rejects arbitrary paths/invalid grants and modified documents before launching; file bytes remain untouched",
+        "process restart reopens saved equations; existing CRLF Markdown is opened/saved with byte-exact LaTeX and newlines",
+        "bundled task guide retains 14 searchable chapters, loads both controlled screenshots and preserves copyable LaTeX examples as code"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "editor-native-v100-release",
+      "mode": "Windows native editor with explicit controlled PNG; screen capture unverified",
+      "checks": [
+        "real raw IPC + Windows Save As writes all five vector types in layer order and byte-identical immutable original PNG",
+        "real Windows Open dialog restores five editable object types; Delete + Ctrl+Z works after reload",
+        "real Windows export dialog writes the requested test-export.png at full 320 × 200 resolution",
+        "official clipboard plugin transfers composite image to separate Edge viewer; every RGBA pixel matches saved PNG",
+        "real save-dialog cancellation leaves existing original/project/export unchanged",
+        "actual app restart and project reopen restore all five annotation types"
+      ],
+      "errors": [],
+      "result": "passed"
+    },
+    {
+      "suite": "desktop-v100-recheck",
+      "mode": "actual Windows app, tray popup with scoped synthetic input, OS hotkeys, SQLite and restarts; source PNG is controlled, OS color changes use CDP media emulation",
+      "checks": [
+        "legacy settings load new annotation/close defaults without reset; system preference persists and follows both CDP light/dark media changes (not a physical OS theme toggle)",
+        "close-to-tray hides without losing the window; actual native tray callback restores it; three minimize/restore cycles retain one main HWND and one tray",
+        "second real process exits through the official single-instance plugin and restores the first without duplicating windows or tray icons",
+        "actual native tray popup selects Settings through fixed synthetic keyboard input and opens the existing main window",
+        "an actual second process owns the requested hotkey; failed registration preserves original file/binding, then retry succeeds after releasing the conflict",
+        "removing only the empty test default directory produces an explicit warning and keeps its configured path",
+        "changing persisted defaults while an object is selected preserves it; the next object uses the new style; exit warns for unsaved annotations and cancellation retains editable objects",
+        "a real SQLite save failure cancels tray exit and retains the draft; retry saves notes, removes native windows/tray, exits cleanly and releases all tested global hotkeys",
+        "actual tray Region menu enters the existing native capture workflow and returns CANCELLED; Escape is sent only to an owned overlay, cancellation/permission failure is not counted as a successful screenshot",
+        "actual restart restores every changed preference, note and one tray; repeated tray exit releases the single-instance and shortcut resources again"
+      ],
+      "errors": [],
+      "captureOutcome": "CANCELLED",
+      "result": "passed"
+    },
+    {
+      "suite": "openwith-v100-recheck",
+      "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+      "checks": [
+        "SHOpenWithDialog displays a real Windows chooser: a newly created System32/OpenWith.exe host has exactly one visible popup",
+        "cancelling the actual native chooser returns control without changing the .md source or showing an error; no default association changed"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "material-ui-v100-release",
+      "mode": "actual Edge renderer; preview only, no native capture or database claims",
+      "checks": [
+        "single sidebar capture action and separate full-width search row; no duplicate capture entry",
+        "dark theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+        "dark: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+        "light theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+        "light: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+        "moved capture button still opens existing capture dialog; Escape closes it",
+        "Markdown entry, split visibility, draft across navigation, cancel/discard close and full-width restoration still work",
+        "system theme follows OS media changes without resetting the preference"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "library-v100-release",
+      "mode": "actual Windows WebView2 + SQLite + managed PNG files, controlled source PNG; no mocked persistence or real screen capture",
+      "checks": [
+        "empty SQLite library renders guidance without inserting demonstration records",
+        "49 actual SQLite records; bounded 24-card grid; thumbnails requested without loading originals or annotation documents",
+        "creation-time ascending/descending sorting; three pages cover all 49 records without duplicates; sort resets to page one",
+        "rename/favorite/unfavorite use real revisions, preserve creation ordering, and refresh the favorites empty state correctly",
+        "single click opens the knowledge card with one original request; explicit image-edit opens existing editor, source PNG stays unchanged",
+        "one deliberately corrupt test thumbnail displays a per-card placeholder without crashing other cards; restoring its file and retrying works",
+        "real native light/list and dark/grid views render the same records with no horizontal document overflow",
+        "16 non-empty theme/grid/list layouts at 480x400, 640x500, 960x680, 1440x900 (CDP viewport emulation inside native WebView; not a hardware DPI test)",
+        "delete cancel keeps row/files; confirmed final-page deletion cleans only its files and automatically clamps to the preceding page",
+        "actual close/restart preserves count, rename, favorite, deletion and immutable original"
+      ],
+      "errors": [
+        "PostMessage failed ; is the messages queue full? Error code 0x80070578 - 无效的窗口句柄。",
+        "PostMessage failed ; is the messages queue full? Error code 0x80070578 - 无效的窗口句柄。"
+      ],
+      "result": "failed",
+      "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n2 !== 0\n"
+    },
+    {
+      "suite": "installer-v100-final",
+      "version": "1.0.0",
+      "mode": "actual NSIS, isolated install path, read-only user-data hashes, process fixture for busy guard",
+      "checks": [
+        "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+        "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+        "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+        "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+      ],
+      "result": "passed",
+      "userDataFilesHashed": 7,
+      "installerSha256": "88BB12D721874B00271919FA51C1767E96E4704A102F5785A8A973BF630D0502",
+      "signatureStatus": "NotSigned",
+      "installedPayloadSha256": "411E5049D57D4DED6921E7FD6A2B96645792271A6606453C7FD95A4F1D046CD8",
+      "metadata": {
+        "publisher": "ResearchClip",
+        "product": "ResearchClip",
+        "hasIcon": true,
+        "version": "1.0.0"
+      },
+      "busyUninstallExit": 2,
+      "busyInstallExit": 2,
+      "installationStillPresent": false
+    },
+    {
+      "suite": "guide-v100-capture-actions",
+      "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+      "checks": [
+        "actual complete screenshot-action panel captured after controls are ready, including copy/library/save/editor actions"
+      ],
+      "errors": [],
+      "result": "PASS"
+    }
+  ],
+  "captureProbe": {
+    "exitCode": 0,
+    "captures": 3,
+    "displayCaptured": "primary only",
+    "gdiBefore": 1,
+    "gdiAfter": 1,
+    "secondary": "enumerated only; negative coordinates; capture not validated"
+  },
+  "productionBuild": {
+    "exitCode": 0,
+    "installerSigned": false,
+    "productionUserDataUiRun": "NOT_RUN"
+  }
+}

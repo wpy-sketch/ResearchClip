@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let c = rusqlite::Connection::open_with_flags(db, rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE)?;
     c.busy_timeout(std::time::Duration::from_secs(5))?;
-    if c.query_row("PRAGMA user_version", [], |r| r.get::<_, u32>(0))? != 2 {
+    if c.query_row("PRAGMA user_version", [], |r| r.get::<_, u32>(0))? != 3 {
         return Err("unexpected test schema".into());
     }
     match mode.as_str(){

@@ -19,5 +19,9 @@ describe('offline math, one Markdown preview pipeline',()=>{
     expect(html).toContain('src="/assets/guide.png"');expect(html).not.toContain('src="file:');expect(html.match(/<img /g)).toHaveLength(1);
     expect(render(md)).not.toContain('<img ');
   });
+  it('offers figure zoom only for explicitly resolved images, keeping arbitrary document resources inert',()=>{
+    const html=renderToStaticMarkup(<MarkdownPreview markdown="![step](images/step.png) ![untrusted](https://evil.invalid/a.png)" assets={{}} guideImages={{'images/step.png':'/assets/step.png'}} onImageOpen={()=>{}}/>);
+    expect(html.match(/<button /g)).toHaveLength(1);expect(html).toContain('放大图片：step');expect(html).not.toContain('src="https:');expect(render('![step](images/step.png)')).not.toContain('<button');
+  });
   it('ignores pseudo-headings inside math blocks and aligns real heading offsets',()=>{const md='$$\n# not a title\n$$\n\n## 真标题 $x_1$\n';expect(documentOutline(md)).toHaveLength(1);expect(render(md)).toContain(`data-heading-offset="${md.indexOf('##')}"`);});
 });

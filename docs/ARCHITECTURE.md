@@ -556,3 +556,10 @@ KaTeX 及字体本地打包，MIT；与较重的 MathJax 相比，本轮所需�
 open_markdown_external 是 main-only 业务命令，只接受已打开文档的不透明 token；DocumentFiles::external_path 验证授权、磁盘快照和源文件未变，再调用 Windows SHOpenWithDialog/OAIF_EXEC。Windows 使用 UTF-16 路径，去除规范化扩展前缀供 Shell 使用，保留 UNC/中文。操作使用捕获任务许可避免重复选择器，前端未保存或脏文档先 await save，失败不启动其他应用。没有通用 opener/fs/shell 权限、任意程序名或命令行输入。系统选择器在主窗口所属线程运行；取消作为正常结果。应用外修改会触发原有拒绝覆盖机制。非 Windows 默认应用分支尚未整机验证。
 
 依赖/API核对：[react-markdown 官方数学示例](https://github.com/remarkjs/react-markdown)、[remark-math](https://github.com/remarkjs/remark-math)、[KaTeX配置](https://katex.org/docs/options)、[安全说明](https://katex.org/docs/security)、[Windows SHOpenWithDialog](https://learn.microsoft.com/en-us/windows/win32/api/shlobj_core/nf-shlobj_core-shopenwithdialog)。本轮实际结果与限制见 [v0.2.1验收](qa/RELEASE-0.2.1.md)。
+
+
+## v1.0.0 界面与指南增量
+
+保留既有模块和schema v3，压缩素材页无预览状态与未选择批量栏；截图任务、错误提示和原有操作仍复用。GuideView仍使用同一USER_GUIDE.md和安全Markdown解析器，14个H2章节保留，增加三条阅读路线、高亮/清除搜索、10张显式白名单本地图片。图示放大复用Modal，支持Enter和Esc；不开放任意磁盘图片或远程资源。无新依赖、数据库迁移、通用文件权限或新功能模块。
+
+阶段验收：首屏实际图片可见、图文导航/图片解码/键盘放大关闭、480–1440深浅主题、原截图/编辑/分栏/项目/笔记/导入回归、Rust/前端/Windows构建与发布摘要；安装环境冲突时不覆盖用户安装，明确记录受阻。实际结果见[1.0.0验收](qa/RELEASE-1.0.0.md)，未执行硬件矩阵仍单独保留。

@@ -1,7 +1,7 @@
 {
   "name": "researchclip",
   "private": true,
-  "version": "0.2.1",
+  "version": "1.0.0",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -42,7 +42,8 @@
     "test:smoke:compare:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/compare-native-smoke.mjs",
     "test:smoke:projects:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/projects-native-smoke.mjs",
     "test:smoke:math:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/math-native-smoke.mjs",
-    "test:smoke:open-with:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input --example markdown_open_with_probe && node scripts/markdown-open-with-native-smoke.mjs"
+    "test:smoke:open-with:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input --example markdown_open_with_probe && node scripts/markdown-open-with-native-smoke.mjs",
+    "test:smoke:guide:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/guide-native-smoke.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.3",

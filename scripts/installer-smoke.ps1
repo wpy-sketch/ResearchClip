@@ -5,8 +5,9 @@ param(
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $targetRoot = [IO.Path]::GetFullPath((Join-Path $projectRoot $TargetDir))
-$allowedTarget = [IO.Path]::GetFullPath((Join-Path $projectRoot 'src-tauri/target')) + [IO.Path]::DirectorySeparatorChar
-if (!$targetRoot.StartsWith($allowedTarget, [StringComparison]::OrdinalIgnoreCase)) { throw 'Build target must stay in this workspace target directory.' }
+$allowedTargetRoot = [IO.Path]::GetFullPath((Join-Path $projectRoot 'src-tauri/target'))
+$allowedTarget = $allowedTargetRoot + [IO.Path]::DirectorySeparatorChar
+if (!$targetRoot.Equals($allowedTargetRoot, [StringComparison]::OrdinalIgnoreCase) -and !$targetRoot.StartsWith($allowedTarget, [StringComparison]::OrdinalIgnoreCase)) { throw 'Build target must stay in this workspace target directory.' }
 $runRoot = Join-Path $projectRoot "artifacts/installer-$RunId"
 if (Test-Path -LiteralPath $runRoot) { throw 'Use a new run ID; existing evidence is never overwritten.' }
 New-Item -ItemType Directory -Path $runRoot | Out-Null

@@ -12,12 +12,12 @@ export function CapturePanel() {
   const { preview, displays, phase, notice, clearPreview, previewFailed, copyImage, savePng } = useCaptureStore();
   const sourceIndex = displays.findIndex((display) => display.id === preview?.displayId);
   const busy = phase !== 'idle';
-  return <section className="capture-panel" aria-labelledby="capture-title">
-    <div className="mb-5 flex items-start justify-between gap-3">
-      <div><h2 id="capture-title" className="text-sm font-medium">屏幕截图</h2><p className="mt-2 text-xs text-muted">截图完成后，选择复制、保存或打开编辑器。</p></div>
+  return <section className={`capture-panel ${!preview?'is-compact':''}`} aria-labelledby="capture-title">
+    <div className="capture-panel-heading mb-5 flex items-start justify-between gap-3">
+      <div><h2 id="capture-title" className="text-sm font-medium">屏幕截图</h2><p className="mt-2 text-xs text-muted">截图预览为临时内容；点击“存入素材库”才会长期保留。</p></div>
       {preview && <button className="icon-button" aria-label="关闭截图预览" title="关闭截图预览" disabled={busy} onClick={clearPreview}><X size={16} /></button>}
     </div>
-    <CaptureControls />
+    <CaptureControls compact={!preview} />
     <button className="secondary-button mt-3" onClick={() => useUiStore.getState().navigate('editor')}><Pencil size={15} />图片编辑器 / 打开项目</button>
     {preview ? <>
       <figure className="mt-5 overflow-hidden rounded-lg border border-edge bg-canvas">
@@ -35,6 +35,6 @@ export function CapturePanel() {
       </div>
       {notice && <p className="mt-3 text-xs text-secondary" role="status">{notice}</p>}
 
-    </> : <div className="capture-preview-empty"><Camera size={25} strokeWidth={1.5} /><p>选择显示器，开始全屏或区域截图</p></div>}
+    </> : <div className="capture-preview-empty"><Camera size={18} strokeWidth={1.5} /><p>选择显示器，开始全屏或区域截图</p></div>}
   </section>;
 }
