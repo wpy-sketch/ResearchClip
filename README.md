@@ -1,5 +1,7 @@
 # ResearchClip
 
+# 使用Codex进行构建
+
 面向科研人员的本地桌面截图、图片标注与知识管理工具。当前已有 Windows 全屏/区域捕获、独立快捷键、标注编辑器、SQLite素材库、科研知识卡片、笔记自动保存、来源链接、标签管理、组合搜索、Markdown导出及系统托盘。
 
 当前为 **0.2.1 Windows 版本**，完整人工验收尚未完成。素材库关闭阶段仍有已复现的窗口句柄错误，托盘恢复存在一次超时记录；详情、复现命令与尚未实现范围见 [QA报告](docs/qa/TEST_REPORT.md)，后续统一按 [测试规范](docs/qa/TEST_PLAN.md) 验收。最新 Markdown 模板与大纲见 [0.1.5](docs/RELEASE-NOTES-0.1.5.md)，高级标注见 [0.1.4](docs/RELEASE-NOTES-0.1.4.md)，离线 OCR 见 [0.1.3](docs/RELEASE-NOTES-0.1.3.md)，界面优化见 [0.1.2](docs/RELEASE-NOTES-0.1.2.md)，此前贴图版本说明见 [0.1.1](docs/RELEASE-NOTES-0.1.1.md)，此前Markdown更新见 [0.1.0-rc.2](docs/RELEASE-NOTES-0.1.0-rc.2.md)，历史基线见 [0.1.0-rc.1](docs/RELEASE-NOTES-0.1.0-rc.1.md)。
