@@ -8,6 +8,8 @@
 
 此前新增科研项目逻辑分组、截图与Markdown文档关联、跨页筛选全选和批量整理；指南按任务分组并可搜索章节。详见 [0.2.0发布说明](docs/RELEASE-NOTES-0.2.0.md) 与 [项目/批量验收](docs/qa/RELEASE-0.2.0.md)。此前剪贴板/文件拖拽导入、独立双图对比、紧凑列表/网格继续保留。见 [使用指南](docs/USER_GUIDE.md)、[0.1.8 发布说明](docs/RELEASE-NOTES-0.1.8.md) 和 [本轮验收](docs/qa/RELEASE-0.1.8.md)。v0.1.6/0.1.7 请求合并交付为 v0.1.8，不单独制造中间发布。
 
+v0.2.1 [直接下载 Windows x64 EXE](https://github.com/wpy-sketch/ResearchClip/releases/download/v0.2.1/ResearchClip-v0.2.1-windows-x64.exe)，[发布及下载校验回执](docs/qa/PUBLICATION-0.2.1.md)。
+
 Windows x64 下载入口：[GitHub Releases](https://github.com/wpy-sketch/ResearchClip/releases)。安装包和直接运行的EXE均未签名，需要WebView2。请先保存并退出旧实例，再启动新程序；本次 GitHub Release 按用户要求不标记预发布；未执行的人工/硬件验收仍如实保留。
 
 本轮主题、标注默认样式、托盘、单实例和退出保护的实际结果见 [桌面体验验收](docs/DESKTOP-EXPERIENCE-VALIDATION.md)。

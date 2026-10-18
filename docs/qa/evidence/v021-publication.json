@@ -1,0 +1,311 @@
+{
+  "published": true,
+  "uploaded": [
+    {
+      "name": "ResearchClip-v0.2.1-windows-x64.exe",
+      "size": 19106816,
+      "id": 652764347,
+      "digest": "sha256:e23cbfa89b887d47c45d606ce91585e04c9f13eeb3e8dce35e7a625f2c393029",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.2.1/ResearchClip-v0.2.1-windows-x64.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 181,
+      "id": 652764265,
+      "digest": "sha256:1e9a26e929093ecda4ba1d17d10df0c5f869014fbde77244097ce766153da62e",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.2.1/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1478,
+      "id": 652764187,
+      "digest": "sha256:845797ea34e00d337414ebaabb2cc5ae1986e1468f28fd132a20d7d4467fa998",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v0.2.1/SOURCE.txt"
+    }
+  ],
+  "previous": [
+    {
+      "id": 414630853,
+      "tag": "v0.1.0-rc.1",
+      "prerelease": true,
+      "assets": [
+        [
+          646415082,
+          "researchclip.exe",
+          15311360,
+          "sha256:0560c796ae12fe0877cb63ac7ee75a2732359dfe691a0bd81c0011d844d9dbdf"
+        ],
+        [
+          646414559,
+          "ResearchClip_0.1.0_x64-setup.exe",
+          3704395,
+          "sha256:4f0032c89e21f40fbcab742fb77ae6a0c07f5bba211b90e95093e56fd6be0c1e"
+        ],
+        [
+          646416086,
+          "SHA256SUMS.txt",
+          184,
+          "sha256:6ce72ed9a8a3b843c005dd586012102fa261496303d3628858b0d5c9a2a4b778"
+        ]
+      ]
+    },
+    {
+      "id": 415591926,
+      "tag": "v0.1.0-rc.2",
+      "prerelease": true,
+      "assets": [
+        [
+          649588057,
+          "ResearchClip-v0.1.0-rc.2-windows-x64.exe",
+          15634944,
+          "sha256:4de78777c89f2fbaa3439a04f8e16ef3e2def987da6cdaa06bf5e9c00afdaf6d"
+        ],
+        [
+          649588844,
+          "SHA256SUMS.txt",
+          186,
+          "sha256:d1f21007a39a2f4565eb70dfc612b38f32ef14792ae824aa6c5a1ad8779c9530"
+        ],
+        [
+          649588885,
+          "SOURCE.txt",
+          561,
+          "sha256:bb4de204a08b13990114a99f8f7fe3fedb1eb6abe33cec8f354e53a6239160fb"
+        ]
+      ]
+    },
+    {
+      "id": 415609781,
+      "tag": "v0.1.1",
+      "prerelease": true,
+      "assets": [
+        [
+          649667204,
+          "ResearchClip-v0.1.1-windows-x64.exe",
+          15969280,
+          "sha256:be18bbe376dc79749a43e8c33c96bbb137addad36cbf5f320d2d3453e1332a0b"
+        ],
+        [
+          649669142,
+          "SHA256SUMS.txt",
+          181,
+          "sha256:182c39f9b8a45b25b2a5991df4169733336db568720c32e67e8c658c802246c5"
+        ],
+        [
+          649669040,
+          "SOURCE.txt",
+          653,
+          "sha256:2f9749b6e9090870b5c40d1e0fafbd578e354a547234df096dc9c97ac0b6912f"
+        ]
+      ]
+    },
+    {
+      "id": 415617489,
+      "tag": "v0.1.2",
+      "prerelease": false,
+      "assets": [
+        [
+          649700935,
+          "ResearchClip-v0.1.2-windows-x64.exe",
+          15969792,
+          "sha256:135453f3381e9008e51648e543042809dfcc03c29a90623c5c0e786369d2b559"
+        ],
+        [
+          649701400,
+          "SHA256SUMS.txt",
+          181,
+          "sha256:ee1f85bf798cdbbd2ffda00ce3cf9ef580e4b2371f8a853ee9331223fd191f78"
+        ],
+        [
+          649701361,
+          "SOURCE.txt",
+          888,
+          "sha256:2e490cf1ac4bc33bb0511d39207ad5719ab028870524a9e84c07d1a8d669eb8e"
+        ]
+      ]
+    },
+    {
+      "id": 415709850,
+      "tag": "v0.1.3",
+      "prerelease": false,
+      "assets": [
+        [
+          650108266,
+          "ResearchClip-v0.1.3-windows-x64.exe",
+          16224768,
+          "sha256:76c82c8b6b1bbe41e41c30deafdecc89157dfd5ed99bcfd62472c31ddd7ed85f"
+        ],
+        [
+          650121674,
+          "SHA256SUMS.txt",
+          179,
+          "sha256:75c7f98161b974e9a6493487158206155d8cf8e5931604583888dc7cd55dfcd8"
+        ],
+        [
+          650121636,
+          "SOURCE.txt",
+          1119,
+          "sha256:ba687a39b46193835691ab6c66b3a0082808d55d5f222f7df00a745ab2b43e3d"
+        ]
+      ]
+    },
+    {
+      "id": 415798601,
+      "tag": "v0.1.4",
+      "prerelease": false,
+      "assets": [
+        [
+          650444675,
+          "ResearchClip-v0.1.4-windows-x64.exe",
+          16232960,
+          "sha256:c219260ad4728c53899e6fcc6987d0e1cdba611cff901a517806e060cd8263fa"
+        ],
+        [
+          650444631,
+          "SHA256SUMS.txt",
+          179,
+          "sha256:8dae03b98efb483ed168f3eb1dd04e97f2f94fb7a43057048821ae834e4699f5"
+        ],
+        [
+          650444541,
+          "SOURCE.txt",
+          1143,
+          "sha256:2e46b1262dd71897dc7ee337a0e80838df6e5cb0a89f7678ba64b9c164a424fa"
+        ]
+      ]
+    },
+    {
+      "id": 415810941,
+      "tag": "v0.1.5",
+      "prerelease": false,
+      "assets": [
+        [
+          650503567,
+          "ResearchClip-v0.1.5-windows-x64.exe",
+          16545280,
+          "sha256:2ccd38838cf4756a856236147ca8d01be8bf4d669ce8dcdac414de47a7a02416"
+        ],
+        [
+          650503493,
+          "SHA256SUMS.txt",
+          181,
+          "sha256:4d8c4dd184aced58e9b0c4137c13218847c3f66e534fb2d77c4fc27ba410f06f"
+        ],
+        [
+          650503418,
+          "SOURCE.txt",
+          1128,
+          "sha256:d8da3c3c795416f8c5c70c5a47fb603c59b4a76c76e73abc395fe5fd718de3c5"
+        ]
+      ]
+    },
+    {
+      "id": 415841214,
+      "tag": "v0.1.8",
+      "prerelease": false,
+      "assets": [
+        [
+          650650894,
+          "ResearchClip-v0.1.8-windows-x64.exe",
+          17254400,
+          "sha256:f5475732e108856d1a9e6406160f81cfc2494037862f727e900d5f8f39c05c94"
+        ],
+        [
+          650650793,
+          "SHA256SUMS.txt",
+          181,
+          "sha256:8ac5201e5fc7d8d9315b70224c8e0b1563bd57a9dd6e03d4f72c8a70bce41306"
+        ],
+        [
+          650650699,
+          "SOURCE.txt",
+          1292,
+          "sha256:e9ee48151e46502c97285f111104479bc2b90718cd6c07d5ed625d34fdbb6b38"
+        ]
+      ]
+    },
+    {
+      "id": 415864695,
+      "tag": "v0.2.0",
+      "prerelease": false,
+      "assets": [
+        [
+          650752847,
+          "ResearchClip-v0.2.0-windows-x64.exe",
+          17945600,
+          "sha256:b76afddd222eb2ea62c2958b77e8872c80be83750a2928a6fad95a5234fcff2e"
+        ],
+        [
+          650752751,
+          "SHA256SUMS.txt",
+          181,
+          "sha256:5cf5dabc2f9c6657f1f54a509bd4c8b9aac637f68c414619cfe855ee74de5b53"
+        ],
+        [
+          650752661,
+          "SOURCE.txt",
+          1633,
+          "sha256:8e371e9174a2658b64f67cc7daa55cc22a4e410059e80f4a149d19d1cb22c088"
+        ]
+      ]
+    }
+  ],
+  "releaseId": 416295372,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v0.2.1",
+  "draft": false,
+  "prerelease": false,
+  "publishedAt": "2026-10-18T07:09:49Z",
+  "isLatest": true,
+  "previousReleasePreserved": true,
+  "tagCommitVerified": true,
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v0.2.1-windows-x64.exe",
+      "size": 19106816,
+      "sha256": "e23cbfa89b887d47c45d606ce91585e04c9f13eeb3e8dce35e7a625f2c393029",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 19106816,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1478,
+      "sha256": "845797ea34e00d337414ebaabb2cc5ae1986e1468f28fd132a20d7d4467fa998",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 1478,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 181,
+      "sha256": "1e9a26e929093ecda4ba1d17d10df0c5f869014fbde77244097ce766153da62e",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 181,
+          "matched": true
+        }
+      ]
+    }
+  ],
+  "result": "PASS",
+  "sourceCommit": "a65dbcfdb9db1f27f350e2f85b082e795a9ccbdc",
+  "tag": "v0.2.1"
+}

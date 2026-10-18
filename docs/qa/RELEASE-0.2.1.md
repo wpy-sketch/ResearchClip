@@ -144,3 +144,8 @@ src/features/guide/GuideView.tsx
 src/features/projects/ProjectNavigation.tsx
 src/styles.css
 ```
+
+
+## GitHub发布结果
+
+PASS：v0.2.1源码与标签已上传，普通Latest发布成功；3附件服务器摘要与匿名公开下载大小/SHA256一致，旧9个Release保留。详情见[发布回执](PUBLICATION-0.2.1.md)。该回执单独提交，不移动构建源码标签。
