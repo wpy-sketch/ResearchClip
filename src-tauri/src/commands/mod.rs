@@ -12,6 +12,7 @@ pub mod markdown;
 pub mod ocr;
 pub mod pins;
 pub mod region;
+pub mod scrolling;
 pub mod workflow;
 
 #[derive(Debug, Serialize)]

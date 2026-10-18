@@ -1,3 +1,4 @@
+import {ScrollCaptureDialog} from '../features/capture/ScrollCapture';
 import { lazy, Suspense, useEffect } from 'react';
 import { useAppStore } from './store';
 import { useUiStore } from './ui-store';
@@ -70,6 +71,7 @@ export function App() {
       </div>
       <WorkspaceDialogs />
       <OcrPanel/>
+      <ScrollCaptureDialog/>
     </div>
   );
 }

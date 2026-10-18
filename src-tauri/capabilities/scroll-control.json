@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "scroll-control",
+  "description": "Owned scrolling session progress, bounded next/stop/cancel only. No files, images, window creation or input API exposed.",
+  "windows": [
+    "scroll-control-*"
+  ],
+  "permissions": [
+    "allow-scroll-status",
+    "allow-scroll-action"
+  ]
+}

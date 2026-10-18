@@ -1,0 +1,370 @@
+{
+  "date": "2026-10-18",
+  "environment": "Windows 11 x64; actual Edge/GDI/WebView2/SQLite except the explicitly labelled browser-only UI suite",
+  "frontend": {
+    "files": 44,
+    "tests": 306,
+    "result": "PASS"
+  },
+  "rust": {
+    "tests": 132,
+    "ignored": 0,
+    "result": "PASS"
+  },
+  "newDependencies": [],
+  "databaseSchema": 3,
+  "cases": [
+    {
+      "suite": "scrolling-v101-steady",
+      "autoScreens": 3,
+      "mode": "actual Edge window, Windows GDI screen pixels, existing native selection overlay, actual foreground-guarded wheel input and bounded Rust stitching; isolated data only",
+      "checks": [
+        "actual browser three-screen manual scrolling stitches exact sampled screen pixels with no repeated overlap; repeated frame adds no height",
+        "actual Edge wheel input produces 3-screen long PNG, fixed top header occurs once, repeated bottom frames stop automatically and sampled pixels retain exact document order",
+        "real Windows save dialog writes the final long PNG with original dimensions; independent file read reopens its PNG header",
+        "actual stitched long image enters existing editor, creates an editable rectangle and saves through existing SQLite immutable-image workflow",
+        "insufficient overlap pauses with explicit error; cancel releases engine and capture gate without publishing a partial replacement",
+        "opening the owned main window removes target focus, pauses auto mode and sends no further browser scroll input; cancellation frees the session",
+        "ordinary offline HTML headings and variable-length paragraphs with a fixed navigation bar scroll and stitch through the real Edge/GDI pipeline",
+        "actual main UI opens the themed scrolling setup, explicitly chooses the test browser, explains manual/auto limits and cancels without a new capture",
+        "real application restart reopens the long screenshot and editable annotation from SQLite; managed original is byte-identical to the native saved PNG"
+      ],
+      "errors": [],
+      "manual": {
+        "width": 720,
+        "height": 1848,
+        "mismatch": 0,
+        "checked": 16568,
+        "scrollY": 1257,
+        "expectedHeight": 1848
+      },
+      "automatic": {
+        "width": 720,
+        "height": 1848,
+        "mismatch": 0,
+        "checked": 16264,
+        "scrollY": 1257,
+        "expectedHeight": 1848
+      },
+      "result": "PASS"
+    },
+    {
+      "suite": "scrolling-v101-guide",
+      "autoScreens": 10,
+      "mode": "actual Edge window, Windows GDI screen pixels, existing native selection overlay, actual foreground-guarded wheel input and bounded Rust stitching; isolated data only",
+      "checks": [
+        "valid persisted test preferences load without warnings; actual setup selects a browser, enables region selection, captures the guide figure and cancels without allocating a capture"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "scrolling-v101-browser-2",
+      "mode": "actual Edge window, Windows GDI screen pixels, existing native selection overlay, actual foreground-guarded wheel input and bounded Rust stitching; isolated data only",
+      "checks": [
+        "actual browser three-screen manual scrolling stitches exact sampled screen pixels with no repeated overlap; repeated frame adds no height",
+        "actual Edge wheel input produces ten-screen long PNG, fixed top header occurs once, repeated bottom frames stop automatically and sampled pixels retain exact document order"
+      ],
+      "errors": [],
+      "manual": {
+        "width": 720,
+        "height": 1848,
+        "mismatch": 0,
+        "checked": 16568,
+        "scrollY": 1257,
+        "expectedHeight": 1848
+      },
+      "automatic": {
+        "width": 720,
+        "height": 6195,
+        "mismatch": 0,
+        "checked": 55176,
+        "scrollY": 5604,
+        "expectedHeight": 6195
+      },
+      "result": "FAIL",
+      "failure": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '矩形', exact: true })\u001b[22m\n"
+    },
+    {
+      "suite": "guide-v101-regression",
+      "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+      "checks": [
+        "real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+        "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+        "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+        "all 11 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+        "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 14 chapters; 1180/760/480 layouts do not overflow"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "split-v101-regression",
+      "mode": "actual Windows WebView2, real file dialogs, SQLite and filesystem; explicitly controlled source PNG, not screen capture",
+      "checks": [
+        "initial document session is absent: no Markdown panel or separator DOM and original workspace owns full width",
+        "new blank untitled.md opens a focused right source editor without creating any disk file",
+        "Chinese/English/LaTeX Markdown and undo/redo work while left navigation changes without losing the right document",
+        "left library inserts an annotated image and matching note at the saved right caret selection, using controlled relative assets; preview resolves the image",
+        "Ctrl+S opens a real Windows Save dialog and writes exact standard UTF-8 source plus full-resolution annotated PNG assets",
+        "real pointer drag and keyboard divider adjust both widths, enforce minimum sizes and persist the ratio through the existing native settings service",
+        "after live split resize the actual left Konva canvas creates original-pixel coordinates correctly; right Ctrl+Z does not undo left annotations; real SQLite save preserves vectors",
+        "clean document close truly unmounts the pane and divider, restores full width, and preserves the same left canvas DOM and selected editor session",
+        "native Open restores saved content and split preference; current editor composite can be inserted and saved with a second stable relative asset",
+        "dirty Close Cancel retains content; external-write conflict keeps panel and pending dialog open; Save As recovers, and Save/Close closes only after disk commit",
+        "480px layout has no document-level horizontal overflow; real restart restores split ratio and disk source, repeated blank/create/discard/close leaves no pane or listener error; original PNG hashes unchanged"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "editor-native-v101-regression",
+      "mode": "Windows native editor with explicit controlled PNG; screen capture unverified",
+      "checks": [
+        "real raw IPC + Windows Save As writes all five vector types in layer order and byte-identical immutable original PNG",
+        "real Windows Open dialog restores five editable object types; Delete + Ctrl+Z works after reload",
+        "real Windows export dialog writes the requested test-export.png at full 320 × 200 resolution",
+        "official clipboard plugin transfers composite image to separate Edge viewer; every RGBA pixel matches saved PNG",
+        "real save-dialog cancellation leaves existing original/project/export unchanged",
+        "actual app restart and project reopen restore all five annotation types"
+      ],
+      "errors": [],
+      "result": "passed"
+    },
+    {
+      "suite": "math-v101-font-fixed",
+      "mode": "actual Windows WebView2, real v2 SQLite migration, native file dialogs and restart; test-owned PNGs, not screen capture",
+      "checks": [
+        "real SQLite sidebar switches two projects, unclassified and all with correct counts; initially no Markdown pane",
+        "actual WebView offline KaTeX fonts load; inline/display formulas, matrix, Greek, aligned lines, sum/integral update live and survive source/preview switches",
+        "exact malformed matrix shows error without rewriting; hostile TeX URL, raw HTML and remote image remain inert",
+        "left navigation/compact project selector preserve document; live toggle and 480x400 layout retain an 80px source editor",
+        "native Save preserves exact UTF-8 LaTeX in .md; association and outline keep source unchanged",
+        "external-open rejects arbitrary paths/invalid grants and modified documents before launching; file bytes remain untouched",
+        "process restart reopens saved equations; existing CRLF Markdown is opened/saved with byte-exact LaTeX and newlines",
+        "bundled task guide retains 14 searchable chapters, loads both controlled screenshots and preserves copyable LaTeX examples as code"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "material-ui-v101-regression",
+      "mode": "actual Edge renderer; preview only, no native capture or database claims",
+      "checks": [
+        "single sidebar capture action and separate full-width search row; no duplicate capture entry",
+        "dark theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+        "dark: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+        "light theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+        "light: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+        "moved capture button still opens existing capture dialog; Escape closes it",
+        "Markdown entry, split visibility, draft across navigation, cancel/discard close and full-width restoration still work",
+        "system theme follows OS media changes without resetting the preference"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    {
+      "suite": "region-capture-desktop-v101-region-verified",
+      "mode": "desktop-region",
+      "result": "PASS",
+      "checks": [
+        "navigation, list/grid state, guide navigation and welcome reopen on returning to library",
+        "capture controls, search input/clear, Ctrl+K, Escape and modal focus",
+        "real Rust command response, repeated click and window theme permission",
+        "light/dark and settings keep toolbar view selection in sync",
+        "region overlay focus, physical boundaries, live size, frozen native pixels and exact PNG resource/preview match",
+        "zero area remains selectable, reverse drag crops correctly, Esc closes/restores without new files",
+        "20 consecutive region sessions: 10 previews, 10 Esc cancellations; no automatic files, unique sessions, no remaining overlays, main focus restored",
+        "pointer capture clamps outside top/left, repeated overlays fully destroyed, capability and resource-ID isolation",
+        "no leaked canvas on idle pages or browser storage writes",
+        "UI interactions do not call database diagnostics; observed: desktop_status, get_preferences, update_preferences, screenshot_page, library_status, list_projects, list_project_documents, list_tags, plugin:window|set_theme, test_connection, list_displays, capture_region, capture_result_png, current_capture, region_overlay_info, region_result_png, discard_capture",
+        "isolated WebView2 test profile",
+        "restart: navigation, list/grid state, guide navigation and welcome reopen on returning to library",
+        "restart: capture controls, search input/clear, Ctrl+K, Escape and modal focus",
+        "restart: real Rust command response, repeated click and window theme permission",
+        "restart: light/dark and settings keep toolbar view selection in sync",
+        "restart: region overlay focus, physical boundaries, live size, frozen native pixels and exact PNG resource/preview match",
+        "restart: zero area remains selectable, reverse drag crops correctly, Esc closes/restores without new files",
+        "restart: pointer capture clamps outside top/left, repeated overlays fully destroyed, capability and resource-ID isolation",
+        "restart: no leaked canvas on idle pages or browser storage writes",
+        "restart: UI interactions do not call database diagnostics; observed: list_projects, list_project_documents, screenshot_page, library_status, list_tags, plugin:window|set_theme, plugin:event|listen, current_capture, get_preferences, plugin:app|version, list_displays, desktop_status, update_preferences, test_connection, capture_region, capture_result_png, region_overlay_info, region_result_png, discard_capture",
+        "restart: isolated WebView2 test profile"
+      ]
+    },
+    {
+      "suite": "installer-v101-direct-launch",
+      "result": "PASS",
+      "checks": [
+        "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+        "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+        "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+        "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+      ],
+      "userDataFilesHashed": 7,
+      "installerSha256": "B6EBD9876DD69EBBF15D5830AEE2FE0265F52F98D0C5C5534CA7F0B97717B2AF",
+      "signatureStatus": "NotSigned",
+      "busyInstallExit": 2,
+      "busyUninstallExit": 2,
+      "installationStillPresent": false
+    },
+    {
+      "suite": "installer-v101-quiescent",
+      "result": "PASS",
+      "checks": [
+        "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+        "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+        "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+        "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+      ],
+      "userDataFilesHashed": 7,
+      "installerSha256": "B6EBD9876DD69EBBF15D5830AEE2FE0265F52F98D0C5C5534CA7F0B97717B2AF",
+      "signatureStatus": "NotSigned",
+      "busyInstallExit": 2,
+      "busyUninstallExit": 2,
+      "quiescence": {
+        "result": "PASS",
+        "needed": 0,
+        "codes": [
+          0
+        ]
+      },
+      "installationStillPresent": false
+    },
+    {
+      "suite": "installer-v101-quiescent-repeat",
+      "result": "PASS",
+      "checks": [
+        "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+        "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+        "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+        "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+      ],
+      "userDataFilesHashed": 7,
+      "installerSha256": "B6EBD9876DD69EBBF15D5830AEE2FE0265F52F98D0C5C5534CA7F0B97717B2AF",
+      "signatureStatus": "NotSigned",
+      "busyInstallExit": 2,
+      "busyUninstallExit": 2,
+      "quiescence": {
+        "result": "PASS",
+        "needed": 0,
+        "codes": [
+          0
+        ]
+      },
+      "installationStillPresent": false
+    }
+  ],
+  "initialFailures": [
+    {
+      "suite": "scrolling-v101-first",
+      "result": "FAIL",
+      "completedGroups": 0,
+      "failure": "Error: Timeout selection overlay: "
+    },
+    {
+      "suite": "scrolling-v101-select-error",
+      "result": "FAIL",
+      "completedGroups": 0,
+      "failure": "Error: Fatal:Error: page.evaluate: Error: {\"code\":\"CAPTURE_FAILED\",\"message\":\"Windows未允许激活目标。请先点击该窗口再重试。\"}"
+    },
+    {
+      "suite": "scrolling-v101-foreground",
+      "result": "FAIL",
+      "completedGroups": 0,
+      "failure": "locator.waitFor: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '滚动长截图', exact: true }).first() to be visible\u001b[22m\n\u001b[2m    - waiting for navigation to finish...\u001b[22m\n"
+    },
+    {
+      "suite": "scrolling-v101-native-1",
+      "result": "FAIL",
+      "completedGroups": 0,
+      "failure": "AssertionError [ERR_ASSERTION]: {\"width\":720,\"height\":1848,\"mismatch\":12371,\"checked\":16568,\"scrollY\":1257,\"expectedHeight\":1848}\n\n12371 !== 0\n"
+    },
+    {
+      "suite": "scrolling-v101-workflow",
+      "result": "FAIL",
+      "completedGroups": 1,
+      "failure": "Error: Fatal:{\"sessionId\":\"2564-3\",\"state\":\"paused\",\"frames\":2,\"width\":720,\"height\":691,\"automatic\":false,\"message\":\"鼠标已离开选区，已停止自动滚动；不会向其他窗口发送输入。 可手动滚动后重试，或停止保留已拼接部分。\",\"result\":null}"
+    },
+    {
+      "suite": "scrolling-v101-workflow-short",
+      "result": "FAIL",
+      "completedGroups": 1,
+      "failure": "Error: Fatal:{\"sessionId\":\"1968-3\",\"state\":\"paused\",\"frames\":2,\"width\":720,\"height\":691,\"automatic\":false,\"message\":\"鼠标已离开选区，已停止自动滚动；不会向其他窗口发送输入。 可手动滚动后重试，或停止保留已拼接部分。\",\"result\":null}"
+    },
+    {
+      "suite": "installer-v101-final",
+      "result": "FAIL",
+      "completedGroups": 2,
+      "failure": "Uninstall did not remove owned application files and uninstall registration.",
+      "launcherCompletionIsNotUninstallProof": true
+    },
+    {
+      "suite": "installer-v101-confirmed",
+      "result": "FAIL",
+      "completedGroups": 2,
+      "failure": "Uninstall did not remove owned application files and uninstall registration.",
+      "launcherCompletionIsNotUninstallProof": true
+    },
+    {
+      "suite": "installer-v101-private-temp",
+      "result": "FAIL",
+      "completedGroups": 2,
+      "failure": "Uninstall did not remove owned application files and uninstall registration.",
+      "launcherCompletionIsNotUninstallProof": true
+    },
+    {
+      "suite": "installer-v101-direct-repeat",
+      "result": "FAIL",
+      "completedGroups": 2,
+      "failure": "Uninstall did not remove owned application files and uninstall registration.",
+      "launcherCompletionIsNotUninstallProof": true
+    }
+  ],
+  "limits": {
+    "pixels": 16777216,
+    "height": 30000,
+    "frames": 64,
+    "seconds": 180,
+    "singleFramePixels": 4194304
+  },
+  "hardware125and150Percent": "NOT_RUN; only automated coordinate conversion tested",
+  "ChromeNative": "NOT_RUN; Edge native only",
+  "remainingHistoricalBugs": [
+    "QA-001/P2 exit PostMessage warning",
+    "QA-002 historical intermittent tray timeout"
+  ],
+  "installerFollowup": {
+    "id": "QA-003",
+    "priority": "P2",
+    "state": "OPEN",
+    "cause": "not established; no claim that quiescence timing fixes production root cause",
+    "finalTwoFreshDefaultTempRuns": "PASS",
+    "dataFilesUnchanged": 7,
+    "trace": "BLOCKED: WMI process stop trace access denied",
+    "cleanup": "Only test-owned app/registration cleaned via actual uninstaller; unrelated sentinel and user data retained"
+  },
+  "notRun": [
+    "Chrome native scrolling",
+    "actual Windows 125%/150% and mixed DPI scrolling",
+    "negative-coordinate display long capture",
+    "production EXE full UI against real data",
+    "Windows10/macOS/HDR/long soak/complex pages"
+  ],
+  "build": {
+    "result": "PASS",
+    "version": "1.0.1",
+    "exe": {
+      "bytes": 20113920,
+      "sha256": "eed8912073448f3d41a4489b137e672a57921319dfd8edcc2fc41eed1795c164"
+    },
+    "nsis": {
+      "bytes": 6396745,
+      "sha256": "b6ebd9876dd69ebbf15d5830aee2fe0265f52f98d0c5c5534ca7f0b97717b2af"
+    }
+  },
+  "sourceNotes": [
+    "Early steady fixture omitted required preference fields, so defaults were used; separate healthy setup-only run passes with valid preferences",
+    "10-screen case passed actual sampled pixels, but its enclosing suite remains FAIL due to later obsolete button locator",
+    "Private-temp retry does not substitute for the final two default-temp install/uninstall tests"
+  ]
+}

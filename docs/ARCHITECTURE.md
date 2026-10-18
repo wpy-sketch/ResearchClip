@@ -567,3 +567,16 @@ open_markdown_external 是 main-only 业务命令，只接受已打开文档的�
 ## ResearchClip Pro约束记录阶段
 
 [Pro开发规范](PRO-DEVELOPMENT.md)记录用户本轮规则和实际代码复用入口，延续现有模块化单体、schema v3、原图不可变、受限IPC与条件分栏。当前仅文档，没有新增服务、数据表、依赖或权限；PDF导出与独立备份恢复系统明确排除，WebDAV/截图版本历史仅能在后续具体请求中开发。本节不定义新API或宣称未来能力已实现。
+
+
+## v1.0.1 滚动长截图MVP
+
+复用commands/region::select_region，先冻结原生GDI画面，再由既有覆盖层选择物理矩形；返回CapturePermit，普通区域截图直到PNG进入CaptureWorkflow后才释放，长截图则把同一许可交给Session，避免并发采集。ScrollService只保留有界目标列表、一个活动会话和进度，不保存图像历史。主窗口只能通过5个受限命令列举/选择/开始/查询/操作会话；scroll-control-*只拥有查询与next/stop/cancel，不拥有文件、输入或窗口创建权限。重载可恢复活动会话，关闭/退出取消采集。
+
+Windows适配器保存用户选择的HWND/PID和物理客户区快照，不将句柄暴露给WebView。自动模式同时检查chrome.exe/msedge.exe与Chrome窗口类；每次输入前重新检查窗口身份/边界/可见性/捕获限制、前台窗口、选区命中、鼠标位置和修饰键。只发前台滚轮，不PostMessage后台注入；失焦、遮挡或移动暂停，用户可明确手动重试。检查与SendInput不是系统级原子操作，仍需避免同时操作其他窗口；受保护内容不绕过。
+
+独立StitchingEngine沿用RawFrame及现有png/image依赖，不引入OpenCV。OpenCV Rust绑定会增加原生OpenCV、构建探测及DLL打包链，本MVP只需垂直像素对齐，选择纯Rust有界采样匹配。搜索相邻帧垂直偏移、排除顶栏、独立密集校验、拒绝歧义/低纹理/不足重叠，仅追加新底部；原图与既有标注不变。只保留一个已拼接RGBA缓冲及上一帧，稳定检查瞬时保留相邻帧；不缓存所有原始帧。输出仍受现有16,777,216像素/PNG预算，再加30,000高、64帧、180秒；编码与解码有额外有界内存，并非整个进程只占一个RGBA缓冲。
+
+两次重复只表示疑似底部/输入未生效，不保证无限滚动内容结束；固定底栏、悬浮层和迟到动态加载可能需要排除或人工核对。PNG进入同一CaptureWorkflow（mode=scroll），前端继续使用既有预览、系统保存对话框、素材库及编辑器；数据库schema v3和迁移不变。实际结果见[1.0.1验收](qa/RELEASE-1.0.1.md)。
+
+API/方案核对：[Windows SendInput与UIPI限制](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput)、[GetForegroundWindow](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow)、[WindowFromPoint](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-windowfrompoint)、[Tauri capabilities](https://v2.tauri.app/security/capabilities/)、[OpenCV Rust系统依赖说明](https://github.com/twistedfall/opencv-rust)。实际windows-rs0.62.2函数签名已从安装源码核对并编译；沿用image0.25.10与png0.18.1，不新增第三方依赖。

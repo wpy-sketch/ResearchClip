@@ -18,7 +18,7 @@ export async function saveCaptureToLibrary(){
   useCaptureStore.setState({phase:'working',error:null,notice:null});
   try {
     const session=useEditorStore.getState().sessions[preview.captureId];
-    const item=session?await saveEditorToLibrary(session):await createScreenshot(preview.blob,`${preview.mode==='region'?'区域':'全屏'}截图 ${new Date().toLocaleString('zh-CN')}`,{schemaVersion:1,image:{widthPx:preview.widthPx,heightPx:preview.heightPx},objects:[]});
+    const item=session?await saveEditorToLibrary(session):await createScreenshot(preview.blob,`${preview.mode==='scroll'?'滚动长':preview.mode==='region'?'区域':'全屏'}截图 ${new Date().toLocaleString('zh-CN')}`,{schemaVersion:1,image:{widthPx:preview.widthPx,heightPx:preview.heightPx},objects:[]});
     if(useCaptureStore.getState().preview?.captureId===preview.captureId)useCaptureStore.setState({preview:{...preview,library:{id:item.id,revision:item.revision,title:item.title}},notice:'截图已保存到本地素材库，重启后仍可打开。'});
     await useLibraryStore.getState().refresh();useCaptureStore.setState({phase:'idle'});
   }catch(error){useCaptureStore.setState({phase:'idle',error:errorMessage(error,'素材保存失败，请保留预览后重试。')});}

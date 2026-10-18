@@ -100,6 +100,27 @@ pub(crate) async fn run_region_capture(
     regions: Arc<RegionCaptureService>,
     display_id: String,
 ) -> Result<CaptureInfo, CaptureError> {
+    let (display, _, png, _permit) =
+        select_region(window, app.clone(), permit, regions, display_id).await?;
+    app.state::<Arc<CaptureWorkflow>>()
+        .store(display.id, "region", png)
+}
+
+pub(crate) async fn select_region(
+    window: WebviewWindow,
+    app: AppHandle,
+    permit: CapturePermit,
+    regions: Arc<RegionCaptureService>,
+    display_id: String,
+) -> Result<
+    (
+        DisplayInfo,
+        crate::capture::geometry::RectPx,
+        Vec<u8>,
+        CapturePermit,
+    ),
+    CaptureError,
+> {
     validate_display_id(&display_id)?;
     if window.label() != "main" {
         return Err(window_error());
@@ -235,8 +256,7 @@ pub(crate) async fn run_region_capture(
             }
             let png = encode_png(crop_frame(frame, selected)?)?;
             overlay_guard.close()?;
-            app.state::<Arc<CaptureWorkflow>>()
-                .store(display_id, "region", png)
+            Ok((display, selected, png, _permit))
         })();
         hidden.restore()?;
         result

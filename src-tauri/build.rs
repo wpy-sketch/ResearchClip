@@ -1,6 +1,11 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "scroll_targets",
+            "scroll_prepare",
+            "scroll_start",
+            "scroll_status",
+            "scroll_action",
             "ocr_status",
             "recognize_ocr",
             "copy_ocr_text",

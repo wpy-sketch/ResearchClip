@@ -151,6 +151,7 @@ pub fn request_exit(app: &AppHandle) -> Result<(), CaptureError> {
     if !service.request() {
         return Ok(());
     }
+    app.state::<Arc<super::scrolling::ScrollService>>().cancel();
     app.state::<Arc<RegionCaptureService>>().cancel_active();
     if let Err(error) = show_main(app).and_then(|_| {
         app.emit_to("main", "desktop-action", "exit")
@@ -179,6 +180,7 @@ pub fn dispatch(app: &AppHandle, action: DesktopAction) -> Result<(), CaptureErr
             if app.tray_by_id(TRAY_ID).is_none() {
                 return Err(failure("托盘不可用，已保留主窗口。"));
             }
+            app.state::<Arc<super::scrolling::ScrollService>>().cancel();
             app.state::<Arc<RegionCaptureService>>().cancel_active();
             app.get_webview_window("main")
                 .ok_or_else(|| failure("主窗口不可用。"))?
@@ -240,6 +242,7 @@ pub fn finish_exit(app: &AppHandle, approved: bool) -> Result<(), CaptureError> 
         notice(app, &error.message);
         return Err(error);
     }
+    app.state::<Arc<super::scrolling::ScrollService>>().cancel();
     app.state::<Arc<RegionCaptureService>>().cancel_active();
     if let Err(error) = app.state::<Arc<super::pins::PinManager>>().close_all(app) {
         service.phase.store(0, Ordering::Release);

@@ -366,8 +366,11 @@ async function checkUI(page, suffix = '') {
   await nav.getByRole('button', { name: '标签', exact: true }).click();
   await page.getByRole('heading', { name: '让素材形成自己的脉络' }).waitFor();
   await page.getByRole('button', { name: '使用指南', exact: true }).click();
-  await page.getByRole('heading', { name: '欢迎使用 ResearchClip' }).waitFor();
-  report.checks.push(`${prefix}navigation, list/grid state, dismiss and reopen guide`);
+  await page.getByRole('heading', { name: '从图片到研究记录',exact:true }).waitFor();
+  await nav.getByRole('button',{name:'截图素材',exact:true}).click();
+  await page.getByRole('region',{name:'截图素材库',exact:true}).waitFor();
+  await page.getByRole('heading',{name:'欢迎使用 ResearchClip',exact:true}).waitFor();
+  report.checks.push(`${prefix}navigation, list/grid state, guide navigation and welcome reopen on returning to library`);
 
   await page.getByRole('button', { name: '新建截图', exact: true }).click();
   const capture = page.getByRole('dialog', { name: '新建截图', exact: true });
@@ -425,6 +428,9 @@ async function checkUI(page, suffix = '') {
     report.checks.push('preview disables native action without a fake success message');
   }
   await page.getByRole('button', { name: '使用指南', exact: true }).click();
+  await page.getByRole('heading',{name:'从图片到研究记录',exact:true}).waitFor();
+  await nav.getByRole('button',{name:'截图素材',exact:true}).click();
+  await page.getByRole('region',{name:'屏幕截图',exact:true}).waitFor();
   await toolbar.getByRole('button', { name: '切换为浅色主题' }).click();
   await screenshot(`${label}${suffix}-light.png`);
   report.checks.push(`${prefix}light/dark and settings keep toolbar view selection in sync`);
@@ -462,7 +468,7 @@ async function checkUI(page, suffix = '') {
     assert.equal(commands.includes('test_connection'), true, 'IPC observation must capture real test calls');
     assert.equal(commands.includes('plugin:window|set_theme'), true, 'IPC observation must capture theme calls');
     assert.equal(commands.includes('get_workspace_status'), false);
-    const unexpected = commands.filter((command) => !['plugin:app|version', 'plugin:window|set_theme', 'test_connection', 'list_displays', 'capture_fullscreen', 'capture_region', 'region_result_png','capture_result_png','current_capture','discard_capture','get_preferences','update_preferences','plugin:event|listen','plugin:event|unlisten','library_status','list_screenshots','screenshot_page','screenshot_image','list_tags'].includes(command));
+    const unexpected = commands.filter((command) => !['plugin:app|version', 'plugin:window|set_theme', 'test_connection', 'list_displays', 'capture_fullscreen', 'capture_region', 'region_result_png','capture_result_png','current_capture','discard_capture','get_preferences','update_preferences','plugin:event|listen','plugin:event|unlisten','library_status','list_screenshots','screenshot_page','screenshot_image','list_tags','desktop_status','list_projects','list_project_documents'].includes(command));
     assert.deepEqual(unexpected, ['region_overlay_info'], 'Only the explicitly rejected main-to-overlay security probe may be outside the normal UI command list');
     report.checks.push(`${prefix}UI interactions do not call database diagnostics; observed: ${[...new Set(commands)].join(', ')}`);
   }

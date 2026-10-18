@@ -79,6 +79,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(Arc::new(services::scrolling::ScrollService::default()))
         .manage(Arc::new(services::pins::PinManager::default()))
         .manage(Arc::new(std::sync::Mutex::new(
             services::markdown_document::DocumentFiles::default(),
@@ -166,6 +167,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 }
             }
             if window.label() == "main" && matches!(event, tauri::WindowEvent::Destroyed) {
+                window
+                    .state::<Arc<services::scrolling::ScrollService>>()
+                    .cancel();
                 if let Err(error) = window
                     .state::<Arc<services::pins::PinManager>>()
                     .close_all(window.app_handle())
@@ -178,6 +182,11 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            commands::scrolling::scroll_targets,
+            commands::scrolling::scroll_prepare,
+            commands::scrolling::scroll_start,
+            commands::scrolling::scroll_status,
+            commands::scrolling::scroll_action,
             commands::ocr::ocr_status,
             commands::ocr::recognize_ocr,
             commands::ocr::copy_ocr_text,

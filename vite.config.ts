@@ -11,6 +11,6 @@ export default defineConfig({
     host: '127.0.0.1', port: 1420, strictPort: true,
     watch: { ignored: ['**/src-tauri/**', '**/.tools/**', '**/artifacts/**'] },
   },
-  build: { target: ['es2022', 'chrome105', 'safari15.4'] },
+  build: { assetsInlineLimit: (filePath) => /\.(woff2?|ttf|otf)$/i.test(filePath) ? false : undefined, target: ['es2022', 'chrome105', 'safari15.4'] },
   test: { environment: 'node', include: ['src/**/*.test.{ts,tsx}'], clearMocks: true },
 });

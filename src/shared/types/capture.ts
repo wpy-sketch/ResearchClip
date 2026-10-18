@@ -13,7 +13,7 @@ export interface CapturePreview {
   displayId: string;
   widthPx: number;
   heightPx: number;
-  mode?: 'fullscreen' | 'region';
+  mode?: 'fullscreen' | 'region' | 'scroll';
   savedPath?: string;
   captureId?: string;
   blob?: Blob;
@@ -22,4 +22,4 @@ export interface CapturePreview {
 
 export interface OverlayInfo { sessionId: string; display: DisplayInfo }
 
-export interface CaptureInfo { captureId: string; displayId: string; widthPx: number; heightPx: number; mode: 'fullscreen' | 'region' }
+export interface CaptureInfo { captureId: string; displayId: string; widthPx: number; heightPx: number; mode: 'fullscreen' | 'region' | 'scroll' }

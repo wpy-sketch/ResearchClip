@@ -21,7 +21,7 @@ export function CapturePanel() {
     <button className="secondary-button mt-3" onClick={() => useUiStore.getState().navigate('editor')}><Pencil size={15} />图片编辑器 / 打开项目</button>
     {preview ? <>
       <figure className="mt-5 overflow-hidden rounded-lg border border-edge bg-canvas">
-        <div className="capture-image-container"><img className="capture-image" src={preview.url} alt={preview.mode === 'region' ? '区域截图预览' : '全屏截图预览'} onError={() => previewFailed(preview.url)} /></div>
+        <div className="capture-image-container"><img className="capture-image" src={preview.url} alt={preview.mode === 'scroll' ? '滚动长截图预览' : preview.mode === 'region' ? '区域截图预览' : '全屏截图预览'} onError={() => previewFailed(preview.url)} /></div>
         <figcaption className="border-t border-edge px-4 py-3 text-xs text-muted"><div className="flex flex-wrap justify-between gap-2"><span>{preview.widthPx} × {preview.heightPx} 像素</span><span>{sourceIndex >= 0 ? `显示器 ${sourceIndex + 1}` : '截图预览'} · {preview.savedPath ? 'PNG 已保存' : '临时预览 · 未保存'}</span></div>{preview.savedPath && <p className="mt-2 break-all select-text">保存位置：{preview.savedPath}</p>}</figcaption>
       </figure>
       <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="截图完成操作">

@@ -52,7 +52,14 @@ function Data-Snapshot {
 }
 function Run-Setup([string]$path, [string]$arguments) {
   $report.commands.Add("$path $arguments")
-  $process = Start-Process -FilePath $path -ArgumentList $arguments -WindowStyle Hidden -PassThru
+  # Launch the exact image directly, without ShellExecute/hidden-shell relaunch.
+  # NSIS default uninstall itself launches a temporary child; inspect actual files
+  # and registration below rather than treating its launcher exit as completion.
+  $start = [Diagnostics.ProcessStartInfo]::new($path)
+  $start.Arguments = $arguments
+  $start.UseShellExecute = $false
+  $start.CreateNoWindow = $true
+  $process = [Diagnostics.Process]::Start($start)
   if (!$process.WaitForExit(60000)) { throw 'Owned setup process timed out; do not force-close applications or claim successful cleanup.' }
   $code=$process.ExitCode; $process.Dispose(); return $code
 }
@@ -128,6 +135,9 @@ try {
   Move-Item -LiteralPath $backupExe -Destination $installedExe
   $swapped = $false
   Assert-Check ((Get-FileHash -LiteralPath $installedExe -Algorithm SHA256).Hash -eq $expectedHash) 'Production executable was not restored correctly.'
+  $quiet = & (Get-Process -Id $PID).Path -NoProfile -File (Join-Path $PSScriptRoot 'installer-quiescence.ps1') -InstalledPath $installedExe
+  Assert-Check ($LASTEXITCODE -eq 0) 'Owned test resources are still busy; do not test a successful uninstall yet.'
+  $report.quiescence = $quiet | ConvertFrom-Json
   $code = Run-Setup $uninstaller '/S'
   Assert-Check ($code -eq 0) "Uninstaller launcher returned $code."
   $wait = [Diagnostics.Stopwatch]::StartNew()

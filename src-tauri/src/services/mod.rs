@@ -9,3 +9,8 @@ pub mod screen_capture;
 pub mod settings;
 pub mod templates;
 pub mod workflow;
+
+pub mod scrolling;
+#[cfg(target_os = "windows")]
+pub mod scrolling_windows;
+pub mod stitching;
