@@ -1,5 +1,7 @@
 # ResearchClip
 
+# 使用Codex进行构建
+
 面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.0 Windows 正式版**。
 
 [下载正式版](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [v1.0.0实际验收](docs/qa/RELEASE-1.0.0.md)
