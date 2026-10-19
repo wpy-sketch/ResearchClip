@@ -36,6 +36,7 @@ assert.equal(read('src-tauri/Cargo.toml').match(/^version\s*=\s*"([^"]+)"/m)?.[1
 assert.deepEqual(config.app.security.capabilities, [main.identifier, overlay.identifier, pins.identifier, "scroll-control"]);
 assert.deepEqual(main.windows, ['main']);
 assert.deepEqual(overlay.windows, ['capture-overlay-*']);
+const syncCommands=['sync_status','sync_configure','sync_start','sync_stop','sync_resolve','sync_authorize_documents'];for(const command of syncCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::sync::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 const mathCommands=["math_ocr_status","cancel_math_ocr","download_math_models","choose_math_runtime","import_math_models","recognize_math_ocr"];for(const command of mathCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::math_ocr::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 const indexCommands=["get_ocr_content","correct_ocr_content","start_ocr_index","ocr_index_status","ocr_index_action","rebuild_search_index"];for(const command of indexCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::ocr_index::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 const clipperCommands=['clipper_status','clipper_connection']; for(const command of clipperCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::clipper::'+command));}
@@ -71,9 +72,9 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/002_libr
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_projects.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/004_ocr_index.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/005_annotation_revisions.sql'], { cwd: root, stdio: 'pipe' });
-assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 5;'),true);
+assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 6;'),true);
 assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pending_file_deletions'));
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v5; published migrations001–005 unchanged' }, null, 2));
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v6; published migrations001–005 unchanged' }, null, 2));
 
 for(const command of ["annotation_history","annotation_revision","save_annotation_revision","restore_annotation_revision"]){assert.ok(main.permissions.includes("allow-"+command.replaceAll("_","-")));assert.ok(read("src-tauri/src/lib.rs").includes("commands::revisions::"+command));assert.ok(read("src-tauri/build.rs").includes("\""+command+"\""));}

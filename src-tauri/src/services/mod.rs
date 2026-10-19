@@ -19,3 +19,4 @@ pub mod stitching;
 pub mod ocr_index;
 
 pub mod math_ocr;
+pub mod sync;

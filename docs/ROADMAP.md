@@ -237,3 +237,9 @@ EditorSession沿用现有 store/document/history，image.annotationVersion 标�
 ## v2.0.0 界面与帮助交付边界
 
 本版仅调整语义色、间距、圆角和阅读导航。GuideView复用现有MarkdownPreview与同一mdast标题解析，按源码偏移建立H2/H3/H4目录，搜索保留祖先，滚动监听及requestAnimationFrame在卸载时清理。指南14章、19幅离线图示，窄窗口目录堆叠，隐藏小节时定位可见上级。未打开Markdown时不创建分栏；既有编辑/保存逻辑保持。无新增依赖、数据库表、迁移或权限，已发布001–005迁移不改。A06协议与迁移文档仍是提案，不提供WebDAV同步。详见[本版验收](qa/RELEASE-2.0.0.md)。
+
+## A06 / v3.0.0 实际阶段
+
+M1 schema6与资源协议 → M2连接/目录/安全条件探针 → M3不可变上传下载 → M4两逻辑客户端双向 → M5冲突/双副本 → M6后台任务/持久队列/停止重试UI，按顺序在隔离数据完成验证。默认WsgiDAV安全门槛失败并保留证据；参考配置显式增加原子写入和内容ETag。实际命令及状态以[3.0 QA报告](qa/RELEASE-3.0.0.md)为准。
+
+指定坚果云ResearchClip目录认证验收、物理双设备、macOS、完整DPI矩阵仍需完成；不能把这份阶段记录当作它们通过。后续定时同步/更广Markdown资源适配需单独授权。不开发PDF或独立全库备份恢复。

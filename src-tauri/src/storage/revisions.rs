@@ -36,7 +36,7 @@ fn row(r: &rusqlite::Row<'_>) -> rusqlite::Result<AnnotationRevision> {
         schema_version: r.get(6)?,
     })
 }
-fn same_content(a: &Value, b: &Value) -> bool {
+pub(crate) fn same_content(a: &Value, b: &Value) -> bool {
     match (a, b) {
         (Value::Number(a), Value::Number(b)) => a.as_f64() == b.as_f64(),
         (Value::Array(a), Value::Array(b)) => {
@@ -61,7 +61,7 @@ pub(super) fn record(
             "版本说明最多500字符，不能包含空字符。",
         ));
     }
-    let latest=connection.query_row("SELECT revision_id,version_number,CASE WHEN length(CAST(annotation_json AS BLOB))<=4194304 THEN annotation_json ELSE '' END FROM annotation_revisions WHERE screenshot_id=?1 ORDER BY version_number DESC LIMIT 1",[id],|r|Ok((r.get::<_,String>(0)?,r.get::<_,i64>(1)?,r.get::<_,String>(2)?))).optional()?;
+    let latest=connection.query_row("SELECT revision_id,version_number,CASE WHEN length(CAST(annotation_json AS BLOB))<=4194304 THEN annotation_json ELSE '' END FROM annotation_revisions WHERE revision_id=(SELECT revision_id FROM annotation_heads WHERE screenshot_id=?1 AND needs_review=0)",[id],|r|Ok((r.get::<_,String>(0)?,r.get::<_,i64>(1)?,r.get::<_,String>(2)?))).optional()?;
     if latest.as_ref().is_some_and(|(_, _, json)| {
         serde_json::from_str::<Value>(json)
             .ok()
@@ -69,9 +69,12 @@ pub(super) fn record(
     }) {
         return Ok(false);
     }
-    let (parent, number) = latest
-        .map(|(id, n, _)| (Some(id), n.saturating_add(1)))
-        .unwrap_or((None, 1));
+    let parent = latest.map(|(id, _, _)| id);
+    let number: i64 = connection.query_row(
+        "SELECT coalesce(max(version_number),0)+1 FROM annotation_revisions WHERE screenshot_id=?1",
+        [id],
+        |r| r.get(0),
+    )?;
     connection.execute(
         "INSERT INTO annotation_revisions VALUES (lower(hex(randomblob(16))),?1,?2,?3,?4,?5,?6,1)",
         params![
@@ -416,7 +419,7 @@ mod tests {
         assert_eq!(
             conn.pragma_query_value(None, "user_version", |r| r.get::<_, i64>(0))
                 .unwrap(),
-            5
+            6
         );
     }
 }

@@ -1,6 +1,12 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "sync_status",
+            "sync_configure",
+            "sync_start",
+            "sync_stop",
+            "sync_resolve",
+            "sync_authorize_documents",
             "annotation_history",
             "annotation_revision",
             "save_annotation_revision",

@@ -618,3 +618,9 @@ EditorSession沿用现有 store/document/history，image.annotationVersion 标�
 ## v2.0.0 界面与帮助交付边界
 
 本版仅调整语义色、间距、圆角和阅读导航。GuideView复用现有MarkdownPreview与同一mdast标题解析，按源码偏移建立H2/H3/H4目录，搜索保留祖先，滚动监听及requestAnimationFrame在卸载时清理。指南14章、19幅离线图示，窄窗口目录堆叠，隐藏小节时定位可见上级。未打开Markdown时不创建分栏；既有编辑/保存逻辑保持。无新增依赖、数据库表、迁移或权限，已发布001–005迁移不改。A06协议与迁移文档仍是提案，不提供WebDAV同步。详见[本版验收](qa/RELEASE-2.0.0.md)。
+
+## v3.0.0：资源级WebDAV同步
+
+当前实现替代历史A06-M1设计状态，实际协议见[sync/PROTOCOL.md](sync/PROTOCOL.md)。React `features/sync` → main限定的6个Rust命令 → `services/sync/runtime`单后台任务 → engine/transport/credentials → `storage/sync`与schema6。网络调用不持有SQLite锁；不直接上传数据库，不增加通用HTTP/fs权限。窗口退出先请求停止同步，队列保留，等待请求结束后再退出。
+
+SQLite新增head/配置/队列/基线/冲突/tombstone/文档授权；原图不变。项目独立资源、截图bundle及Markdownbundle依赖先落盘验证再事务激活。独立服务商验收状态见[3.0 QA](qa/RELEASE-3.0.0.md)，不能把本地测试当作坚果云通过。前端新增设置任务导航、手动范围/状态/冲突确认；指南复用现有安全MarkdownPreview，无新解析管线。

@@ -35,14 +35,20 @@ impl LibraryService {
         &self,
         f: impl FnOnce(&mut Storage) -> Result<T, StorageError>,
     ) -> Result<T, CommandError> {
-        let mut guard = self.storage.lock().map_err(|_| CommandError {
-            code: "STORAGE_UNAVAILABLE",
-            message: "资料服务锁异常，请保留未保存内容并重启。".into(),
-        })?;
+        self.access(f).map_err(error)
+    }
+    pub fn access<T>(
+        &self,
+        f: impl FnOnce(&mut Storage) -> Result<T, StorageError>,
+    ) -> Result<T, StorageError> {
+        let mut guard = self
+            .storage
+            .lock()
+            .map_err(|_| StorageError::Invalid("资料服务锁异常，请保留未保存内容并重启。"))?;
         if guard.is_none() {
-            *guard = Some(Storage::open(self.root.clone()).map_err(error)?);
+            *guard = Some(Storage::open(self.root.clone())?);
         }
-        f(guard.as_mut().unwrap()).map_err(error)
+        f(guard.as_mut().unwrap())
     }
 }
 pub(super) fn error(e: StorageError) -> CommandError {

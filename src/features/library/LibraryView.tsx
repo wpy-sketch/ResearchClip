@@ -57,7 +57,7 @@ export function LibraryView({favorites}: {favorites:boolean}) {
     <ProjectBar/>
     <OcrIndexControls/>
     <p className="image-drop-hint" title="每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。详见使用指南。">拖入图片或点击顶部剪贴板图标导入。支持 PNG、JPG / JPEG、WebP。</p>
-    {!favorites && <CapturePanel/>}
+    {!favorites && (items.length ? <details className="library-capture-tools"><summary>截图工具 · 全屏、区域与滚动长截图</summary><CapturePanel/></details> : <CapturePanel/>)}
     {!favorites && showWelcome && !items.length && !loading && !filtered && <HomeView/>}
     {(error || operationError) && <p role="alert" className="error-banner my-3">{operationError ?? error}</p>}
     {notice && <p role="status" className="my-3 text-xs text-muted">{notice}</p>}

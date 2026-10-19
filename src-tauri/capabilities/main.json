@@ -102,6 +102,12 @@
     "allow-download-math-models",
     "allow-choose-math-runtime",
     "allow-import-math-models",
-    "allow-recognize-math-ocr"
+    "allow-recognize-math-ocr",
+    "allow-sync-status",
+    "allow-sync-configure",
+    "allow-sync-start",
+    "allow-sync-stop",
+    "allow-sync-resolve",
+    "allow-sync-authorize-documents"
   ]
 }

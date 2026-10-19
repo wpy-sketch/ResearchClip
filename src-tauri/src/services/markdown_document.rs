@@ -81,7 +81,7 @@ pub struct DocumentFiles {
     sequence: u64,
     indexed: HashMap<String, PathBuf>,
 }
-fn names(markdown: &str) -> Result<BTreeSet<String>, CaptureError> {
+pub(crate) fn names(markdown: &str) -> Result<BTreeSet<String>, CaptureError> {
     let mut result = BTreeSet::new();
     for tail in markdown.split("](assets/").skip(1) {
         let name = tail

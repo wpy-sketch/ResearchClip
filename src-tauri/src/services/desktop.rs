@@ -151,6 +151,7 @@ pub fn request_exit(app: &AppHandle) -> Result<(), CaptureError> {
     if !service.request() {
         return Ok(());
     }
+    app.state::<Arc<super::sync::runtime::SyncService>>().stop();
     app.state::<Arc<super::ocr_index::OcrIndexService>>()
         .cancel();
     app.state::<Arc<super::scrolling::ScrollService>>().cancel();
@@ -228,6 +229,14 @@ pub fn finish_exit(app: &AppHandle, approved: bool) -> Result<(), CaptureError> 
             }
         }
     };
+    let sync = app.state::<Arc<super::sync::runtime::SyncService>>();
+    sync.stop();
+    if sync.busy() {
+        service.cancel();
+        return Err(failure(
+            "WebDAV正在停止当前网络请求（最多30秒），未确认队列保留；请稍后再次退出。",
+        ));
+    }
     // Math jobs own temporary images and child processes. Let cancellation finish
     // before destroying the WebView; Windows Job Object also covers abrupt exit.
     let math = app.state::<Arc<super::math_ocr::MathOcrService>>();

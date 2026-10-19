@@ -85,6 +85,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(Arc::new(services::sync::runtime::SyncService::default()))
         .manage(Arc::new(services::ocr_index::OcrIndexService::default()))
         .manage(services::clipper::ClipperService::default())
         .manage(Arc::new(services::scrolling::ScrollService::default()))
@@ -196,6 +197,12 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            commands::sync::sync_status,
+            commands::sync::sync_configure,
+            commands::sync::sync_start,
+            commands::sync::sync_stop,
+            commands::sync::sync_resolve,
+            commands::sync::sync_authorize_documents,
             commands::clipper::clipper_status,
             commands::clipper::clipper_connection,
             commands::scrolling::scroll_targets,

@@ -136,3 +136,7 @@ EditorSession沿用现有 store/document/history，image.annotationVersion 标�
 ## v2.0.0 界面与帮助交付边界
 
 本版仅调整语义色、间距、圆角和阅读导航。GuideView复用现有MarkdownPreview与同一mdast标题解析，按源码偏移建立H2/H3/H4目录，搜索保留祖先，滚动监听及requestAnimationFrame在卸载时清理。指南14章、19幅离线图示，窄窗口目录堆叠，隐藏小节时定位可见上级。未打开Markdown时不创建分栏；既有编辑/保存逻辑保持。无新增依赖、数据库表、迁移或权限，已发布001–005迁移不改。A06协议与迁移文档仍是提案，不提供WebDAV同步。详见[本版验收](qa/RELEASE-2.0.0.md)。
+
+## v3.0.0 增量：手动WebDAV
+
+Windows设置提供连接、安全探针、项目选择、已登记Markdown授权、手动开始/停止/重试及逐项冲突处理。默认不联网。首次合并不推断删除；远端明确删除需要再次确认。用户草稿保存失败不能开始同步。初版有界资源及受管PNG Markdown范围，不承诺所有WebDAV服务兼容，不包含定时同步/PDF/独立全库恢复。详见[指南13章](USER_GUIDE.md)。

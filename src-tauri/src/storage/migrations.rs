@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 5;
+pub const SCHEMA_VERSION: u32 = 6;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -93,6 +93,9 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/005_annotation_revisions.sql"),
         )?;
     }
+    if version < 6 {
+        apply_migration(connection, 6, include_str!("../../migrations/006_sync.sql"))?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
@@ -134,6 +137,19 @@ fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageE
     }
     if version >= 5 {
         connection.prepare("SELECT revision_id,screenshot_id,version_number,parent_revision_id,annotation_json,created_at,description,schema_version FROM annotation_revisions LIMIT 0")?;
+    }
+    if version >= 6 {
+        for sql in [
+            "SELECT screenshot_id,revision_id,needs_review FROM annotation_heads LIMIT 0",
+            "SELECT device_id,counter FROM sync_identity LIMIT 0",
+            "SELECT connection_id,resource_key,content_hash,manifest_hash,remote_etag FROM sync_state LIMIT 0",
+            "SELECT operation_id,phase FROM sync_queue LIMIT 0",
+            "SELECT id,resolved FROM sync_conflicts LIMIT 0",
+            "SELECT resource_key,project_id FROM sync_tombstones LIMIT 0",
+            "SELECT document_id,authorized_path FROM sync_document_grants LIMIT 0",
+        ] {
+            connection.prepare(sql)?;
+        }
     }
     Ok(())
 }
@@ -180,7 +196,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 5);
+        assert_eq!(storage.status().unwrap().schema_version, 6);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()

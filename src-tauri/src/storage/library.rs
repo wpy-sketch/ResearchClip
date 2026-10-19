@@ -664,7 +664,7 @@ impl Storage {
     }
     pub fn library_status(&self) -> Result<LibraryStatus, StorageError> {
         Ok(LibraryStatus {
-            schema_version: 5,
+            schema_version: 6,
             pending_writes: self.connection.query_row(
                 "SELECT count(*) FROM pending_screenshots",
                 [],
@@ -689,7 +689,7 @@ impl Storage {
             )
             .optional()?
             .ok_or(StorageError::NotFound)?;
-        item.annotation_version=self.connection.query_row("SELECT coalesce(max(version_number),0) FROM annotation_revisions WHERE screenshot_id=?1",[id],|r|r.get(0))?;
+        item.annotation_version=self.connection.query_row("SELECT coalesce((SELECT r.version_number FROM annotation_heads h JOIN annotation_revisions r ON r.revision_id=h.revision_id WHERE h.screenshot_id=?1 AND h.needs_review=0),0)",[id],|r|r.get(0))?;
         self.validate_references(&item)?;
         document(&item.annotation_data, item.width_px, item.height_px)?;
         Ok(item)

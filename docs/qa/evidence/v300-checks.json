@@ -1,0 +1,95 @@
+{
+  "environment": "Windows NT10.0.26200 x64; Node22.22.2/npm10.9.7; Rust1.99 MSVC; Tauri2.12.3/CLI2.12.2",
+  "frontendTests": 338,
+  "rustTests": 158,
+  "integrationTests": 7,
+  "extensionTests": 5,
+  "cleanInstallPackages": 303,
+  "commandExitCodes": {
+    "npm run check": 0,
+    "npm run test:rust": 0,
+    "cargo test --locked -- --ignored --test-threads=1": 0,
+    "npm run format:rust": 0,
+    "npm run check:rust": 0,
+    "npm run desktop:bundle": 0,
+    "installer-smoke v300-final": 0,
+    "npm run check:docs": 0
+  },
+  "installer": {
+    "result": "PASS",
+    "userDataFilesHashed": 10,
+    "installerSha256": "2f253b6a58739a619911f2e5f41d400382d767308cdec60a5cb8d4b905e04da4",
+    "signatureStatus": "NotSigned",
+    "busyInstallExit": 2,
+    "busyUninstallExit": 2,
+    "userDataUnchanged": true
+  },
+  "suites": {
+    "syncNative": {
+      "result": "PASS",
+      "mode": "actual Windows debug EXE/WebView2/Rust IPC/SQLite/Credential Manager, disposable workspace, TLS-negative fixture only; no Nutstore or physical screenshot claims",
+      "checks": [
+        "native startup initializes schema6 and has no automatic sync/config",
+        "actual settings UI saves through Rust/Windows credentials, clears password and excludes it from status",
+        "native background job rejects self-signed TLS; no upload/baseline, failure state remains retryable",
+        "real application close/restart restores SQLite config and OS credential without auto network task",
+        "actual persistent SQLite does not contain fixture username/password"
+      ]
+    },
+    "guideNative": {
+      "result": "PASS",
+      "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+      "checks": [
+        "real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+        "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+        "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+        "all 21 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+        "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 14 chapters; 1180/760/480 layouts do not overflow"
+      ]
+    },
+    "syncUI": {
+      "result": "PASS",
+      "mode": "actual headless Edge rendering of browser preview; no native IPC/credentials/server claims",
+      "checks": [
+        "settings task navigation scrolls/focuses actual section",
+        "browser preview cannot submit credentials or start synchronization",
+        "dark: WebDAV form, actions and task navigation contained at 6 widths 480–1440",
+        "light: WebDAV form, actions and task navigation contained at 6 widths 480–1440",
+        "left navigation/settings remount leaves independent Markdown draft untouched"
+      ]
+    },
+    "guideUI": {
+      "result": "PASS",
+      "mode": "local isolated headless Edge renderer; no native capture, user database, credential or clipboard claims",
+      "checks": [
+        "14 chapters and nested subsections mount; absent Markdown document has no split",
+        "third-level step navigation scrolls and keyboard-focuses the actual matching H4, active location follows",
+        "collapse all removes children and active step falls back to visible parent",
+        "nested search retains ancestors, reports no results and clear restores navigation",
+        "all 21 whitelisted offline guide images actually decode",
+        "whitelisted local guide image opens with Enter and closes with Escape",
+        "dark: guide and directory contained at seven widths 480–1440",
+        "light: guide and directory contained at seven widths 480–1440",
+        "guide navigation/unmount and remount preserves independent Markdown draft; cancel/discard closes split correctly"
+      ]
+    },
+    "materialUI": {
+      "result": "PASS",
+      "mode": "actual Edge renderer; preview only, no native capture or database claims",
+      "checks": [
+        "single sidebar capture action and separate full-width search row; no duplicate capture entry",
+        "dark theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+        "dark: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+        "light theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+        "light: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+        "moved capture button still opens existing capture dialog; Escape closes it",
+        "Markdown entry, split visibility, draft across navigation, cancel/discard close and full-width restoration still work",
+        "system theme follows OS media changes without resetting the preference"
+      ]
+    }
+  },
+  "nutstoreAuthenticatedCompatibility": "BLOCKED: no user credentials locally configured; not attempted",
+  "physicalTwoDevices": "NOT_RUN",
+  "macOS": "NOT_RUN",
+  "defaultWsgiDAV": "FAIL: rejected by conditional-write probes, preserved evidence; distinct reference configuration only for positive tests"
+}
