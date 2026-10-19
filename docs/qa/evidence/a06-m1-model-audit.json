@@ -1,0 +1,62 @@
+{
+  "auditResult": "PASS",
+  "phaseGate": "BLOCKED",
+  "syncImplemented": false,
+  "reason": "schema5 needs explicit sync migration; actual test server information pending",
+  "python": "3.14.6",
+  "sqlite": "3.53.2",
+  "logicalClients": 2,
+  "tests": 8,
+  "checks": [
+    {
+      "id": "test_01_existing_schema_and_immutable_original_are_usable_foundations",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    },
+    {
+      "id": "test_02_single_end_change_can_be_seen_but_counter_is_only_local",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    },
+    {
+      "id": "test_03_two_clients_fork_same_ordinal_and_naive_history_import_fails",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    },
+    {
+      "id": "test_04_completed_physical_delete_has_no_durable_sync_tombstone",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    },
+    {
+      "id": "test_05_same_named_documents_have_no_cross_device_path_identity",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    },
+    {
+      "id": "test_06_external_markdown_and_assets_changes_are_not_index_revisions",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    },
+    {
+      "id": "test_07_distinct_tag_and_project_ids_with_same_names_cannot_be_blindly_merged",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    },
+    {
+      "id": "test_08_shared_tag_rename_also_changes_unselected_project_display",
+      "status": "PASS",
+      "meaning": "schema5 model audit assertion reproduced; not sync acceptance"
+    }
+  ],
+  "originalFixtureSha256": "50b3471f493a6c339ab165b313604ca27a0f750daf1affceaf8a16c053d08b7d",
+  "migrationHashes": {
+    "001_workspace.sql": "6d343ec8e37af1f35aaa8b99dfc106b4b4bbe6570dc0e6dbcbc06d46fdb6cea4",
+    "002_library.sql": "6c856cbf984f1fba2601b320c1648907c5be6c58194ba720c45c4f45cf31a2f0",
+    "003_projects.sql": "2f867903d8f5c82ffaecbf8214966ae9907e4573cdbd10b2ce55bb62df98d85f",
+    "004_ocr_index.sql": "b4fd2734f4e3a98a2c61bf3f511d2a77cb2b346d818a0e2461871b2512cae51d",
+    "005_annotation_revisions.sql": "3fa577309a3a0ef6bf42674b409818b5ab71f45b1edd7e44aa0358bc501729ee"
+  },
+  "serverTests": "NOT_RUN",
+  "productionDataAccess": false
+}

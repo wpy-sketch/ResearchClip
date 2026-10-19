@@ -3045,7 +3045,7 @@ dependencies = [
 
 [[package]]
 name = "researchclip"
-version = "1.0.5"
+version = "2.0.0"
 dependencies = [
  "image",
  "png 0.18.1",

@@ -1,0 +1,85 @@
+{
+  "version": "2.0.0",
+  "frontend": {
+    "files": 49,
+    "tests": 329,
+    "result": "PASS"
+  },
+  "rust": {
+    "tests": 149,
+    "ignored": 0,
+    "result": "PASS"
+  },
+  "format": "PASS",
+  "clippy": "PASS",
+  "extension": {
+    "tests": 5,
+    "build": "PASS"
+  },
+  "cleanInstall": {
+    "packages": 303,
+    "mode": "online locked install after offline cache misses",
+    "result": "PASS"
+  },
+  "guide": {
+    "mode": "local isolated headless Edge renderer; no native capture, user database, credential or clipboard claims",
+    "checks": [
+      "14 chapters and nested subsections mount; absent Markdown document has no split",
+      "third-level step navigation scrolls and keyboard-focuses the actual matching H4, active location follows",
+      "collapse all removes children and active step falls back to visible parent",
+      "nested search retains ancestors, reports no results and clear restores navigation",
+      "all 19 whitelisted offline guide images actually decode",
+      "whitelisted local guide image opens with Enter and closes with Escape",
+      "dark: guide and directory contained at seven widths 480–1440",
+      "light: guide and directory contained at seven widths 480–1440",
+      "guide navigation/unmount and remount preserves independent Markdown draft; cancel/discard closes split correctly"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "material": {
+    "mode": "actual Edge renderer; preview only, no native capture or database claims",
+    "checks": [
+      "single sidebar capture action and separate full-width search row; no duplicate capture entry",
+      "dark theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+      "dark: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+      "light theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+      "light: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+      "moved capture button still opens existing capture dialog; Escape closes it",
+      "Markdown entry, split visibility, draft across navigation, cancel/discard close and full-width restoration still work",
+      "system theme follows OS media changes without resetting the preference"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "installer": {
+    "result": "PASS",
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ],
+    "userDataFilesHashed": 9,
+    "installerSha256": "D64BBFE1A4CFD65C7F7FC88210013E6DCEC80B3FDCB9B20335024A4DF31C6367",
+    "signature": "NotSigned",
+    "metadata": {
+      "version": "2.0.0",
+      "publisher": "ResearchClip",
+      "hasIcon": true,
+      "product": "ResearchClip"
+    },
+    "busyInstallExit": 2,
+    "busyUninstallExit": 2,
+    "installationStillPresent": false
+  },
+  "nativeInteraction": "NOT_RUN",
+  "macOS": "NOT_RUN",
+  "webDAV": "NOT_IMPLEMENTED; M1 phase gate BLOCKED",
+  "initialFailures": [
+    "sandbox SSR temp ENOENT; unsandboxed check passed",
+    "sandbox localhost timeout; unsandboxed smoke passed",
+    "offline cache missing; online clean install passed",
+    "old DOM scroll handle; current DOM decode check passed"
+  ]
+}

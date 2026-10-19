@@ -607,3 +607,14 @@ revisions.rs 负责带CAS保存/恢复、最新内容语义去重及50条分页�
 EditorSession沿用现有 store/document/history，image.annotationVersion 标记编辑基准；RevisionHistory 是局部弹窗状态，复用 renderComposite 只读预览和双图展示，不激活另一编辑会话。恢复后 document/savedDocument/CAS 更新，撤销历史独立工作。4个main-only命令通过既有 LibraryService/spawn_blocking 运行，不扩展通用文件或SQL权限。无新第三方依赖，无独立备份/恢复业务。
 
 损坏/未知标注快照拒绝预览及恢复，原记录保留；不支持的历史元数据仍可列出。当前正式格式仍为 Annotation schema1，包括早期基本图元及现有高级图元；不虚构 schema0 迁移。实际检查、未运行 Windows 交互与人工矩阵见 [A05验收](qa/RELEASE-1.0.5.md)。
+
+## A06 / 目标v1.0.6：M1门槛记录
+
+[资源协议](sync/PROTOCOL.md)、[schema6迁移提案](sync/MIGRATION.md)及[实际审计](qa/A06-M1.md)说明当前schema5并不具备可靠跨设备删除、全局修订和外部Markdown资源身份。仅完成设计与两个隔离SQLite逻辑客户端的风险复现，未新增迁移或同步业务。M1迁移适配门槛BLOCKED；M2依赖用户稍后提供的实际测试服务器信息。M2–M6未实现，不能发布为已完成WebDAV的v1.0.6。
+
+原有截图、原图、Annotation schema1、版本历史、OCR、搜索、浏览器插件与动态Markdown分栏保持。界面规划沿用现有主题，完整配置/同步/冲突管理UI应在一致性验证之后开发；不先显示无安全后端的同步按钮。既有升级前安全备份继续适用，但不新增独立全库备份/恢复系统。
+
+
+## v2.0.0 界面与帮助交付边界
+
+本版仅调整语义色、间距、圆角和阅读导航。GuideView复用现有MarkdownPreview与同一mdast标题解析，按源码偏移建立H2/H3/H4目录，搜索保留祖先，滚动监听及requestAnimationFrame在卸载时清理。指南14章、19幅离线图示，窄窗口目录堆叠，隐藏小节时定位可见上级。未打开Markdown时不创建分栏；既有编辑/保存逻辑保持。无新增依赖、数据库表、迁移或权限，已发布001–005迁移不改。A06协议与迁移文档仍是提案，不提供WebDAV同步。详见[本版验收](qa/RELEASE-2.0.0.md)。

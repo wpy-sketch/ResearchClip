@@ -2,9 +2,11 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.5 Windows 版本**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v2.0.0 Windows 正式版本**。
 
-[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.5) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v2.0.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+
+v2.0.0 聚焦界面与帮助：统一深浅色语义色、收敛圆角与留白；使用指南可展开到操作步骤、搜索正文、定位当前章节并返回目录。保持原有截图、SQLite schema5与动态Markdown分栏。[本版变更](docs/RELEASE-NOTES-2.0.0.md) · [实际验收](docs/qa/RELEASE-2.0.0.md)。
 
 ## 从这里开始
 
@@ -20,11 +22,15 @@
 - **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
 - **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
 - **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
-- **帮助**：14节任务式说明、详细分步注释、17张离线界面图与操作示意和原尺寸放大查看。
+- **帮助**：14章任务式说明、二/三/四级标题、分层目录与正文搜索、19张离线界面图与操作示意和原尺寸放大查看。
 
 v1.0.5 新增非破坏性标注版本历史：显式保存去重、版本说明、只读预览/对比、恢复追加新版本；schema5升级前备份，原图不重复保存。[本轮验收](docs/qa/RELEASE-1.0.5.md) · [发布核验](docs/qa/PUBLICATION-1.0.5.md)。Release继续附带兼容的 v1.0.2 浏览器插件包，不删除既有发布。
 
 v1.0.4 新增需校对的离线公式图片转LaTeX；可选Python运行时与171 MiB模型由用户主动安装/下载。实际样本存在误识别，详见[模型比较](docs/MATH-OCR.md)与[本轮验收](docs/qa/RELEASE-1.0.4.md) · [发布核验](docs/qa/PUBLICATION-1.0.4.md)。v1.0.3 新增独立OCR全文存储、用户控制批量索引、中文短词/英文组合搜索与安全摘要高亮；数据库以备份及事务升级到schema4。详见[本轮验收](docs/qa/RELEASE-1.0.3.md) · [发布核验](docs/qa/PUBLICATION-1.0.3.md)。v1.0.2 新增独立MV3网页剪藏、受限Native Messaging Host、项目保存和标准Markdown联动；完整安装/重试说明见指南第3节。v1.0.1滚动长截图保持。完整高DPI/多屏、浏览器真实工具栏交互、macOS与第三方应用矩阵仍需专项验证；旧退出/托盘问题与本轮复验分别记录在 [QA总表](docs/qa/TEST_REPORT.md)，不把正式Release标识等同于未运行项目通过。
+
+## A06 WebDAV 开发状态
+
+**尚未提供可用同步功能，当前正式版本为v2.0.0。** M1已发现单机序号、删除记录和外部Markdown身份/资源授权方面的缺口，正在按阶段门槛先交付[资源协议](docs/sync/PROTOCOL.md)和[迁移方案](docs/sync/MIGRATION.md)。[隔离审计结果](docs/qa/A06-M1.md)只验证现有模型风险，不代表WebDAV通过。测试服务器信息待用户提供，M2–M6及v1.0.6发布尚未完成；不上传SQLite、不自动联网，不新增全库备份/恢复功能。
 
 ## 实现与历史记录
 
@@ -49,7 +55,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_1.0.5_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_2.0.0_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc
@@ -249,7 +255,7 @@ src-tauri/
   src/commands/              # 截图、设置、编辑器与受限素材库入口
   src/services/              # screen_capture、region_capture、workflow、settings、editor、desktop
   src/capture/               # Windows GDI、物理坐标与裁剪
-  src/storage/ migrations/   # SQLite v2、素材/卡片事务、组合搜索、文件一致性与迁移
+  src/storage/ migrations/   # SQLite schema5、素材/卡片事务、组合搜索、文件一致性与迁移
   capabilities/              # main / capture-overlay 分离
   examples/                  # 仅供测试的原生辅助程序
 scripts/ docs/                # 检查、冒烟、架构和验收
@@ -282,4 +288,4 @@ SQLite v2→v3升级会先验证并备份，新增projects、screenshot_projects
 
 v1.0.0 已发布为正式 Latest：[附件与匿名下载校验回执](docs/qa/PUBLICATION-1.0.0.md)。
 
-后续分阶段开发遵守[ResearchClip Pro规范](docs/PRO-DEVELOPMENT.md)。当前仅记录约束；不开发PDF导出或独立备份恢复系统，不自动实施WebDAV或截图版本历史。[规范记录验收](docs/qa/PRO-CONSTRAINTS.md)。
+后续分阶段开发遵守[ResearchClip Pro规范](docs/PRO-DEVELOPMENT.md)。版本历史已在v1.0.5实现；WebDAV仍处于设计阶段，不开发PDF导出或独立备份恢复系统。[规范记录验收](docs/qa/PRO-CONSTRAINTS.md)。
