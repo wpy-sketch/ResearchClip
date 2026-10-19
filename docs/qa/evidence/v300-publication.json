@@ -1,0 +1,146 @@
+{
+  "result": "PASS",
+  "releaseId": 417245961,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.0.0",
+  "publishedAt": "2026-10-19T12:26:05Z",
+  "draft": false,
+  "prerelease": false,
+  "isLatest": true,
+  "sourceCommit": "31eb050629d8c44d5821a3d95013513dd98a47dc",
+  "tag": "v3.0.0",
+  "previousReleasePreserved": true,
+  "previousReleaseCount": 17,
+  "tagCommitVerified": true,
+  "tagNameVerified": true,
+  "tagAssociationCorrected": true,
+  "assets": [
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "id": 656204509,
+      "digest": "sha256:c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.0/ResearchClip-MathOCR-Setup-v1.0.4.zip"
+    },
+    {
+      "name": "ResearchClip-v3.0.0-windows-x64.exe",
+      "size": 24257536,
+      "id": 656204808,
+      "digest": "sha256:981062605955823549469ad08cfa3c13e303f33da6564d64d1eae7dd1c11c7b3",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.0/ResearchClip-v3.0.0-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "id": 656204318,
+      "digest": "sha256:1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.0/ResearchClip-WebClipper-v1.0.2-windows-x64.zip"
+    },
+    {
+      "name": "ResearchClip_3.0.0_x64-setup.exe",
+      "size": 7732417,
+      "id": 656205853,
+      "digest": "sha256:5c47a82b6faf08c8d4fadce7355edbc27b6d3734be946ac187d8756e24130555",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.0/ResearchClip_3.0.0_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 495,
+      "id": 656204709,
+      "digest": "sha256:33f975e872af6518cbcb5c36ef74c287f53127234d6cb2e153d687bbe7bcf06e",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.0/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 2079,
+      "id": 656204611,
+      "digest": "sha256:12c706511e4a475989eada7afc1888543c363610faadf8907d698e9633d3d4ec",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.0/SOURCE.txt"
+    }
+  ],
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "sha256": "c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "http": "200",
+          "bytes": 10948,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip-v3.0.0-windows-x64.exe",
+      "size": 24257536,
+      "sha256": "981062605955823549469ad08cfa3c13e303f33da6564d64d1eae7dd1c11c7b3",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "http": "200",
+          "bytes": 24257536,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "sha256": "1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "http": "200",
+          "bytes": 541479,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip_3.0.0_x64-setup.exe",
+      "size": 7732417,
+      "sha256": "5c47a82b6faf08c8d4fadce7355edbc27b6d3734be946ac187d8756e24130555",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "http": "200",
+          "bytes": 7732417,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 495,
+      "sha256": "33f975e872af6518cbcb5c36ef74c287f53127234d6cb2e153d687bbe7bcf06e",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "http": "200",
+          "bytes": 495,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 2079,
+      "sha256": "12c706511e4a475989eada7afc1888543c363610faadf8907d698e9633d3d4ec",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "http": "200",
+          "bytes": 2079,
+          "matched": true
+        }
+      ]
+    }
+  ]
+}

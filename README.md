@@ -6,7 +6,7 @@
 
 [下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.0.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
-v3.0.0 新增 Windows 手动 WebDAV 资源级同步：系统安全凭据、项目范围、强ETag安全探针、可重试队列与逐项冲突确认；schema6保留既有资料并建立明确标注head。设置新增分类导航，指南扩展同步步骤、排错和21张离线图。**坚果云认证兼容性尚未验收；不可靠条件写入会被拒绝。** [本版变更](docs/RELEASE-NOTES-3.0.0.md) · [实际验收](docs/qa/RELEASE-3.0.0.md)。
+v3.0.0 新增 Windows 手动 WebDAV 资源级同步：系统安全凭据、项目范围、强ETag安全探针、可重试队列与逐项冲突确认；schema6保留既有资料并建立明确标注head。设置新增分类导航，指南扩展同步步骤、排错和21张离线图。**坚果云认证兼容性尚未验收；不可靠条件写入会被拒绝。** [本版变更](docs/RELEASE-NOTES-3.0.0.md) · [实际验收](docs/qa/RELEASE-3.0.0.md) · [正式发布回执](docs/qa/PUBLICATION-3.0.0.md)。
 
 ## 从这里开始
 
