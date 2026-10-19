@@ -59,3 +59,5 @@ Windows生产EXE及NSIS构建PASS/0；隔离NSIS安装/繁忙保护/默认卸载
 收尾检查：独立扩展干净npm ci及5项Node测试/两份构建PASS；桌面45文件308项检查PASS，Rust135项与协议3项PASS，严格Clippy PASS。真实Host恶意帧/未知字段/未启动/10秒超时5组PASS。记录原始FAIL，Windows工具栏测试仍BLOCKED。可公开[摘要](evidence/v102-acceptance.json)不含令牌、页面正文或用户文件。生产构建/发布结果另补。
 
 最终命令：npm run lint、npm run check:docs（64文档389链接）、npm run desktop:bundle、node scripts/clipper-host-smoke.mjs v102-release --release、pwsh -File scripts/installer-smoke.ps1 -RunId v102-final -TargetDir src-tauri/target均退出0。Release Host实际5组协议/超时检查PASS。扩展交付ZIP含57份依赖许可条目；压缩工具将早于1980的LICENSE时间戳规范化，文件字节保留。安装成功不关闭QA-008历史间歇问题。
+
+GitHub正式Latest发布与5附件匿名下载校验PASS；12个旧Release保持不变，见[发布回执](PUBLICATION-1.0.2.md)。

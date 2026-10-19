@@ -4,7 +4,7 @@
 
 面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.2 Windows 版本**。
 
-[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.2) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md)
+[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.2) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
 ## 从这里开始
 
