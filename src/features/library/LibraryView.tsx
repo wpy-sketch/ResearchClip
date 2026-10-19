@@ -1,10 +1,11 @@
+import {useCaptureStore} from '../capture/store';
 import {OcrIndexControls} from '../ocr-index/OcrIndex';
 import {useSelectionStore} from '../projects/selection';
 import {useBatchStore} from '../projects/batch';
 import {ProjectBar} from '../projects/ProjectBar';
 import {BulkActions} from '../projects/BulkActions';
 import {useImageDrop} from '../import/use-image-drop';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Images, RefreshCw, Star } from 'lucide-react';
 import { isTauri } from '@tauri-apps/api/core';
 import { useUiStore } from '../../app/ui-store';
@@ -25,6 +26,8 @@ import {useMarkdownExportStore} from '../export/store';
 
 export function LibraryView({favorites}: {favorites:boolean}) {
   const drop=useImageDrop('library');
+  const capturePreview=useCaptureStore(s=>s.preview),captureError=useCaptureStore(s=>s.error);
+  const captureTools=useRef<HTMLDetailsElement>(null);
   const exporting=useMarkdownExportStore(s=>s.busy);
   const selection=useSelectionStore(),selected=selection.items.map(i=>i.id),batchBusy=useBatchStore(s=>s.busy);
   const {projectId,unclassified}=useLibraryStore();
@@ -32,6 +35,7 @@ export function LibraryView({favorites}: {favorites:boolean}) {
   useEffect(()=>{useSelectionStore.getState().clear();},[filterKey]);
   const {viewMode, showWelcome, openCapture} = useUiStore();
   const {items, status, error, loading, page, total, sort, query,tagIds,favorite,source, refresh, retryRecovery} = useLibraryStore();
+  useEffect(()=>{if(captureTools.current)captureTools.current.open=Boolean(capturePreview||captureError);},[capturePreview,captureError,items.length]);
   const {items:tags,error:tagError}=useTagStore();
   const [target, setTarget] = useState<{item:ScreenshotSummary; mode:'rename'|'delete'} | null>(null);
   const [working, setWorking] = useState(false);
@@ -57,7 +61,7 @@ export function LibraryView({favorites}: {favorites:boolean}) {
     <ProjectBar/>
     <OcrIndexControls/>
     <p className="image-drop-hint" title="每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。详见使用指南。">拖入图片或点击顶部剪贴板图标导入。支持 PNG、JPG / JPEG、WebP。</p>
-    {!favorites && (items.length ? <details className="library-capture-tools"><summary>截图工具 · 全屏、区域与滚动长截图</summary><CapturePanel/></details> : <CapturePanel/>)}
+    {!favorites && (items.length ? <details className="library-capture-tools" ref={captureTools}><summary>截图工具 · 全屏、区域与滚动长截图</summary><CapturePanel/></details> : <CapturePanel/>)}
     {!favorites && showWelcome && !items.length && !loading && !filtered && <HomeView/>}
     {(error || operationError) && <p role="alert" className="error-banner my-3">{operationError ?? error}</p>}
     {notice && <p role="status" className="my-3 text-xs text-muted">{notice}</p>}

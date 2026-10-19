@@ -18,7 +18,7 @@
   "installer": {
     "result": "PASS",
     "userDataFilesHashed": 10,
-    "installerSha256": "2f253b6a58739a619911f2e5f41d400382d767308cdec60a5cb8d4b905e04da4",
+    "installerSha256": "5c47a82b6faf08c8d4fadce7355edbc27b6d3734be946ac187d8756e24130555",
     "signatureStatus": "NotSigned",
     "busyInstallExit": 2,
     "busyUninstallExit": 2,
@@ -40,7 +40,7 @@
       "result": "PASS",
       "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
       "checks": [
-        "real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+        "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
         "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
         "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
         "all 21 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
@@ -91,5 +91,13 @@
   "nutstoreAuthenticatedCompatibility": "BLOCKED: no user credentials locally configured; not attempted",
   "physicalTwoDevices": "NOT_RUN",
   "macOS": "NOT_RUN",
-  "defaultWsgiDAV": "FAIL: rejected by conditional-write probes, preserved evidence; distinct reference configuration only for positive tests"
+  "defaultWsgiDAV": "FAIL: rejected by conditional-write probes, preserved evidence; distinct reference configuration only for positive tests",
+  "latestFrontendLog": "artifacts/v300-visibility-check.log",
+  "latestNativeGuideLog": "artifacts/v300-visibility-native.log",
+  "latestBundleLog": "artifacts/v300-visibility-bundle.log",
+  "latestInstallerLog": "artifacts/v300-visibility-installer.log",
+  "prepublicationCaptureFeedbackRegression": {
+    "reproduced": "FAIL with populated library and active fixture preview",
+    "fixed": "PASS: same mounted details component opens for new preview/error; native completion visibility and cancellation compact layout asserted"
+  }
 }

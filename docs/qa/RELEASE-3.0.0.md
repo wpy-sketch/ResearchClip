@@ -14,7 +14,7 @@
 
 | 实际命令 | 结果与证据 |
 | --- | --- |
-| npm run check | PASS，51文件338测试、TypeScript/ESLint/前端生产构建；artifacts/v300-check-final-layout.log。后续仅说明文本更新由最终bundle再次类型检查/构建 |
+| npm run check | PASS，51文件338测试、TypeScript/ESLint/前端生产构建；artifacts/v300-visibility-check.log。最终bundle再次类型检查/构建 |
 | npm run test:rust | PASS，158测试；7个需要服务器的用例单独运行，不当作跳过通过；v300-rust-approved.log |
 | RESEARCHCLIP_QA_DAV_BASE=http://127.0.0.1:1461/；node scripts/with-rust.mjs cargo test --manifest-path src-tauri/Cargo.toml --locked -- --ignored --test-threads=1 | PASS，全部7集成测试；独立1461原子条件写入/内容ETag HTTP与1462不可信TLS服务；v300-webdav-approved.log |
 | npm run format:rust / npm run check:rust | PASS，格式与all-targets Clippy -D warnings；v300-fmt-approved.log / v300-clippy-approved.log |
@@ -23,11 +23,11 @@
 | node scripts/sync-ui-smoke.mjs v300-polished --update-guide | PASS，5组真实Edge布局/禁止浏览器原生操作/草稿保持；预览不等于原生同步；v300-sync-ui-polished.log |
 | node scripts/guide-reader-smoke.mjs v300-final-layout | PASS，9组：14章层级、搜索、焦点、21图实际解码、深浅色7宽度、Markdown草稿；v300-guide-final-layout.log |
 | node scripts/material-ui-smoke.mjs v300-final | PASS，8组主题/对比度/8宽度/原入口/Markdown状态；v300-material-ui.log |
-| npm run tauri -- build --debug --no-bundle | PASS，实际Windows调试EXE；v300-debug-build.log与布局修正后v300-debug-layout.log |
+| npm run tauri -- build --debug --no-bundle | PASS，实际Windows调试EXE；v300-debug-build.log与布局修正后v300-visibility-debug.log |
 | node scripts/sync-native-smoke.mjs v300-first | PASS，5组真实WebView2/IPC/SQLite/Credential Manager：初始无自动同步、表单保存和清空密码、拒绝不可信TLS、真正关闭/重启恢复、DB不含测试凭据。测试系统凭据已清理；v300-native-sync.log |
-| node scripts/guide-native-smoke.mjs v300-guide-retry --verify-only | PASS，5组实际Windows：6张SQLite示例网格/列表、既有箭头文字及卡片标签保存、双图对比、真实系统对话框保存.md/合成assets、完整关闭分栏、21图与指南键盘/布局；v300-guide-native-retry.log。图是明确标注的测试图，不冒充屏幕捕获 |
-| npm run desktop:bundle | PASS，最终Windows3.0.0 EXE及NSIS；v300-bundle-approved.log |
-| pwsh -NoProfile -File scripts/installer-smoke.ps1 -RunId v300-final -TargetDir src-tauri/target | PASS，真实隔离安装、运行中安装/卸载拒绝、默认卸载。10个既有资料文件hash不变（首轮为9个；每轮仅对照本轮前后，不跨轮推断外部变化），无生产程序访问真实资料；v300-installer-final.log |
+| node scripts/guide-native-smoke.mjs v300-visibility-final --verify-only | PASS，5组实际Windows：6张SQLite示例网格/列表、既有箭头文字及卡片标签保存、双图对比、真实系统对话框保存.md/合成assets、完整关闭分栏、21图与指南键盘/布局；v300-visibility-native.log。图是明确标注的测试图，不冒充屏幕捕获 |
+| npm run desktop:bundle | PASS，最终Windows3.0.0 EXE及NSIS；v300-visibility-bundle.log |
+| pwsh -NoProfile -File scripts/installer-smoke.ps1 -RunId v300-visibility-final -TargetDir src-tauri/target | PASS，真实隔离安装、运行中安装/卸载拒绝、默认卸载。10个既有资料文件hash不变（首轮为9个；每轮仅对照本轮前后，不跨轮推断外部变化），无生产程序访问真实资料；v300-visibility-installer.log |
 | npm run check:docs | PASS，版本/权限/已发布迁移不变、本地链接和围栏；最终文档数量以提交前日志为准 |
 
 ### 测试具体覆盖
@@ -49,7 +49,7 @@ M1资源协议与迁移、M2安全连接/目录、M3内容寻址上传下载、M
 4. 集成首次断连：旧隔离服务器生命周期结束导致5组连接失败；重新启动独立服务器后重跑。项目范围测试原先期望3次apply，实际文档先创建相同项目依赖，只需2次apply+1次基线ACK；保留总资源3、ID、数量与内容断言并复跑，不跳过用例。
 5. OpenSSL工具缺少默认配置，改为测试目录内明确配置生成自签名证书；不安装任何系统信任证书。
 6. 格式/Clippy初轮失败（含Socket测试未处理read数量）、新测试模块宏/类型未导入均修正，重跑158常规及7集成/严格Clippy通过；保留编译失败记录，不删除断言。
-7. 原生指南首轮FAIL：非空素材库截图面板挤占首行。P2布局修正为默认收起仍可展开，修正后实际Windows首行断言通过；同时将旧指南按钮选择器更新为当前分级目录。完整5组重跑PASS，原失败截图/报告保留。
+7. 原生指南首轮FAIL：非空素材库截图面板挤占首行。P2布局修正为默认收起仍可展开，修正后实际Windows首行断言通过；同时将旧指南按钮选择器更新为当前分级目录。完整5组重跑PASS，原失败截图/报告保留。发布前再复核发现活动截图也被收起：在隔离原生窗口稳定复现FAIL后，改为保留同一details组件、以新预览/错误自动展开、取消后收起；加入活动预览可见断言并完整5组复跑PASS。同步setState的lint失败已改用DOM展开同步，没有禁用规则。指南重绘导致旧图节点分离的脚本失败，改为当前DOM中21图全量解码断言后通过，保留失败记录。
 8. 文档检查首次FAIL：schema常量仍期待5、Cargo.toml尾部空行；分别更新到6/移除多余空行后通过。构建大chunk/插件时序提示保留，不提高阈值隐藏警告。
 
 ## Windows 人工清单（NOT_RUN，除另有实际记录）
@@ -140,3 +140,7 @@ EXE：`src-tauri/target/release/researchclip.exe`；NSIS：`src-tauri/target/rel
 - src/shared/api/library.test.ts
 - src/shared/api/library.ts
 - src/styles.css
+
+### 发布前候选修正
+
+最初源码4c5dcbf与本轮尚未公开的v3.0.0空草稿已创建；发现截图预览回归后停止公开，完成复现、修正、338前端检查、原生5组和最终EXE/NSIS/隔离安装复验。最终源码与标签以发布回执为准，不能把旧候选包当最终附件。17个既有发布不修改；更新本轮未公开候选标签时限定旧标签SHA，避免覆盖并发修改。

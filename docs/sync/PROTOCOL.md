@@ -35,7 +35,7 @@ researchclip-sync-v2/
   probes/<随机ID>/...
 ```
 
-使用 MKCOL、Depth1 PROPFIND、GET、PUT，不执行远端DELETE。目录列表最多2MiB/5000条；资源发现使用有界catalog，避免依赖服务商可能分页截断的对象目录遍历。catalog最多5000资源/2MiB，超限失败，不截断。
+使用 MKCOL、Depth1 PROPFIND、GET、PUT，不执行远端DELETE。目录列表最多2MiB/1000条；资源发现使用有界catalog，避免依赖服务商可能分页截断的对象目录遍历。catalog最多5000资源/2MiB，超限失败，不截断。
 
 上传顺序：不可变二进制对象 → 不可变manifest → 条件更新catalog。对象PUT使用If-None-Match:*并读回验hash；catalog采用If-Match或首次If-None-Match:*。每次提交核对该资源预期的远端manifest；其他资源并发变化最多重新读取合并3次，同资源变化转为冲突。远端commit成功而本地ACK丢失时，重试先发现目标manifest已经生效，补确认，不新建重复版本。
 
