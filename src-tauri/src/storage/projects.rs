@@ -2,7 +2,7 @@ use super::{
     Storage, StorageError,
     library::LibrarySort,
     library::{check_id, now},
-    search::{FILTER, LibraryFilter, pattern},
+    search::{FILTER, LibraryFilter, fts_query, pattern},
 };
 use rusqlite::{OptionalExtension, TransactionBehavior, params};
 use serde::{Deserialize, Serialize};
@@ -140,7 +140,9 @@ impl Storage {
                     rusqlite::types::Null,
                     rusqlite::types::Null,
                     filter.project_id,
-                    filter.unclassified
+                    filter.unclassified,
+                    filter.source.key(),
+                    fts_query(filter.query.trim(), filter.source)
                 ],
                 |r| {
                     Ok(SelectedScreenshot {
@@ -636,7 +638,7 @@ mod tests {
             c.pragma_update(None, "user_version", 2).unwrap();
         }
         let s = Storage::open(root.clone()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 3);
+        assert_eq!(s.status().unwrap().schema_version, 4);
         assert_eq!(
             s.connection
                 .query_row(

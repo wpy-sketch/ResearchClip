@@ -168,14 +168,20 @@ impl OcrService {
         }
     }
     pub fn recognize(bytes: &[u8]) -> Result<OcrResult, CaptureError> {
+        Self::recognize_controlled(bytes, || false)
+    }
+    pub fn recognize_controlled(
+        bytes: &[u8],
+        cancelled: impl Fn() -> bool,
+    ) -> Result<OcrResult, CaptureError> {
         let (options, png) = unpack(bytes)?;
         #[cfg(target_os = "windows")]
         {
-            native::recognize(png, options)
+            native::recognize(png, options, &cancelled)
         }
         #[cfg(not(target_os = "windows"))]
         {
-            let _ = (options, png);
+            let _ = (options, png, cancelled);
             Self::status()?;
             unreachable!()
         }
@@ -189,23 +195,10 @@ mod native {
         Graphics::Imaging::{BitmapPixelFormat, SoftwareBitmap},
         Media::Ocr::OcrEngine,
         Storage::Streams::DataWriter,
-        Win32::System::WinRT::{RO_INIT_MULTITHREADED, RoInitialize, RoUninitialize},
     };
-    struct Apartment;
-    impl Apartment {
-        fn new() -> Result<Self, CaptureError> {
-            unsafe { RoInitialize(RO_INIT_MULTITHREADED) }
-                .map_err(|_| failure("Windows OCR 运行环境初始化失败，请重启应用。"))?;
-            Ok(Self)
-        }
-    }
-    impl Drop for Apartment {
-        fn drop(&mut self) {
-            unsafe {
-                RoUninitialize();
-            }
-        }
-    }
+    // windows-core 0.62.2 load_factory pins the process MTA when necessary.
+    // Do not tear down the last apartment after each call: the projection keeps
+    // agile activation factories cached across calls and worker threads.
     fn error(_: windows::core::Error) -> CaptureError {
         failure("Windows OCR 识别失败。请确认已安装相应 OCR 语言包，尝试较清晰或较小的图片。")
     }
@@ -223,11 +216,13 @@ mod native {
         })
     }
     pub fn status() -> Result<OcrStatus, CaptureError> {
-        let _apartment = Apartment::new()?;
         capabilities()
     }
-    pub fn recognize(png: &[u8], options: OcrOptions) -> Result<OcrResult, CaptureError> {
-        let _apartment = Apartment::new()?;
+    pub fn recognize(
+        png: &[u8],
+        options: OcrOptions,
+        cancelled: &dyn Fn() -> bool,
+    ) -> Result<OcrResult, CaptureError> {
         let status = capabilities()?;
         if !status
             .languages
@@ -237,6 +232,9 @@ mod native {
             return Err(failure(
                 "所选 OCR 语言包不可用，请在 Windows 设置的语言选项中安装文字识别组件后重试。",
             ));
+        }
+        if cancelled() {
+            return Err(failure("识别已取消。"));
         }
         let frame = prepare(png, options.region, status.max_dimension)?;
         let language = Language::CreateLanguage(&options.language.into()).map_err(error)?;
@@ -258,6 +256,9 @@ mod native {
         drop(buffer);
         drop(frame.rgba);
         let recognized = (|| {
+            // Keep SoftwareBitmap alive until the native operation completes. Cancellation
+            // is cooperative between images; closing it immediately after Cancel can race
+            // Windows OCR's native reader. The caller discards a cancelled result.
             let result = engine.RecognizeAsync(&bitmap)?.join()?;
             let mut lines = Vec::new();
             for line in result.Lines()? {

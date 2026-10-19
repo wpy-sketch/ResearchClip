@@ -36,6 +36,7 @@ assert.equal(read('src-tauri/Cargo.toml').match(/^version\s*=\s*"([^"]+)"/m)?.[1
 assert.deepEqual(config.app.security.capabilities, [main.identifier, overlay.identifier, pins.identifier, "scroll-control"]);
 assert.deepEqual(main.windows, ['main']);
 assert.deepEqual(overlay.windows, ['capture-overlay-*']);
+const indexCommands=["get_ocr_content","correct_ocr_content","start_ocr_index","ocr_index_status","ocr_index_action","rebuild_search_index"];for(const command of indexCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::ocr_index::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 const clipperCommands=['clipper_status','clipper_connection']; for(const command of clipperCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::clipper::'+command));}
 const extension=JSON.parse(read('browser-extension/manifest.json'));assert.deepEqual(extension.permissions,['activeTab','scripting','nativeMessaging','storage']);assert.equal(extension.host_permissions,undefined);assert.equal(extension.content_scripts,undefined);assert.equal(extension.background,undefined);
 const scrollingCommands=['scroll_targets','scroll_prepare','scroll_start','scroll_status','scroll_action'];
@@ -67,7 +68,7 @@ assert.ok(main.permissions.includes('core:event:allow-listen'));assert.ok(main.p
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/001_workspace.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/002_library.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_projects.sql'], { cwd: root, stdio: 'pipe' });
-assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 3;'),true);
+assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 4;'),true);
 assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pending_file_deletions'));
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v3; published v1/v2/v3 migrations unchanged' }, null, 2));
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v4; published v1/v2/v3 migrations unchanged' }, null, 2));

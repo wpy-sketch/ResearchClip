@@ -1,0 +1,258 @@
+{
+  "cases": [
+    {
+      "characters": 37,
+      "file": "text-01.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-02.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-03.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-04.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-05.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-06.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-07.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-08.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 37,
+      "file": "text-09.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 39,
+      "file": "text-10.png",
+      "keywordMatched": true,
+      "kind": "Chinese",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 78,
+      "file": "text-11.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 78,
+      "file": "text-12.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 78,
+      "file": "text-13.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 77,
+      "file": "text-14.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 78,
+      "file": "text-15.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 78,
+      "file": "text-16.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 77,
+      "file": "text-17.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 78,
+      "file": "text-18.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 78,
+      "file": "text-19.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 77,
+      "file": "text-20.png",
+      "keywordMatched": true,
+      "kind": "English",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-21.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-22.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-23.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-24.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-25.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-26.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-27.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-28.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-29.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    },
+    {
+      "characters": 57,
+      "file": "text-30.png",
+      "keywordMatched": true,
+      "kind": "mixed",
+      "nonempty": true,
+      "searchCount": 20
+    }
+  ],
+  "completed": 30,
+  "installedLanguages": [
+    {
+      "name": "简体中文(中国大陆)",
+      "tag": "zh-Hans-CN"
+    }
+  ],
+  "language": "zh-Hans-CN",
+  "mode": "actual Windows.Media.Ocr, thirty owned text images, real SQLite/FTS and worker; no mock or desktop input",
+  "pauseResumeCancel": "PASS",
+  "rebuild": "PASS",
+  "restart": "PASS",
+  "result": "PASS",
+  "seconds": 3.0686022
+}

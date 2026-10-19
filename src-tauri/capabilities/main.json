@@ -86,6 +86,12 @@
     "allow-scroll-prepare",
     "allow-scroll-start",
     "allow-scroll-status",
-    "allow-scroll-action"
+    "allow-scroll-action",
+    "allow-get-ocr-content",
+    "allow-correct-ocr-content",
+    "allow-start-ocr-index",
+    "allow-ocr-index-status",
+    "allow-ocr-index-action",
+    "allow-rebuild-search-index"
   ]
 }

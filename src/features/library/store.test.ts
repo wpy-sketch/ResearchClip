@@ -4,7 +4,7 @@ import type {LibrarySort} from '../../shared/api/library';
 const api = vi.hoisted(() => ({readScreenshotPage:vi.fn(), libraryStatus:vi.fn()}));
 vi.mock('../../shared/api/library', () => api);
 vi.mock('@tauri-apps/api/core', () => ({isTauri:() => true}));
-const status = {schemaVersion:3, pendingWrites:0, pendingCleanup:0, warnings:[]};
+const status = {schemaVersion:4, pendingWrites:0, pendingCleanup:0, warnings:[]};
 const item = (n:number, isFavorite=false) => ({id:n.toString(16).padStart(32,'0'), title:`素材 ${n}`,
   originalImagePath:`originals/${n.toString(16).padStart(32,'0')}.png`, thumbnailPath:`thumbnails/${n.toString(16).padStart(32,'0')}.png`,
   widthPx:32, heightPx:24, createdAt:n, updatedAt:n, revision:1, isFavorite, imageAvailable:true, thumbnailAvailable:true});
@@ -13,6 +13,7 @@ const result = (page=0, total=50, sort:LibrarySort='createdDesc', favorites=fals
 });
 beforeEach(() => {vi.clearAllMocks(); useLibraryStore.setState(useLibraryStore.getInitialState(),true); api.libraryStatus.mockResolvedValue(status);});
 describe('bounded native library pages', () => {
+  it('source changes clear old results and send the same source on subsequent pages',async()=>{api.readScreenshotPage.mockResolvedValue(result(0,1));await useLibraryStore.getState().refresh(false,{query:'科研',source:'ocr'});expect(api.readScreenshotPage).toHaveBeenLastCalledWith(0,false,'createdDesc',expect.objectContaining({source:'ocr',query:'科研'}));await useLibraryStore.getState().refresh(false,{source:'all',query:''});expect(useLibraryStore.getState().source).toBe('all');});
   it('combines query, tags, favorites and sort while resetting the page',async()=>{
     api.readScreenshotPage.mockResolvedValueOnce(result(2)).mockResolvedValueOnce(result(0,1,'createdAsc'));
     await useLibraryStore.getState().refresh(false,{page:2});const tagIds=['a'.repeat(32),'b'.repeat(32)];

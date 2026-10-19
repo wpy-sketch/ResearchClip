@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-19",
+  "frontend": {
+    "files": 46,
+    "tests": 312,
+    "result": "PASS"
+  },
+  "rust": {
+    "tests": 140,
+    "result": "PASS"
+  },
+  "fmt": "PASS",
+  "clippy": "PASS",
+  "productionBuild": "PASS",
+  "schema": 4,
+  "installer": {
+    "result": "passed",
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ],
+    "userDataFilesHashed": 7,
+    "sha256": "5C4B39E79C9C8386F06CEB0C7F9187A2FA570F3AAF43362944B44B8767512C2C",
+    "signature": "NotSigned"
+  },
+  "nativeOcr": "v103-native-ocr.json",
+  "notRun": [
+    "new native UI interaction",
+    "other languages/Windows versions/DPI",
+    "long soak and memory curve"
+  ],
+  "failuresRetained": [
+    "sandbox atomic file commits and SSR ENOENT",
+    "stale schema assertion",
+    "repeat OCR status access violation fixed and rerun",
+    "initial Clippy nested if"
+  ]
+}

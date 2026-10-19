@@ -64,3 +64,5 @@ mod tests {
 
 pub mod clipper;
 pub mod projects;
+
+pub mod ocr_index;

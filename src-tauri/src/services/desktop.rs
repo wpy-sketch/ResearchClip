@@ -151,6 +151,8 @@ pub fn request_exit(app: &AppHandle) -> Result<(), CaptureError> {
     if !service.request() {
         return Ok(());
     }
+    app.state::<Arc<super::ocr_index::OcrIndexService>>()
+        .cancel();
     app.state::<Arc<super::scrolling::ScrollService>>().cancel();
     app.state::<Arc<RegionCaptureService>>().cancel_active();
     if let Err(error) = show_main(app).and_then(|_| {

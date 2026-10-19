@@ -1,3 +1,4 @@
+import {highlightParts} from '../ocr-index/highlight';
 import type {MouseEvent} from 'react';
 import { useEffect, useState } from 'react';
 import { ImageOff, Pencil, RotateCw, Star, Trash2 } from 'lucide-react';
@@ -64,6 +65,7 @@ export function LibraryCard({item, disabled, onOpen, onEdit, onFavorite, onRenam
       <time dateTime={new Date(item.createdAt).toISOString()} title="创建时间">{formatDate.format(item.createdAt)}</time>
       <p className="library-dimensions">{item.widthPx} × {item.heightPx} px</p>
       {!item.imageAvailable && <p className="library-file-warning">原图缺失或不可访问；资料记录已保留。</p>}
+      {item.matchExcerpt&&<p className="search-excerpt"><span>{({title:'标题',notes:'笔记',tags:'标签',ocr:'OCR'} as Record<string,string>)[item.matchExcerpt.source]} · </span>{highlightParts(item.matchExcerpt.text,item.matchExcerpt.keyword).map((part,i)=>part.match?<mark key={i}>{part.text}</mark>:<span key={i}>{part.text}</span>)}</p>}
       <InsertButton id={item.id} disabled={disabled}/>
       <div className="library-card-actions">
         <button className="library-edit-button" disabled={disabled} onClick={onEdit}>编辑标注</button>

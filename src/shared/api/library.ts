@@ -2,15 +2,16 @@ import { invoke, isTauri } from '@tauri-apps/api/core';
 import { parseDocument } from '../../features/editor/serialization';
 import type { AnnotationDocument } from '../../features/editor/types';
 import { parsePngSize } from './capture';
-export interface ScreenshotSummary { id:string; title:string; originalImagePath:string; thumbnailPath:string; widthPx:number; heightPx:number; createdAt:number; updatedAt:number; isFavorite:boolean; revision:number; imageAvailable:boolean; thumbnailAvailable:boolean }
+export interface ScreenshotSummary { id:string; title:string; originalImagePath:string; thumbnailPath:string; widthPx:number; heightPx:number; createdAt:number; updatedAt:number; isFavorite:boolean; revision:number; imageAvailable:boolean; thumbnailAvailable:boolean;matchExcerpt?:{source:string;text:string;keyword:string} }
 export interface Screenshot extends Omit<ScreenshotSummary,'imageAvailable'|'thumbnailAvailable'> { annotationData:AnnotationDocument }
 export const LIBRARY_PAGE_SIZE = 24;
 export type LibrarySort = 'createdDesc' | 'createdAsc';
 export interface ScreenshotPage {items:ScreenshotSummary[]; total:number; page:number; limit:number; sort:LibrarySort}
-export interface LibraryStatus {schemaVersion:3; pendingWrites:number; pendingCleanup:number; warnings:string[]}
+export interface LibraryStatus {schemaVersion:4; pendingWrites:number; pendingCleanup:number; warnings:string[]}
 export interface Note {id:string;screenshotId:string;content:string;sourceUrl:string|null;createdAt:number;updatedAt:number;revision:number}
 export interface Tag {id:string;name:string}
-export interface LibraryFilter {query:string;tagIds:string[];favorite:boolean|null;projectId?:string|null;unclassified?:boolean}
+export type SearchSource='all'|'title'|'notes'|'tags'|'ocr';
+export interface LibraryFilter {query:string;tagIds:string[];favorite:boolean|null;projectId?:string|null;unclassified?:boolean;source?:SearchSource}
 export interface KnowledgeCard {screenshot:ScreenshotSummary;note:Note|null;tags:Tag[];additionalNoteCount:number}
 export interface CardDraft {title:string;content:string;sourceUrl:string;tagNames:string[];isFavorite:boolean}
 const object=(v:unknown):v is Record<string,unknown>=>Boolean(v)&&typeof v==='object'&&!Array.isArray(v);
@@ -21,8 +22,8 @@ function metadata(v:unknown) {
   return {id:v.id,title:v.title,originalImagePath:v.originalImagePath,thumbnailPath:v.thumbnailPath,widthPx:v.widthPx,heightPx:v.heightPx,createdAt:v.createdAt,updatedAt:v.updatedAt,isFavorite:v.isFavorite,revision:v.revision};
 }
 export function parseScreenshot(v:unknown):Screenshot {const meta=metadata(v);if(!object(v))throw new Error('素材记录无效。');const annotationData=parseDocument(v.annotationData);if(annotationData.image.widthPx!==meta.widthPx||annotationData.image.heightPx!==meta.heightPx)throw new Error('素材与标注尺寸不一致。');return {...meta,annotationData};}
-export function parseSummary(v:unknown):ScreenshotSummary {const meta=metadata(v);if(!object(v)||typeof v.imageAvailable!=='boolean'||typeof v.thumbnailAvailable!=='boolean')throw new Error('素材列表响应无效。');return {...meta,imageAvailable:v.imageAvailable,thumbnailAvailable:v.thumbnailAvailable};}
-export function parseStatus(v:unknown):LibraryStatus {if(!object(v)||v.schemaVersion!==3||!integer(v.pendingWrites)||!integer(v.pendingCleanup)||!Array.isArray(v.warnings)||v.warnings.some(s=>typeof s!=='string'))throw new Error('工作区状态无效。');return {schemaVersion:3,pendingWrites:v.pendingWrites,pendingCleanup:v.pendingCleanup,warnings:v.warnings as string[]};}
+export function parseSummary(v:unknown):ScreenshotSummary {const meta=metadata(v);if(!object(v)||typeof v.imageAvailable!=='boolean'||typeof v.thumbnailAvailable!=='boolean')throw new Error('素材列表响应无效。');if(v.matchExcerpt!==undefined&&(!object(v.matchExcerpt)||!['title','notes','tags','ocr'].includes(String(v.matchExcerpt.source))||typeof v.matchExcerpt.text!=='string'||Array.from(v.matchExcerpt.text).length>140||typeof v.matchExcerpt.keyword!=='string'||Array.from(v.matchExcerpt.keyword).length>200))throw Error('搜索摘要无效。');return {...meta,imageAvailable:v.imageAvailable,thumbnailAvailable:v.thumbnailAvailable,...(v.matchExcerpt?{matchExcerpt:v.matchExcerpt as {source:string;text:string;keyword:string}}:{})};}
+export function parseStatus(v:unknown):LibraryStatus {if(!object(v)||v.schemaVersion!==4||!integer(v.pendingWrites)||!integer(v.pendingCleanup)||!Array.isArray(v.warnings)||v.warnings.some(s=>typeof s!=='string'))throw new Error('工作区状态无效。');return {schemaVersion:4,pendingWrites:v.pendingWrites,pendingCleanup:v.pendingCleanup,warnings:v.warnings as string[]};}
 function desktop(){if(!isTauri())throw new Error('素材库持久化需要在桌面应用中使用。');}
 async function call(name:string,args?:Record<string,unknown>|ArrayBuffer):Promise<unknown>{desktop();return invoke(name,args);}
 export async function packScreenshot(blob:Blob,title:string,document:AnnotationDocument):Promise<ArrayBuffer>{
@@ -41,6 +42,7 @@ export function parseScreenshotPage(v:unknown):ScreenshotPage {
 }
 export async function readScreenshotPage(page=0,favorites=false,sort:LibrarySort='createdDesc',filter?:LibraryFilter) {
   if(!integer(page)||page>1_000_000||(sort!=='createdDesc'&&sort!=='createdAsc'))throw new Error('素材分页参数无效。');
+  if(filter?.source&&!['all','title','notes','tags','ocr'].includes(filter.source))throw Error('搜索来源无效。');
   if(filter&&(Array.from(filter.query).length>200||filter.query.includes('\0')||filter.tagIds.length>100||filter.tagIds.some(value=>!id(value))||new Set(filter.tagIds).size!==filter.tagIds.length||(filter.favorite!==null&&typeof filter.favorite!=='boolean')))throw new Error('搜索筛选参数无效。');
   const result=parseScreenshotPage(await call('screenshot_page',{page,limit:LIBRARY_PAGE_SIZE,favorites,sort,...(filter?{filter}:{})}));
   if(result.sort!==sort||result.page>page)throw new Error('素材分页响应与请求不一致。');

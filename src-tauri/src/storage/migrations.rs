@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 3;
+pub const SCHEMA_VERSION: u32 = 4;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -77,6 +77,13 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             connection,
             3,
             include_str!("../../migrations/003_projects.sql"),
+        )?;
+    }
+    if version < 4 {
+        apply_migration(
+            connection,
+            4,
+            include_str!("../../migrations/004_ocr_index.sql"),
         )?;
     }
     validate_schema(connection, SCHEMA_VERSION)?;
@@ -163,7 +170,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 3);
+        assert_eq!(storage.status().unwrap().schema_version, 4);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()

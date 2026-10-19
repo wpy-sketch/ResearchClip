@@ -276,3 +276,7 @@ NOT_RUN：真实屏幕内容的全屏/区域到贴图、高/混合 DPI 和多屏
 ## 2026-10-19 v1.0.2 A02
 
 实现、命令、初期FAIL和人工矩阵见[报告](RELEASE-1.0.2.md)。真实DOM提取5组、Host→Tauri/SQLite/文件7组PASS；实际扩展Native Messaging项目读取完成，但完整脚本后续popup等待FAIL，Windows工具URL安全检查BLOCKED。不得标完整浏览器交互通过；schema v3/已有原图不变。最终构建/发布回执另记。
+
+## 2026-10-19 v1.0.3 / A03
+
+已实现：独立OCR全文、批量队列、纠错与跨图片检索。实际46文件312项前端/140项Rust、20次OCR能力查询、30张真实中英图及队列/FTS/持久化PASS；首轮沙箱/旧版本断言与原生访问冲突FAIL保留、修复后复验。Windows新UI与长期/语言矩阵NOT_RUN。无用户资料重置，schema4备份迁移。详见[本轮报告](RELEASE-1.0.3.md)。

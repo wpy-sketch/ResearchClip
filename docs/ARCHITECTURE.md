@@ -585,3 +585,11 @@ API/方案核对：[Windows SendInput与UIPI限制](https://learn.microsoft.com/
 ## v1.0.2 A02 网页剪藏
 
 独立browser-extension的MV3主动提取，经Readability/DOMPurify/Turndown生成Markdown；独立Rust Native Messaging Host验证固定origin与长度帧后，连接用户按会话启用的127.0.0.1随机端口/256位令牌IPC。不是HTTP接口，无扩展SQL或通用路径命令。Desktop复用DocumentFiles、markdown_documents和项目事务；请求ID/摘要/受管文件完成幂等与提交恢复，schema v3及001–003不变。正文/图像/消息与超时有界；同源匿名HTTPS图需明确允许，失败保留来源。完整协议、安全边界和许可证见[协议](../browser-extension/PROTOCOL.md)，实际原生/浏览器/受阻UI分别见[验收](qa/RELEASE-1.0.2.md)。
+
+## v1.0.3 A03 OCR全文索引
+
+004_ocr_index.sql新增ocr_content（截图外键级联、文本/语言/状态/系统管理引擎说明/时间/原图身份/revision/错误/人工修正）、FTS5 trigram screenshot_search及只读来源视图/维护触发器。迁移沿用升级前quick_check、唯一不覆盖备份、事务和未来版本拒写，001–003不改。标题/笔记/标签/OCR写入和删除在原事务中更新索引；rebuild只从权威表重建派生数据。>=3字符用安全双引号字面MATCH，1–2字符用转义LIKE，不让用户提供FTS操作符。来源筛选与全选复用同一谓词，分页仅加载本页缩略图。摘要为140字符纯文本，React节点高亮，无HTML注入。
+
+OCRContent与Note分离；original-v1:<截图ID>标识应用内不可变原图，不随标注或标题修改失效，不声称能检测外部程序同尺寸篡改。系统OCR未暴露模型版本，因此明确记录Windows.Media.Ocr由系统管理，不编造版本。OcrIndexService只保留最多5000个ID和单个图像；每次启动明确允许，单并发、暂停/继续/取消/失败重试，取消等待当前原生操作结束并丢弃在途结果。已完成逐条事务落盘；重启把running标为failed、保留旧文本，不自动继续扫描。六个命令只授予main，无通用SQL/路径/文件权限。
+
+真实20次能力查询暴露逐次RoUninitialize使windows-rs静态agile工厂缓存失效的访问冲突；改用安装版windows-core 0.62.2自带load_factory/MTA生命周期，不再逐次拆除最后apartment。实测20查询与30图队列通过；不能据此保证其他Windows版本或长期无泄漏。参考[SQLite FTS5](https://www.sqlite.org/fts5.html)、[Microsoft缓存工厂与COM生命周期](https://devblogs.microsoft.com/oldnewthing/20211105-00/?p=105878)、[Windows OCR](https://learn.microsoft.com/en-us/uwp/api/windows.media.ocr.ocrengine)。

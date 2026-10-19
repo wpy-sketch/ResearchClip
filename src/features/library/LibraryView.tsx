@@ -1,3 +1,4 @@
+import {OcrIndexControls} from '../ocr-index/OcrIndex';
 import {useSelectionStore} from '../projects/selection';
 import {useBatchStore} from '../projects/batch';
 import {ProjectBar} from '../projects/ProjectBar';
@@ -27,10 +28,10 @@ export function LibraryView({favorites}: {favorites:boolean}) {
   const exporting=useMarkdownExportStore(s=>s.busy);
   const selection=useSelectionStore(),selected=selection.items.map(i=>i.id),batchBusy=useBatchStore(s=>s.busy);
   const {projectId,unclassified}=useLibraryStore();
-  const filterKey=JSON.stringify([favorites,projectId,unclassified,useLibraryStore(s=>s.query),useLibraryStore(s=>s.tagIds),useLibraryStore(s=>s.favorite)]);
+  const filterKey=JSON.stringify([favorites,projectId,unclassified,useLibraryStore(s=>s.query),useLibraryStore(s=>s.source),useLibraryStore(s=>s.tagIds),useLibraryStore(s=>s.favorite)]);
   useEffect(()=>{useSelectionStore.getState().clear();},[filterKey]);
   const {viewMode, showWelcome, openCapture} = useUiStore();
-  const {items, status, error, loading, page, total, sort, query,tagIds,favorite, refresh, retryRecovery} = useLibraryStore();
+  const {items, status, error, loading, page, total, sort, query,tagIds,favorite,source, refresh, retryRecovery} = useLibraryStore();
   const {items:tags,error:tagError}=useTagStore();
   const [target, setTarget] = useState<{item:ScreenshotSummary; mode:'rename'|'delete'} | null>(null);
   const [working, setWorking] = useState(false);
@@ -48,12 +49,13 @@ export function LibraryView({favorites}: {favorites:boolean}) {
   const busy = working || loading || exporting || batchBusy;
   const select=(id:string,shift=false)=>selection.choose(items,id,shift);
   const pages = Math.max(1, Math.ceil(total / LIBRARY_PAGE_SIZE));
-  const filtered=Boolean(query||tagIds.length||favorite!==null);
+  const filtered=Boolean(source!=='all'||query||tagIds.length||favorite!==null);
   return <div className={`page-container library-page image-drop-target ${drop.over?'is-drag-over':''}`} data-image-drop-target="library" {...drop.handlers}>
     <div className="page-heading"><div><h2>{favorites ? '收藏' : '截图素材'}</h2>
       <p>{favorites ? '将值得反复回看的图像，留在这里。' : '图像和标注保存在本机应用数据目录中。'}</p>
     </div><span className="subtle-badge">{viewMode === 'grid' ? '网格视图' : '列表视图'}</span></div>
     <ProjectBar/>
+    <OcrIndexControls/>
     <p className="image-drop-hint" title="每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。详见使用指南。">拖入图片或点击顶部剪贴板图标导入。支持 PNG、JPG / JPEG、WebP。</p>
     {!favorites && <CapturePanel/>}
     {!favorites && showWelcome && !items.length && !loading && !filtered && <HomeView/>}
@@ -65,7 +67,7 @@ export function LibraryView({favorites}: {favorites:boolean}) {
       <button className="secondary-button mt-2" disabled={busy} onClick={() => void retryRecovery()}>重试恢复与清理</button>
     </div>}
     <section data-view-mode={viewMode} aria-label={favorites ? '收藏素材' : '截图素材库'} aria-busy={loading}>
-      <div className="library-filters">
+      <div className="library-filters"><label>检索来源<select aria-label="检索来源" value={source} disabled={busy} onChange={e=>void refresh(favorites,{source:e.target.value as import('../../shared/api/library').SearchSource})}><option value="all">标题、笔记、标签与 OCR</option><option value="title">标题</option><option value="notes">笔记</option><option value="tags">标签名称</option><option value="ocr">OCR 全文</option></select></label>
         <label>收藏状态<select aria-label="收藏筛选" value={favorite===null?'all':favorite?'favorite':'unfavorite'} disabled={busy||!isTauri()} onChange={e=>void refresh(favorites,{favorite:e.target.value==='all'?null:e.target.value==='favorite'})}><option value="all">全部状态</option><option value="favorite">已收藏</option><option value="unfavorite">未收藏</option></select></label>
         <details><summary>标签筛选{tagIds.length?` · ${tagIds.length}`:''}</summary><div className="library-tag-options"><p>同时包含所有选中标签</p>{tags.map(tag=><label key={tag.id}><input type="checkbox" aria-label={`筛选标签 ${tag.name}`} checked={tagIds.includes(tag.id)} disabled={busy} onChange={()=>void refresh(favorites,{tagIds:tagIds.includes(tag.id)?tagIds.filter(id=>id!==tag.id):[...tagIds,tag.id]})}/>{tag.name}</label>)}{!tags.length&&<p>还没有标签，可在知识卡片中添加。</p>}</div></details>
         {(filtered||favorites)&&<button className="secondary-button" onClick={clearLibraryFilters}>清除全部筛选</button>}

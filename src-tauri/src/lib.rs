@@ -1,6 +1,8 @@
 pub mod capture;
 mod commands;
 mod domain;
+#[cfg(debug_assertions)]
+pub mod qa_ocr;
 pub mod services;
 mod storage;
 
@@ -79,6 +81,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(Arc::new(services::ocr_index::OcrIndexService::default()))
         .manage(services::clipper::ClipperService::default())
         .manage(Arc::new(services::scrolling::ScrollService::default()))
         .manage(Arc::new(services::pins::PinManager::default()))
@@ -190,6 +193,12 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::scrolling::scroll_start,
             commands::scrolling::scroll_status,
             commands::scrolling::scroll_action,
+            commands::ocr_index::get_ocr_content,
+            commands::ocr_index::correct_ocr_content,
+            commands::ocr_index::start_ocr_index,
+            commands::ocr_index::ocr_index_status,
+            commands::ocr_index::ocr_index_action,
+            commands::ocr_index::rebuild_search_index,
             commands::ocr::ocr_status,
             commands::ocr::recognize_ocr,
             commands::ocr::copy_ocr_text,
@@ -280,6 +289,8 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 }
             }
             tauri::RunEvent::Exit => {
+                app.state::<Arc<services::ocr_index::OcrIndexService>>()
+                    .cancel();
                 app.state::<services::clipper::ClipperService>().stop();
                 app.remove_tray_by_id(services::desktop::TRAY_ID);
             }

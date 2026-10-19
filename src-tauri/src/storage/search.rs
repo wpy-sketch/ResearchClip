@@ -16,12 +16,52 @@ pub struct LibraryFilter {
     pub project_id: Option<String>,
     #[serde(default)]
     pub unclassified: bool,
+    #[serde(default)]
+    pub source: SearchSource,
 }
 
+#[derive(Clone, Copy, Default, serde::Deserialize, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum SearchSource {
+    #[default]
+    All,
+    Title,
+    Notes,
+    Tags,
+    Ocr,
+}
+impl SearchSource {
+    pub fn key(self) -> &'static str {
+        match self {
+            Self::All => "all",
+            Self::Title => "title",
+            Self::Notes => "notes",
+            Self::Tags => "tags",
+            Self::Ocr => "ocr",
+        }
+    }
+}
+pub(super) fn fts_query(query: &str, source: SearchSource) -> String {
+    let query = if query.is_empty() {
+        "__researchclip_empty__"
+    } else {
+        query
+    };
+    let phrase = format!("\"{}\"", query.replace('"', "\"\""));
+    if matches!(source, SearchSource::All) {
+        phrase
+    } else {
+        format!("{} : {phrase}", source.key())
+    }
+}
 pub(super) const SUMMARY_COLUMNS: &str = "id,title,original_image_path,thumbnail_path,width_px,height_px,created_at,updated_at,is_favorite,revision";
 pub(super) const FILTER: &str = r"(?1=0 OR is_favorite=1) AND (?2 IS NULL OR is_favorite=?2)
- AND (?3='' OR lower(title) LIKE lower(?4) ESCAPE '\'
- OR EXISTS(SELECT 1 FROM notes n WHERE n.screenshot_id=screenshots.id AND lower(n.content) LIKE lower(?4) ESCAPE '\'))
+ AND (?3='' OR id IN (SELECT screenshot_id FROM screenshot_search WHERE
+ (length(?3)>=3 AND rowid IN (SELECT rowid FROM screenshot_search WHERE screenshot_search MATCH ?11))
+ OR (length(?3)<3 AND ((?10 IN ('all','title') AND title LIKE ?4 ESCAPE '\')
+ OR (?10 IN ('all','notes') AND notes LIKE ?4 ESCAPE '\')
+ OR (?10 IN ('all','tags') AND tags LIKE ?4 ESCAPE '\')
+ OR (?10 IN ('all','ocr') AND ocr LIKE ?4 ESCAPE '\')))))
  AND NOT EXISTS(SELECT 1 FROM json_each(?5) wanted WHERE NOT EXISTS(
  SELECT 1 FROM screenshot_tags st WHERE st.screenshot_id=screenshots.id AND st.tag_id=wanted.value))
  AND (?8 IS NULL OR EXISTS(SELECT 1 FROM screenshot_projects sp WHERE sp.screenshot_id=screenshots.id AND sp.project_id=?8))
@@ -48,6 +88,7 @@ impl Storage {
                 && files::image_path(&self.data_dir, path).is_ok_and(|p| p.is_file())
         };
         Ok(ScreenshotSummary {
+            match_excerpt: None,
             id: id.clone(),
             title: r.get(1)?,
             width_px: r.get(4)?,
@@ -110,7 +151,9 @@ impl Storage {
                 rusqlite::types::Null,
                 rusqlite::types::Null,
                 filter.project_id,
-                filter.unclassified
+                filter.unclassified,
+                filter.source.key(),
+                fts_query(query, filter.source)
             ],
             |r| r.get(0),
         )?;
@@ -119,7 +162,7 @@ impl Storage {
             LibrarySort::CreatedDesc => "created_at DESC,id DESC",
             LibrarySort::CreatedAsc => "created_at ASC,id ASC",
         };
-        let items = {
+        let mut items = {
             let mut stmt=tx.prepare(&format!("SELECT {SUMMARY_COLUMNS} FROM screenshots WHERE {FILTER} ORDER BY {order} LIMIT ?6 OFFSET ?7"))?;
             stmt.query_map(
                 params![
@@ -131,12 +174,17 @@ impl Storage {
                     limit,
                     page * limit,
                     filter.project_id,
-                    filter.unclassified
+                    filter.unclassified,
+                    filter.source.key(),
+                    fts_query(query, filter.source)
                 ],
                 |r| self.summary_row(r),
             )?
             .collect::<rusqlite::Result<Vec<_>>>()?
         };
+        for item in &mut items {
+            item.match_excerpt = self.search_excerpt(&item.id, query, filter.source)?;
+        }
         tx.commit()?;
         Ok(ScreenshotPage {
             items,
@@ -344,5 +392,50 @@ mod tests {
             .total,
             0
         );
+    }
+}
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct MatchExcerpt {
+    pub source: String,
+    pub text: String,
+    pub keyword: String,
+}
+impl Storage {
+    fn search_excerpt(
+        &self,
+        id: &str,
+        query: &str,
+        source: SearchSource,
+    ) -> Result<Option<MatchExcerpt>, StorageError> {
+        if query.is_empty() {
+            return Ok(None);
+        }
+        let values = self.connection.query_row(
+            "SELECT title,notes,tags,ocr FROM screenshot_search WHERE screenshot_id=?1",
+            [id],
+            |r| Ok([r.get::<_, String>(0)?, r.get(1)?, r.get(2)?, r.get(3)?]),
+        )?;
+        for (key, text) in ["title", "notes", "tags", "ocr"].into_iter().zip(values) {
+            if source.key() != "all" && key != source.key() {
+                continue;
+            }
+            // ASCII folding keeps byte indices stable; Chinese is matched literally. No HTML markers enter the UI.
+            if let Some(byte) = text.to_ascii_lowercase().find(&query.to_ascii_lowercase()) {
+                let before = text[..byte].chars().count();
+                let excerpt: String = text
+                    .chars()
+                    .skip(before.saturating_sub(35))
+                    .take(140)
+                    .collect();
+                return Ok(Some(MatchExcerpt {
+                    source: key.into(),
+                    text: excerpt,
+                    keyword: query.into(),
+                }));
+            }
+        }
+        Ok(None)
     }
 }

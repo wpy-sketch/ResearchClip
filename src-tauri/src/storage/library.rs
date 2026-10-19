@@ -539,6 +539,8 @@ pub struct ScreenshotSummary {
     pub revision: i64,
     pub image_available: bool,
     pub thumbnail_available: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub match_excerpt: Option<super::search::MatchExcerpt>,
 }
 #[derive(Clone, Copy, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -660,7 +662,7 @@ impl Storage {
     }
     pub fn library_status(&self) -> Result<LibraryStatus, StorageError> {
         Ok(LibraryStatus {
-            schema_version: 3,
+            schema_version: 4,
             pending_writes: self.connection.query_row(
                 "SELECT count(*) FROM pending_screenshots",
                 [],

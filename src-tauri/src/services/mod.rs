@@ -15,3 +15,5 @@ pub mod scrolling;
 #[cfg(target_os = "windows")]
 pub mod scrolling_windows;
 pub mod stitching;
+
+pub mod ocr_index;
