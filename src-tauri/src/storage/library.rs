@@ -13,6 +13,7 @@ pub struct Screenshot {
     pub original_image_path: String,
     pub thumbnail_path: String,
     pub annotation_data: Value,
+    pub annotation_version: i64,
     pub width_px: u32,
     pub height_px: u32,
     pub created_at: i64,
@@ -646,6 +647,7 @@ fn row(r: &Row<'_>) -> rusqlite::Result<Screenshot> {
         original_image_path: r.get(2)?,
         thumbnail_path: r.get(3)?,
         annotation_data,
+        annotation_version: 0,
         width_px: r.get(5)?,
         height_px: r.get(6)?,
         created_at: r.get(7)?,
@@ -662,7 +664,7 @@ impl Storage {
     }
     pub fn library_status(&self) -> Result<LibraryStatus, StorageError> {
         Ok(LibraryStatus {
-            schema_version: 4,
+            schema_version: 5,
             pending_writes: self.connection.query_row(
                 "SELECT count(*) FROM pending_screenshots",
                 [],
@@ -678,7 +680,7 @@ impl Storage {
     }
     pub fn get_screenshot(&self, id: &str) -> Result<Screenshot, StorageError> {
         check_id(id)?;
-        let item = self
+        let mut item = self
             .connection
             .query_row(
                 &format!("SELECT {COLUMNS} FROM screenshots WHERE id=?1"),
@@ -687,6 +689,7 @@ impl Storage {
             )
             .optional()?
             .ok_or(StorageError::NotFound)?;
+        item.annotation_version=self.connection.query_row("SELECT coalesce(max(version_number),0) FROM annotation_revisions WHERE screenshot_id=?1",[id],|r|r.get(0))?;
         self.validate_references(&item)?;
         document(&item.annotation_data, item.width_px, item.height_px)?;
         Ok(item)
@@ -931,12 +934,20 @@ impl Storage {
             .map(title)
             .transpose()?
             .unwrap_or(old.title);
+        let has_annotation = patch.annotation_data.is_some();
         let doc = patch.annotation_data.unwrap_or(old.annotation_data);
         let json = document(&doc, old.width_px, old.height_px)?;
-        let n=self.connection.execute("UPDATE screenshots SET title=?1,is_favorite=?2,annotation_data=?3,updated_at=?4,revision=revision+1 WHERE id=?5 AND revision=?6",params![name,patch.is_favorite.unwrap_or(old.is_favorite),json,now()?,id,revision])?;
+        let tx = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        if has_annotation {
+            super::revisions::record(&tx, id, &doc, "保存标注")?;
+        }
+        let n=tx.execute("UPDATE screenshots SET title=?1,is_favorite=?2,annotation_data=?3,updated_at=?4,revision=revision+1 WHERE id=?5 AND revision=?6",params![name,patch.is_favorite.unwrap_or(old.is_favorite),json,now()?,id,revision])?;
         if n != 1 {
             return Err(StorageError::Conflict);
         }
+        tx.commit()?;
         self.get_screenshot(id)
     }
     pub fn delete_screenshot(

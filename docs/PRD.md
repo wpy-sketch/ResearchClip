@@ -115,3 +115,13 @@ OCR全文独立存储与人工纠错，主动单图/批量索引、暂停/继续
 ## v1.0.4 A04本地公式识别
 
 复用OCR矩形/PNG边界、MathFormula、MarkdownDocumentSession与CardStore，新增MathOcrService和受控CPU Python/ONNX子进程。原图/数据库schema4不变，六项main专用命令，无通用路径/HTTP/脚本权限。模型主动确认下载、摘要及禁止覆盖；取消/超时/有界像素/输出/token与Windows Job Object，退出等待资源释放。结果verified=false；确认校对后才插入或追加，不自动替换旧公式。实际样本有上下标、求和和范数符号FAIL，不能视作数学正确。方案/依赖/许可/安装见[模型说明](MATH-OCR.md)，实际命令和未运行矩阵见[验收](qa/RELEASE-1.0.4.md)。不开发PDF/云OCR。
+
+## A05 / v1.0.5 标注历史增量
+
+SQLite schema5：新增 annotation_revisions（revision_id、screenshot_id、version_number、parent_revision_id、annotation_json、created_at、description、schema_version）；005事务迁移，001–004不改，升级前验证及唯一备份。已有标注原字节导入 v1；后续新素材在提交记录的同一事务建立 v1。每份历史引用同一原图，不存扁平图缓存。
+
+revisions.rs 负责带CAS保存/恢复、最新内容语义去重及50条分页；普通 update_screenshot 的显式标注更新也进入同一事务历史。标题/收藏/笔记不创建标注版本。恢复从已校验快照读取，并追加当前版本的子版本；相同内容不产生冗余版本。历史不自动清理；只有用户明确删除整张截图时外键级联清理。
+
+EditorSession沿用现有 store/document/history，image.annotationVersion 标记编辑基准；RevisionHistory 是局部弹窗状态，复用 renderComposite 只读预览和双图展示，不激活另一编辑会话。恢复后 document/savedDocument/CAS 更新，撤销历史独立工作。4个main-only命令通过既有 LibraryService/spawn_blocking 运行，不扩展通用文件或SQL权限。无新第三方依赖，无独立备份/恢复业务。
+
+损坏/未知标注快照拒绝预览及恢复，原记录保留；不支持的历史元数据仍可列出。当前正式格式仍为 Annotation schema1，包括早期基本图元及现有高级图元；不虚构 schema0 迁移。实际检查、未运行 Windows 交互与人工矩阵见 [A05验收](qa/RELEASE-1.0.5.md)。

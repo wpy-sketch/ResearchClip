@@ -1,0 +1,26 @@
+{
+  "result": "PASS",
+  "environment": "Windows x64, isolated CLI processes; not desktop UI",
+  "commands": [
+    {
+      "phase": "seed",
+      "exitCode": 0
+    },
+    {
+      "phase": "verify",
+      "exitCode": 0
+    }
+  ],
+  "schemaVersion": 5,
+  "revisionNumbers": [
+    1,
+    2,
+    3
+  ],
+  "versionCount": 3,
+  "originalFileCount": 1,
+  "originalSha256": "91d203c6a2fe6b6b6a2c9e0496abc773c45094aa109b510c4e54c5559c385e18",
+  "originalEquality": "both processes asserted encode_png(original frame) exact bytes",
+  "integrity": "ok",
+  "uiStatus": "NOT_RUN"
+}

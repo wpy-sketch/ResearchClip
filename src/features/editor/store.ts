@@ -17,8 +17,9 @@ interface EditorState {
   setTool: (tool: EditorTool) => void; fit: (width: number, height: number) => void;
   setViewport: (viewport: Viewport) => void; zoom: (scale: number, anchor: Point) => void;
   imageFailed: (id: string, message: string | null) => void; serialize: (id: string) => AnnotationDocument;
-  bindLibrary:(id:string,libraryId:string,libraryRevision:number,name:string)=>void;
+  bindLibrary:(id:string,libraryId:string,libraryRevision:number,name:string,annotationVersion?:number)=>void;
   unlinkLibrary:(libraryId:string)=>void;
+  restoreRevision:(id:string,document:AnnotationDocument,libraryRevision:number,annotationVersion:number)=>void;
   select: (id: string | null) => void; add: (annotation: Annotation) => boolean; update: (annotation: Annotation) => boolean; removeSelected: () => void;
   setStyle: (patch: Partial<AnnotationStyle>) => void;
   beginDraw: (point: Point) => void; beginMove: (id: string, point: Point, endpoint?: 0 | 1) => void;
@@ -62,8 +63,9 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   zoom: (scale, anchor) => { const id = get().activeId; if (id) get().setViewport(zoomViewport(get().sessions[id].viewport, scale, anchor)); },
   imageFailed: (id, loadError) => { const session = get().sessions[id]; if (session) set({ sessions: { ...get().sessions, [id]: { ...session, loadError } } }); },
-  bindLibrary:(id,libraryId,libraryRevision,name)=>{const session=get().sessions[id];if(session)set({sessions:{...get().sessions,[id]:{...session,image:{...session.image,libraryId,libraryRevision,name}}}});},
-  unlinkLibrary:(libraryId)=>{const sessions={...get().sessions};for(const [id,session]of Object.entries(sessions)){if(session.image.libraryId===libraryId){const image={...session.image};delete image.libraryId;delete image.libraryRevision;sessions[id]={...session,image};}}set({sessions});},
+  bindLibrary:(id,libraryId,libraryRevision,name,annotationVersion)=>{const session=get().sessions[id];if(session)set({sessions:{...get().sessions,[id]:{...session,image:{...session.image,libraryId,libraryRevision,name,annotationVersion}}}});},
+  unlinkLibrary:(libraryId)=>{const sessions={...get().sessions};for(const [id,session]of Object.entries(sessions)){if(session.image.libraryId===libraryId){const image={...session.image};delete image.libraryId;delete image.libraryRevision;delete image.annotationVersion;sessions[id]={...session,image};}}set({sessions});},
+  restoreRevision:(id,input,libraryRevision,annotationVersion)=>{const session=get().sessions[id];if(!session)throw Error("编辑会话已关闭。");const document=parseDocument(input);if(document.image.widthPx!==session.image.widthPx||document.image.heightPx!==session.image.heightPx)throw Error("版本尺寸不一致。");get().cancelGesture();set({sessions:{...get().sessions,[id]:{...session,document,savedDocument:JSON.stringify(document),selectedId:null,image:{...session.image,libraryRevision,annotationVersion},history:recordEdit(session.history,session.document.objects,document.objects)}}});},
   serialize: (id) => { const session = get().sessions[id]; if (!session) throw new Error('编辑会话不存在。'); validateDocument(session.document); return structuredClone(session.document); },
   select: (selectedId) => { const id=get().activeId; if(id && (selectedId===null||get().sessions[id].document.objects.some((o)=>o.id===selectedId))) set({sessions:{...get().sessions,[id]:{...get().sessions[id],selectedId}}}); },
   add: (annotation) => {

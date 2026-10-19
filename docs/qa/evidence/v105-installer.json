@@ -1,0 +1,32 @@
+{
+  "version": "1.0.5",
+  "mode": "actual NSIS, isolated install path, read-only user-data hashes, process fixture for busy guard",
+  "checks": [
+    "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+    "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+    "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+    "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+  ],
+  "result": "PASS",
+  "userDataFilesHashed": 8,
+  "installerSha256": "E4AB9561024DDF2B16A2D8C84BBAA7C487662A4D86E63F8FF849CE2DCC8CDE82",
+  "signatureStatus": "NotSigned",
+  "installedPayloadSha256": "A073671D8FA23677DC57D8EB332CCBF1993C7060A754E6DC747EA4FA60C5DE22",
+  "metadata": {
+    "version": "1.0.5",
+    "publisher": "ResearchClip",
+    "product": "ResearchClip",
+    "hasIcon": true
+  },
+  "busyUninstallExit": 2,
+  "busyInstallExit": 2,
+  "quiescence": {
+    "codes": [
+      0
+    ],
+    "needed": 0,
+    "result": "PASS"
+  },
+  "installationStillPresent": false,
+  "sourceResult": "passed"
+}

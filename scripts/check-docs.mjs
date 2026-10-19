@@ -70,7 +70,9 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/001_work
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/002_library.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_projects.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/004_ocr_index.sql'], { cwd: root, stdio: 'pipe' });
-assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 4;'),true);
+assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 5;'),true);
 assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pending_file_deletions'));
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v4; published v1/v2/v3/v4 migrations unchanged' }, null, 2));
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v5; published v1/v2/v3/v4 migrations unchanged' }, null, 2));
+
+for(const command of ["annotation_history","annotation_revision","save_annotation_revision","restore_annotation_revision"]){assert.ok(main.permissions.includes("allow-"+command.replaceAll("_","-")));assert.ok(read("src-tauri/src/lib.rs").includes("commands::revisions::"+command));assert.ok(read("src-tauri/build.rs").includes("\""+command+"\""));}

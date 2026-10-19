@@ -14,6 +14,6 @@ export type Annotation =
   | (BaseAnnotation & { type: 'text'; text: string; fontSize: number });
 // Only this document is serializable. URLs, Blob, Konva nodes, selection and view are separate.
 export interface AnnotationDocument { schemaVersion: 1; image: { widthPx: number; heightPx: number }; objects: Annotation[] }
-export interface EditorImage { id: string; name: string; widthPx: number; heightPx: number; blob: Blob; url: string; libraryId?:string; libraryRevision?:number }
+export interface EditorImage { id: string; name: string; widthPx: number; heightPx: number; blob: Blob; url: string; libraryId?:string; libraryRevision?:number; annotationVersion?:number }
 export interface EditHistory { past: Annotation[][]; future: Annotation[][] }
 export interface EditorSession { image: EditorImage; document: AnnotationDocument; viewport: Viewport; selectedId: string | null; loadError: string | null; history: EditHistory; savedDocument:string }

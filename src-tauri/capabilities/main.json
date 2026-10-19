@@ -6,6 +6,10 @@
     "main"
   ],
   "permissions": [
+    "allow-annotation-history",
+    "allow-annotation-revision",
+    "allow-save-annotation-revision",
+    "allow-restore-annotation-revision",
     "allow-clipper-status",
     "allow-clipper-connection",
     "allow-ocr-status",

@@ -2,9 +2,9 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.4 Windows 版本**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.5 Windows 版本**。
 
-[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.4) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.5) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
 ## 从这里开始
 
@@ -20,7 +20,9 @@
 - **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
 - **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
 - **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
-- **帮助**：14节任务式说明、详细分步注释、16张离线界面图与操作示意和原尺寸放大查看。
+- **帮助**：14节任务式说明、详细分步注释、17张离线界面图与操作示意和原尺寸放大查看。
+
+v1.0.5 新增非破坏性标注版本历史：显式保存去重、版本说明、只读预览/对比、恢复追加新版本；schema5升级前备份，原图不重复保存。[本轮验收](docs/qa/RELEASE-1.0.5.md)。Release继续附带兼容的 v1.0.2 浏览器插件包，不删除既有发布。
 
 v1.0.4 新增需校对的离线公式图片转LaTeX；可选Python运行时与171 MiB模型由用户主动安装/下载。实际样本存在误识别，详见[模型比较](docs/MATH-OCR.md)与[本轮验收](docs/qa/RELEASE-1.0.4.md) · [发布核验](docs/qa/PUBLICATION-1.0.4.md)。v1.0.3 新增独立OCR全文存储、用户控制批量索引、中文短词/英文组合搜索与安全摘要高亮；数据库以备份及事务升级到schema4。详见[本轮验收](docs/qa/RELEASE-1.0.3.md) · [发布核验](docs/qa/PUBLICATION-1.0.3.md)。v1.0.2 新增独立MV3网页剪藏、受限Native Messaging Host、项目保存和标准Markdown联动；完整安装/重试说明见指南第3节。v1.0.1滚动长截图保持。完整高DPI/多屏、浏览器真实工具栏交互、macOS与第三方应用矩阵仍需专项验证；旧退出/托盘问题与本轮复验分别记录在 [QA总表](docs/qa/TEST_REPORT.md)，不把正式Release标识等同于未运行项目通过。
 
@@ -47,7 +49,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_1.0.4_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_1.0.5_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc

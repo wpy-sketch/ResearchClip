@@ -1,6 +1,10 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "annotation_history",
+            "annotation_revision",
+            "save_annotation_revision",
+            "restore_annotation_revision",
             "clipper_status",
             "clipper_connection",
             "scroll_targets",

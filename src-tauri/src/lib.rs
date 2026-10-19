@@ -5,6 +5,8 @@ mod domain;
 pub mod qa_math;
 #[cfg(debug_assertions)]
 pub mod qa_ocr;
+#[cfg(debug_assertions)]
+pub mod qa_revisions;
 pub mod services;
 mod storage;
 
@@ -201,6 +203,10 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::scrolling::scroll_start,
             commands::scrolling::scroll_status,
             commands::scrolling::scroll_action,
+            commands::revisions::annotation_history,
+            commands::revisions::annotation_revision,
+            commands::revisions::save_annotation_revision,
+            commands::revisions::restore_annotation_revision,
             commands::ocr_index::get_ocr_content,
             commands::ocr_index::correct_ocr_content,
             commands::ocr_index::start_ocr_index,

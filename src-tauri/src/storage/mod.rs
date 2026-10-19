@@ -6,6 +6,7 @@ pub mod markdown;
 mod migrations;
 pub mod ocr;
 pub mod projects;
+pub mod revisions;
 pub mod search;
 
 use crate::domain::WorkspaceStatus;
@@ -111,7 +112,7 @@ mod tests {
         let root = temporary.path().join("科研工作区");
         let storage = Storage::open(root.clone()).unwrap();
         let status = storage.status().unwrap();
-        assert_eq!(status.schema_version, 4);
+        assert_eq!(status.schema_version, 5);
         assert!(root.join("researchclip.sqlite3").is_file());
         for name in ["originals", "thumbnails", "exports"] {
             assert!(root.join(name).is_dir());
@@ -151,7 +152,7 @@ mod tests {
             )
             .unwrap();
         assert_eq!(note, "keep me");
-        assert_eq!(storage.status().unwrap().schema_version, 4);
+        assert_eq!(storage.status().unwrap().schema_version, 5);
     }
 
     #[test]
@@ -224,7 +225,7 @@ mod tests {
         let storage = Storage::open(temporary.path().to_path_buf()).unwrap();
         let json = serde_json::to_value(storage.status().unwrap()).unwrap();
         assert_eq!(json["appName"], "ResearchClip");
-        assert_eq!(json["schemaVersion"], 4);
+        assert_eq!(json["schemaVersion"], 5);
         assert!(json.get("data_dir").is_none());
     }
     #[test]

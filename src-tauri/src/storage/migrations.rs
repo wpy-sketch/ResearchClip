@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 4;
+pub const SCHEMA_VERSION: u32 = 5;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -86,6 +86,13 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/004_ocr_index.sql"),
         )?;
     }
+    if version < 5 {
+        apply_migration(
+            connection,
+            5,
+            include_str!("../../migrations/005_annotation_revisions.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
@@ -124,6 +131,9 @@ fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageE
         ] {
             connection.prepare(sql)?;
         }
+    }
+    if version >= 5 {
+        connection.prepare("SELECT revision_id,screenshot_id,version_number,parent_revision_id,annotation_json,created_at,description,schema_version FROM annotation_revisions LIMIT 0")?;
     }
     Ok(())
 }
@@ -170,7 +180,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 4);
+        assert_eq!(storage.status().unwrap().schema_version, 5);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()
