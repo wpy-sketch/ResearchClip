@@ -2,6 +2,8 @@ pub mod capture;
 mod commands;
 mod domain;
 #[cfg(debug_assertions)]
+pub mod qa_math;
+#[cfg(debug_assertions)]
 pub mod qa_ocr;
 pub mod services;
 mod storage;
@@ -125,6 +127,12 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 None
             }
             .unwrap_or(app.path().app_data_dir()?);
+            let math_root = path.join("math-ocr-v1");
+            let math =
+                services::math_ocr::MathOcrService::new(math_root.clone()).unwrap_or_else(|e| {
+                    services::math_ocr::MathOcrService::unavailable(math_root, e.message)
+                });
+            app.manage(Arc::new(math));
             app.manage(Arc::new(commands::library::LibraryService::new(data_root)));
             app.manage(Arc::clone(&settings));
             if let Err(error) = services::desktop::install_tray(app.handle()) {
@@ -199,6 +207,12 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::ocr_index::ocr_index_status,
             commands::ocr_index::ocr_index_action,
             commands::ocr_index::rebuild_search_index,
+            commands::math_ocr::math_ocr_status,
+            commands::math_ocr::cancel_math_ocr,
+            commands::math_ocr::download_math_models,
+            commands::math_ocr::choose_math_runtime,
+            commands::math_ocr::import_math_models,
+            commands::math_ocr::recognize_math_ocr,
             commands::ocr::ocr_status,
             commands::ocr::recognize_ocr,
             commands::ocr::copy_ocr_text,
@@ -289,6 +303,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 }
             }
             tauri::RunEvent::Exit => {
+                let _ = app
+                    .state::<Arc<services::math_ocr::MathOcrService>>()
+                    .cancel();
                 app.state::<Arc<services::ocr_index::OcrIndexService>>()
                     .cancel();
                 app.state::<services::clipper::ClipperService>().stop();

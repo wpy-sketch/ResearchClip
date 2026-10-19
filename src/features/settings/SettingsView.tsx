@@ -1,3 +1,4 @@
+import {MathOcrSettings} from '../math-ocr/MathOcr';
 import {useEffect} from 'react';
 import {ClipperSettings} from '../clipper/Clipper';
 import { Check, FolderOpen, LayoutGrid, List, Moon, Sun,Monitor } from 'lucide-react';
@@ -15,7 +16,7 @@ export function SettingsView() {
   useEffect(()=>{void useSettingsStore.getState().refresh();},[]);
   return <div className="page-container settings-page">
     <div className="page-heading"><div><h2>设置</h2><p>外观、截图快捷键与文件保存位置。</p></div></div>
-    <ClipperSettings/>
+    <ClipperSettings/><MathOcrSettings/>
     {(error || snapshot.storageError) && <p className="error-banner mb-5" role="alert">{error ?? snapshot.storageError}</p>}
     <section className="settings-section" aria-labelledby="appearance-title"><h3 id="appearance-title">外观</h3><p className="settings-description">选择舒适的主题与字体。</p><div className="theme-options" role="group" aria-label="主题选择">
       {([{ id: 'dark', label: '深色', icon: Moon }, { id: 'light', label: '浅色', icon: Sun },{id:'system',label:'跟随系统',icon:Monitor}] as const).map(({ id, label, icon: Icon }) => <button key={id} className={`theme-option ${snapshot.preferences.theme === id ? 'is-selected' : ''}`} disabled={busy} aria-pressed={snapshot.preferences.theme === id} onClick={() => void change({ theme: id })}><span className={`theme-preview ${id==='system'?theme:id}`} aria-hidden="true"><span /><span><i /><i /><i /></span></span><span className="flex items-center gap-2 text-[13px]"><Icon size={15} />{label}{snapshot.preferences.theme === id && <Check className="ml-auto text-accent" size={15} />}</span></button>)}

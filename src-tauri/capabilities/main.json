@@ -92,6 +92,12 @@
     "allow-start-ocr-index",
     "allow-ocr-index-status",
     "allow-ocr-index-action",
-    "allow-rebuild-search-index"
+    "allow-rebuild-search-index",
+    "allow-math-ocr-status",
+    "allow-cancel-math-ocr",
+    "allow-download-math-models",
+    "allow-choose-math-runtime",
+    "allow-import-math-models",
+    "allow-recognize-math-ocr"
   ]
 }

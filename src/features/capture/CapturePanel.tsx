@@ -1,3 +1,4 @@
+import {MathOcrButton} from '../math-ocr/MathOcr';
 import { createPin } from '../pins/api';
 import { errorMessage } from '../../shared/api/errors';
 import { Camera, Pin, ClipboardCopy, Download, Pencil, Save, X } from 'lucide-react';
@@ -25,6 +26,7 @@ export function CapturePanel() {
         <figcaption className="border-t border-edge px-4 py-3 text-xs text-muted"><div className="flex flex-wrap justify-between gap-2"><span>{preview.widthPx} × {preview.heightPx} 像素</span><span>{sourceIndex >= 0 ? `显示器 ${sourceIndex + 1}` : '截图预览'} · {preview.savedPath ? 'PNG 已保存' : '临时预览 · 未保存'}</span></div>{preview.savedPath && <p className="mt-2 break-all select-text">保存位置：{preview.savedPath}</p>}</figcaption>
       </figure>
       <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="截图完成操作">
+        <MathOcrButton disabled={busy||!preview.blob} libraryId={preview.library?.id} name="截图公式" image={async()=>{if(!preview.blob)throw Error('截图已失效。');return preview.blob;}}/>
         <OcrButton disabled={busy||!preview.blob} name="截图预览" image={async()=>{if(!preview.blob)throw new Error('截图已失效，请重新截图。');return preview.blob;}}/>
         <button className="capture-button" disabled={busy||Boolean(preview.library)} onClick={()=>void saveCaptureToLibrary()}><Save size={15}/>{preview.library?'已存入素材库':'存入素材库'}</button>
         <button className="secondary-button" disabled={busy||!preview.blob} onClick={()=>{if(!preview.blob||phase!=='idle')return;useCaptureStore.setState({phase:'working',error:null,notice:null});void createPin(preview.blob).then(()=>useCaptureStore.setState({notice:'桌面贴图已创建，可拖动、滚轮缩放或右键操作。'})).catch(e=>useCaptureStore.setState({error:errorMessage(e,'创建贴图失败。')})).finally(()=>useCaptureStore.setState({phase:'idle'}));}}><Pin size={15}/>贴图</button>

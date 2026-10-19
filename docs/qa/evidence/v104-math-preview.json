@@ -1,0 +1,57 @@
+[
+  {
+    "kind": "quadratic",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "fraction",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "scripts",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "greek",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "integral",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "sum",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "norm",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "brackets",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "lowres",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "matrix",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  },
+  {
+    "kind": "multiline",
+    "result": "PASS",
+    "scope": "render validity, not mathematical correctness"
+  }
+]

@@ -17,3 +17,5 @@ pub mod scrolling_windows;
 pub mod stitching;
 
 pub mod ocr_index;
+
+pub mod math_ocr;

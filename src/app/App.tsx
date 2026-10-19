@@ -1,3 +1,4 @@
+import {MathOcrPanel} from '../features/math-ocr/MathOcr';
 import {ScrollCaptureDialog} from '../features/capture/ScrollCapture';
 import {ClipperNotice} from '../features/clipper/Clipper';
 import { lazy, Suspense, useEffect } from 'react';
@@ -72,7 +73,7 @@ export function App() {
         <footer className="workspace-footer"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-faint" />本地工作区</span><span>图片与标注保存在本机</span></footer>
       </div>
       <WorkspaceDialogs />
-      <OcrPanel/>
+      <OcrPanel/><MathOcrPanel/>
       <ScrollCaptureDialog/>
     </div>
   );

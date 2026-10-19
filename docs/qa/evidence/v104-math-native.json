@@ -1,0 +1,98 @@
+{
+  "blankImage": "PASS",
+  "cancel": "PASS",
+  "cases": [
+    {
+      "expectedLatex": "V(x)=x^T P x",
+      "kind": "quadratic",
+      "latex": "V ( x ) = x ^ { T } P x",
+      "seconds": 1.5114702,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\frac{dV}{dt}<0",
+      "kind": "fraction",
+      "latex": "{ \\frac { d V } { d t } } < 0 .",
+      "seconds": 1.3475242,
+      "verified": false
+    },
+    {
+      "expectedLatex": "x_i^{2}+y_{k+1}",
+      "kind": "scripts",
+      "latex": "\\chi _ { i } ^ { 2 } + y _ { k } + 1",
+      "seconds": 1.3485679,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\alpha+\\beta=\\lambda\\gamma",
+      "kind": "greek",
+      "latex": "\\alpha + \\beta = \\lambda \\gamma",
+      "seconds": 1.3077483,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\int_0^1 x^2\\,dx=\\frac{1}{3}",
+      "kind": "integral",
+      "latex": "\\textstyle \\int _ { 0 } ^ { 1 } x ^ { 2 } \\, d x = { \\frac { 1 } { 3 } }",
+      "seconds": 1.5924561000000002,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\sum_{i=1}^{n}i=\\frac{n(n+1)}{2}",
+      "kind": "sum",
+      "latex": "\\sum _ { i = 1 } ^ { n } i \\not = { \\frac { n ( n + 1 ) } { 2 } }",
+      "seconds": 1.5898008,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\frac{\\|x-p\\|}{v_P}=\\frac{\\|x-e\\|}{v_E}",
+      "kind": "norm",
+      "latex": "\\frac { \\| x - p \\| } { \\nu _ { P } } \\Longrightarrow \\frac { \\| x - e \\| } { \\nu _ { E } }",
+      "seconds": 1.6325414999999999,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\left(\\frac{a+b}{c+d}\\right)^2",
+      "kind": "brackets",
+      "latex": "\\left( { \\frac { a + b } { c + d } } \\right) ^ { 2 }",
+      "seconds": 1.472777,
+      "verified": false
+    },
+    {
+      "expectedLatex": "V(x)=x^T P x",
+      "kind": "lowres",
+      "latex": "V ( x ) = x ^ { T } P x",
+      "seconds": 1.347604,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}",
+      "kind": "matrix",
+      "latex": "\\left[ \\begin{array} { l l } { 1 } & { 2 } \\\\ { 3 } & { 4 } \\end{array} \\right]",
+      "seconds": 1.5927521,
+      "verified": false
+    },
+    {
+      "expectedLatex": "\\begin{aligned}\\dot{x}&=Ax+Bu\\\\y&=Cx\\end{aligned}",
+      "kind": "multiline",
+      "latex": "\\begin{array} { c } { { \\dot { x } = A x + B u } } \\\\ { { y = C x } } \\end{array}",
+      "seconds": 1.5920107,
+      "verified": false
+    }
+  ],
+  "corruptRecovery": "PASS",
+  "downloadAndCancel": "NOT_RUN",
+  "duplicateImport": "PASS",
+  "handlesAfter": 97,
+  "handlesBefore": 97,
+  "invalidModel": "PASS",
+  "markdownReload": "PASS",
+  "mathCorrectness": "NOT_VERIFIED",
+  "missingModel": "PASS",
+  "noteReload": "PASS",
+  "result": "PASS",
+  "scope": "actual Windows Rust service to isolated Python ONNX processes, fixed source and pinned models; not UI or mathematical accuracy acceptance",
+  "seconds": 19.425632,
+  "settingsReload": "PASS",
+  "timeoutAndOutputLimit": "PASS"
+}

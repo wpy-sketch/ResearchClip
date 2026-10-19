@@ -593,3 +593,7 @@ API/方案核对：[Windows SendInput与UIPI限制](https://learn.microsoft.com/
 OCRContent与Note分离；original-v1:<截图ID>标识应用内不可变原图，不随标注或标题修改失效，不声称能检测外部程序同尺寸篡改。系统OCR未暴露模型版本，因此明确记录Windows.Media.Ocr由系统管理，不编造版本。OcrIndexService只保留最多5000个ID和单个图像；每次启动明确允许，单并发、暂停/继续/取消/失败重试，取消等待当前原生操作结束并丢弃在途结果。已完成逐条事务落盘；重启把running标为failed、保留旧文本，不自动继续扫描。六个命令只授予main，无通用SQL/路径/文件权限。
 
 真实20次能力查询暴露逐次RoUninitialize使windows-rs静态agile工厂缓存失效的访问冲突；改用安装版windows-core 0.62.2自带load_factory/MTA生命周期，不再逐次拆除最后apartment。实测20查询与30图队列通过；不能据此保证其他Windows版本或长期无泄漏。参考[SQLite FTS5](https://www.sqlite.org/fts5.html)、[Microsoft缓存工厂与COM生命周期](https://devblogs.microsoft.com/oldnewthing/20211105-00/?p=105878)、[Windows OCR](https://learn.microsoft.com/en-us/uwp/api/windows.media.ocr.ocrengine)。
+
+## v1.0.4 A04本地公式识别
+
+复用OCR矩形/PNG边界、MathFormula、MarkdownDocumentSession与CardStore，新增MathOcrService和受控CPU Python/ONNX子进程。原图/数据库schema4不变，六项main专用命令，无通用路径/HTTP/脚本权限。模型主动确认下载、摘要及禁止覆盖；取消/超时/有界像素/输出/token与Windows Job Object，退出等待资源释放。结果verified=false；确认校对后才插入或追加，不自动替换旧公式。实际样本有上下标、求和和范数符号FAIL，不能视作数学正确。方案/依赖/许可/安装见[模型说明](MATH-OCR.md)，实际命令和未运行矩阵见[验收](qa/RELEASE-1.0.4.md)。不开发PDF/云OCR。

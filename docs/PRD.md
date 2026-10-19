@@ -111,3 +111,7 @@ M1骨架和本轮文档完成不等于MVP完成。截图权限/DPI硬件矩阵�
 ## v1.0.3 A03增量
 
 OCR全文独立存储与人工纠错，主动单图/批量索引、暂停/继续/取消/重试，标题/笔记/标签/OCR组合检索与来源摘要、FTS5重建。schema4版本迁移不重置资料。30张自有中英文图为实际原生验收；窗口UI、其他语言/系统矩阵另列未运行，不开发PDF或云服务。见[验收报告](qa/RELEASE-1.0.3.md)。
+
+## v1.0.4 A04本地公式识别
+
+复用OCR矩形/PNG边界、MathFormula、MarkdownDocumentSession与CardStore，新增MathOcrService和受控CPU Python/ONNX子进程。原图/数据库schema4不变，六项main专用命令，无通用路径/HTTP/脚本权限。模型主动确认下载、摘要及禁止覆盖；取消/超时/有界像素/输出/token与Windows Job Object，退出等待资源释放。结果verified=false；确认校对后才插入或追加，不自动替换旧公式。实际样本有上下标、求和和范数符号FAIL，不能视作数学正确。方案/依赖/许可/安装见[模型说明](MATH-OCR.md)，实际命令和未运行矩阵见[验收](qa/RELEASE-1.0.4.md)。不开发PDF/云OCR。

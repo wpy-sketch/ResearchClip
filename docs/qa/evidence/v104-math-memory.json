@@ -1,0 +1,18 @@
+{
+  "exitCode": 0,
+  "peakRssBytesSampled": 267993088,
+  "sampleIntervalMs": 25,
+  "maxOwnedProcesses": 2,
+  "actual": {
+    "ok": true,
+    "result": {
+      "latex": "V ( x ) = x ^ { T } P x",
+      "model": "rapid-latex-ocr-onnx-v0",
+      "verified": false,
+      "tokens": 13
+    },
+    "seconds": 1.1560000000026776
+  },
+  "stderrBytes": 0,
+  "scope": "one owned STIX formula, CPU, launcher plus its own descendants; not total app RAM or long soak"
+}

@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-19",
+  "frontend": {
+    "files": 47,
+    "tests": 320,
+    "result": "PASS"
+  },
+  "rust": {
+    "tests": 143,
+    "result": "PASS"
+  },
+  "fmt": "PASS",
+  "clippy": "PASS",
+  "cleanPythonInstall": "PASS",
+  "actualNative": "v104-math-native.json",
+  "actualModelDownload": "v104-math-download-native.json",
+  "schema": 4,
+  "databaseMigrations": "unchanged",
+  "mathContentFailures": [
+    "scripts",
+    "sum",
+    "norm"
+  ],
+  "notRun": [
+    "new Windows UI interaction",
+    "clipboard paste in another app",
+    "native system dialogs and DPI",
+    "long soak",
+    "GPU and macOS"
+  ],
+  "setupKit": {
+    "result": "PASS",
+    "entries": [
+      "download-models.py",
+      "install-runtime.ps1",
+      "LICENSE-LaTeX-OCR",
+      "LICENSE-RapidLaTeXOCR",
+      "models.json",
+      "README.md",
+      "requirements-lock.txt",
+      "worker.py"
+    ],
+    "bytes": 10948,
+    "sha256": "c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+    "containsModelOrRuntime": false,
+    "sourceBytesMatched": true
+  },
+  "productionBuild": {
+    "result": "PASS",
+    "exitCode": 0
+  },
+  "installer": {
+    "result": "passed",
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ],
+    "userDataFilesHashed": 8,
+    "sha256": "B4271364C5EDE834564B0EBA0879192E4CCC867166F18F2B87FC638757E61261",
+    "signature": "NotSigned"
+  },
+  "documentation": {
+    "result": "PASS",
+    "documents": 72,
+    "localLinks": 433
+  },
+  "finalNative": {
+    "result": "PASS",
+    "handlesBefore": 97,
+    "handlesAfter": 97
+  }
+}

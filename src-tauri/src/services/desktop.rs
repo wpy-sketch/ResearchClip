@@ -228,6 +228,18 @@ pub fn finish_exit(app: &AppHandle, approved: bool) -> Result<(), CaptureError> 
             }
         }
     };
+    // Math jobs own temporary images and child processes. Let cancellation finish
+    // before destroying the WebView; Windows Job Object also covers abrupt exit.
+    let math = app.state::<Arc<super::math_ocr::MathOcrService>>();
+    math.cancel()?;
+    let math_deadline = std::time::Instant::now();
+    while math.status()?.job.phase == "running" {
+        if math_deadline.elapsed() > std::time::Duration::from_secs(3) {
+            service.cancel();
+            return Err(failure("公式任务仍在释放资源，退出已取消，请稍后重试。"));
+        }
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
     if !service.commit() {
         return Err(failure("退出请求已改变，请重试。"));
     }

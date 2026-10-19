@@ -1,3 +1,4 @@
+import {MathOcrButton} from '../math-ocr/MathOcr';
 import {SavedOcrButton} from '../ocr-index/OcrIndex';
 import {useEffect,useState} from 'react';
 import {ArrowLeft,ExternalLink,ImageOff,Save,Star,X} from 'lucide-react';
@@ -32,7 +33,7 @@ export function KnowledgeCardView(){
   const saveThen=async(fn:()=>Promise<unknown>)=>{if(await flush(id))await fn();};
   const addTag=()=>{const name=tagInput.trim();if(!name||Array.from(name).length>50||draft.tagNames.some(t=>normalizeTagName(t)===normalizeTagName(name))){setActionError('标签须为1至50个字符，且不能与已添加标签重名。');return;}if(draft.tagNames.length>=100){setActionError('每张卡片最多100个标签。');return;}edit(id,{tagNames:[...draft.tagNames,name]});setTagInput('');setActionError(null);};
   return <div className="page-container knowledge-page">
-    <div className="knowledge-heading"><button className="secondary-button" onClick={()=>{void flush(id);useUiStore.getState().navigate('screenshots');}}><ArrowLeft size={14}/>返回素材库</button><h2>科研知识卡片</h2><div className="flex flex-wrap gap-2"><SavedOcrButton id={id}/><MarkdownExportButton ids={[id]} disabled={disabled}/><button className="secondary-button" disabled={disabled} onClick={()=>void action(()=>saveThen(()=>openLibraryEditor(id)))}>编辑图片标注</button><button className="secondary-button" disabled={disabled||session.status==='saving'} onClick={()=>void flush(id)}><Save size={14}/>保存卡片</button></div></div>
+    <div className="knowledge-heading"><button className="secondary-button" onClick={()=>{void flush(id);useUiStore.getState().navigate('screenshots');}}><ArrowLeft size={14}/>返回素材库</button><h2>科研知识卡片</h2><div className="flex flex-wrap gap-2"><MathOcrButton image={()=>screenshotImage(id)} name={draft.title} libraryId={id} disabled={disabled}/><SavedOcrButton id={id}/><MarkdownExportButton ids={[id]} disabled={disabled}/><button className="secondary-button" disabled={disabled} onClick={()=>void action(()=>saveThen(()=>openLibraryEditor(id)))}>编辑图片标注</button><button className="secondary-button" disabled={disabled||session.status==='saving'} onClick={()=>void flush(id)}><Save size={14}/>保存卡片</button></div></div>
     <div className="knowledge-layout">
       <section className="knowledge-preview" aria-label="卡片图片"><CardImage key={id} id={id} title={draft.title}/><div className="knowledge-times"><span>原图 {card.screenshot.widthPx} × {card.screenshot.heightPx} px</span><span>创建：{format(card.screenshot.createdAt)}</span><span>修改：{format(card.screenshot.updatedAt)}</span></div></section>
       <section className="knowledge-fields" aria-label="笔记编辑区">

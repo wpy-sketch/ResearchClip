@@ -66,3 +66,5 @@ pub mod clipper;
 pub mod projects;
 
 pub mod ocr_index;
+
+pub mod math_ocr;
