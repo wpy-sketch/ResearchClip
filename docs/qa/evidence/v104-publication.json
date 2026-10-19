@@ -1,0 +1,128 @@
+{
+  "result": "PASS",
+  "releaseId": 416850762,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.4",
+  "publishedAt": "2026-10-19T02:47:54Z",
+  "draft": false,
+  "prerelease": false,
+  "isLatest": true,
+  "sourceCommit": "c2656ab84dac42f336e707ac6758f9d924a3ba30",
+  "tag": "v1.0.4",
+  "previousReleasePreserved": true,
+  "previousReleaseCount": 14,
+  "tagCommitVerified": true,
+  "assets": [
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "id": 655046150,
+      "digest": "sha256:c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.4/ResearchClip-MathOCR-Setup-v1.0.4.zip"
+    },
+    {
+      "name": "ResearchClip-v1.0.4-windows-x64.exe",
+      "size": 21219840,
+      "id": 655059173,
+      "digest": "sha256:77420012a1d0eb5882479f4d8ea1463846d4ee0e67b6d4cee78027745ede7d03",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.4/ResearchClip-v1.0.4-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip_1.0.4_x64-setup.exe",
+      "size": 6711385,
+      "id": 655059690,
+      "digest": "sha256:b4271364c5ede834564b0eba0879192e4ccc867166f18f2b87fc638757e61261",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.4/ResearchClip_1.0.4_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 382,
+      "id": 655046359,
+      "digest": "sha256:956e31b316149c63ceaae94d125d23ebb9e7c950756aa34de6da5cb1e4ff9cdd",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.4/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 2010,
+      "id": 655046260,
+      "digest": "sha256:1b4773b9514e2d666b94b3206d78afdac541a7d6c285a90c11f3969c146b8df9",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.4/SOURCE.txt"
+    }
+  ],
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v1.0.4-windows-x64.exe",
+      "size": 21219840,
+      "sha256": "77420012a1d0eb5882479f4d8ea1463846d4ee0e67b6d4cee78027745ede7d03",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 21219840,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip_1.0.4_x64-setup.exe",
+      "size": 6711385,
+      "sha256": "b4271364c5ede834564b0eba0879192e4ccc867166f18f2b87fc638757e61261",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 6711385,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "sha256": "c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 10948,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 2010,
+      "sha256": "1b4773b9514e2d666b94b3206d78afdac541a7d6c285a90c11f3969c146b8df9",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 2010,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 382,
+      "sha256": "956e31b316149c63ceaae94d125d23ebb9e7c950756aa34de6da5cb1e4ff9cdd",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 382,
+          "matched": true
+        }
+      ]
+    }
+  ]
+}

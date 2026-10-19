@@ -75,3 +75,5 @@
 收尾界面检查修正：公式面板复用OCR宽面板和窄窗口单栏布局；图片用自动宽高与max-size保持元素坐标对应真实图像，避免object-fit留白影响局部框选。需人工补验长竖图/宽公式与窄窗口，未把静态源码检查标为运行通过。
 
 收尾实际命令：npm run lint、npm run build（布局修正后）、npm run desktop:bundle、pwsh -File scripts/installer-smoke.ps1 -RunId v104-final -TargetDir src-tauri/target、npm run check:docs、npm run format:rust均退出0。最终原生native-delivery再次PASS，句柄97→97；下载工具复用已有有效模型PASS。MathOCR-Setup ZIP共8文件、10948字节，逐份对比源字节（README仅改为远程文档链接）通过，无权重/运行时/缓存。实际安装未启动生产程序访问用户工作区，未签名，不关闭QA-008历史问题。
+
+远程正式Latest发布、5附件匿名下载与14个旧发布保持PASS，见[发布回执](PUBLICATION-1.0.4.md)。
