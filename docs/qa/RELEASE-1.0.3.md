@@ -47,3 +47,5 @@
 建议：已执行核心检查通过后可交付本轮增量；Windows新增UI按清单人工验收，A04仍单独验收。
 
 收尾：npm run desktop:bundle退出0，EXE/NSIS成功；pwsh -File scripts/installer-smoke.ps1 -RunId v103-final -TargetDir src-tauri/target退出0，实际隔离安装/繁忙拒绝/默认卸载与7份既有用户资料摘要保持通过。npm run lint及check:docs（67文档401链接）退出0。历史QA-008未关闭。
+
+远程正式Latest发布、4附件匿名下载与13个旧发布保持PASS，见[发布回执](PUBLICATION-1.0.3.md)。

@@ -1,0 +1,106 @@
+{
+  "result": "PASS",
+  "releaseId": 416830450,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.3",
+  "publishedAt": "2026-10-19T01:53:34Z",
+  "draft": false,
+  "prerelease": false,
+  "isLatest": true,
+  "sourceCommit": "b4bc8bf65030d0f857850d96d1ed0b43fa26c8ae",
+  "tag": "v1.0.3",
+  "previousReleasePreserved": true,
+  "previousReleaseCount": 13,
+  "tagCommitVerified": true,
+  "assets": [
+    {
+      "name": "ResearchClip-v1.0.3-windows-x64.exe",
+      "size": 20697088,
+      "id": 654967964,
+      "digest": "sha256:d3490e9377b790bb2568243326cfe04ec328e62dc533d247021d8ca1920b3052",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.3/ResearchClip-v1.0.3-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip_1.0.3_x64-setup.exe",
+      "size": 6607173,
+      "id": 654968340,
+      "digest": "sha256:5c4b39e79c9c8386f06ceb0c7f9187a2fa570f3aaf43362944b44b8767512c2c",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.3/ResearchClip_1.0.3_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 278,
+      "id": 654967911,
+      "digest": "sha256:6b48cda4c59d134915bc0f34015e2c281cf6bf23e67f7af74e6f4830ac76f22c",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.3/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1343,
+      "id": 654967865,
+      "digest": "sha256:d698c9f45c1f7ac64ccba7e5848f559a288279379a2dca5af5bd2759ebb30665",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v1.0.3/SOURCE.txt"
+    }
+  ],
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v1.0.3-windows-x64.exe",
+      "size": 20697088,
+      "sha256": "d3490e9377b790bb2568243326cfe04ec328e62dc533d247021d8ca1920b3052",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 20697088,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip_1.0.3_x64-setup.exe",
+      "size": 6607173,
+      "sha256": "5c4b39e79c9c8386f06ceb0c7f9187a2fa570f3aaf43362944b44b8767512c2c",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 6607173,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1343,
+      "sha256": "d698c9f45c1f7ac64ccba7e5848f559a288279379a2dca5af5bd2759ebb30665",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 1343,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 278,
+      "sha256": "6b48cda4c59d134915bc0f34015e2c281cf6bf23e67f7af74e6f4830ac76f22c",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 278,
+          "matched": true
+        }
+      ]
+    }
+  ]
+}
