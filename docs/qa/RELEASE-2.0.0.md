@@ -90,3 +90,8 @@
 - docs/qa/evidence/v200-checks.json
 
 建议进入正式版本发布；Windows人工矩阵仍为NOT_RUN，A06仍BLOCKED，不宣称所有设备通过。
+
+
+## 正式发布
+
+普通Latest发布、六附件匿名下载及16个旧发布保留均PASS，见[发布回执](PUBLICATION-2.0.0.md)。发布后仅修改README/本报告并新增回执和公开证据；源码标签与程序附件不变。

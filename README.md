@@ -6,7 +6,7 @@
 
 [下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v2.0.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
-v2.0.0 聚焦界面与帮助：统一深浅色语义色、收敛圆角与留白；使用指南可展开到操作步骤、搜索正文、定位当前章节并返回目录。保持原有截图、SQLite schema5与动态Markdown分栏。[本版变更](docs/RELEASE-NOTES-2.0.0.md) · [实际验收](docs/qa/RELEASE-2.0.0.md)。
+v2.0.0 聚焦界面与帮助：统一深浅色语义色、收敛圆角与留白；使用指南可展开到操作步骤、搜索正文、定位当前章节并返回目录。保持原有截图、SQLite schema5与动态Markdown分栏。[本版变更](docs/RELEASE-NOTES-2.0.0.md) · [实际验收](docs/qa/RELEASE-2.0.0.md) · [正式发布回执](docs/qa/PUBLICATION-2.0.0.md)。
 
 ## 从这里开始
 

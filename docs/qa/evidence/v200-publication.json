@@ -1,0 +1,157 @@
+{
+  "result": "PASS",
+  "releaseId": 417000822,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v2.0.0",
+  "publishedAt": "2026-10-19T07:10:14Z",
+  "draft": false,
+  "prerelease": false,
+  "isLatest": true,
+  "sourceCommit": "37a3ce89f9e57d03f3f5d27b98db4ebf74e7948d",
+  "tag": "v2.0.0",
+  "previousReleasePreserved": true,
+  "previousReleaseCount": 16,
+  "tagCommitVerified": true,
+  "assets": [
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "id": 655519090,
+      "digest": "sha256:c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v2.0.0/ResearchClip-MathOCR-Setup-v1.0.4.zip"
+    },
+    {
+      "name": "ResearchClip-v2.0.0-windows-x64.exe",
+      "size": 21859328,
+      "id": 655519331,
+      "digest": "sha256:d3ae676038390f6a64ae7b6ff57d88a57364bb6e0ebf813d9b8a65c24aaf0355",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v2.0.0/ResearchClip-v2.0.0-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "id": 655518985,
+      "digest": "sha256:1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v2.0.0/ResearchClip-WebClipper-v1.0.2-windows-x64.zip"
+    },
+    {
+      "name": "ResearchClip_2.0.0_x64-setup.exe",
+      "size": 7054346,
+      "id": 655519746,
+      "digest": "sha256:d64bbfe1a4cfd65c7f7fc88210013e6dcec80b3fdcb9b20335024a4df31c6367",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v2.0.0/ResearchClip_2.0.0_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 495,
+      "id": 655519245,
+      "digest": "sha256:2b9ef7b52a01ed6418e671e32441faf80b3e6b3c15bef255840410081798e4d7",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v2.0.0/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 2105,
+      "id": 655519176,
+      "digest": "sha256:5a595be17ea53facd19951a95ea0fccc2738b9b618aa44f785425c91384327f1",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v2.0.0/SOURCE.txt"
+    }
+  ],
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v2.0.0-windows-x64.exe",
+      "size": 21859328,
+      "sha256": "d3ae676038390f6a64ae7b6ff57d88a57364bb6e0ebf813d9b8a65c24aaf0355",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 21859328,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip_2.0.0_x64-setup.exe",
+      "size": 7054346,
+      "sha256": "d64bbfe1a4cfd65c7f7fc88210013e6dcec80b3fdcb9b20335024a4df31c6367",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 35,
+          "http": "000",
+          "bytes": 0,
+          "matched": false
+        },
+        {
+          "mode": "direct",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 7054346,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "sha256": "1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 541479,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "sha256": "c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 10948,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 2105,
+      "sha256": "5a595be17ea53facd19951a95ea0fccc2738b9b618aa44f785425c91384327f1",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 2105,
+          "matched": true
+        }
+      ]
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 495,
+      "sha256": "2b9ef7b52a01ed6418e671e32441faf80b3e6b3c15bef255840410081798e4d7",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "proxy",
+          "curlExit": 0,
+          "http": "200",
+          "bytes": 495,
+          "matched": true
+        }
+      ]
+    }
+  ]
+}
