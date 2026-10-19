@@ -580,3 +580,8 @@ Windows适配器保存用户选择的HWND/PID和物理客户区快照，不将�
 两次重复只表示疑似底部/输入未生效，不保证无限滚动内容结束；固定底栏、悬浮层和迟到动态加载可能需要排除或人工核对。PNG进入同一CaptureWorkflow（mode=scroll），前端继续使用既有预览、系统保存对话框、素材库及编辑器；数据库schema v3和迁移不变。实际结果见[1.0.1验收](qa/RELEASE-1.0.1.md)。
 
 API/方案核对：[Windows SendInput与UIPI限制](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput)、[GetForegroundWindow](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow)、[WindowFromPoint](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-windowfrompoint)、[Tauri capabilities](https://v2.tauri.app/security/capabilities/)、[OpenCV Rust系统依赖说明](https://github.com/twistedfall/opencv-rust)。实际windows-rs0.62.2函数签名已从安装源码核对并编译；沿用image0.25.10与png0.18.1，不新增第三方依赖。
+
+
+## v1.0.2 A02 网页剪藏
+
+独立browser-extension的MV3主动提取，经Readability/DOMPurify/Turndown生成Markdown；独立Rust Native Messaging Host验证固定origin与长度帧后，连接用户按会话启用的127.0.0.1随机端口/256位令牌IPC。不是HTTP接口，无扩展SQL或通用路径命令。Desktop复用DocumentFiles、markdown_documents和项目事务；请求ID/摘要/受管文件完成幂等与提交恢复，schema v3及001–003不变。正文/图像/消息与超时有界；同源匿名HTTPS图需明确允许，失败保留来源。完整协议、安全边界和许可证见[协议](../browser-extension/PROTOCOL.md)，实际原生/浏览器/受阻UI分别见[验收](qa/RELEASE-1.0.2.md)。

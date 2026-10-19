@@ -5,7 +5,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default tseslint.config(
-  { ignores: ['dist/**', 'node_modules/**', 'src-tauri/**', '.tools/**', 'artifacts/**'] },
+  { ignores: ['dist/**', 'browser-extension/dist/**', 'browser-extension/target/**', 'browser-extension/native-host/target/**', 'browser-extension/protocol/target/**', 'node_modules/**', 'src-tauri/**', '.tools/**', 'artifacts/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },

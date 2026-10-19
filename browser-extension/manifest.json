@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "ResearchClip 网页剪藏",
+  "version": "1.0.2",
+  "description": "用户主动剪藏网页到本机 ResearchClip",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IZtjM7DwXG0zTA71x4+k9Q04PejzFrSuxqVn022XsQFbt4J73Dw0iaZnHNDxTChbWnBMKG/PUisihpyp5EmkDV4FNTvZf/eq0lP9V/N2EEygYNVZxZCa2DJC5JiXiKhzYGr4kM0yfDOi7I5CfIDBjW2G5y5uyfw+kG2kszbWkzCAbqCmd+No7RcA+Qov/YfIYbvJoCaZLo2dmy8nM36ksH6JELoWQOYaSsTEcWubM7VvynIZ2rewOZTlqFYEee/x/7mxcYcDgI6QTKkeqrJGOlLv+MgMT9X/m/wuMskbIuGSqzBzMDeKtH/Ks0YGe267n8Dk4MK64h7l03+ma9qSwIDAQAB",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "nativeMessaging",
+    "storage"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src https:; object-src 'none'; base-uri 'none'"
+  }
+}

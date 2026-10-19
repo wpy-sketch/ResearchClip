@@ -1,0 +1,15 @@
+{
+  "name": "researchclip-browser-extension",
+  "private": true,
+  "version": "1.0.2",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build && vite build --config vite.content.config.ts",
+    "test": "node --experimental-strip-types --test src/types.test.ts",
+    "check": "npm test && npm run build"
+  },
+  "dependencies": {"@mozilla/readability":"0.6.0","dompurify":"3.4.17","turndown":"7.2.4"},
+  "devDependencies": {"@types/chrome":"0.1.32","@types/turndown":"5.0.6","@types/node":"^22.0.0","typescript":"6.0.3","vite":"8.3.4"},
+  "engines": {"node":">=22.12"},
+  "packageManager":"npm@10.9.7"
+}

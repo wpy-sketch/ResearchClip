@@ -2,9 +2,9 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.1 Windows 版本**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v1.0.2 Windows 版本**。
 
-[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.1) · [完整图文使用指南](docs/USER_GUIDE.md) · [v1.0.1实际验收](docs/qa/RELEASE-1.0.1.md) · [发布核验回执](docs/qa/PUBLICATION-1.0.1.md)
+[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v1.0.2) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md)
 
 ## 从这里开始
 
@@ -20,9 +20,9 @@
 - **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
 - **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
 - **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
-- **帮助**：14节任务式说明、详细分步注释、11张离线界面图和原尺寸放大查看。
+- **帮助**：14节任务式说明、详细分步注释、13张离线界面图和原尺寸放大查看。
 
-v1.0.1 新增显式目标窗口的浏览器滚动长截图、手动回退和有界拼接；完整用法见指南第2节。v1.0.0 优化素材首屏密度、批量操作显示层级和指南导航。完整高DPI/多屏、macOS与第三方应用矩阵仍需专项验证；旧退出/托盘问题与本轮复验分别记录在 [QA总表](docs/qa/TEST_REPORT.md)，不把正式Release标识等同于未运行项目通过。
+v1.0.2 新增独立MV3网页剪藏、受限Native Messaging Host、项目保存和标准Markdown联动；完整安装/重试说明见指南第3节。v1.0.1滚动长截图保持。完整高DPI/多屏、浏览器真实工具栏交互、macOS与第三方应用矩阵仍需专项验证；旧退出/托盘问题与本轮复验分别记录在 [QA总表](docs/qa/TEST_REPORT.md)，不把正式Release标识等同于未运行项目通过。
 
 ## 实现与历史记录
 
@@ -47,7 +47,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_1.0.1_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_1.0.2_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc

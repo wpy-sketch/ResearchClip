@@ -6,6 +6,8 @@
     "main"
   ],
   "permissions": [
+    "allow-clipper-status",
+    "allow-clipper-connection",
     "allow-ocr-status",
     "allow-recognize-ocr",
     "allow-copy-ocr-text",

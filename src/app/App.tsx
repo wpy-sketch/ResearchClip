@@ -1,4 +1,5 @@
 import {ScrollCaptureDialog} from '../features/capture/ScrollCapture';
+import {ClipperNotice} from '../features/clipper/Clipper';
 import { lazy, Suspense, useEffect } from 'react';
 import { useAppStore } from './store';
 import { useUiStore } from './ui-store';
@@ -62,6 +63,7 @@ export function App() {
         <PendingCardNotice/>
         <MarkdownExportStatus/>
         <ImportStatus/>
+        <ClipperNotice/>
         <WorkspaceSplit><main id="workspace-content" className="workspace-scroll" tabIndex={-1}>
           {error && <div className="error-banner" role="alert">{error}</div>}
           {settingsError && activeView !== 'settings' && <div className="error-banner" role="alert">{settingsError}<button className="secondary-button ml-3" onClick={() => useUiStore.getState().navigate('settings')}>打开设置</button></div>}

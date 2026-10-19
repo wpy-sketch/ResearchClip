@@ -6,6 +6,8 @@ import {documentOutline} from '../document/outline';
 import projectsImage from '../../../docs/images/v021-projects.png';
 import mathImage from '../../../docs/images/v021-math.png';
 import scrollingImage from '../../../docs/images/v101-scrolling.png';
+import clipperSettingsImage from '../../../docs/images/v102-clipper-settings.png';
+import clipperExtensionImage from '../../../docs/images/v102-clipper-extension.png';
 import captureImage from '../../../docs/images/v100-capture.png';
 import library_gridImage from '../../../docs/images/v100-library-grid.png';
 import library_listImage from '../../../docs/images/v100-library-list.png';
@@ -14,7 +16,7 @@ import cardImage from '../../../docs/images/v100-card.png';
 import compareImage from '../../../docs/images/v100-compare.png';
 import markdownImage from '../../../docs/images/v100-markdown.png';
 import settingsImage from '../../../docs/images/v100-settings.png';
-const guideImages={'images/v101-scrolling.png':scrollingImage,'images/v021-projects.png':projectsImage,'images/v021-math.png':mathImage,'images/v100-capture.png':captureImage,'images/v100-library-grid.png':library_gridImage,'images/v100-library-list.png':library_listImage,'images/v100-editor.png':editorImage,'images/v100-card.png':cardImage,'images/v100-compare.png':compareImage,'images/v100-markdown.png':markdownImage,'images/v100-settings.png':settingsImage};
+const guideImages={'images/v102-clipper-settings.png':clipperSettingsImage,'images/v102-clipper-extension.png':clipperExtensionImage,'images/v101-scrolling.png':scrollingImage,'images/v021-projects.png':projectsImage,'images/v021-math.png':mathImage,'images/v100-capture.png':captureImage,'images/v100-library-grid.png':library_gridImage,'images/v100-library-list.png':library_listImage,'images/v100-editor.png':editorImage,'images/v100-card.png':cardImage,'images/v100-compare.png':compareImage,'images/v100-markdown.png':markdownImage,'images/v100-settings.png':settingsImage};
 const groups=[{name:'开始与采集',sections:[1,2,3]},{name:'资料与项目',sections:[4,5,7]},{name:'图片工具',sections:[6,8,12]},{name:'Markdown 写作',sections:[9,10,11]},{name:'设置与数据安全',sections:[13,14]}];
 export function GuideView(){
  const headings=useMemo(()=>documentOutline(text).filter(h=>h.depth===2),[]),body=useRef<HTMLDivElement>(null),[query,setQuery]=useState(''),[active,setActive]=useState<number|null>(null),[figure,setFigure]=useState<{url:string;alt:string}|null>(null);

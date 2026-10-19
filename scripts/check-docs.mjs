@@ -9,7 +9,7 @@ const read = (file) => readFileSync(join(root, file), 'utf8');
 const collectDocs = (directory) => readdirSync(join(root, directory), { withFileTypes: true })
   .flatMap((entry) => entry.isDirectory() ? collectDocs(join(directory, entry.name))
     : entry.name.endsWith('.md') ? [join(directory, entry.name)] : []);
-const docs = ['README.md', 'AGENTS.md', ...(existsSync(join(root, 'CHANGELOG.md')) ? ['CHANGELOG.md'] : []), ...collectDocs('docs')];
+const docs = ['browser-extension/README.md','browser-extension/PROTOCOL.md','README.md', 'AGENTS.md', ...(existsSync(join(root, 'CHANGELOG.md')) ? ['CHANGELOG.md'] : []), ...collectDocs('docs')];
 let links = 0;
 for (const file of docs) {
   const content = read(file);
@@ -36,6 +36,8 @@ assert.equal(read('src-tauri/Cargo.toml').match(/^version\s*=\s*"([^"]+)"/m)?.[1
 assert.deepEqual(config.app.security.capabilities, [main.identifier, overlay.identifier, pins.identifier, "scroll-control"]);
 assert.deepEqual(main.windows, ['main']);
 assert.deepEqual(overlay.windows, ['capture-overlay-*']);
+const clipperCommands=['clipper_status','clipper_connection']; for(const command of clipperCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::clipper::'+command));}
+const extension=JSON.parse(read('browser-extension/manifest.json'));assert.deepEqual(extension.permissions,['activeTab','scripting','nativeMessaging','storage']);assert.equal(extension.host_permissions,undefined);assert.equal(extension.content_scripts,undefined);assert.equal(extension.background,undefined);
 const scrollingCommands=['scroll_targets','scroll_prepare','scroll_start','scroll_status','scroll_action'];
 const scrolling=JSON.parse(read('src-tauri/capabilities/scroll-control.json'));assert.deepEqual(scrolling.windows,['scroll-control-*']);assert.deepEqual(scrolling.permissions,['allow-scroll-status','allow-scroll-action']);
 const mainCaptureCommands = ['list_displays', 'capture_fullscreen', 'capture_region', 'region_result_png'];

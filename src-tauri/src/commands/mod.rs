@@ -17,8 +17,8 @@ pub mod workflow;
 
 #[derive(Debug, Serialize)]
 pub struct CommandError {
-    code: &'static str,
-    message: String,
+    pub(crate) code: &'static str,
+    pub(crate) message: String,
 }
 
 #[tauri::command]
@@ -62,4 +62,5 @@ mod tests {
     }
 }
 
+pub mod clipper;
 pub mod projects;

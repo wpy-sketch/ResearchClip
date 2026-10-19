@@ -1,3 +1,4 @@
+pub mod clips;
 pub(crate) mod files;
 pub mod knowledge;
 pub mod library;

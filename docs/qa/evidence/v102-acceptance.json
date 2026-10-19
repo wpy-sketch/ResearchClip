@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-19",
+  "frontend": {
+    "files": 45,
+    "tests": 308,
+    "result": "PASS"
+  },
+  "rust": {
+    "tests": 135,
+    "result": "PASS"
+  },
+  "extension": {
+    "tests": 5,
+    "build": "PASS",
+    "cleanInstall": "PASS"
+  },
+  "protocol": {
+    "tests": 3,
+    "result": "PASS"
+  },
+  "databaseSchema": 3,
+  "cases": [
+    {
+      "mode": "actual Edge DOM + production extraction bundle; this suite does not claim native messaging or browser action permission",
+      "result": "PASS",
+      "checks": [
+        "link mode preserves title, HTTP(S) URL and site without scanning form values",
+        "Readability + DOMPurify + Turndown preserves Chinese/English paragraphs, headings, lists, quote, code and resolved links; forms/scripts excluded",
+        "actual DOM selection is converted safely and image placeholder remains associated with its validated source",
+        "selection inside textarea/form rejected rather than reading sensitive input",
+        "image mode enumerates visible compatible user-selectable images and deduplicates repeated source"
+      ],
+      "errors": []
+    },
+    {
+      "mode": "actual Windows Native Messaging Host stdin/stdout -> authenticated local IPC -> actual Tauri/WebView2/SQLite/files; no browser activeTab claim",
+      "result": "PASS",
+      "checks": [
+        "real independent host handles desktop-not-running and rejects a different extension origin with binary UTF-8 framing",
+        "desktop connection is opt-in, actual host ping succeeds, and forged local IPC token is rejected",
+        "actual extracted article persists in chosen project; duplicate request returns same document and changed payload under same ID is rejected",
+        "saved article opens in existing Markdown split with source/code intact, local HTML inert, and explicit missing-asset source status",
+        "real PNG bytes are validated and copied to managed relative assets; standard UTF-8 Markdown and independent disk reads match with original PNG hash unchanged",
+        "existing unsaved document stays on Cancel; explicit discard opens clipped image, editing and saving reuse original Markdown service, close removes split",
+        "stop releases endpoint; actual process restart retains clips/project grouping/edited Markdown and requires explicit re-enable"
+      ],
+      "errors": []
+    },
+    {
+      "mode": "actual unpacked Edge MV3 and native host registered in checked test-owned HKCU entries, isolated browser and Tauri data",
+      "result": "FAIL",
+      "checks": [
+        "real MV3 extension origin uses Chrome runtime.connectNative, browser launches registered host and receives actual SQLite project metadata"
+      ],
+      "errors": [],
+      "failure": "Error: Timeout actual action popup target: ",
+      "ownedRegistrationsRemoved": true
+    },
+    {
+      "mode": "actual standalone Windows Host process with hostile/partial stdio frames, no UI or real user configuration",
+      "result": "PASS",
+      "checks": [
+        "different extension origin rejected before reading stdin",
+        "oversize declared frame rejected without allocating it",
+        "truncated frame, malformed JSON and unknown local path field rejected",
+        "incomplete native caller times out after actual ten-second read deadline",
+        "absent desktop endpoint produces a user-facing recoverable error"
+      ],
+      "errors": []
+    }
+  ],
+  "computerUse": {
+    "result": "BLOCKED",
+    "reason": "Windows browser URL could not be reliably verified; stopped further input"
+  },
+  "notRun": [
+    "full real toolbar action and activeTab end-to-end",
+    "Chrome native interaction",
+    "real browser same-origin image download with omitted Cookie",
+    "macOS",
+    "long resource soak",
+    "production full UI"
+  ],
+  "productionBuild": {
+    "result": "PASS",
+    "exitCode": 0
+  },
+  "installer": {
+    "result": "passed",
+    "userDataFilesHashed": 7,
+    "installerSha256": "967A027AF119EBEFB60AA90885167F7C33298A12C2D81950557655CB3E29CC61",
+    "signatureStatus": "NotSigned",
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ]
+  },
+  "releaseHost": {
+    "mode": "actual standalone Windows Host process with hostile/partial stdio frames, no UI or real user configuration",
+    "checks": [
+      "different extension origin rejected before reading stdin",
+      "oversize declared frame rejected without allocating it",
+      "truncated frame, malformed JSON and unknown local path field rejected",
+      "incomplete native caller times out after actual ten-second read deadline",
+      "absent desktop endpoint produces a user-facing recoverable error"
+    ],
+    "errors": [],
+    "result": "PASS"
+  }
+}

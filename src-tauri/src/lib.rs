@@ -79,6 +79,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(services::clipper::ClipperService::default())
         .manage(Arc::new(services::scrolling::ScrollService::default()))
         .manage(Arc::new(services::pins::PinManager::default()))
         .manage(Arc::new(std::sync::Mutex::new(
@@ -182,6 +183,8 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            commands::clipper::clipper_status,
+            commands::clipper::clipper_connection,
             commands::scrolling::scroll_targets,
             commands::scrolling::scroll_prepare,
             commands::scrolling::scroll_start,
@@ -277,6 +280,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 }
             }
             tauri::RunEvent::Exit => {
+                app.state::<services::clipper::ClipperService>().stop();
                 app.remove_tray_by_id(services::desktop::TRAY_ID);
             }
             _ => {}
