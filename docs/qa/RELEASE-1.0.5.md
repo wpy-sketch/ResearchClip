@@ -121,3 +121,5 @@
 - `src/shared/api/library.test.ts`
 - `src/shared/api/library.ts`
 - `src/styles.css`
+
+远程普通Latest发布、6附件匿名下载与15个旧发布保持PASS，见[发布回执](PUBLICATION-1.0.5.md)。发布后仅新增此回执和核验证据并更新README/本报告；不改变已标记源码与附件。
