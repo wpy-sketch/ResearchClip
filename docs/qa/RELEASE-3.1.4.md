@@ -24,3 +24,12 @@
 ## 未执行项与风险
 
 Windows人工完整工作流、物理高DPI/多显示器和macOS未执行。安装包未签名。两个原有未跟踪发布脚本不包含在本版提交中。
+
+
+## GitHub交付：BLOCKED
+
+本地提交 `8ee6eafcdefa5dd933eb55df716e6a3e41f095f7` 与标签 `v3.1.4` 已创建，尚未成功推送。未创建正式Release；EXE、NSIS、SHA256SUMS与SOURCE已在 `artifacts/publish-v314/` 保留并重新校验哈希。
+
+Git直连、Schannel、OpenSSL和已有7897代理均出现TLS握手失败；代理曾成功读取远端main（0426541），后续上传失败。Edge发布页显示ERR_CONNECTION_CLOSED。连接器只读仓库访问成功，但Git blob写入返回403“Resource not accessible by integration”，另有网络传输失败及一次自动权限审查超时（不是拒绝，不据此判定不安全）。没有更改系统网络、权限或关闭TLS校验。
+
+[机器可读证据](evidence/v314-publication.json)。依照用户先上传v3.1.4再开始A10的顺序，尚未实施A10/v3.1.5；已询问是否允许网络恢复前先开发，未获得答复前不改变顺序。需要可用的GitHub上传网络，或用户明确允许调整顺序。
