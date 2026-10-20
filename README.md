@@ -2,11 +2,13 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v3.0.0 Windows 正式版本**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v3.0.1 Windows 正式版本**。
 
-[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.0.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.0.1) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
 v3.0.0 新增 Windows 手动 WebDAV 资源级同步：系统安全凭据、项目范围、强ETag安全探针、可重试队列与逐项冲突确认；schema6保留既有资料并建立明确标注head。设置新增分类导航，指南扩展同步步骤、排错和21张离线图。**坚果云认证兼容性尚未验收；不可靠条件写入会被拒绝。** [本版变更](docs/RELEASE-NOTES-3.0.0.md) · [实际验收](docs/qa/RELEASE-3.0.0.md) · [正式发布回执](docs/qa/PUBLICATION-3.0.0.md)。
+
+v3.0.1 新增 **窗口截图**：鼠标高亮选择、Tab/Shift+Tab切换、Esc取消，使用Windows Graphics Capture读取窗口自身图像，复用复制、PNG保存、入库及标注编辑。受控本地捕获worker限制资源与超时；不会用桌面裁剪冒充无遮挡窗口截图。无数据库迁移或新第三方依赖。[使用与支持范围](docs/WINDOW-CAPTURE.md) · [本版变更](docs/RELEASE-NOTES-3.0.1.md) · [实际验收](docs/qa/RELEASE-3.0.1.md)。
 
 ## 从这里开始
 
@@ -22,7 +24,7 @@ v3.0.0 新增 Windows 手动 WebDAV 资源级同步：系统安全凭据、项�
 - **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
 - **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
 - **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
-- **帮助**：14章任务式说明、二/三/四级标题、分层目录与正文搜索、21张离线界面图与操作示意和原尺寸放大查看。
+- **帮助**：14章任务式说明、二/三/四级标题、分层目录与正文搜索、22张离线界面图与操作示意和原尺寸放大查看。
 
 v1.0.5 新增非破坏性标注版本历史：显式保存去重、版本说明、只读预览/对比、恢复追加新版本；schema5升级前备份，原图不重复保存。[本轮验收](docs/qa/RELEASE-1.0.5.md) · [发布核验](docs/qa/PUBLICATION-1.0.5.md)。Release继续附带兼容的 v1.0.2 浏览器插件包，不删除既有发布。
 
@@ -57,7 +59,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_3.0.0_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_3.0.1_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc

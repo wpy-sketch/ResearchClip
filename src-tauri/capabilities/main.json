@@ -108,6 +108,7 @@
     "allow-sync-start",
     "allow-sync-stop",
     "allow-sync-resolve",
-    "allow-sync-authorize-documents"
+    "allow-sync-authorize-documents",
+    "allow-capture-window"
   ]
 }

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { captureFullscreen, captureRegion, copyCaptureImage, discardCapture, listDisplays, readCapturePreview, releasePreview, saveCapturePng } from '../../shared/api/capture';
+import { captureFullscreen, captureRegion, captureWindow, copyCaptureImage, discardCapture, listDisplays, readCapturePreview, releasePreview, saveCapturePng } from '../../shared/api/capture';
 import { errorMessage } from '../../shared/api/errors';
 import type { CaptureInfo, CapturePreview, DisplayInfo } from '../../shared/types/capture';
 
@@ -14,6 +14,7 @@ interface CaptureState {
   selectDisplay: (id: string) => void;
   capture: () => Promise<void>;
   captureRegion: () => Promise<void>;
+  captureWindow: () => Promise<void>;
   clearPreview: () => void;
   previewFailed: (url: string) => void;
   copyImage: () => Promise<void>;
@@ -62,6 +63,15 @@ export const useCaptureStore = create<CaptureState>((set, get) => ({
       if (preview) { releasePreview(get().preview); set({ preview }); }
       set({ phase: 'idle' });
     } catch (error) { set({ phase: 'idle', error: errorMessage(error, '区域截图失败，请重试。') }); }
+  },
+  captureWindow: async () => {
+    if (get().phase !== 'idle') return;
+    set({ phase: 'capturing', error: null, notice: null });
+    try {
+      const preview = await captureWindow();
+      if (preview) { releasePreview(get().preview); set({ preview }); }
+      set({ phase: 'idle' });
+    } catch (error) { set({ phase: 'idle', error: errorMessage(error, '窗口截图失败，请选择普通桌面窗口后重试。') }); }
   },
   clearPreview: () => {
     if (get().phase !== 'idle') return;

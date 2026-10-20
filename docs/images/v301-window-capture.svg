@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="530" viewBox="0 0 1000 530">
+<rect width="1000" height="530" rx="20" fill="#111b2c"/>
+<g font-family="Segoe UI,Microsoft YaHei,sans-serif">
+<text x="36" y="49" fill="#f1f5f9" font-size="25" font-weight="600">窗口截图 · 先选择，再捕获窗口自身图像</text>
+<text x="36" y="81" fill="#a8bbd3" font-size="15">操作流程示意图；不是 Windows 原生捕获验收截图。</text>
+<rect x="36" y="110" width="568" height="303" rx="12" fill="#1b2a40" stroke="#41516a"/>
+<rect x="64" y="138" width="436" height="227" rx="9" fill="#263d56" stroke="#79b8ff" stroke-width="4"/>
+<rect x="64" y="138" width="436" height="35" rx="9" fill="#304b68"/>
+<text x="82" y="162" fill="#ecf5ff" font-size="15">待捕获的普通桌面窗口</text>
+<path d="M91 207h215m-215 28h332m-332 28h290m-290 28h194" stroke="#91a8c2" stroke-width="10" stroke-linecap="round"/>
+<rect x="347" y="266" width="224" height="118" rx="10" fill="#e4eaf2" stroke="#8b9eb7"/>
+<text x="366" y="302" fill="#25384d" font-size="15">另一个遮挡窗口</text>
+<text x="366" y="329" fill="#435b73" font-size="13">不从桌面裁剪来冒充</text>
+<text x="366" y="351" fill="#435b73" font-size="13">未遮挡的窗口内容</text>
+<g fill="#dceafd" font-size="17">
+<text x="638" y="148">1  点击「窗口截图」</text>
+<text x="638" y="203">2  移动鼠标，核对高亮边界</text>
+<text x="638" y="258">3  Tab / Shift+Tab 切换候选</text>
+<text x="638" y="313">4  单击捕获，Esc 取消</text>
+<text x="638" y="368">5  复制、保存、编辑或入库</text>
+</g>
+<rect x="36" y="436" width="928" height="62" rx="10" fill="#25344a"/>
+<text x="54" y="460" fill="#fcd789" font-size="14">不支持：最小化、受保护内容、ResearchClip 自身窗口、任意网页 DOM 元素。</text>
+<text x="54" y="483" fill="#bdcde1" font-size="14">窗口移动/缩放、权限拒绝或捕获超时会提示重试；混合 DPI 与多显示器须按实际设备验收。</text>
+</g></svg>

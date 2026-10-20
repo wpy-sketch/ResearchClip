@@ -1,12 +1,12 @@
 import {ScrollCaptureButton} from './ScrollCapture';
 import { useEffect } from 'react';
-import { Camera, Crop, RefreshCw } from 'lucide-react';
+import { Camera, Crop, RefreshCw, PanelsTopLeft } from 'lucide-react';
 import { useAppStore } from '../../app/store';
 import { useCaptureStore } from './store';
 
 export function CaptureControls({ onCaptured,compact=false }: { onCaptured?: () => void; compact?:boolean }) {
   const desktop = useAppStore((state) => state.info?.mode === 'desktop');
-  const { displays, selectedDisplayId, phase, error, refreshDisplays, selectDisplay, capture, captureRegion } = useCaptureStore();
+  const { displays, selectedDisplayId, phase, error, refreshDisplays, selectDisplay, capture, captureRegion, captureWindow } = useCaptureStore();
   useEffect(() => {
     if (desktop && useCaptureStore.getState().displays.length === 0) void refreshDisplays();
   }, [desktop, refreshDisplays]);
@@ -36,9 +36,13 @@ export function CaptureControls({ onCaptured,compact=false }: { onCaptured?: () 
           if (!state.error && state.preview && state.preview.url !== previousUrl) onCaptured?.();
         });
       }}><Camera size={15} /><span>{phase === 'capturing' ? '正在截图…' : '全屏截图'}</span></button>
+      <button className="secondary-button capture-window-button" aria-label="窗口截图" disabled={!desktop || busy} onClick={() => {
+        const previousUrl = useCaptureStore.getState().preview?.url;
+        void captureWindow().then(() => { const state=useCaptureStore.getState(); if(!state.error && state.preview?.mode==='window' && state.preview.url!==previousUrl)onCaptured?.(); });
+      }}><PanelsTopLeft size={15}/><span>窗口截图</span><small>智能选窗</small></button>
       <ScrollCaptureButton disabled={!desktop||busy}/>
     </div>
-    {(!compact||busy)&&<p className="mt-3 text-xs leading-5 text-muted" role="status">{phase === 'capturing' ? '正在截图，主窗口会短暂隐藏。区域选择时按 Esc 取消。' : phase === 'working' ? '正在处理图片操作…' : '截图仅保留为当前预览；选择“保存 PNG”才写入所选目录。'}</p>}
+    {(!compact||busy)&&<p className="mt-3 text-xs leading-5 text-muted" role="status">{phase === 'capturing' ? '正在截图，主窗口会短暂隐藏。区域或窗口选择时按 Esc 取消。' : phase === 'working' ? '正在处理图片操作…' : '截图仅保留为当前预览；选择“保存 PNG”才写入所选目录。'}</p>}
     {!desktop && <p className="mt-2 text-xs text-muted">浏览器预览不具备屏幕捕获能力。</p>}
     {error && <div className="error-banner mt-4" role="alert">{error}</div>}
   </div>;

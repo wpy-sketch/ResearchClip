@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { captureFullscreen, captureRegion, copyCaptureImage, discardCapture, listDisplays, readCapturePreview, releasePreview, saveCapturePng } from '../../shared/api/capture';
+import { captureFullscreen, captureRegion, captureWindow, copyCaptureImage, discardCapture, listDisplays, readCapturePreview, releasePreview, saveCapturePng } from '../../shared/api/capture';
 import { useCaptureStore } from './store';
 import type { CapturePreview } from '../../shared/types/capture';
 
-vi.mock('../../shared/api/capture', () => ({ captureFullscreen: vi.fn(), captureRegion: vi.fn(), listDisplays: vi.fn(), releasePreview: vi.fn(), copyCaptureImage: vi.fn(), discardCapture: vi.fn(), readCapturePreview: vi.fn(), saveCapturePng: vi.fn() }));
+vi.mock('../../shared/api/capture', () => ({ captureFullscreen: vi.fn(), captureRegion: vi.fn(), captureWindow: vi.fn(), listDisplays: vi.fn(), releasePreview: vi.fn(), copyCaptureImage: vi.fn(), discardCapture: vi.fn(), readCapturePreview: vi.fn(), saveCapturePng: vi.fn() }));
 const primary = { id: 'main', name: '主显示器', widthPx: 2560, heightPx: 1440, xPx: 0, yPx: 0, isPrimary: true };
 const secondary = { ...primary, id: 'second', isPrimary: false, xPx: -2560 };
 const preview: CapturePreview = { url: 'blob:first', displayId: 'main', widthPx: 2560, heightPx: 1440 };
@@ -127,4 +127,12 @@ describe('single capture session', () => {
     expect(useCaptureStore.getState()).toMatchObject({ preview: current, error: null });
     expect(releasePreview).not.toHaveBeenCalled();
   });
+});
+
+describe('window capture workflow',()=>{
+  beforeEach(()=>{vi.clearAllMocks();useCaptureStore.setState({phase:'idle',preview:null,error:null,notice:null});});
+  it('uses the native window capture without needing a display selection',async()=>{const preview={captureId:'window-1',mode:'window',displayId:'window',widthPx:640,heightPx:480,url:'blob:window',blob:new Blob()} as CapturePreview;vi.mocked(captureWindow).mockResolvedValue(preview);useCaptureStore.setState({selectedDisplayId:null});await useCaptureStore.getState().captureWindow();expect(useCaptureStore.getState().preview).toBe(preview);expect(useCaptureStore.getState().phase).toBe('idle');});
+  it('retains the previous image when the picker is cancelled',async()=>{const previous={url:'blob:previous'} as CapturePreview;useCaptureStore.setState({preview:previous});vi.mocked(captureWindow).mockResolvedValue(null);await useCaptureStore.getState().captureWindow();expect(useCaptureStore.getState().preview).toBe(previous);expect(releasePreview).not.toHaveBeenCalled();});
+  it('shows a native failure and permits a retry without losing the old image',async()=>{const previous={url:'blob:previous'} as CapturePreview;useCaptureStore.setState({preview:previous});vi.mocked(captureWindow).mockRejectedValue({code:'PERMISSION_DENIED',message:'Windows 拒绝访问'});await useCaptureStore.getState().captureWindow();expect(useCaptureStore.getState().preview).toBe(previous);expect(useCaptureStore.getState().error).toContain('拒绝访问');expect(useCaptureStore.getState().phase).toBe('idle');});
+  it('does not queue a second capture while another operation owns the gate',async()=>{useCaptureStore.setState({phase:'capturing'});await useCaptureStore.getState().captureWindow();expect(captureWindow).not.toHaveBeenCalled();});
 });

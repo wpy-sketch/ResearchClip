@@ -8,6 +8,7 @@ pub mod region_capture;
 pub mod screen_capture;
 pub mod settings;
 pub mod templates;
+pub mod window_capture;
 pub mod workflow;
 
 pub mod clipper;

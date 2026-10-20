@@ -624,3 +624,8 @@ EditorSession沿用现有 store/document/history，image.annotationVersion 标�
 当前实现替代历史A06-M1设计状态，实际协议见[sync/PROTOCOL.md](sync/PROTOCOL.md)。React `features/sync` → main限定的6个Rust命令 → `services/sync/runtime`单后台任务 → engine/transport/credentials → `storage/sync`与schema6。网络调用不持有SQLite锁；不直接上传数据库，不增加通用HTTP/fs权限。窗口退出先请求停止同步，队列保留，等待请求结束后再退出。
 
 SQLite新增head/配置/队列/基线/冲突/tombstone/文档授权；原图不变。项目独立资源、截图bundle及Markdownbundle依赖先落盘验证再事务激活。独立服务商验收状态见[3.0 QA](qa/RELEASE-3.0.0.md)，不能把本地测试当作坚果云通过。前端新增设置任务导航、手动范围/状态/冲突确认；指南复用现有安全MarkdownPreview，无新解析管线。
+
+
+## A07 / v3.0.1 窗口级原生捕获
+
+WindowCaptureService、独立 window-picker 选择层、DWM物理边界与WGC/D3D11图像读取复用既有CapturePermit、CaptureWorkflow和编辑器；无数据库或Annotation变更。职责、预算、权限与失败策略见[窗口截图设计](WINDOW-CAPTURE.md)。

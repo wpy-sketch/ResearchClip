@@ -1,7 +1,7 @@
 {
   "name": "researchclip",
   "private": true,
-  "version": "3.0.0",
+  "version": "3.0.1",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -47,7 +47,8 @@
     "test:smoke:scrolling:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example workflow_input && node scripts/scrolling-native-smoke.mjs",
     "build:extension": "npm --prefix browser-extension run build",
     "test:clipper:browser": "node scripts/clipper-browser-smoke.mjs",
-    "test:clipper:native": "node scripts/clipper-native-smoke.mjs"
+    "test:clipper:native": "node scripts/clipper-native-smoke.mjs",
+    "test:smoke:window:native": "node scripts/with-rust.mjs cargo build --manifest-path src-tauri/Cargo.toml --locked --example window_capture_probe --example workflow_input && node scripts/window-capture-native-smoke.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.12.3",

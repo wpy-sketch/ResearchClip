@@ -156,6 +156,8 @@ pub fn request_exit(app: &AppHandle) -> Result<(), CaptureError> {
         .cancel();
     app.state::<Arc<super::scrolling::ScrollService>>().cancel();
     app.state::<Arc<RegionCaptureService>>().cancel_active();
+    app.state::<Arc<super::window_capture::WindowCaptureService>>()
+        .cancel_active();
     if let Err(error) = show_main(app).and_then(|_| {
         app.emit_to("main", "desktop-action", "exit")
             .map_err(|_| failure("无法通知窗口保存资料；退出已取消，请重试。"))
@@ -185,6 +187,8 @@ pub fn dispatch(app: &AppHandle, action: DesktopAction) -> Result<(), CaptureErr
             }
             app.state::<Arc<super::scrolling::ScrollService>>().cancel();
             app.state::<Arc<RegionCaptureService>>().cancel_active();
+            app.state::<Arc<super::window_capture::WindowCaptureService>>()
+                .cancel_active();
             app.get_webview_window("main")
                 .ok_or_else(|| failure("主窗口不可用。"))?
                 .hide()
@@ -267,6 +271,8 @@ pub fn finish_exit(app: &AppHandle, approved: bool) -> Result<(), CaptureError> 
     }
     app.state::<Arc<super::scrolling::ScrollService>>().cancel();
     app.state::<Arc<RegionCaptureService>>().cancel_active();
+    app.state::<Arc<super::window_capture::WindowCaptureService>>()
+        .cancel_active();
     if let Err(error) = app.state::<Arc<super::pins::PinManager>>().close_all(app) {
         service.phase.store(0, Ordering::Release);
         return Err(error);

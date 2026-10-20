@@ -14,6 +14,7 @@ pub mod pins;
 pub mod region;
 pub mod scrolling;
 pub mod sync;
+pub mod window_capture;
 pub mod workflow;
 
 #[derive(Debug, Serialize)]

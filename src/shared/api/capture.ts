@@ -66,7 +66,7 @@ export function parseCaptureInfo(value: unknown, displayId?: string): CaptureInf
   const result = value as Record<string, unknown>;
   if (typeof result.captureId !== 'string' || !/^[a-zA-Z0-9-]{1,128}$/.test(result.captureId) || typeof result.displayId !== 'string' || !result.displayId || (displayId !== undefined && result.displayId !== displayId)
     || !integer(result.widthPx) || !integer(result.heightPx) || result.widthPx <= 0 || result.heightPx <= 0 || result.widthPx * result.heightPx > MAX_PIXELS
-    || !['fullscreen', 'region', 'scroll'].includes(String(result.mode))) throw new Error('截图结果与前端协议不兼容。');
+    || !['fullscreen', 'region', 'scroll', 'window'].includes(String(result.mode))) throw new Error('截图结果与前端协议不兼容。');
   return value as CaptureInfo;
 }
 
@@ -99,4 +99,10 @@ export async function saveCapturePng(captureId: string): Promise<string | null> 
 
 export function releasePreview(preview: CapturePreview | null) {
   if (preview) URL.revokeObjectURL(preview.url);
+}
+
+export async function captureWindow(): Promise<CapturePreview | null> {
+  requireDesktop();
+  try { return await readCapturePreview(parseCaptureInfo(await invoke<unknown>("capture_window"))); }
+  catch(error) { if(error && typeof error === "object" && "code" in error && error.code === "CANCELLED") return null; throw error; }
 }

@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 pub mod geometry;
 
 #[cfg(target_os = "windows")]
@@ -7,7 +7,7 @@ mod windows;
 pub const MAX_PIXELS: u64 = 16_777_216;
 pub const MAX_PNG_BYTES: usize = 16_777_216 * 4 + 1_048_576;
 
-#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct DisplayInfo {
     /// Current Windows display device name. Re-enumerated on every capture, never a path.
@@ -20,7 +20,7 @@ pub struct DisplayInfo {
     pub is_primary: bool,
 }
 
-#[derive(Clone, Copy, Debug, Serialize, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ErrorCode {
     Unsupported,
@@ -49,7 +49,7 @@ pub enum ErrorCode {
     FileExists,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct CaptureError {
     pub code: ErrorCode,
     pub message: String,

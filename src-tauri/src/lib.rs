@@ -85,6 +85,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(Arc::new(
+            services::window_capture::WindowCaptureService::default(),
+        ))
         .manage(Arc::new(services::sync::runtime::SyncService::default()))
         .manage(Arc::new(services::ocr_index::OcrIndexService::default()))
         .manage(services::clipper::ClipperService::default())
@@ -194,6 +197,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 window
                     .state::<std::sync::Arc<services::region_capture::RegionCaptureService>>()
                     .cancel_active();
+                window
+                    .state::<Arc<services::window_capture::WindowCaptureService>>()
+                    .cancel_active();
             }
         })
         .invoke_handler(tauri::generate_handler![
@@ -238,6 +244,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::get_workspace_status,
             commands::capture::list_displays,
             commands::capture::capture_fullscreen,
+            commands::window_capture::capture_window,
+            commands::window_capture::window_picker_status,
+            commands::window_capture::window_picker_action,
             commands::region::capture_region,
             commands::region::region_overlay_info,
             commands::region::region_overlay_image,

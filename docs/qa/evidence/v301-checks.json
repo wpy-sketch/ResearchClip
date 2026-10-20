@@ -1,0 +1,103 @@
+{
+  "result": "PASS",
+  "version": "3.0.1",
+  "frontendTests": 348,
+  "frontendFiles": 52,
+  "rustTests": 167,
+  "rustIgnoredNotRun": 7,
+  "extensionTests": 5,
+  "cleanNpmPackages": 303,
+  "native": {
+    "mode": "actual Windows WebView2 + DWM/WGC; isolated SQLite/settings, controlled GDI fixture; OS cursor/click and CDP keyboard events",
+    "checks": [
+      "PASS actual desktop occluder differs from unobscured WGC window pixel\nPASS window pixels 626x473, green=137574, red=137574",
+      "PASS cancel refused with Cancelled",
+      "PASS in-progress worker cancellation and cleanup",
+      "PASS minimized window refused",
+      "PASS negative-origin display WGC 619x469; target origin -2448,101 at 96 DPI",
+      "HANDLE TYPES before={\"ALPC Port\": 1, \"Desktop\": 1, \"Directory\": 2, \"EtwRegistration\": 38, \"Event\": 20, \"File\": 24, \"IRTimer\": 4, \"IoCompletion\": 3, \"Key\": 9, \"Mutant\": 1, \"SchedulerSharedData\": 1, \"Section\": 11, \"Semaphore\": 2, \"TpWorkerFactory\": 2, \"WaitCompletionPacket\": 6, \"WindowStation\": 2} after={\"ALPC Port\": 1, \"Desktop\": 1, \"Directory\": 2, \"EtwRegistration\": 38, \"Event\": 20, \"File\": 24, \"IRTimer\": 4, \"IoCompletion\": 3, \"Key\": 9, \"Mutant\": 1, \"SchedulerSharedData\": 1, \"Section\": 11, \"Semaphore\": 2, \"TpWorkerFactory\": 2, \"WaitCompletionPacket\": 6, \"WindowStation\": 2}\nPASS 20 captures, process handles 127->127\nPASS window pixels 626x473, green=137574, red=137574",
+      "PASS protected refused with PermissionDenied",
+      "PASS closed target refused",
+      "PASS Edge WGC 802x731\nPASS window pixels 802x731, green=258354, red=253186",
+      "Esc removes the actual selection window, restores main and releases the capture gate",
+      "physical mouse hover/click selects the target; Tab/Shift+Tab changes candidates; real WGC preview retains both unobscured fixture colors",
+      "PASS Windows clipboard image DIB 626x473",
+      "real PNG system dialog saves exact WGC dimensions; Windows clipboard contains image data; captured window opens in the existing Konva editor and returns",
+      "three additional picker/cancel cycles retain the previous screenshot and leave no picker window"
+    ],
+    "errors": [],
+    "nativeFailures": [],
+    "result": "PASS"
+  },
+  "guideNative": {
+    "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+    "checks": [
+      "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+      "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+      "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+      "all 22 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+      "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 14 chapters; 1180/760/480 layouts do not overflow"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "releaseWorker": {
+    "result": "PASS",
+    "mode": "actual optimized v3.0.1 EXE worker; no Tauri/user database initialization",
+    "size": [
+      626,
+      473
+    ],
+    "green": 137574,
+    "red": 137574,
+    "bytes": 10997,
+    "exitCode": 0
+  },
+  "installer": {
+    "result": "passed",
+    "userDataFilesHashed": 10,
+    "installerSha256": "CCA9094477285FB9DE6ABE818150C016699E763E6FF0BDAF941B1BCC9C1F9578",
+    "installedPayloadSha256": "B1873198CC0120BD51B285142320B02BD32B484F50F676E2ABE8400BAB640A82",
+    "busyUninstallExit": 2,
+    "busyInstallExit": 2,
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ],
+    "metadata": {
+      "version": "3.0.1",
+      "product": "ResearchClip",
+      "publisher": "ResearchClip",
+      "hasIcon": true
+    }
+  },
+  "initialFailedInstallUserDataUnchangedAfterCleanup": true,
+  "manualNotRun": [
+    "125%/150% mixed DPI",
+    "cross-monitor spanning window",
+    "UAC secure desktop/elevated applications",
+    "HDR/RDP/full application matrix",
+    "paste into external image applications",
+    "macOS"
+  ],
+  "commandsExit0": [
+    "npm ci --no-audit --no-fund (native permissions)",
+    "npm run check",
+    "npm run check:rust",
+    "npm run format:rust",
+    "npm run test:rust (native permissions)",
+    "npm run check:docs",
+    "npm --prefix browser-extension test",
+    "npm --prefix browser-extension run build",
+    "npm run tauri -- build --debug --no-bundle",
+    "npm run desktop:bundle (final rerun)",
+    "node scripts/window-capture-native-smoke.mjs a07-final3",
+    "node scripts/guide-native-smoke.mjs a07-final --verify-only",
+    "node scripts/material-ui-smoke.mjs a07-final",
+    "node scripts/guide-reader-smoke.mjs a07-final",
+    "python artifacts/a07-native/release-worker-probe.py",
+    "scripts/installer-smoke.ps1 -RunId a07-v301-rerun -TargetDir src-tauri/target"
+  ]
+}
