@@ -1,11 +1,11 @@
 <!-- A09 delivery status -->
-> **v3.1.3 开发中**：新增本机文献库、DOI 查询预览、BibTeX 导入与引用关联；相似检索移至左侧并支持项目范围。发布与真实验收状态见 [A09 验收](docs/qa/RELEASE-3.1.3.md)。历史 v3.1.2 尚未正式发布，其独立交付阻塞记录保留。
+> **v3.1.4**：调整侧栏顺序，优化导航配色、圆角与指南任务目录、阅读进度。实际验证见 [本版验收](docs/qa/RELEASE-3.1.4.md)。
 
 # ResearchClip
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v3.1.3 Windows；GitHub正式发布尚未完成**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v3.1.4 Windows；GitHub正式发布尚未完成**。
 
 [最新已发布版本v3.1.0](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.0) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
@@ -45,7 +45,7 @@ v1.0.4 新增需校对的离线公式图片转LaTeX；可选Python运行时与17
 
 ## 实现与历史记录
 
-当前版本说明：[3.1.3文献引用](docs/RELEASE-NOTES-3.1.3.md)。此前 [3.1.2本地检索](docs/RELEASE-NOTES-3.1.2.md)。此前 [3.0.0 WebDAV与工作区](docs/RELEASE-NOTES-3.0.0.md)。此前 [1.0.1滚动长截图](docs/RELEASE-NOTES-1.0.1.md)。此前 [1.0.0](docs/RELEASE-NOTES-1.0.0.md)。此前 [0.2.1项目分类与公式](docs/RELEASE-NOTES-0.2.1.md)、[0.2.0项目/批量](docs/RELEASE-NOTES-0.2.0.md)、[0.1.8导入/对比](docs/RELEASE-NOTES-0.1.8.md)、[0.1.5模板](docs/RELEASE-NOTES-0.1.5.md)、[0.1.4高级标注](docs/RELEASE-NOTES-0.1.4.md)、[0.1.3OCR](docs/RELEASE-NOTES-0.1.3.md)、[0.1.1贴图](docs/RELEASE-NOTES-0.1.1.md)。旧发布内容保留。
+当前版本说明：[3.1.4导航与指南](docs/RELEASE-NOTES-3.1.4.md)。此前 [3.1.3文献引用](docs/RELEASE-NOTES-3.1.3.md)。此前 [3.1.2本地检索](docs/RELEASE-NOTES-3.1.2.md)。此前 [3.0.0 WebDAV与工作区](docs/RELEASE-NOTES-3.0.0.md)。此前 [1.0.1滚动长截图](docs/RELEASE-NOTES-1.0.1.md)。此前 [1.0.0](docs/RELEASE-NOTES-1.0.0.md)。此前 [0.2.1项目分类与公式](docs/RELEASE-NOTES-0.2.1.md)、[0.2.0项目/批量](docs/RELEASE-NOTES-0.2.0.md)、[0.1.8导入/对比](docs/RELEASE-NOTES-0.1.8.md)、[0.1.5模板](docs/RELEASE-NOTES-0.1.5.md)、[0.1.4高级标注](docs/RELEASE-NOTES-0.1.4.md)、[0.1.3OCR](docs/RELEASE-NOTES-0.1.3.md)、[0.1.1贴图](docs/RELEASE-NOTES-0.1.1.md)。旧发布内容保留。
 
 存储和既有模块证据：[存储](docs/STORAGE-VALIDATION.md)、[素材库](docs/LIBRARY-VALIDATION.md)、[笔记与搜索](docs/KNOWLEDGE-SEARCH-VALIDATION.md)、[标注与导出](docs/EDITOR-COMPLETION-VALIDATION.md)、[桌面体验](docs/DESKTOP-EXPERIENCE-VALIDATION.md)。历史记录不充当本轮测试结果。
 
@@ -66,7 +66,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_3.1.3_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_3.1.4_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc

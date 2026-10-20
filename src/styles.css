@@ -695,3 +695,17 @@ html[data-window-picker="true"],html[data-window-picker="true"] body,html[data-w
 @media(max-width:800px){.similarity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.similarity-filters{grid-template-columns:1fr 1fr}.similarity-filters>label:first-child{grid-column:1/-1}}@media(max-width:560px){.similarity-panel{padding:12px}.similarity-grid{grid-template-columns:1fr}.similarity-source{flex-wrap:wrap}.similarity-filters{grid-template-columns:1fr}.similarity-group{gap:8px}.similarity-group>span:last-child{display:none}}
 .sync-steps span{border-radius:999px}.sync-settings button:disabled{cursor:not-allowed}
 @media(max-width:520px){.sync-fields{padding:12px}.sync-save{width:100%}.sync-feedback{overflow-wrap:anywhere}}
+
+/* v3.1.4: calm navigation and readable task-oriented manual. */
+.sidebar-settings-entry{margin-top:12px;padding-top:12px;border-top:1px solid var(--rc-edge)}
+.nav-button{border-radius:11px;border:1px solid transparent}
+.nav-button.is-active{border-color:color-mix(in srgb,var(--rc-accent) 30%,var(--rc-edge));box-shadow:inset 3px 0 var(--rc-accent)}
+.guide-search-box .guide-search{margin-bottom:0;min-height:24px}
+.guide-layout nav[aria-label="使用指南目录"]{border:1px solid var(--rc-edge);border-radius:16px;background:var(--rc-container);padding:16px}
+.guide-position{margin-left:auto;font-size:11px;white-space:nowrap;color:var(--rc-muted)}
+.guide-chapter-actions{display:flex!important;position:static!important;justify-content:space-between;gap:12px;border:0!important;background:transparent!important;margin-top:24px;max-height:none!important}
+.guide-content .document-preview table{width:100%;font-size:12px;line-height:1.8;border-collapse:collapse}
+.guide-content .document-preview th{background:var(--rc-container);text-align:left}
+.guide-content .document-preview td,.guide-content .document-preview th{padding:10px;border:1px solid var(--rc-edge)}
+.guide-content .document-preview h4{border-left:3px solid var(--rc-accent);padding-left:12px}
+@media(max-width:700px){.guide-position{display:none}.guide-layout nav[aria-label="使用指南目录"]{padding:12px}}
