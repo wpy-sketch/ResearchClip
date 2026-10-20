@@ -8,7 +8,7 @@
 
 v3.0.0 新增 Windows 手动 WebDAV 资源级同步：系统安全凭据、项目范围、强ETag安全探针、可重试队列与逐项冲突确认；schema6保留既有资料并建立明确标注head。设置新增分类导航，指南扩展同步步骤、排错和21张离线图。**坚果云认证兼容性尚未验收；不可靠条件写入会被拒绝。** [本版变更](docs/RELEASE-NOTES-3.0.0.md) · [实际验收](docs/qa/RELEASE-3.0.0.md) · [正式发布回执](docs/qa/PUBLICATION-3.0.0.md)。
 
-v3.0.1 新增 **窗口截图**：鼠标高亮选择、Tab/Shift+Tab切换、Esc取消，使用Windows Graphics Capture读取窗口自身图像，复用复制、PNG保存、入库及标注编辑。受控本地捕获worker限制资源与超时；不会用桌面裁剪冒充无遮挡窗口截图。无数据库迁移或新第三方依赖。[使用与支持范围](docs/WINDOW-CAPTURE.md) · [本版变更](docs/RELEASE-NOTES-3.0.1.md) · [实际验收](docs/qa/RELEASE-3.0.1.md)。
+v3.0.1 新增 **窗口截图**：鼠标高亮选择、Tab/Shift+Tab切换、Esc取消，使用Windows Graphics Capture读取窗口自身图像，复用复制、PNG保存、入库及标注编辑。受控本地捕获worker限制资源与超时；不会用桌面裁剪冒充无遮挡窗口截图。无数据库迁移或新第三方依赖。[使用与支持范围](docs/WINDOW-CAPTURE.md) · [本版变更](docs/RELEASE-NOTES-3.0.1.md) · [实际验收](docs/qa/RELEASE-3.0.1.md) · [正式发布回执](docs/qa/PUBLICATION-3.0.1.md)。
 
 ## 从这里开始
 

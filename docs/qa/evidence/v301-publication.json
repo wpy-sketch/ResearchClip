@@ -1,0 +1,162 @@
+{
+  "result": "PASS",
+  "releaseId": 417896354,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.0.1",
+  "publishedAt": "2026-10-20T00:59:19Z",
+  "draft": false,
+  "prerelease": false,
+  "isLatest": true,
+  "tagNameVerified": true,
+  "tagCommitVerified": true,
+  "previousReleasePreserved": true,
+  "publicDownloads": [
+    {
+      "name": "ResearchClip-v3.0.1-windows-x64.exe",
+      "size": 24515584,
+      "sha256": "3526bf520b788c3949a58db99e951abfdcde1403a2fb456b2307ba78b9d04d08",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "attempt": 1,
+          "http": "200",
+          "bytes": 24515584,
+          "matched": true,
+          "errorType": null,
+          "seconds": 6.88
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip_3.0.1_x64-setup.exe",
+      "size": 7777970,
+      "sha256": "cca9094477285fb9de6abe818150c016699e763e6ff0bdaf941b1bcc9c1f9578",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "attempt": 1,
+          "http": "200",
+          "bytes": 7777970,
+          "matched": true,
+          "errorType": null,
+          "seconds": 3.79
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "sha256": "1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "attempt": 1,
+          "http": "200",
+          "bytes": 541479,
+          "matched": true,
+          "errorType": null,
+          "seconds": 2.31
+        }
+      ]
+    },
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "sha256": "c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "attempt": 1,
+          "http": "200",
+          "bytes": 10948,
+          "matched": true,
+          "errorType": null,
+          "seconds": 1.58
+        }
+      ]
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1484,
+      "sha256": "b19fb88a0b84bd7c4d3918c08b450c676ffbe4a2098bb36b5b861da025eb78fc",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "attempt": 1,
+          "http": "200",
+          "bytes": 1484,
+          "matched": true,
+          "errorType": null,
+          "seconds": 1.5
+        }
+      ]
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 495,
+      "sha256": "35c525b301ecf99d6cccbde97ace6a09dacd01696623d4c95a00f467d2dcea97",
+      "matched": true,
+      "attempts": [
+        {
+          "mode": "anonymous-direct-python-tls",
+          "attempt": 1,
+          "http": "200",
+          "bytes": 495,
+          "matched": true,
+          "errorType": null,
+          "seconds": 1.69
+        }
+      ]
+    }
+  ],
+  "uploaded": [
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "id": 657875314,
+      "digest": "sha256:c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.1/ResearchClip-MathOCR-Setup-v1.0.4.zip"
+    },
+    {
+      "name": "ResearchClip-v3.0.1-windows-x64.exe",
+      "size": 24515584,
+      "id": 657875471,
+      "digest": "sha256:3526bf520b788c3949a58db99e951abfdcde1403a2fb456b2307ba78b9d04d08",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.1/ResearchClip-v3.0.1-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "id": 657875230,
+      "digest": "sha256:1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.1/ResearchClip-WebClipper-v1.0.2-windows-x64.zip"
+    },
+    {
+      "name": "ResearchClip_3.0.1_x64-setup.exe",
+      "size": 7777970,
+      "id": 657875818,
+      "digest": "sha256:cca9094477285fb9de6abe818150c016699e763e6ff0bdaf941b1bcc9c1f9578",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.1/ResearchClip_3.0.1_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 495,
+      "id": 657875426,
+      "digest": "sha256:35c525b301ecf99d6cccbde97ace6a09dacd01696623d4c95a00f467d2dcea97",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.1/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 1484,
+      "id": 657875404,
+      "digest": "sha256:b19fb88a0b84bd7c4d3918c08b450c676ffbe4a2098bb36b5b861da025eb78fc",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.0.1/SOURCE.txt"
+    }
+  ],
+  "sourceCommit": "6bc863a4a9f673ed3b26eb416f94126e308bd672",
+  "previousReleaseCount": 18
+}

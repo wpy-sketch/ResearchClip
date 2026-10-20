@@ -126,3 +126,7 @@
 - `src/features/capture/WindowPicker.tsx`
 - `src/features/capture/window-picker.test.ts`
 - `src/features/capture/window-picker.ts`
+
+## 8. 正式发布
+
+普通v3.0.1、六附件匿名下载及18个既有发布保留均PASS，见[发布回执](PUBLICATION-3.0.1.md)。源码标签固定，不以回执提交更新程序附件。
