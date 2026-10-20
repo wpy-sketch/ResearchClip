@@ -6,7 +6,7 @@
 
 [下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
-v3.1.0 修复 WebDAV 设置交互：保存回执与状态轮询分离、停止不等待配置锁、凭据错误可见且可修复、编辑中的连接信息不被轮询重置。字段就近提示、按钮条件说明与23幅离线指南图片帮助完成保存→测试→同步。[本版变更](docs/RELEASE-NOTES-3.1.0.md) · [实际验收](docs/qa/RELEASE-3.1.0.md)。真实坚果云认证仍需在你的账号上验证，未放宽安全条件写入门槛。
+v3.1.0 修复 WebDAV 设置交互：保存回执与状态轮询分离、停止不等待配置锁、凭据错误可见且可修复、编辑中的连接信息不被轮询重置。字段就近提示、按钮条件说明与23幅离线指南图片帮助完成保存→测试→同步。[本版变更](docs/RELEASE-NOTES-3.1.0.md) · [实际验收](docs/qa/RELEASE-3.1.0.md) · [正式发布回执](docs/qa/PUBLICATION-3.1.0.md)。真实坚果云认证仍需在你的账号上验证，未放宽安全条件写入门槛。
 
 v3.0.0 新增 Windows 手动 WebDAV 资源级同步：系统安全凭据、项目范围、强ETag安全探针、可重试队列与逐项冲突确认；schema6保留既有资料并建立明确标注head。设置新增分类导航，指南扩展同步步骤、排错和21张离线图。**坚果云认证兼容性尚未验收；不可靠条件写入会被拒绝。** [本版变更](docs/RELEASE-NOTES-3.0.0.md) · [实际验收](docs/qa/RELEASE-3.0.0.md) · [正式发布回执](docs/qa/PUBLICATION-3.0.0.md)。
 
