@@ -664,7 +664,7 @@ impl Storage {
     }
     pub fn library_status(&self) -> Result<LibraryStatus, StorageError> {
         Ok(LibraryStatus {
-            schema_version: 6,
+            schema_version: 7,
             pending_writes: self.connection.query_row(
                 "SELECT count(*) FROM pending_screenshots",
                 [],

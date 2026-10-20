@@ -43,7 +43,7 @@ describe('native persisted library contract',()=>{
   });
   it('validates opaque IDs, managed refs, revisions, dimensions and future annotation versions',()=>{
     expect(parseScreenshot(item)).toEqual(item);for(const bad of [{...item,id:'../x'},{...item,originalImagePath:'C:/private.png'},{...item,revision:0},{...item,widthPx:33},{...item,annotationData:{...doc,schemaVersion:99}}])expect(()=>parseScreenshot(bad)).toThrow();
-    expect(parseSummary({...item,imageAvailable:true,thumbnailAvailable:false}).imageAvailable).toBe(true);expect(()=>parseSummary(item)).toThrow();expect(parseStatus({schemaVersion:6,pendingWrites:1,pendingCleanup:0,warnings:['保留原图']})).toMatchObject({pendingWrites:1});expect(()=>parseStatus({schemaVersion:99})).toThrow();
+    expect(parseSummary({...item,imageAvailable:true,thumbnailAvailable:false}).imageAvailable).toBe(true);expect(()=>parseSummary(item)).toThrow();expect(parseStatus({schemaVersion:7,pendingWrites:1,pendingCleanup:0,warnings:['保留原图']})).toMatchObject({pendingWrites:1});expect(()=>parseStatus({schemaVersion:99})).toThrow();
   });
   it('propagates native errors and refuses browser-only persistence',async()=>{
     native.isTauri.mockReturnValue(false);await expect(createScreenshot(new Blob(['PNG']),'A',doc)).rejects.toThrow('桌面');expect(native.invoke).not.toHaveBeenCalled();native.isTauri.mockReturnValue(true);native.invoke.mockRejectedValue({code:'FILE_UNAVAILABLE',message:'图片保存失败'});await expect(createScreenshot(new Blob(['PNG']),'A',doc)).rejects.toMatchObject({code:'FILE_UNAVAILABLE'});

@@ -1,0 +1,92 @@
+{
+  "version": "3.1.2",
+  "date": "2026-10-20",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "node": "v22.22.2",
+    "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)"
+  },
+  "frontendTestFiles": 55,
+  "frontendTests": 372,
+  "rustTests": 178,
+  "rustIntegrationTests": 7,
+  "extensionTests": 5,
+  "cleanNpmPackages": 303,
+  "schemaVersion": 7,
+  "annotationSchemaVersion": 1,
+  "newNpmOrRustDependencies": false,
+  "nativeSimilarity": {
+    "mode": "actual Windows debug EXE/WebView2, real SQLite and managed test PNGs; local bundled model when --ai; not a screen capture or cloud-provider claim",
+    "checks": [
+      "38 real SQLite-backed test images indexed; exact groups of33 and3 retain all original records; filenames do not change duplicate identity",
+      "exact and approximate modes, thresholds and real result pagination work; scaled image finds the original family; distance is displayed without a probability",
+      "deep/light at1180/760/480 fit without overflow; manual compare enters existing shared viewport; browsing never deletes originals",
+      "existing manual delete confirmation can be cancelled without deleting any screenshot or feature",
+      "corrupt original is isolated and retained; cancelled rebuild keeps completed features; unchanged records are reused without re-decoding",
+      "real system folder dialog validates bundled weights/runtime hashes; actual CPU Qwen recognizes two test images with valid text and identity; second real inference is cancelled and temp resources are released",
+      "normal exit0 and restart preserve schema7/features; index and AI do not start automatically"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "nativeGuide": {
+    "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+    "checks": [
+      "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+      "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+      "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+      "all 25 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+      "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 14 chapters; 1180/760/480 layouts do not overflow"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "nativeWindow": {
+    "result": "PASS",
+    "groups": 14,
+    "errors": [],
+    "nativeFailures": []
+  },
+  "optimizedWorker": {
+    "result": "PASS",
+    "mode": "actual optimized v3.1.2 EXE worker; no Tauri/user database initialization",
+    "size": [
+      626,
+      473
+    ],
+    "green": 137574,
+    "red": 137574,
+    "bytes": 10997,
+    "exitCode": 0
+  },
+  "offlineAssembly": {
+    "result": "PASS",
+    "mode": "actual Windows PowerShell split SHA checks, ZIP64 assembly, safe extraction and full entry hashes; second run refuses existing output",
+    "parts": 3,
+    "archiveBytes": 3269394775,
+    "entries": 39,
+    "exitCode": 0,
+    "existingOutputExitCode": 1,
+    "seconds": 37.7
+  },
+  "installer": {
+    "result": "passed",
+    "userDataFilesHashed": 11,
+    "installerSha256": "F998AAB69EFAD400EA23850F6EB8151E0C7A41779E22B85939773BA3087DC90B",
+    "signatureStatus": "NotSigned",
+    "busyUninstallExit": 2,
+    "busyInstallExit": 2,
+    "installationStillPresent": false
+  },
+  "notRun": [
+    "100000-image performance benchmark",
+    "physical125/150 mixedDPI/RDP/HDR/fullthirdparty matrix",
+    "macOS",
+    "authenticated Nutstore and two physical sync clients"
+  ],
+  "knownLimits": [
+    "Qwen is optional experimental CPU pair advice, can hallucinate or truncate; not mathematical verification",
+    "perceptual distances are not probabilities; original duplicates can carry different notes and annotations",
+    "unsigned binaries, existing QA001/002/008 and frontend chunk warning retained"
+  ]
+}

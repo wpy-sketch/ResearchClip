@@ -152,6 +152,10 @@ pub fn request_exit(app: &AppHandle) -> Result<(), CaptureError> {
         return Ok(());
     }
     app.state::<Arc<super::sync::runtime::SyncService>>().stop();
+    app.state::<Arc<super::similarity_ai::SimilarityAi>>()
+        .cancel();
+    app.state::<Arc<super::similarity_index::SimilarityIndex>>()
+        .cancel();
     app.state::<Arc<super::ocr_index::OcrIndexService>>()
         .cancel();
     app.state::<Arc<super::scrolling::ScrollService>>().cancel();
@@ -234,6 +238,26 @@ pub fn finish_exit(app: &AppHandle, approved: bool) -> Result<(), CaptureError> 
         }
     };
     let sync = app.state::<Arc<super::sync::runtime::SyncService>>();
+    let local_ai = app.state::<Arc<super::similarity_ai::SimilarityAi>>();
+    local_ai.cancel();
+    let ai_deadline = std::time::Instant::now();
+    while local_ai.busy() {
+        if ai_deadline.elapsed() > std::time::Duration::from_secs(3) {
+            service.cancel();
+            return Err(failure("本地AI仍在释放资源，请稍后再次退出。"));
+        }
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
+    let similarity = app.state::<Arc<super::similarity_index::SimilarityIndex>>();
+    similarity.cancel();
+    let deadline = std::time::Instant::now();
+    while similarity.busy() {
+        if deadline.elapsed() > std::time::Duration::from_secs(3) {
+            service.cancel();
+            return Err(failure("图片索引仍在释放资源，请稍后再次退出。"));
+        }
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
     sync.stop();
     if sync.busy() {
         service.cancel();

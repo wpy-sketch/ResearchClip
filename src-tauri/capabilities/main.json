@@ -6,6 +6,15 @@
     "main"
   ],
   "permissions": [
+    "allow-similarity-ai-status",
+    "allow-choose-similarity-ai-bundle",
+    "allow-start-similarity-ai",
+    "allow-cancel-similarity-ai",
+    "allow-similarity-status",
+    "allow-start-similarity-index",
+    "allow-cancel-similarity-index",
+    "allow-find-similar-images",
+    "allow-duplicate-image-groups",
     "allow-annotation-history",
     "allow-annotation-revision",
     "allow-save-annotation-revision",

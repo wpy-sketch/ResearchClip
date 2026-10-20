@@ -20,6 +20,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || mode == "dialog-open-compare"
         || mode == "dialog-save-md"
         || mode == "dialog-open-md"
+        || mode == "dialog-model-folder"
     {
         use windows::Win32::{
             Foundation::{HWND, LPARAM, WPARAM},
@@ -67,7 +68,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             pid: args.get(2).ok_or("expected owned app PID")?.parse()?,
             hwnd: None,
             count: 0,
-            titles: if mode == "dialog-save-md" {
+            titles: if mode == "dialog-model-folder" {
+                vec![
+                    "选择完整离线包中的 similarity-ai 文件夹"
+                        .encode_utf16()
+                        .collect(),
+                ]
+            } else if mode == "dialog-save-md" {
                 vec!["保存 Markdown 文档".encode_utf16().collect()]
             } else if mode == "dialog-open-md" {
                 vec!["打开 Markdown 文档".encode_utf16().collect()]
@@ -121,6 +128,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             || mode == "dialog-open-compare"
             || mode == "dialog-save-md"
             || mode == "dialog-open-md"
+            || mode == "dialog-model-folder"
         {
             #[derive(Default)]
             struct Fields {
@@ -167,16 +175,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .ok_or("no parent")?
                     .canonicalize()?
                     .starts_with(root)
-                || !path.extension().is_some_and(|s| {
-                    if mode == "dialog-save-md" || mode == "dialog-open-md" {
-                        s == "md"
-                    } else {
-                        s == "png"
-                            || s == "json"
-                            || (mode == "dialog-open-compare"
-                                && ["jpg", "jpeg", "webp", "JPEG"].iter().any(|ext| s == *ext))
-                    }
-                })
+                || !(mode == "dialog-model-folder" && path.is_dir()
+                    || path.extension().is_some_and(|s| {
+                        if mode == "dialog-save-md" || mode == "dialog-open-md" {
+                            s == "md"
+                        } else {
+                            s == "png"
+                                || s == "json"
+                                || (mode == "dialog-open-compare"
+                                    && ["jpg", "jpeg", "webp", "JPEG"].iter().any(|ext| s == *ext))
+                        }
+                    }))
             {
                 return Err("test saves must stay in artifacts".into());
             }

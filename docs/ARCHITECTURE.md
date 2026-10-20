@@ -631,3 +631,8 @@ SQLite新增head/配置/队列/基线/冲突/tombstone/文档授权；原图不�
 ## A07 / v3.0.1 窗口级原生捕获
 
 WindowCaptureService、独立 window-picker 选择层、DWM物理边界与WGC/D3D11图像读取复用既有CapturePermit、CaptureWorkflow和编辑器；无数据库或Annotation变更。职责、预算、权限与失败策略见[窗口截图设计](WINDOW-CAPTURE.md)。
+
+
+## v3.1.2 A08 增量
+
+详见[本地相似检索](SIMILARITY.md)与[实际验收](qa/RELEASE-3.1.2.md)。schema7增加派生图片特征；不改原图、Annotation或WebDAV协议。单线程有界后台索引、受限IPC及可选本地固定Qwen进程复用既有素材库、对比和主题。当前请求不包含PDF或独立备份系统。

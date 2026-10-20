@@ -1,6 +1,15 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "similarity_ai_status",
+            "choose_similarity_ai_bundle",
+            "start_similarity_ai",
+            "cancel_similarity_ai",
+            "similarity_status",
+            "start_similarity_index",
+            "cancel_similarity_index",
+            "find_similar_images",
+            "duplicate_image_groups",
             "sync_status",
             "sync_configure",
             "sync_start",

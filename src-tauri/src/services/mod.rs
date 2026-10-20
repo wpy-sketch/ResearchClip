@@ -20,4 +20,7 @@ pub mod stitching;
 pub mod ocr_index;
 
 pub mod math_ocr;
+pub mod similarity;
+pub mod similarity_ai;
+pub mod similarity_index;
 pub mod sync;

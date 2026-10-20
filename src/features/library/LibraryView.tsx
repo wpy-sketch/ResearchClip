@@ -1,5 +1,6 @@
 import {useCaptureStore} from '../capture/store';
 import {OcrIndexControls} from '../ocr-index/OcrIndex';
+import {SimilarityButton} from '../similarity/SimilarityPanel';
 import {useSelectionStore} from '../projects/selection';
 import {useBatchStore} from '../projects/batch';
 import {ProjectBar} from '../projects/ProjectBar';
@@ -79,7 +80,7 @@ export function LibraryView({favorites}: {favorites:boolean}) {
       {tagError&&<p role="alert" className="error-banner my-3">{tagError}<button className="secondary-button ml-2" onClick={()=>void useTagStore.getState().refresh()}>重试读取标签</button></p>}
       {filtered&&<div className="library-filter-chips">{query&&<span>关键词：{query}</span>}{tagIds.map(id=><button key={id} onClick={()=>void refresh(favorites,{tagIds:tagIds.filter(t=>t!==id)})}>{tags.find(t=>t.id===id)?.name??'已移除标签'} ×</button>)}</div>}
       <div className="library-controls">
-        <p className="library-count">{loading ? '正在读取素材库…' : `共 ${total} 张${favorites ? '收藏' : '素材'}`}</p>
+        <div className="library-similarity-entry"><p className="library-count">{loading ? '正在读取素材库…' : `共 ${total} 张${favorites ? '收藏' : '素材'}`}</p><SimilarityButton/></div>
         <div className="flex flex-wrap items-center gap-2">
           <label className="library-sort">排序
             <select aria-label="素材排序" value={sort} disabled={busy || !isTauri()}

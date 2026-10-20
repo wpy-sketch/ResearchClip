@@ -7,7 +7,7 @@ export interface Screenshot extends Omit<ScreenshotSummary,'imageAvailable'|'thu
 export const LIBRARY_PAGE_SIZE = 24;
 export type LibrarySort = 'createdDesc' | 'createdAsc';
 export interface ScreenshotPage {items:ScreenshotSummary[]; total:number; page:number; limit:number; sort:LibrarySort}
-export interface LibraryStatus {schemaVersion:6; pendingWrites:number; pendingCleanup:number; warnings:string[]}
+export interface LibraryStatus {schemaVersion:7; pendingWrites:number; pendingCleanup:number; warnings:string[]}
 export interface Note {id:string;screenshotId:string;content:string;sourceUrl:string|null;createdAt:number;updatedAt:number;revision:number}
 export interface Tag {id:string;name:string}
 export type SearchSource='all'|'title'|'notes'|'tags'|'ocr';
@@ -23,7 +23,7 @@ function metadata(v:unknown) {
 }
 export function parseScreenshot(v:unknown):Screenshot {const meta=metadata(v);if(!object(v))throw new Error('素材记录无效。');const annotationData=parseDocument(v.annotationData);if(annotationData.image.widthPx!==meta.widthPx||annotationData.image.heightPx!==meta.heightPx)throw new Error('素材与标注尺寸不一致。');if(v.annotationVersion!==undefined&&!integer(v.annotationVersion,1))throw Error("标注版本编号无效。");return {...meta,annotationData,...(v.annotationVersion!==undefined?{annotationVersion:v.annotationVersion as number}:{})};}
 export function parseSummary(v:unknown):ScreenshotSummary {const meta=metadata(v);if(!object(v)||typeof v.imageAvailable!=='boolean'||typeof v.thumbnailAvailable!=='boolean')throw new Error('素材列表响应无效。');if(v.matchExcerpt!==undefined&&(!object(v.matchExcerpt)||!['title','notes','tags','ocr'].includes(String(v.matchExcerpt.source))||typeof v.matchExcerpt.text!=='string'||Array.from(v.matchExcerpt.text).length>140||typeof v.matchExcerpt.keyword!=='string'||Array.from(v.matchExcerpt.keyword).length>200))throw Error('搜索摘要无效。');return {...meta,imageAvailable:v.imageAvailable,thumbnailAvailable:v.thumbnailAvailable,...(v.matchExcerpt?{matchExcerpt:v.matchExcerpt as {source:string;text:string;keyword:string}}:{})};}
-export function parseStatus(v:unknown):LibraryStatus {if(!object(v)||v.schemaVersion!==6||!integer(v.pendingWrites)||!integer(v.pendingCleanup)||!Array.isArray(v.warnings)||v.warnings.some(s=>typeof s!=='string'))throw new Error('工作区状态无效。');return {schemaVersion:6,pendingWrites:v.pendingWrites,pendingCleanup:v.pendingCleanup,warnings:v.warnings as string[]};}
+export function parseStatus(v:unknown):LibraryStatus {if(!object(v)||v.schemaVersion!==7||!integer(v.pendingWrites)||!integer(v.pendingCleanup)||!Array.isArray(v.warnings)||v.warnings.some(s=>typeof s!=='string'))throw new Error('工作区状态无效。');return {schemaVersion:7,pendingWrites:v.pendingWrites,pendingCleanup:v.pendingCleanup,warnings:v.warnings as string[]};}
 function desktop(){if(!isTauri())throw new Error('素材库持久化需要在桌面应用中使用。');}
 async function call(name:string,args?:Record<string,unknown>|ArrayBuffer):Promise<unknown>{desktop();return invoke(name,args);}
 export async function packScreenshot(blob:Blob,title:string,document:AnnotationDocument):Promise<ArrayBuffer>{

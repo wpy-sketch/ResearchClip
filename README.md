@@ -2,9 +2,11 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v3.1.0 Windows 正式版本**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前版本：v3.1.2 Windows 正式版本**。
 
-[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.0) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[下载当前版本](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.2) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+
+v3.1.2 新增 **本地相似图片检索**：主动生成原图特征索引，SHA完全重复组、可调整pHash/颜色距离与双图人工比较，不自动删除。可选Qwen3.5 4B随完整离线分卷包提供；轻量NSIS不含数GB模型。模型可能出错或截断，只作辅助。[算法与离线包](docs/SIMILARITY.md) · [本版变更](docs/RELEASE-NOTES-3.1.2.md) · [实际验收](docs/qa/RELEASE-3.1.2.md)。
 
 v3.1.0 修复 WebDAV 设置交互：保存回执与状态轮询分离、停止不等待配置锁、凭据错误可见且可修复、编辑中的连接信息不被轮询重置。字段就近提示、按钮条件说明与23幅离线指南图片帮助完成保存→测试→同步。[本版变更](docs/RELEASE-NOTES-3.1.0.md) · [实际验收](docs/qa/RELEASE-3.1.0.md) · [正式发布回执](docs/qa/PUBLICATION-3.1.0.md)。真实坚果云认证仍需在你的账号上验证，未放宽安全条件写入门槛。
 
@@ -26,7 +28,7 @@ v3.0.1 新增 **窗口截图**：鼠标高亮选择、Tab/Shift+Tab切换、Esc�
 - **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
 - **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
 - **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
-- **帮助**：14章任务式说明、二/三/四级标题、分层目录与正文搜索、22张离线界面图与操作示意和原尺寸放大查看。
+- **帮助**：14章任务式说明、二/三/四级标题、分层目录与正文搜索、25张离线界面图与操作示意和原尺寸放大查看。
 
 v1.0.5 新增非破坏性标注版本历史：显式保存去重、版本说明、只读预览/对比、恢复追加新版本；schema5升级前备份，原图不重复保存。[本轮验收](docs/qa/RELEASE-1.0.5.md) · [发布核验](docs/qa/PUBLICATION-1.0.5.md)。Release继续附带兼容的 v1.0.2 浏览器插件包，不删除既有发布。
 
@@ -40,7 +42,7 @@ v1.0.4 新增需校对的离线公式图片转LaTeX；可选Python运行时与17
 
 ## 实现与历史记录
 
-当前版本说明：[3.0.0 WebDAV与工作区](docs/RELEASE-NOTES-3.0.0.md)。此前 [1.0.1滚动长截图](docs/RELEASE-NOTES-1.0.1.md)。此前 [1.0.0](docs/RELEASE-NOTES-1.0.0.md)。此前 [0.2.1项目分类与公式](docs/RELEASE-NOTES-0.2.1.md)、[0.2.0项目/批量](docs/RELEASE-NOTES-0.2.0.md)、[0.1.8导入/对比](docs/RELEASE-NOTES-0.1.8.md)、[0.1.5模板](docs/RELEASE-NOTES-0.1.5.md)、[0.1.4高级标注](docs/RELEASE-NOTES-0.1.4.md)、[0.1.3OCR](docs/RELEASE-NOTES-0.1.3.md)、[0.1.1贴图](docs/RELEASE-NOTES-0.1.1.md)。旧发布内容保留。
+当前版本说明：[3.1.2本地检索](docs/RELEASE-NOTES-3.1.2.md)。此前 [3.0.0 WebDAV与工作区](docs/RELEASE-NOTES-3.0.0.md)。此前 [1.0.1滚动长截图](docs/RELEASE-NOTES-1.0.1.md)。此前 [1.0.0](docs/RELEASE-NOTES-1.0.0.md)。此前 [0.2.1项目分类与公式](docs/RELEASE-NOTES-0.2.1.md)、[0.2.0项目/批量](docs/RELEASE-NOTES-0.2.0.md)、[0.1.8导入/对比](docs/RELEASE-NOTES-0.1.8.md)、[0.1.5模板](docs/RELEASE-NOTES-0.1.5.md)、[0.1.4高级标注](docs/RELEASE-NOTES-0.1.4.md)、[0.1.3OCR](docs/RELEASE-NOTES-0.1.3.md)、[0.1.1贴图](docs/RELEASE-NOTES-0.1.1.md)。旧发布内容保留。
 
 存储和既有模块证据：[存储](docs/STORAGE-VALIDATION.md)、[素材库](docs/LIBRARY-VALIDATION.md)、[笔记与搜索](docs/KNOWLEDGE-SEARCH-VALIDATION.md)、[标注与导出](docs/EDITOR-COMPLETION-VALIDATION.md)、[桌面体验](docs/DESKTOP-EXPERIENCE-VALIDATION.md)。历史记录不充当本轮测试结果。
 
@@ -61,7 +63,7 @@ npm run desktop:build
 
 # Windows NSIS 安装包（当前用户安装）
 npm run desktop:bundle
-# src-tauri/target/release/bundle/nsis/ResearchClip_3.0.1_x64-setup.exe
+# src-tauri/target/release/bundle/nsis/ResearchClip_3.1.2_x64-setup.exe
 
 # 旧release窗口正在运行时，可构建到独立Windows target目录
 npm run tauri -- build --no-bundle --target x86_64-pc-windows-msvc

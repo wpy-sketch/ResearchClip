@@ -26,6 +26,7 @@ const EditorView = lazy(() => import('../features/editor/EditorView').then((modu
 import {WorkspaceSplit} from '../features/document/WorkspaceSplit';
 import {ImportStatus} from '../features/import/ImportControls';
 import {OcrPanel} from '../features/ocr/OcrPanel';
+import {SimilarityPanel} from '../features/similarity/SimilarityPanel';
 
 export function App() {
   const initialize = useAppStore((state) => state.initialize);
@@ -74,6 +75,7 @@ export function App() {
       </div>
       <WorkspaceDialogs />
       <OcrPanel/><MathOcrPanel/>
+      <SimilarityPanel/>
       <ScrollCaptureDialog/>
     </div>
   );

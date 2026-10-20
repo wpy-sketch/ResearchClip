@@ -7,6 +7,7 @@ import type { ScreenshotSummary } from '../../shared/api/library';
 import { errorMessage } from '../../shared/api/errors';
 
 import {InsertButton} from '../document/InsertButton';
+import {SimilarityButton} from '../similarity/SimilarityPanel';
 
 function Thumbnail({item, disabled, onOpen}: {item:ScreenshotSummary; disabled:boolean; onOpen:(event:MouseEvent)=>void}) {
   const [attempt, setAttempt] = useState(0);
@@ -70,6 +71,7 @@ export function LibraryCard({item, disabled, onOpen, onEdit, onFavorite, onRenam
       <div className="library-card-actions">
         <button className="library-edit-button" disabled={disabled} onClick={onEdit}>编辑标注</button>
         <div className="flex gap-1">
+          <SimilarityButton id={item.id} title={item.title}/>
           <button className={`icon-button ${item.isFavorite ? 'text-accent' : ''}`} aria-pressed={item.isFavorite}
             aria-label={`${item.isFavorite ? '取消收藏' : '收藏'} ${item.title}`} title={item.isFavorite ? '取消收藏' : '收藏'} disabled={disabled} onClick={onFavorite}>
             <Star size={15} fill={item.isFavorite ? 'currentColor' : 'none'}/>

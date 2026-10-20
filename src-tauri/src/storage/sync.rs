@@ -925,7 +925,7 @@ mod tests {
         drop(old);
         let s = Storage::open(root.path().into()).unwrap();
         assert_eq!(s.screenshot_image(&id, false).unwrap(), image);
-        assert_eq!(s.status().unwrap().schema_version, 6);
+        assert_eq!(s.status().unwrap().schema_version, 7);
         assert_eq!(s.get_screenshot(&id).unwrap().annotation_data, doc);
         assert_eq!(
             s.annotation_history(&id, i64::MAX, 50).unwrap()[0].revision_id,

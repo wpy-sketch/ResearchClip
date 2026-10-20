@@ -1,0 +1,9 @@
+import {describe,it,expect} from 'vitest';
+import {parseStatus,parseJob,parseMatches,parseGroups,parseAi} from './api';
+const id='a'.repeat(32),hash='b'.repeat(64);
+describe('similarity bounded IPC contracts',()=>{
+ it('keeps AI text untrusted, bounded and associated with one exact pair',()=>{const value={available:true,model:'Qwen3.5 4B',job:{phase:'completed',text:'<script>alert(1)</script>',error:null,generation:1,pair:[id,'c'.repeat(32)]}};expect(parseAi(value).job.text).toContain('<script>');expect(()=>parseAi({...value,job:{...value.job,pair:['../bad',id]}})).toThrow();expect(()=>parseAi({...value,job:{...value.job,text:'x'.repeat(8193)}})).toThrow();});
+ it('keeps deterministic distance and exact identity distinct',()=>{const result=parseMatches({items:[{id,title:'中文 A',widthPx:100,heightPx:60,createdAt:1,exact:false,distance:8,differenceDistance:10,colorDistance:17}],total:1,page:0,stale:0});expect(result.items[0].distance).toBe(8);expect(result.items[0].exact).toBe(false);expect(result.items[0]).not.toHaveProperty('probability');});
+ it('validates grouped originals and bounded pages',()=>{expect(parseGroups({items:[{referenceId:id,contentHash:hash,count:2,title:'A'}],total:1,page:0}).items[0].count).toBe(2);expect(()=>parseGroups({items:[{referenceId:'../bad',contentHash:hash,count:1,title:'A'}],total:1,page:0})).toThrow();expect(()=>parseMatches({items:[],page:200,total:0,stale:0})).toThrow();});
+ it('validates versioned statistics and progress',()=>{const job={phase:'running',total:10,scanned:2,computed:1,skipped:1,failed:0,error:null,generation:1};expect(parseStatus({stats:{total:10,ready:1,failed:0,algorithmVersion:1},job}).job.scanned).toBe(2);expect(()=>parseStatus({stats:{total:10,ready:1,failed:0,algorithmVersion:99},job})).toThrow();expect(()=>parseJob({...job,phase:'unknown'})).toThrow();expect(()=>parseJob({...job,scanned:-1})).toThrow();});
+});

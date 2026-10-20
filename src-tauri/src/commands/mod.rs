@@ -13,6 +13,8 @@ pub mod ocr;
 pub mod pins;
 pub mod region;
 pub mod scrolling;
+pub mod similarity;
+pub mod similarity_ai;
 pub mod sync;
 pub mod window_capture;
 pub mod workflow;

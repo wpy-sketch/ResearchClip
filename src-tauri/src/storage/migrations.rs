@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 6;
+pub const SCHEMA_VERSION: u32 = 7;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -96,10 +96,20 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
     if version < 6 {
         apply_migration(connection, 6, include_str!("../../migrations/006_sync.sql"))?;
     }
+    if version < 7 {
+        apply_migration(
+            connection,
+            7,
+            include_str!("../../migrations/007_image_features.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 7 {
+        connection.prepare("SELECT screenshot_id,content_hash,perceptual_hash,difference_hash,descriptor,hash_algorithm_version,source_stamp,status,error,updated_at FROM image_features LIMIT 0")?;
+    }
     // Verify the known schema before reporting storage as ready.
     let _: String = connection.query_row(
         "SELECT value FROM app_metadata WHERE key = 'workspace_initialized_at'",
@@ -196,7 +206,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 6);
+        assert_eq!(storage.status().unwrap().schema_version, 7);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()

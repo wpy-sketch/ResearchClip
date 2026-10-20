@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="390" viewBox="0 0 1100 390" role="img" aria-labelledby="title desc">
+<title id="title">相似图片检索：索引、筛选、人工判断</title><desc id="desc">用户主动更新索引，哈希与颜色特征用于筛选，结果经过人工双图对比；可选离线模型只提供建议，不自动删除。</desc>
+<rect width="1100" height="390" rx="20" fill="#f4f7fc"/><g font-family="Segoe UI,Microsoft YaHei,sans-serif" fill="#19365e"><text x="32" y="46" font-size="24" font-weight="700">先筛选，再比较，保留你的决定权</text>
+<g fill="#ffffff" stroke="#c8d7ed" stroke-width="2"><rect x="32" y="85" width="240" height="128" rx="14"/><rect x="315" y="85" width="320" height="128" rx="14"/><rect x="680" y="85" width="385" height="128" rx="14"/><rect x="315" y="258" width="750" height="92" rx="14"/></g>
+<g font-size="20" font-weight="700"><text x="52" y="118">1 主动更新索引</text><text x="335" y="118">2 选择筛选方式</text><text x="700" y="118">3 打开原图，人工比较</text><text x="335" y="293">可选：离线 Qwen3.5 4B 辅助观察</text></g>
+<g font-size="16"><text x="52" y="152">每次处理一张受管原图</text><text x="52" y="180">可取消，完成记录会保留</text><text x="335" y="152">完全重复：SHA-256 字节一致</text><text x="335" y="180">视觉接近：pHash 距离＋颜色差</text><text x="700" y="152">进入已有双图对比／知识卡片</text><text x="700" y="180">笔记和标注可能不同，不自动删图</text><text x="335" y="323">完整离线包 · 明确点击后推理 · 可能错误或截断 · 不执行模型建议</text></g>
+<g fill="none" stroke="#346ecb" stroke-width="3"><path d="M279 148h25m-8-8 8 8-8 8M643 148h26m-8-8 8 8-8 8M872 221v25m-8-8 8 8 8-8"/></g><text x="32" y="366" font-size="14">操作示意图；不表示真实窗口截图。距离不是相似概率，模型意见不是数学正确性验证。</text></g></svg>

@@ -90,6 +90,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
         ))
         .manage(Arc::new(services::sync::runtime::SyncService::default()))
         .manage(Arc::new(services::ocr_index::OcrIndexService::default()))
+        .manage(Arc::new(
+            services::similarity_index::SimilarityIndex::default(),
+        ))
         .manage(services::clipper::ClipperService::default())
         .manage(Arc::new(services::scrolling::ScrollService::default()))
         .manage(Arc::new(services::pins::PinManager::default()))
@@ -139,6 +142,10 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                     services::math_ocr::MathOcrService::unavailable(math_root, e.message)
                 });
             app.manage(Arc::new(math));
+            app.manage(Arc::new(services::similarity_ai::SimilarityAi::new(
+                path.join("similarity-ai-v1.json"),
+                app.path().resource_dir()?.join("similarity-ai"),
+            )));
             app.manage(Arc::new(commands::library::LibraryService::new(data_root)));
             app.manage(Arc::clone(&settings));
             if let Err(error) = services::desktop::install_tray(app.handle()) {
@@ -203,6 +210,15 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             }
         })
         .invoke_handler(tauri::generate_handler![
+            commands::similarity_ai::similarity_ai_status,
+            commands::similarity_ai::choose_similarity_ai_bundle,
+            commands::similarity_ai::start_similarity_ai,
+            commands::similarity_ai::cancel_similarity_ai,
+            commands::similarity::similarity_status,
+            commands::similarity::start_similarity_index,
+            commands::similarity::cancel_similarity_index,
+            commands::similarity::find_similar_images,
+            commands::similarity::duplicate_image_groups,
             commands::sync::sync_status,
             commands::sync::sync_configure,
             commands::sync::sync_start,
