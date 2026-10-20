@@ -7,6 +7,7 @@ import {useDocumentStore} from '../document/store';
 import {useProjectStore} from '../projects/store';
 import {useUiStore} from '../../app/ui-store';
 import {useLibraryStore} from '../library/store';
+import {useReferenceStore} from '../references/store';
 export function ClipperNotice(){
  const notice=useClipperStore(s=>s.notice),error=useClipperStore(s=>s.error);
  useEffect(()=>{
@@ -15,7 +16,7 @@ export function ClipperNotice(){
   return()=>{active=false;stop?.();};
  },[]);
  if(!notice)return error?<div className="error-banner" role="alert">{error}</div>:null;
- return <div className="clipper-notice" role="status"><Globe size={17}/><div><strong>{notice.duplicate?'剪藏已存在':'网页已保存'}</strong><span>{notice.title}</span></div><button className="secondary-button" onClick={()=>void useDocumentStore.getState().openProject(notice.documentId)}><FileText size={15}/>打开 Markdown</button><button className="icon-button" aria-label="关闭剪藏通知" onClick={()=>useClipperStore.getState().dismiss()}><X size={16}/></button></div>;
+ return <div className="clipper-notice" role="status"><Globe size={17}/><div><strong>{notice.duplicate?'剪藏已存在':'网页已保存'}</strong><span>{notice.title}</span></div><button className="secondary-button" onClick={()=>void useDocumentStore.getState().openProject(notice.documentId)}><FileText size={15}/>打开 Markdown</button><button className="secondary-button" onClick={()=>void (async()=>{await useDocumentStore.getState().openProject(notice.documentId);const state=useDocumentStore.getState(),project=useProjectStore.getState();if(!state.pending&&state.document&&state.token===project.token&&project.current?.id===notice.documentId)useReferenceStore.getState().show({kind:'document',id:notice.documentId},state.document.id);})()}>关联文献</button><button className="icon-button" aria-label="关闭剪藏通知" onClick={()=>useClipperStore.getState().dismiss()}><X size={16}/></button></div>;
 }
 export function ClipperSettings(){
  const {status,busy,error,connect,refresh}=useClipperStore();

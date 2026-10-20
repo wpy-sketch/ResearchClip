@@ -1,6 +1,12 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "lookup_reference_doi",
+            "reference_page",
+            "save_references",
+            "associate_reference",
+            "import_bibtex",
+            "open_reference_doi",
             "similarity_ai_status",
             "choose_similarity_ai_bundle",
             "start_similarity_ai",

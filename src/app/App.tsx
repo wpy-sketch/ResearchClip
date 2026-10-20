@@ -27,6 +27,7 @@ import {WorkspaceSplit} from '../features/document/WorkspaceSplit';
 import {ImportStatus} from '../features/import/ImportControls';
 import {OcrPanel} from '../features/ocr/OcrPanel';
 import {SimilarityPanel} from '../features/similarity/SimilarityPanel';
+import {References} from '../features/references/References';
 
 export function App() {
   const initialize = useAppStore((state) => state.initialize);
@@ -76,6 +77,7 @@ export function App() {
       <WorkspaceDialogs />
       <OcrPanel/><MathOcrPanel/>
       <SimilarityPanel/>
+      <References/>
       <ScrollCaptureDialog/>
     </div>
   );

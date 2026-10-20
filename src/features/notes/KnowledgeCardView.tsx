@@ -1,4 +1,5 @@
 import {MathOcrButton} from '../math-ocr/MathOcr';
+import {ReferenceButton} from '../references/References';
 import {SavedOcrButton} from '../ocr-index/OcrIndex';
 import {useEffect,useState} from 'react';
 import {ArrowLeft,ExternalLink,ImageOff,Save,Star,X} from 'lucide-react';
@@ -37,6 +38,7 @@ export function KnowledgeCardView(){
     <div className="knowledge-layout">
       <section className="knowledge-preview" aria-label="卡片图片"><CardImage key={id} id={id} title={draft.title}/><div className="knowledge-times"><span>原图 {card.screenshot.widthPx} × {card.screenshot.heightPx} px</span><span>创建：{format(card.screenshot.createdAt)}</span><span>修改：{format(card.screenshot.updatedAt)}</span></div></section>
       <section className="knowledge-fields" aria-label="笔记编辑区">
+        <div className="flex flex-wrap items-center gap-2"><ReferenceButton screenshotId={id}/><span className="text-xs text-muted">文献关联独立保存，不会替换笔记正文</span></div>
         <div className="flex items-end gap-2"><label className="min-w-0 flex-1">标题<input aria-label="卡片标题" value={draft.title} maxLength={200} disabled={disabled} onChange={e=>edit(id,{title:e.target.value})}/></label><button className="icon-button mb-1" aria-label="收藏卡片" aria-pressed={draft.isFavorite} disabled={disabled} onClick={()=>edit(id,{isFavorite:!draft.isFavorite})}><Star size={18} fill={draft.isFavorite?'currentColor':'none'}/></button></div>
         <label>Markdown 笔记<textarea aria-label="Markdown 笔记正文" value={draft.content} spellCheck={false} disabled={disabled} maxLength={1_048_576} placeholder="记录观察、实验方法、文献要点或下一步思考…" onChange={e=>edit(id,{content:e.target.value})}/></label>
         <div className="knowledge-save-state" role={session.error?'alert':'status'}>{session.error??(session.status==='saving'?'正在保存…':dirty?'等待自动保存…':'已保存到本机')}<span>停止输入约 0.7 秒后自动保存 · Ctrl+S 立即保存</span></div>

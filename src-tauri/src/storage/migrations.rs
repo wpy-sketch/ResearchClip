@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 7;
+pub const SCHEMA_VERSION: u32 = 8;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -103,10 +103,26 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/007_image_features.sql"),
         )?;
     }
+    if version < 8 {
+        apply_migration(
+            connection,
+            8,
+            include_str!("../../migrations/008_references.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 8 {
+        for sql in [
+            "SELECT id,title,authors_json,year,venue,doi,url,bibtex_key,bibtex_entry,verified_source,source_metadata,updated_at,revision FROM literature_references LIMIT 0",
+            "SELECT screenshot_id,reference_id FROM screenshot_references LIMIT 0",
+            "SELECT document_id,reference_id FROM document_references LIMIT 0",
+        ] {
+            connection.prepare(sql)?;
+        }
+    }
     if version >= 7 {
         connection.prepare("SELECT screenshot_id,content_hash,perceptual_hash,difference_hash,descriptor,hash_algorithm_version,source_stamp,status,error,updated_at FROM image_features LIMIT 0")?;
     }
@@ -206,7 +222,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 7);
+        assert_eq!(storage.status().unwrap().schema_version, 8);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()

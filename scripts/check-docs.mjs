@@ -74,11 +74,14 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/002_libr
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_projects.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/004_ocr_index.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/005_annotation_revisions.sql'], { cwd: root, stdio: 'pipe' });
-assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 7;'),true);
+assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 8;'),true);
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/006_sync.sql'], { cwd: root, stdio: 'pipe' });
 const similarityCommands=['similarity_status','start_similarity_index','cancel_similarity_index','find_similar_images','duplicate_image_groups'];for(const command of similarityCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::similarity::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pending_file_deletions'));
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v7; published migrations001–006 unchanged' }, null, 2));
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v8; published migrations001–007 unchanged' }, null, 2));
 
 for(const command of ["annotation_history","annotation_revision","save_annotation_revision","restore_annotation_revision"]){assert.ok(main.permissions.includes("allow-"+command.replaceAll("_","-")));assert.ok(read("src-tauri/src/lib.rs").includes("commands::revisions::"+command));assert.ok(read("src-tauri/build.rs").includes("\""+command+"\""));}
+
+execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/007_image_features.sql'], { cwd: root, stdio: 'pipe' });
+const referenceCommands=['lookup_reference_doi','reference_page','save_references','associate_reference','import_bibtex','open_reference_doi'];for(const command of referenceCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::references::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}

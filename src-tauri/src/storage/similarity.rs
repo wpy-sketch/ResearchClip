@@ -6,6 +6,26 @@ use crate::services::similarity::{ALGORITHM_VERSION, Features, color_distance, d
 use rusqlite::{OptionalExtension, params};
 use serde::Serialize;
 type Result<T> = std::result::Result<T, StorageError>;
+#[derive(Clone, Default, serde::Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct SearchScope {
+    pub project_id: Option<String>,
+    #[serde(default)]
+    pub unclassified: bool,
+    #[serde(default)]
+    pub favorites: bool,
+}
+impl SearchScope {
+    fn validate(&self) -> Result<()> {
+        if let Some(id) = &self.project_id {
+            check_id(id)?;
+            if self.unclassified {
+                return Err(StorageError::Invalid("项目与未分类范围不能同时选择。"));
+            }
+        }
+        Ok(())
+    }
+}
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FeatureStats {
@@ -145,6 +165,7 @@ impl Storage {
         self.connection.execute("INSERT INTO image_features VALUES(?1,NULL,NULL,NULL,NULL,?2,?3,'failed',?4,?5) ON CONFLICT(screenshot_id) DO UPDATE SET content_hash=NULL,perceptual_hash=NULL,difference_hash=NULL,descriptor=NULL,hash_algorithm_version=excluded.hash_algorithm_version,source_stamp=excluded.source_stamp,status='failed',error=excluded.error,updated_at=excluded.updated_at",params![id,ALGORITHM_VERSION,stamp,"原图损坏、缺失、已改变或暂不可访问；原资料保留。",now()?])?;
         Ok(())
     }
+    #[cfg(test)]
     pub fn similar_images(
         &self,
         id: &str,
@@ -153,6 +174,26 @@ impl Storage {
         color_limit: u32,
         page: u32,
     ) -> Result<Matches> {
+        self.scoped_similar_images(
+            id,
+            exact_only,
+            threshold,
+            color_limit,
+            page,
+            &SearchScope::default(),
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub fn scoped_similar_images(
+        &self,
+        id: &str,
+        exact_only: bool,
+        threshold: u32,
+        color_limit: u32,
+        page: u32,
+        scope: &SearchScope,
+    ) -> Result<Matches> {
+        scope.validate()?;
         check_id(id)?;
         if threshold > 64 || color_limit > 255 || page >= 200 {
             return Err(StorageError::Invalid("距离阈值或页码超出范围。"));
@@ -163,8 +204,16 @@ impl Storage {
                 "参考原图已改变，请更新索引后再检索。",
             ));
         }
-        let mut statement=self.connection.prepare("SELECT s.id,s.title,s.width_px,s.height_px,s.created_at,f.content_hash,f.perceptual_hash,f.difference_hash,f.descriptor,f.source_stamp FROM screenshots s JOIN image_features f ON s.id=f.screenshot_id WHERE f.status='ready' AND f.hash_algorithm_version=?1 AND s.id!=?2 AND (?3=0 OR f.content_hash=?4) ORDER BY s.id")?;
-        let mut rows = statement.query(params![ALGORITHM_VERSION, id, exact_only, source_hash])?;
+        let mut statement=self.connection.prepare("SELECT s.id,s.title,s.width_px,s.height_px,s.created_at,f.content_hash,f.perceptual_hash,f.difference_hash,f.descriptor,f.source_stamp FROM screenshots s JOIN image_features f ON s.id=f.screenshot_id WHERE f.status='ready' AND f.hash_algorithm_version=?1 AND s.id!=?2 AND (?3=0 OR f.content_hash=?4) AND (?5 IS NULL OR EXISTS(SELECT 1 FROM screenshot_projects p WHERE p.screenshot_id=s.id AND p.project_id=?5)) AND (?6=0 OR NOT EXISTS(SELECT 1 FROM screenshot_projects p WHERE p.screenshot_id=s.id)) AND (?7=0 OR s.is_favorite=1) ORDER BY s.id")?;
+        let mut rows = statement.query(params![
+            ALGORITHM_VERSION,
+            id,
+            exact_only,
+            source_hash,
+            scope.project_id,
+            scope.unclassified,
+            scope.favorites
+        ])?;
         let mut items: Vec<Match> = vec![];
         let mut total = 0;
         let mut stale = 0;
@@ -211,20 +260,44 @@ impl Storage {
             stale,
         })
     }
+    #[cfg(test)]
     pub fn duplicate_groups(&self, page: u32) -> Result<Groups> {
+        self.scoped_duplicate_groups(page, &SearchScope::default())
+    }
+    pub fn scoped_duplicate_groups(&self, page: u32, scope: &SearchScope) -> Result<Groups> {
+        scope.validate()?;
         if page >= 5000 {
             return Err(StorageError::Invalid("重复组页码超出范围。"));
         }
-        let total=self.connection.query_row("SELECT count(*) FROM (SELECT content_hash FROM image_features WHERE status='ready' AND hash_algorithm_version=?1 GROUP BY content_hash HAVING count(*)>1)",[ALGORITHM_VERSION],|r|r.get(0))?;
-        let mut stmt=self.connection.prepare("SELECT min(f.screenshot_id),f.content_hash,count(*) FROM image_features f WHERE status='ready' AND hash_algorithm_version=?1 GROUP BY content_hash HAVING count(*)>1 ORDER BY count(*) DESC,content_hash LIMIT 20 OFFSET ?2")?;
+        let predicate = "FROM image_features f JOIN screenshots s ON s.id=f.screenshot_id WHERE f.status='ready' AND f.hash_algorithm_version=?1 AND (?2 IS NULL OR EXISTS(SELECT 1 FROM screenshot_projects p WHERE p.screenshot_id=s.id AND p.project_id=?2)) AND (?3=0 OR NOT EXISTS(SELECT 1 FROM screenshot_projects p WHERE p.screenshot_id=s.id)) AND (?4=0 OR s.is_favorite=1) GROUP BY content_hash HAVING count(*)>1";
+        let total = self.connection.query_row(
+            &format!("SELECT count(*) FROM (SELECT content_hash {predicate})"),
+            params![
+                ALGORITHM_VERSION,
+                scope.project_id,
+                scope.unclassified,
+                scope.favorites
+            ],
+            |r| r.get(0),
+        )?;
+        let mut stmt=self.connection.prepare(&format!("SELECT min(f.screenshot_id),f.content_hash,count(*) {predicate} ORDER BY count(*) DESC,content_hash LIMIT 20 OFFSET ?5"))?;
         let groups = stmt
-            .query_map(params![ALGORITHM_VERSION, page * 20], |r| {
-                Ok((
-                    r.get::<_, String>(0)?,
-                    r.get::<_, String>(1)?,
-                    r.get::<_, u64>(2)?,
-                ))
-            })?
+            .query_map(
+                params![
+                    ALGORITHM_VERSION,
+                    scope.project_id,
+                    scope.unclassified,
+                    scope.favorites,
+                    page * 20
+                ],
+                |r| {
+                    Ok((
+                        r.get::<_, String>(0)?,
+                        r.get::<_, String>(1)?,
+                        r.get::<_, u64>(2)?,
+                    ))
+                },
+            )?
             .collect::<std::result::Result<Vec<_>, _>>()?;
         let items = groups
             .into_iter()
@@ -325,6 +398,82 @@ mod tests {
         assert!(s.feature_input(&b, false).unwrap().is_none());
     }
     #[test]
+    fn project_unclassified_and_favorites_filter_candidates_and_duplicate_groups() {
+        let tmp = tempfile::tempdir().unwrap();
+        let mut s = Storage::open(tmp.path().into()).unwrap();
+        let a = add(&mut s, "A", 20);
+        let b = add(&mut s, "B", 20);
+        let c = add(&mut s, "C", 20);
+        for id in [&a, &b, &c] {
+            index(&mut s, id);
+        }
+        s.save_project(None, "Research").unwrap();
+        let project = s.projects().unwrap().remove(0).id;
+        s.connection
+            .execute(
+                "INSERT INTO screenshot_projects VALUES(?1,?2)",
+                params![a, project],
+            )
+            .unwrap();
+        s.connection
+            .execute(
+                "INSERT INTO screenshot_projects VALUES(?1,?2)",
+                params![b, project],
+            )
+            .unwrap();
+        s.connection
+            .execute("UPDATE screenshots SET is_favorite=1 WHERE id=?1", [&b])
+            .unwrap();
+        let scope = SearchScope {
+            project_id: Some(project),
+            unclassified: false,
+            favorites: false,
+        };
+        assert_eq!(
+            s.scoped_similar_images(&c, true, 0, 0, 0, &scope)
+                .unwrap()
+                .total,
+            2
+        );
+        assert_eq!(
+            s.scoped_duplicate_groups(0, &scope).unwrap().items[0].count,
+            2
+        );
+        let favorite = SearchScope {
+            favorites: true,
+            ..scope
+        };
+        assert_eq!(
+            s.scoped_similar_images(&a, true, 0, 0, 0, &favorite)
+                .unwrap()
+                .items[0]
+                .id,
+            b
+        );
+        assert_eq!(s.scoped_duplicate_groups(0, &favorite).unwrap().total, 0);
+        let none = SearchScope {
+            unclassified: true,
+            ..SearchScope::default()
+        };
+        assert_eq!(
+            s.scoped_similar_images(&a, true, 0, 0, 0, &none)
+                .unwrap()
+                .items[0]
+                .id,
+            c
+        );
+        assert!(
+            s.scoped_duplicate_groups(
+                0,
+                &SearchScope {
+                    project_id: Some("../".into()),
+                    ..SearchScope::default()
+                }
+            )
+            .is_err()
+        );
+    }
+    #[test]
     fn v6_migration_preserves_original_and_creates_backup() {
         let tmp = tempfile::tempdir().unwrap();
         let id;
@@ -333,10 +482,10 @@ mod tests {
             id = add(&mut s, "Keep", 30);
         }
         let conn = rusqlite::Connection::open(tmp.path().join("researchclip.sqlite3")).unwrap();
-        conn.execute_batch("DROP TRIGGER image_features_source_changed;DROP TABLE image_features;PRAGMA user_version=6;").unwrap();
+        conn.execute_batch("DROP TABLE screenshot_references;DROP TABLE document_references;DROP TABLE literature_references;DROP TRIGGER image_features_source_changed;DROP TABLE image_features;PRAGMA user_version=6;").unwrap();
         drop(conn);
         let s = Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 7);
+        assert_eq!(s.status().unwrap().schema_version, 8);
         assert_eq!(s.screenshot_image(&id, false).unwrap(), png(30));
         assert_eq!(s.feature_stats().unwrap().ready, 0);
         assert!(

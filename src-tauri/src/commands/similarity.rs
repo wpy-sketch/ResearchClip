@@ -4,7 +4,7 @@ use super::{
 };
 use crate::{
     services::similarity_index::{Progress, SimilarityIndex},
-    storage::similarity::{FeatureStats, Groups, Matches},
+    storage::similarity::{FeatureStats, Groups, Matches, SearchScope},
 };
 use std::sync::Arc;
 use tauri::{State, WebviewWindow};
@@ -52,6 +52,7 @@ pub fn cancel_similarity_index(
     jobs.status()
 }
 #[tauri::command]
+#[allow(clippy::too_many_arguments)] // Preserve the existing bounded IPC contract; scope is additive.
 pub async fn find_similar_images(
     window: WebviewWindow,
     store: State<'_, Arc<LibraryService>>,
@@ -60,9 +61,17 @@ pub async fn find_similar_images(
     threshold: u32,
     color_limit: u32,
     page: u32,
+    scope: Option<SearchScope>,
 ) -> Result<Matches, CommandError> {
     run(window, Arc::clone(store.inner()), move |s| {
-        s.similar_images(&id, exact_only, threshold, color_limit, page)
+        s.scoped_similar_images(
+            &id,
+            exact_only,
+            threshold,
+            color_limit,
+            page,
+            &scope.unwrap_or_default(),
+        )
     })
     .await
 }
@@ -71,9 +80,10 @@ pub async fn duplicate_image_groups(
     window: WebviewWindow,
     store: State<'_, Arc<LibraryService>>,
     page: u32,
+    scope: Option<SearchScope>,
 ) -> Result<Groups, CommandError> {
     run(window, Arc::clone(store.inner()), move |s| {
-        s.duplicate_groups(page)
+        s.scoped_duplicate_groups(page, &scope.unwrap_or_default())
     })
     .await
 }

@@ -11,6 +11,7 @@ pub mod library;
 pub mod markdown;
 pub mod ocr;
 pub mod pins;
+pub mod references;
 pub mod region;
 pub mod scrolling;
 pub mod similarity;

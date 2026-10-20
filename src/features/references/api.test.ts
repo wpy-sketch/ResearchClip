@@ -1,0 +1,17 @@
+import {describe,it,expect,vi,beforeEach} from 'vitest';
+vi.mock('@tauri-apps/api/core',()=>({invoke:vi.fn(),isTauri:vi.fn(()=>true)}));
+import {invoke,isTauri} from '@tauri-apps/api/core';
+import * as api from './api';
+const data:api.ReferenceInput={title:'中文 & research $x^2$',authors:['Li, Wang','研究院'],year:2026,journalOrConference:'Journal',doi:'10.1234/abc',url:'https://doi.org/10.1234/abc',bibtexKey:'Li2026',bibtexEntry:'@misc{Li2026,title={test}}',verifiedSource:'manual',sourceMetadata:{}};
+const reference={...data,id:'a'.repeat(32),updatedAt:1,revision:1};
+describe('reference IPC boundaries (mocked; not native/network acceptance)',()=>{
+ beforeEach(()=>{vi.clearAllMocks();vi.mocked(isTauri).mockReturnValue(true);});
+ it('accepts missing metadata without inventing authors or year',()=>{expect(api.parseInput({...data,authors:[],year:null,journalOrConference:''}).year).toBeNull();});
+ it('rejects invalid years, author structure, keys and oversized responses',()=>{for(const v of [{...data,year:'2026'},{...data,year:10000},{...data,authors:'Li'},{...data,bibtexEntry:'a'.repeat(65537)}])expect(()=>api.parseInput(v)).toThrow();expect(()=>api.parseReference({...reference,bibtexKey:'bad.key'})).toThrow();expect(()=>api.parsePage({items:[],total:-1})).toThrow();});
+ it('preserves explicit citation keys including case and rejects syntax injection',()=>{expect(api.citation('Li_2026:ABC-1')).toBe('[@Li_2026:ABC-1]');expect(()=>api.citation('a] [x](file:///secret)')).toThrow();});
+ it('sends screenshot and document associations only as stable IDs',async()=>{vi.mocked(invoke).mockResolvedValue(undefined);for(const kind of ['screenshot','document']as const){const target={kind,id:'b'.repeat(32)};await api.associate(target,reference.id,true);expect(invoke).toHaveBeenLastCalledWith('associate_reference',{target,id:reference.id,linked:true});}});
+ it('strips read-only row fields from an existing reference write',async()=>{vi.mocked(invoke).mockResolvedValue([reference]);await api.saveReferences([{id:reference.id,expectedRevision:1,data:reference,confirmKeyChange:false}]);const payload=vi.mocked(invoke).mock.calls[0][1] as {items:api.ReferenceWrite[]};expect(payload.items[0].data).toEqual(data);expect(Object.keys(payload.items[0].data)).not.toContain('id');expect(Object.keys(payload.items[0].data)).not.toContain('revision');});
+ it('does not save DOI lookup until explicitly requested',async()=>{vi.mocked(invoke).mockResolvedValue(data);await api.queryDoi(data.doi);expect(invoke).toHaveBeenCalledOnce();expect(invoke).toHaveBeenCalledWith('lookup_reference_doi',{doi:data.doi});vi.mocked(invoke).mockResolvedValue([reference]);await api.saveReferences([{id:null,expectedRevision:null,data,confirmKeyChange:false}]);expect(invoke).toHaveBeenLastCalledWith('save_references',{items:[{id:null,expectedRevision:null,data,confirmKeyChange:false}]});});
+ it('imports multiple .bib records as a preview and propagates conflict without retrying writes',async()=>{vi.mocked(invoke).mockResolvedValue([data,{...data,bibtexKey:'Second'}]);expect(await api.importBib()).toHaveLength(2);vi.mocked(invoke).mockRejectedValueOnce(Error('DOI 或引用键已存在'));await expect(api.saveReferences([])).rejects.toThrow('已存在');expect(invoke).toHaveBeenCalledTimes(2);});
+ it('keeps offline notebook state independent from desktop or network failure',async()=>{vi.mocked(isTauri).mockReturnValue(false);await expect(api.readReferences()).rejects.toThrow('桌面');expect(invoke).not.toHaveBeenCalled();});
+});

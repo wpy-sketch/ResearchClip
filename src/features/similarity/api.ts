@@ -1,4 +1,5 @@
 import {invoke,isTauri} from '@tauri-apps/api/core';
+export interface SearchScope {projectId:string|null;unclassified:boolean;favorites:boolean}
 export interface FeatureJob {phase:string;total:number;scanned:number;computed:number;skipped:number;failed:number;error:string|null;generation:number}
 export interface FeatureStatus {stats:{total:number;ready:number;failed:number;algorithmVersion:number};job:FeatureJob}
 export interface SimilarMatch {id:string;title:string;widthPx:number;heightPx:number;createdAt:number;exact:boolean;distance:number;differenceDistance:number;colorDistance:number}
@@ -17,8 +18,8 @@ async function call(command:string,args?:Record<string,unknown>){if(!isTauri())t
 export async function status(){return parseStatus(await call('similarity_status'));}
 export async function start(rebuild:boolean,id:string|null=null){return parseJob(await call('start_similarity_index',{rebuild,id}));}
 export async function cancel(){return parseJob(await call('cancel_similarity_index'));}
-export async function find(id:string,exactOnly:boolean,threshold:number,colorLimit:number,page:number){return parseMatches(await call('find_similar_images',{id,exactOnly,threshold,colorLimit,page}));}
-export async function groups(page:number){return parseGroups(await call('duplicate_image_groups',{page}));}
+export async function find(id:string,exactOnly:boolean,threshold:number,colorLimit:number,page:number,scope:SearchScope={projectId:null,unclassified:false,favorites:false}){return parseMatches(await call('find_similar_images',{id,exactOnly,threshold,colorLimit,page,scope}));}
+export async function groups(page:number,scope:SearchScope={projectId:null,unclassified:false,favorites:false}){return parseGroups(await call('duplicate_image_groups',{page,scope}));}
 export interface AiStatus {available:boolean;model:string;job:{phase:string;text:string|null;error:string|null;generation:number;pair:[string,string]|null}}
 export function parseAi(v:unknown):AiStatus{if(!object(v)||typeof v.available!=='boolean'||typeof v.model!=='string'||v.model.length>160||!object(v.job))return invalid();const j=v.job;if(!['','running','validating','completed','failed','cancelled'].includes(String(j.phase))||!count(j.generation)||j.text!==null&&(typeof j.text!=='string'||Array.from(j.text).length>8192)||j.error!==null&&(typeof j.error!=='string'||j.error.length>2048)||j.pair!==null&&(!Array.isArray(j.pair)||j.pair.length!==2||!j.pair.every(id)))return invalid();return v as unknown as AiStatus;}
 export async function aiStatus(){return parseAi(await call('similarity_ai_status'));}

@@ -4,6 +4,7 @@ pub mod image_import;
 pub mod markdown_document;
 pub mod ocr;
 pub mod pins;
+pub mod references;
 pub mod region_capture;
 pub mod screen_capture;
 pub mod settings;

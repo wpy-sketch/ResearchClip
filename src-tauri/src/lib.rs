@@ -85,6 +85,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 .build(),
         )
         .manage(services::desktop::DesktopService::default())
+        .manage(Arc::new(commands::references::ReferenceNetwork::default()))
         .manage(Arc::new(
             services::window_capture::WindowCaptureService::default(),
         ))
@@ -215,6 +216,12 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::similarity_ai::start_similarity_ai,
             commands::similarity_ai::cancel_similarity_ai,
             commands::similarity::similarity_status,
+            commands::references::lookup_reference_doi,
+            commands::references::reference_page,
+            commands::references::save_references,
+            commands::references::associate_reference,
+            commands::references::import_bibtex,
+            commands::references::open_reference_doi,
             commands::similarity::start_similarity_index,
             commands::similarity::cancel_similarity_index,
             commands::similarity::find_similar_images,

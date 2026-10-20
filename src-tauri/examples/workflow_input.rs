@@ -19,6 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || mode == "dialog-open-native"
         || mode == "dialog-open-compare"
         || mode == "dialog-save-md"
+        || mode == "dialog-open-bib"
         || mode == "dialog-open-md"
         || mode == "dialog-model-folder"
     {
@@ -76,6 +77,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ]
             } else if mode == "dialog-save-md" {
                 vec!["保存 Markdown 文档".encode_utf16().collect()]
+            } else if mode == "dialog-open-bib" {
+                vec!["导入 BibTeX 文献".encode_utf16().collect()]
             } else if mode == "dialog-open-md" {
                 vec!["打开 Markdown 文档".encode_utf16().collect()]
             } else if mode == "dialog-open-compare" {
@@ -91,6 +94,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "打开可编辑项目".encode_utf16().collect(),
                     "保存 Markdown 文档".encode_utf16().collect(),
                     "打开 Markdown 文档".encode_utf16().collect(),
+                    "导入 BibTeX 文献".encode_utf16().collect(),
                 ]
             } else if mode == "dialog-save-native" {
                 vec!["保存截图 PNG".encode_utf16().collect()]
@@ -102,6 +106,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     "选择截图默认保存目录".encode_utf16().collect(),
                     "保存 Markdown 文档".encode_utf16().collect(),
                     "打开 Markdown 文档".encode_utf16().collect(),
+                    "导入 BibTeX 文献".encode_utf16().collect(),
                     "保存可编辑项目".encode_utf16().collect(),
                     "导出标注 PNG".encode_utf16().collect(),
                     "保存贴图 PNG".encode_utf16().collect(),
@@ -127,6 +132,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             || mode == "dialog-open-native"
             || mode == "dialog-open-compare"
             || mode == "dialog-save-md"
+            || mode == "dialog-open-bib"
             || mode == "dialog-open-md"
             || mode == "dialog-model-folder"
         {
@@ -177,7 +183,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .starts_with(root)
                 || !(mode == "dialog-model-folder" && path.is_dir()
                     || path.extension().is_some_and(|s| {
-                        if mode == "dialog-save-md" || mode == "dialog-open-md" {
+                        if mode == "dialog-open-bib" {
+                            s == "bib"
+                        } else if mode == "dialog-save-md" || mode == "dialog-open-md" {
                             s == "md"
                         } else {
                             s == "png"

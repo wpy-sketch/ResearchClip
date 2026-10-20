@@ -118,6 +118,12 @@
     "allow-sync-stop",
     "allow-sync-resolve",
     "allow-sync-authorize-documents",
-    "allow-capture-window"
+    "allow-capture-window",
+    "allow-lookup-reference-doi",
+    "allow-reference-page",
+    "allow-save-references",
+    "allow-associate-reference",
+    "allow-import-bibtex",
+    "allow-open-reference-doi"
   ]
 }

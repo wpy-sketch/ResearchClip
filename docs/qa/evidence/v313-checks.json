@@ -1,0 +1,119 @@
+{
+  "version": "3.1.3",
+  "date": "2026-10-20",
+  "frontend": {
+    "result": "PASS",
+    "files": 56,
+    "tests": 381,
+    "command": "npm run check",
+    "exit": 0
+  },
+  "rust": {
+    "result": "PASS",
+    "tests": 188,
+    "ignored": 7,
+    "command": "npm run test:rust",
+    "exit": 0
+  },
+  "fmt": "PASS",
+  "strictClippy": "PASS",
+  "cleanInstall": {
+    "packages": 303,
+    "versionsAndIntegrityUnchanged": true,
+    "officialRegistry": true
+  },
+  "nativeReferences": {
+    "mode": "actual Windows debug EXE/WebView2, real SQLite, native file dialogs and files; controlled test PNGs, not physical screen capture",
+    "checks": [
+      "manual Chinese/English metadata saved through UI to real schema8, normalized DOI, provenance and no empty Markdown split; panel fits1180/760/480",
+      "real duplicate DOI and citation-key rejection, multi-write transaction rollback without a partial new record",
+      "real native .bib picker imports two UTF8 records only after preview confirmation; nested corporate authors and unknown fields preserved",
+      "actual screenshot details links a real saved reference without changing note or original pixels",
+      "real Markdown insertion uses caret; first native Save and subsequent atomic Save preserve citation and LaTeX; closing removes split",
+      "sidebar entry, project and unclassified SQL scopes and visible empty state; same reference can search outside its own project",
+      "normal exit0 and actual restart preserve references, screenshot/document links, citation text and original image SHA256"
+    ],
+    "errors": [],
+    "crossref": {
+      "status": "PASS",
+      "title": "Measured measurement",
+      "authors": "Markus Aspelmeyer",
+      "year": "2009"
+    },
+    "result": "PASS"
+  },
+  "nativeSimilarityAndQwen": {
+    "mode": "actual Windows debug EXE/WebView2, real SQLite and managed test PNGs; local bundled model when --ai; not a screen capture or cloud-provider claim",
+    "checks": [
+      "38 real SQLite-backed test images indexed; exact groups of33 and3 retain all original records; filenames do not change duplicate identity",
+      "exact and approximate modes, thresholds and real result pagination work; scaled image finds the original family; distance is displayed without a probability",
+      "deep/light at1180/760/480 fit without overflow; manual compare enters existing shared viewport; browsing never deletes originals",
+      "existing manual delete confirmation can be cancelled without deleting any screenshot or feature",
+      "corrupt original is isolated and retained; cancelled rebuild keeps completed features; unchanged records are reused without re-decoding",
+      "real system folder dialog validates bundled weights/runtime hashes; actual CPU Qwen recognizes two test images with valid text and identity; second real inference is cancelled and temp resources are released",
+      "normal exit0 and restart preserve schema8/features; index and AI do not start automatically"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "guideRegression": {
+    "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+    "checks": [
+      "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+      "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+      "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+      "all 27 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+      "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 15 chapters; 1180/760/480 layouts do not overflow"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "installer": {
+    "result": "PASS",
+    "groups": 4,
+    "userDataFilesHashedUnchanged": 12,
+    "signature": "NotSigned",
+    "busyInstallExit": 2,
+    "busyUninstallExit": 2,
+    "defaultUninstallExit": 0
+  },
+  "artifacts": [
+    {
+      "name": "MODEL-RESOURCES.txt",
+      "size": 683,
+      "sha256": "8cb5de1a11dbff450ddb1dda2f9e2f6097fb6033f5ec15e10553d5005be75a1a"
+    },
+    {
+      "name": "QWEN-MODEL-MANIFEST.json",
+      "size": 5637,
+      "sha256": "f7367e6ffd4104958598b8bcf789ae7ab05d26997116d6c5b4b7481cb453d4a2"
+    },
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "sha256": "c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d"
+    },
+    {
+      "name": "ResearchClip-v3.1.3-windows-x64.exe",
+      "size": 26192896,
+      "sha256": "2b5da2ce45aff1b2533138f0188d2af2c0ebf4e4c001f154a6650243762fb38b"
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "sha256": "1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce"
+    },
+    {
+      "name": "ResearchClip_3.1.3_x64-setup.exe",
+      "size": 8387852,
+      "sha256": "1054a4a2c9fe66199fbb88113ed2d08b8bd22b70a0f96f02efe811e9aa734a95"
+    }
+  ],
+  "notRun": [
+    "macOS",
+    "physical mixed DPI and multiple monitors",
+    "all external bibliography applications",
+    "live provider WebDAV credentials"
+  ],
+  "publication": "PENDING"
+}
