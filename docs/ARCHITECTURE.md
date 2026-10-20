@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v3.1.0：WebDAV沿用资源协议与schema6。`sync_configure`异步本机写入后返回经验证的Status；Zustand区分mutation busy、状态读取与停止请求，合并状态轮询并以generation丢弃过期响应。启动/冲突处理用spawn_blocking，取消AtomicBool先送达、job.try_lock只更新提示，不阻塞UI等待配置锁；前端对先于启动回执的取消再送一次以保留取消意图。`form.ts`仅做字段/凭据身份校验，后端安全验证继续独立执行。表单不因轮询remount，不持久化未保存密码。凭据读取失败返回受控错误供重输，不回退明文。无权限、依赖或数据库变更；[实际验收](qa/RELEASE-3.1.0.md)。
+
 v0.1.5：`features/document/templates.ts` 提供普通 Markdown 模板种子，复用现有 Zustand 文档会话、未保存确认及文件服务；选择模板后才创建文档，不改变 WorkspaceSplit 的条件挂载。`TemplateDialog` 通过 main-only 的5个有界命令访问 `TemplateFiles`，应用配置目录 `templates-v1/<id>/名称.md + assets` 与 SQLite/用户文档独立。创建在暂存目录校验并提交，重命名复用 DocumentFiles 的禁止覆盖和变更检查；删除采用独立目录改名归档。模板加载的内部文件授权随临时 DocumentFiles 释放，不作为新文档保存路径。`outline.ts` 使用现有 CommonMark 解析链中的 mdast 工具，源文 UTF-16 偏移与预览 heading position 对齐；镜像文本布局处理软换行后的定位，不把导航当作正文编辑。实际契约及验收见 [0.1.5](qa/RELEASE-0.1.5.md)。
 
 v0.1.4：Annotation v1 新增 mosaic/blur/number，由前后端共同校验；effects.ts 共用原像素滤镜、底图区域 clip/copy 替换及矢量上层渲染。复用编辑器 state/history/serialization/export，不改数据库 schema。对象范围、预算、透明度与实际检查见 [高级标注验收](qa/RELEASE-0.1.4.md)。

@@ -50,6 +50,7 @@ pub struct SyncService {
 pub struct Status {
     pub config: Option<Config>,
     pub credential_available: bool,
+    pub credential_error: Option<String>,
     pub job: Job,
     pub conflicts: Vec<Conflict>,
     pub pending: usize,
@@ -77,7 +78,7 @@ impl SyncService {
     }
     pub fn stop(&self) {
         self.cancel.store(true, Ordering::Release);
-        if let Ok(mut j) = self.job.lock()
+        if let Ok(mut j) = self.job.try_lock()
             && ["testing", "syncing"].contains(&j.phase.as_str())
         {
             j.phase = "stopping".into();
@@ -87,19 +88,25 @@ impl SyncService {
     pub fn status(&self, store: &LibraryService) -> Result<Status> {
         let config = store.access(|s| s.sync_config())?;
         let connection = config.as_ref().map(Config::id);
-        let credential_available = config.as_ref().is_some_and(|c| {
+        let credential_error = config.as_ref().and_then(|c| {
             store
                 .access(|s| Ok(s.sync_credential_id(c)))
-                .is_ok_and(|id| credentials::load(&id).is_ok())
+                .and_then(|id| credentials::load(&id).map(|_| ()))
+                .err()
+                .map(message)
         });
+        let credential_available = config.is_some() && credential_error.is_none();
+        // Release the job mutex before querying SQLite; stop never waits on this lock.
+        let job = self
+            .job
+            .lock()
+            .map_err(|_| invalid("同步状态锁异常。"))?
+            .clone();
         Ok(Status {
             config,
             credential_available,
-            job: self
-                .job
-                .lock()
-                .map_err(|_| invalid("同步状态锁异常。"))?
-                .clone(),
+            credential_error,
+            job,
             conflicts: connection
                 .as_ref()
                 .map(|id| store.access(|s| s.sync_conflicts(id)))
@@ -308,5 +315,29 @@ impl SyncService {
                 invalid("无法启动后台同步线程。")
             })?;
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod responsiveness_tests {
+    use super::*;
+    #[test]
+    fn cancellation_does_not_wait_for_configuration_status_lock() {
+        let service = Arc::new(SyncService::default());
+        let other = Arc::clone(&service);
+        let guard = service.job.lock().unwrap();
+        let (sender, receiver) = std::sync::mpsc::channel();
+        let task = std::thread::spawn(move || {
+            other.stop();
+            sender.send(()).unwrap();
+        });
+        let completed = receiver.recv_timeout(std::time::Duration::from_millis(200));
+        drop(guard);
+        task.join().unwrap();
+        assert!(
+            completed.is_ok(),
+            "stop must set cancellation without blocking on the job/configuration lock"
+        );
+        assert!(service.cancel.load(Ordering::Acquire));
     }
 }

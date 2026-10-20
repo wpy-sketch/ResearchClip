@@ -33,14 +33,15 @@ pub async fn sync_configure(
     config: Config,
     username: Option<String>,
     password: Option<String>,
-) -> Result<(), CommandError> {
+) -> Result<Status, CommandError> {
     check(&window)?;
     let store = Arc::clone(store.inner());
     let service = Arc::clone(service.inner());
     tauri::async_runtime::spawn_blocking(move || {
         service
             .configure(&store, config, username, password)
-            .map_err(error)
+            .map_err(error)?;
+        service.status(&store).map_err(error)
     })
     .await
     .map_err(|_| CommandError {
@@ -49,20 +50,25 @@ pub async fn sync_configure(
     })?
 }
 #[tauri::command]
-pub fn sync_start(
+pub async fn sync_start(
     window: WebviewWindow,
     store: State<'_, Arc<LibraryService>>,
     service: State<'_, Arc<SyncService>>,
     test: bool,
 ) -> Result<(), CommandError> {
     check(&window)?;
-    service
-        .start(
-            Arc::clone(store.inner()),
-            if test { "test" } else { "sync" },
-            None,
-        )
-        .map_err(error)
+    let store = Arc::clone(store.inner());
+    let service = Arc::clone(service.inner());
+    tauri::async_runtime::spawn_blocking(move || {
+        service
+            .start(store, if test { "test" } else { "sync" }, None)
+            .map_err(error)
+    })
+    .await
+    .map_err(|_| CommandError {
+        code: "SYNC_TASK",
+        message: "启动同步失败，已有资料保留。".into(),
+    })?
 }
 #[tauri::command]
 pub fn sync_stop(
@@ -74,7 +80,7 @@ pub fn sync_stop(
     Ok(())
 }
 #[tauri::command]
-pub fn sync_resolve(
+pub async fn sync_resolve(
     window: WebviewWindow,
     store: State<'_, Arc<LibraryService>>,
     service: State<'_, Arc<SyncService>>,
@@ -89,9 +95,18 @@ pub fn sync_resolve(
             message: "请先明确确认该资源的冲突处理；远端删除不会自动执行。".into(),
         });
     }
-    service
-        .start(Arc::clone(store.inner()), "resolve", Some((id, choice)))
-        .map_err(error)
+    let store = Arc::clone(store.inner());
+    let service = Arc::clone(service.inner());
+    tauri::async_runtime::spawn_blocking(move || {
+        service
+            .start(store, "resolve", Some((id, choice)))
+            .map_err(error)
+    })
+    .await
+    .map_err(|_| CommandError {
+        code: "SYNC_TASK",
+        message: "启动冲突处理失败，双方版本保留。".into(),
+    })?
 }
 #[tauri::command]
 pub async fn sync_authorize_documents(

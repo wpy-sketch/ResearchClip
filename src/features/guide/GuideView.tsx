@@ -1,5 +1,6 @@
 import windowCaptureImage from '../../../docs/images/v301-window-capture.svg';
-import syncSettingsImage from '../../../docs/images/v300-sync-settings.png';
+import syncSettingsImage from '../../../docs/images/v310-sync-settings.png';
+import syncActionsImage from '../../../docs/images/v310-sync-actions.png';
 import syncFlowImage from '../../../docs/images/v300-sync-flow.svg';
 import guideDarkImage from '../../../docs/images/v200-guide-dark.png';
 import guideLightImage from '../../../docs/images/v200-guide-light.png';
@@ -26,7 +27,7 @@ import cardImage from '../../../docs/images/v100-card.png';
 import compareImage from '../../../docs/images/v100-compare.png';
 import markdownImage from '../../../docs/images/v100-markdown.png';
 import settingsImage from '../../../docs/images/v100-settings.png';
-const guideImages={'images/v301-window-capture.svg':windowCaptureImage,'images/v300-sync-settings.png':syncSettingsImage,'images/v300-sync-flow.svg':syncFlowImage,'images/v200-guide-dark.png':guideDarkImage,'images/v200-guide-light.png':guideLightImage,'images/v105-revisions.svg':revisionsImage,'images/v104-math-ocr-input.png':mathOcrInputImage,'images/v104-math-ocr-workflow.svg':mathOcrWorkflowImage,'images/v103-ocr-index.svg':ocrIndexImage,'images/v102-clipper-settings.png':clipperSettingsImage,'images/v102-clipper-extension.png':clipperExtensionImage,'images/v101-scrolling.png':scrollingImage,'images/v021-projects.png':projectsImage,'images/v021-math.png':mathImage,'images/v100-capture.png':captureImage,'images/v100-library-grid.png':library_gridImage,'images/v100-library-list.png':library_listImage,'images/v100-editor.png':editorImage,'images/v100-card.png':cardImage,'images/v100-compare.png':compareImage,'images/v100-markdown.png':markdownImage,'images/v100-settings.png':settingsImage};
+const guideImages={'images/v301-window-capture.svg':windowCaptureImage,'images/v310-sync-settings.png':syncSettingsImage,'images/v310-sync-actions.png':syncActionsImage,'images/v300-sync-flow.svg':syncFlowImage,'images/v200-guide-dark.png':guideDarkImage,'images/v200-guide-light.png':guideLightImage,'images/v105-revisions.svg':revisionsImage,'images/v104-math-ocr-input.png':mathOcrInputImage,'images/v104-math-ocr-workflow.svg':mathOcrWorkflowImage,'images/v103-ocr-index.svg':ocrIndexImage,'images/v102-clipper-settings.png':clipperSettingsImage,'images/v102-clipper-extension.png':clipperExtensionImage,'images/v101-scrolling.png':scrollingImage,'images/v021-projects.png':projectsImage,'images/v021-math.png':mathImage,'images/v100-capture.png':captureImage,'images/v100-library-grid.png':library_gridImage,'images/v100-library-list.png':library_listImage,'images/v100-editor.png':editorImage,'images/v100-card.png':cardImage,'images/v100-compare.png':compareImage,'images/v100-markdown.png':markdownImage,'images/v100-settings.png':settingsImage};
 const groups=[{name:'开始与采集',sections:[1,2,3]},{name:'资料与项目',sections:[4,5,7]},{name:'图片工具',sections:[6,8,12]},{name:'Markdown 写作',sections:[9,10,11]},{name:'设置与数据安全',sections:[13,14]}];
 
 function GuideBranch({nodes,depth,collapsed,active,searching,onToggle,onJump}:{nodes:GuideSection[];depth:number;collapsed:Set<number>;active:number|null;searching:boolean;onToggle:(offset:number)=>void;onJump:(offset:number)=>void}){

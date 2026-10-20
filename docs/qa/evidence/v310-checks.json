@@ -1,0 +1,191 @@
+{
+  "result": "PASS",
+  "version": "3.1.0",
+  "environment": "Windows11 10.0.26200 x64; Node22.22.2/npm10.9.7; Rust1.99 MSVC; Tauri2.12.3",
+  "frontendFiles": 53,
+  "frontendTests": 364,
+  "rustTests": 168,
+  "rustIntegrationTests": 7,
+  "rustUnrunIgnored": 0,
+  "extensionTests": 5,
+  "cleanNpmPackages": 303,
+  "native": {
+    "mode": "actual Windows debug EXE/WebView2/SQLite/Credential Manager; local delayed TLS negative fixture; controlled UI status/acknowledgement fault injection is labelled separately",
+    "checks": [
+      "labelled UI credential-write failure injection retains entered fields/password and releases save for retry; not a native credential-failure claim",
+      "actual native configuration/credential save succeeds; password cleared; confirmed status transport delay does not own mutation controls",
+      "actual local TLS handshake delay remains cancellable while confirmed UI start acknowledgement is held; stop button sends native cancellation and save recovers",
+      "missing Windows fixture credential is explained and repairable; saving scope retains same-connection credentials and persists a real SQLite project",
+      "actual close/restart restores config/scope/OS credentials without auto-sync; SQLite contains no fixture username/password; narrow layouts do not overflow"
+    ],
+    "observations": [
+      {
+        "case": "fresh native form",
+        "saveDisabled": false,
+        "serverDisabled": false
+      },
+      {
+        "case": "invalid save error visible in current viewport",
+        "value": true
+      },
+      {
+        "case": "controlled delayed status after real successful native save",
+        "saveDisabled": false,
+        "backendSaved": true,
+        "transportIntercepted": true
+      }
+    ],
+    "errors": [],
+    "result": "PASS",
+    "fixtureCredentialRemoved": true
+  },
+  "window": {
+    "mode": "actual Windows WebView2 + DWM/WGC; isolated SQLite/settings, controlled GDI fixture; OS cursor/click and CDP keyboard events",
+    "checks": [
+      "PASS actual desktop occluder differs from unobscured WGC window pixel\nPASS window pixels 626x473, green=137574, red=137574",
+      "PASS cancel refused with Cancelled",
+      "PASS in-progress worker cancellation and cleanup",
+      "PASS minimized window refused",
+      "PASS negative-origin display WGC 619x469; target origin -2448,101 at 96 DPI",
+      "HANDLE TYPES before={\"ALPC Port\": 1, \"Desktop\": 1, \"Directory\": 2, \"EtwRegistration\": 38, \"Event\": 20, \"File\": 23, \"IRTimer\": 4, \"IoCompletion\": 3, \"Key\": 9, \"Mutant\": 1, \"SchedulerSharedData\": 1, \"Section\": 11, \"Semaphore\": 2, \"TpWorkerFactory\": 2, \"WaitCompletionPacket\": 6, \"WindowStation\": 2} after={\"ALPC Port\": 1, \"Desktop\": 1, \"Directory\": 2, \"EtwRegistration\": 38, \"Event\": 20, \"File\": 23, \"IRTimer\": 4, \"IoCompletion\": 3, \"Key\": 9, \"Mutant\": 1, \"SchedulerSharedData\": 1, \"Section\": 11, \"Semaphore\": 2, \"TpWorkerFactory\": 2, \"WaitCompletionPacket\": 6, \"WindowStation\": 2}\nPASS 20 captures, process handles 126->126\nPASS window pixels 626x473, green=137574, red=137574",
+      "PASS protected refused with PermissionDenied",
+      "PASS closed target refused",
+      "PASS Edge WGC 802x731\nPASS window pixels 802x731, green=258354, red=253186",
+      "Esc removes the actual selection window, restores main and releases the capture gate",
+      "physical mouse hover/click selects the target; Tab/Shift+Tab changes candidates; real WGC preview retains both unobscured fixture colors",
+      "PASS Windows clipboard image DIB 626x473",
+      "real PNG system dialog saves exact WGC dimensions; Windows clipboard contains image data; captured window opens in the existing Konva editor and returns",
+      "three additional picker/cancel cycles retain the previous screenshot and leave no picker window"
+    ],
+    "errors": [],
+    "nativeFailures": [],
+    "result": "PASS"
+  },
+  "guideNative": {
+    "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+    "checks": [
+      "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+      "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+      "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+      "all 23 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+      "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 14 chapters; 1180/760/480 layouts do not overflow"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "layout": {
+    "mode": "actual Edge renderer; preview only, no native capture or database claims",
+    "checks": [
+      "single sidebar capture action and separate full-width search row; no duplicate capture entry",
+      "dark theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+      "dark: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+      "light theme applied through real UI; primary/secondary body text and primary button contrast meet checked thresholds",
+      "light: 8 window widths from 480 to 1440 have no root overflow or clipped toolbar actions",
+      "moved capture button still opens existing capture dialog; Escape closes it",
+      "Markdown entry, split visibility, draft across navigation, cancel/discard close and full-width restoration still work",
+      "system theme follows OS media changes without resetting the preference"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "guideReader": {
+    "mode": "local isolated headless Edge renderer; no native capture, user database, credential or clipboard claims",
+    "checks": [
+      "14 chapters and nested subsections mount; absent Markdown document has no split",
+      "third-level step navigation scrolls and keyboard-focuses the actual matching H4, active location follows",
+      "collapse all removes children and active step falls back to visible parent",
+      "nested search retains ancestors, reports no results and clear restores navigation",
+      "all 23 whitelisted offline guide images actually decode",
+      "whitelisted local guide image opens with Enter and closes with Escape",
+      "dark: guide and directory contained at seven widths 480–1440",
+      "light: guide and directory contained at seven widths 480–1440",
+      "guide navigation/unmount and remount preserves independent Markdown draft; cancel/discard closes split correctly"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "syncLayout": {
+    "mode": "actual headless Edge rendering of browser preview; no native IPC/credentials/server claims",
+    "checks": [
+      "settings task navigation scrolls/focuses actual section",
+      "browser preview cannot submit credentials or start synchronization",
+      "dark: WebDAV form, actions and task navigation contained at 6 widths 480–1440",
+      "light: WebDAV form, actions and task navigation contained at 6 widths 480–1440",
+      "left navigation/settings remount leaves independent Markdown draft untouched"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "releaseWorker": {
+    "result": "PASS",
+    "mode": "actual optimized v3.1.0 EXE worker; no Tauri/user database initialization",
+    "size": [
+      626,
+      473
+    ],
+    "green": 137574,
+    "red": 137574,
+    "bytes": 10997,
+    "exitCode": 0
+  },
+  "installer": {
+    "result": "passed",
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ],
+    "userDataFilesHashed": 10,
+    "installerSha256": "CA92000D83D9AFCEBF5CC18482EF1473D7565B422A7CBCBCBE164DCCAD101AF1",
+    "installedPayloadSha256": "8E58214CEB15B2ADBB4928EAF34D6AEC0BF589689C01F8E7CBA323954BB8B85D",
+    "signatureStatus": "NotSigned",
+    "busyInstallExit": 2,
+    "busyUninstallExit": 2,
+    "installationStillPresent": false
+  },
+  "baseline": {
+    "frontendRegression": "FAIL 2; PASS 5 before fix",
+    "rustCancellation": "FAIL 1 before fix",
+    "nativeVisibleSaveError": false,
+    "invalidatedEvidence": "Earlier invoke monkey-patching had no effect because Tauri properties are non-writable. Its delay/ack claims are invalid; final fetch interception explicitly verifies both holds. Original all-disabled screenshot is not fully reproduced.",
+    "testFacilityFailures": [
+      "save_project returns void, now read list_projects",
+      "unwritable invoke interception, now verified fetch interception",
+      "sandbox OS credential denied, native full suite passes",
+      "guide image moved during build, restored and full check passes"
+    ],
+    "ownedFailedTestCredentialCleanup": {
+      "ownedTestCredentialRemovedOrAlreadyAbsent": true
+    }
+  },
+  "notRun": [
+    "authenticated Nutstore server compatibility (no configured user credential)",
+    "two physical devices with real provider",
+    "final production full GUI against a real user database (deliberately not launched); isolated debug uses same source/IPC, optimized worker and actual NSIS verified separately",
+    "physical125/150 mixed DPI and spanning windows",
+    "elevated/secure desktop/HDR/RDP/full third-party application/paste matrix",
+    "macOS"
+  ],
+  "commandsExit0": [
+    "npm run check",
+    "npm run format:rust",
+    "npm run check:rust",
+    "npm run test:rust (native permissions)",
+    "RESEARCHCLIP_QA_DAV_BASE=http://127.0.0.1:1461/; node scripts/with-rust.mjs cargo test --manifest-path src-tauri/Cargo.toml --locked -- --ignored --test-threads=1",
+    "npm --prefix artifacts/qa-v310/npm-clean ci --registry=https://registry.npmjs.org --no-audit --no-fund",
+    "npm --prefix browser-extension test",
+    "npm --prefix browser-extension run build",
+    "npm run tauri -- build --debug --no-bundle",
+    "node scripts/sync-settings-native-smoke.mjs v310-accepted2 --guide",
+    "node scripts/guide-native-smoke.mjs v310-final --verify-only",
+    "node scripts/window-capture-native-smoke.mjs v310-final",
+    "node scripts/material-ui-smoke.mjs v310-final",
+    "node scripts/guide-reader-smoke.mjs v310-final",
+    "node scripts/sync-ui-smoke.mjs v310-colors",
+    "npm run desktop:bundle (final theme rerun)",
+    "D:/anaconda3/python.exe artifacts/qa-v310-final/release-worker-probe.py",
+    "scripts/installer-smoke.ps1 -RunId v310-accepted -TargetDir src-tauri/target",
+    "npm run check:docs"
+  ]
+}
