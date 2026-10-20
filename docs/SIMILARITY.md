@@ -43,6 +43,8 @@ SQLite schema6→7使用新增`007_image_features.sql`，沿用升级前一致�
 
 ## 6. 完整离线包
 
+发布传输重试说明：原1.5GB分卷的GitHub连接被远端重置，未公开不完整Release。最终采用每卷至多128MiB、共25卷，所有卷必须一起下载。合并后的ZIP仍为`0c138e414991720b784a869d76756ceeec3771a0bf7ac8e37d26b75e2d40b668`，39个解压文件内容与已验程序/模型一致；不重新量化或替换权重。源码标签保持不变，打包重试与发布回执另行记录。
+
 [GitHub每附件限制2GiB](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)，故完整离线包分卷发布，包含桌面程序、NSIS、模型、视觉投影、运行时和许可证。所有卷及组装脚本放同目录后，校验并组装解压。可直接运行解压目录的EXE，自动发现旁边`similarity-ai`；也可运行其中NSIS安装主体，再在相似面板选择解压目录中的模型文件夹。**小型NSIS本身不内嵌数GB模型**；完整离线套件提供所有资源，不在首次推理时偷偷下载。模型不进入Git源码，首次使用不联网。
 
 具体实际执行结果、失败和Windows人工清单见[本轮报告](qa/RELEASE-3.1.2.md)。

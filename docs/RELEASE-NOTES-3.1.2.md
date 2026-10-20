@@ -11,7 +11,7 @@ Windows x64 正式版本。新增原图完全重复与视觉接近检索，索�
 
 ## 下载与离线模型
 
-轻量EXE/NSIS可独立使用传统检索。需要Qwen时，同时下载全部 `ResearchClip-v3.1.2-offline.zip.00N` 分卷和 `Assemble-Offline.ps1` 到同一空目录，以PowerShell运行脚本；脚本先核对分卷和完整ZIP的SHA256，再解压到新目录，不覆盖现有目录。完整离线包包含应用、安装包和约3.46GB模型/运行时。GitHub每附件2GiB限制，因此采用分卷，不声称小型NSIS本身包含模型。
+轻量EXE/NSIS可独立使用传统检索。需要Qwen时，同时下载全部25个 `ResearchClip-v3.1.2-offline.zip.001` 至 `.025` 分卷和 `Assemble-Offline.ps1` 到同一空目录，以PowerShell运行脚本；脚本先核对分卷和完整ZIP的SHA256，再解压到新目录，不覆盖现有目录。完整离线包包含应用、安装包和约3.46GB模型/运行时。GitHub每附件2GiB限制，且大请求在本次传输中遇到连接重置，因此每卷至多128MiB；同一ZIP内容不变，不声称小型NSIS本身包含模型。
 
 解压后直接运行目录内EXE可发现旁边的`similarity-ai`；安装版在「离线Qwen辅助」中选择该文件夹。无需下载、Ollama、云服务或本地HTTP服务器。首次校验较慢，请等待完成。首次安装WebView2仍可能需要微软运行时。
 

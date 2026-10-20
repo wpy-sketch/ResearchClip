@@ -64,7 +64,8 @@ def main():
             path = args.out / f'{archive.name}.{number:03d}'
             with path.open('xb') as target:
                 target.write(first)
-                remaining = 1_500_000_000 - len(first)
+                # Smaller requests tolerate interrupted/slow GitHub upload connections.
+                remaining = 128 * 1024 * 1024 - len(first)
                 while remaining:
                     chunk = stream.read(min(1024 * 1024, remaining))
                     if not chunk:

@@ -53,6 +53,10 @@
 
 最终结论：本轮已执行检查无未解决FAIL，可发布v3.1.2。未执行矩阵和旧问题继续公开保留；不将38张原生样本宣称为10万张性能验收。完整修改涉及services/similarity、similarity_index、similarity_ai，storage/similarity及迁移007、受限IPC、前端similarity模块、素材入口/指南、版本与QA脚本；原始001–006迁移和用户资料保持。
 
+## 发布传输重试与相同内容证明
+
+初始大分卷上传实际FAIL：GitHub连接重置，发布保持draft，没有公开不完整版本。改为25个128MiB小分卷，ZIP本身、最终EXE/NSIS、模型及39个解压文件均未修改。`python artifacts/a08-assemble-small.py`退出0，实际Windows PowerShell5.1合并/解压/逐文件SHA再次PASS；重跑拒绝覆盖的预期退出1。上表3卷是初始本地验证记录，不表示最终Release附件只有3卷。源码标签`2336bd9`保持不可变；打包脚本分卷大小、文档和发布回执后续提交到main，不改变已验业务代码或二进制。实际公开附件的最终状态以发布回执为准。
+
 ## 人工验收清单（未执行项为NOT_RUN）
 
 - [ ] 在自己的Windows机器升级后进入「相似与重复」，更新索引，检查原有素材/笔记/标注完整。

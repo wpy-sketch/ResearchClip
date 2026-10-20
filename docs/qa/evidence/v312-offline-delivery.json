@@ -1,0 +1,10 @@
+{
+  "result": "PASS",
+  "mode": "actual Windows PowerShell split SHA checks, ZIP64 assembly, safe extraction and full entry hashes; second run refuses existing output",
+  "parts": 25,
+  "archiveBytes": 3269394775,
+  "entries": 39,
+  "exitCode": 0,
+  "existingOutputExitCode": 1,
+  "seconds": 41.75
+}
