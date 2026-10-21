@@ -1,6 +1,10 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "annotation_anchors",
+            "resolve_annotation_anchor",
+            "save_annotation_anchor",
+            "delete_annotation_anchor",
             "link_targets",
             "link_document_source",
             "replace_document_links",

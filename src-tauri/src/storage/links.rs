@@ -15,6 +15,8 @@ use std::{
 #[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct IndexedLink {
+    #[serde(default)]
+    pub anchor_id: Option<String>,
     pub target_id: String,
     pub link_type: String,
     pub start: usize,
@@ -77,6 +79,7 @@ pub struct Backlink {
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OutgoingLink {
+    pub anchor_id: Option<String>,
     pub id: String,
     pub kind: String,
     pub label: String,
@@ -163,7 +166,19 @@ fn checked_span<'a>(
     let raw = source
         .get(start..end)
         .ok_or(StorageError::Invalid("引用位置越界。"))?;
-    let suffix = format!("](researchclip://{}/{})", link.link_type, link.target_id);
+    let anchor_suffix = if let Some(id) = &link.anchor_id {
+        check_id(id)?;
+        if link.link_type != "screenshot" {
+            return Err(StorageError::Invalid("锚点只能引用截图。"));
+        }
+        format!("/anchor/{id}")
+    } else {
+        String::new()
+    };
+    let suffix = format!(
+        "](researchclip://{}/{}{})",
+        link.link_type, link.target_id, anchor_suffix
+    );
     if !raw.starts_with('[') || !raw.ends_with(&suffix) || raw.len() > 4096 {
         return Err(StorageError::Invalid("引用内容与已保存文档不一致。"));
     }
@@ -226,7 +241,7 @@ impl Storage {
         tx.execute("DELETE FROM link_index WHERE source_id=?1", [id])?;
         for (l, line) in rows {
             tx.execute(
-                "INSERT INTO link_index VALUES(?1,?2,?3,?4,?5,?6,?7,?8)",
+                "INSERT INTO link_index VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9)",
                 params![
                     id,
                     l.target_id,
@@ -235,7 +250,8 @@ impl Storage {
                     l.end as i64,
                     line as i64,
                     l.label,
-                    time
+                    time,
+                    l.anchor_id
                 ],
             )?;
         }
@@ -366,12 +382,20 @@ impl Storage {
         check_target(kind, id)?;
         let mut backlinks=self.connection.prepare("SELECT l.source_id,d.name,l.source_location,l.source_line,l.label,d.path FROM link_index l JOIN markdown_documents d ON d.id=l.source_id WHERE l.link_type=?1 AND l.target_id=?2 ORDER BY d.name,l.source_location LIMIT 501")?.query_map(params![kind,id],|r|{let p:String=r.get(5)?;Ok(Backlink{source_id:r.get(0)?,title:r.get(1)?,start:r.get::<_,i64>(2)? as usize,line:r.get::<_,i64>(3)? as usize,label:r.get(4)?,available:Path::new(&p).is_file()&&super::files::ordinary(Path::new(&p)).is_ok()})})?.collect::<rusqlite::Result<Vec<_>>>()?;
         let mut outgoing = if kind == "document" {
-            self.connection.prepare("SELECT target_id,link_type,label,source_location,source_line FROM link_index WHERE source_id=?1 ORDER BY source_location LIMIT 501")?.query_map([id],|r|Ok(OutgoingLink{id:r.get(0)?,kind:r.get(1)?,label:r.get(2)?,start:r.get::<_,i64>(3)? as usize,line:r.get::<_,i64>(4)? as usize,available:false}))?.collect::<rusqlite::Result<Vec<_>>>()?
+            self.connection.prepare("SELECT target_id,link_type,label,source_location,source_line,anchor_id FROM link_index WHERE source_id=?1 ORDER BY source_location LIMIT 501")?.query_map([id],|r|Ok(OutgoingLink{anchor_id:r.get(5)?,id:r.get(0)?,kind:r.get(1)?,label:r.get(2)?,start:r.get::<_,i64>(3)? as usize,line:r.get::<_,i64>(4)? as usize,available:false}))?.collect::<rusqlite::Result<Vec<_>>>()?
         } else {
             Vec::new()
         };
+        let mut anchors = HashMap::new();
         for link in &mut outgoing {
-            link.available = self.link_target_available(&link.kind, &link.id)?;
+            link.available = if let Some(anchor_id) = &link.anchor_id {
+                if !anchors.contains_key(&link.id) {
+                    anchors.insert(link.id.clone(), self.available_anchors(&link.id)?);
+                }
+                anchors[&link.id].contains_key(anchor_id)
+            } else {
+                self.link_target_available(&link.kind, &link.id)?
+            };
         }
         let tag_ids = if kind == "document" {
             self.connection
@@ -455,7 +479,7 @@ impl Storage {
         if stamp.as_deref() != Some(&source.stamp) {
             return Err(StorageError::Invalid("请先更新当前文档链接索引，再导出。"));
         }
-        let links=self.connection.prepare("SELECT target_id,link_type,source_location,source_end,label FROM link_index WHERE source_id=?1 ORDER BY source_location DESC")?.query_map([id],|r|Ok(IndexedLink{target_id:r.get(0)?,link_type:r.get(1)?,start:r.get::<_,i64>(2)? as usize,end:r.get::<_,i64>(3)? as usize,label:r.get(4)?}))?.collect::<rusqlite::Result<Vec<_>>>()?;
+        let links=self.connection.prepare("SELECT target_id,link_type,source_location,source_end,label,anchor_id FROM link_index WHERE source_id=?1 ORDER BY source_location DESC")?.query_map([id],|r|Ok(IndexedLink{anchor_id:r.get(5)?,target_id:r.get(0)?,link_type:r.get(1)?,start:r.get::<_,i64>(2)? as usize,end:r.get::<_,i64>(3)? as usize,label:r.get(4)?}))?.collect::<rusqlite::Result<Vec<_>>>()?;
         let parent = destination
             .parent()
             .ok_or(StorageError::Invalid("导出目录无效。"))?
@@ -463,6 +487,7 @@ impl Storage {
         let offsets = source_offsets(&source.markdown, &links)?;
         let mut text = source.markdown;
         let mut warnings = Vec::new();
+        let mut anchors = HashMap::new();
         for (l, (start, end, _)) in links.into_iter().zip(offsets) {
             let raw = checked_span(&text, &l, start, end)?.to_owned();
             let relative = if l.link_type == "document"
@@ -472,7 +497,28 @@ impl Storage {
             } else {
                 None
             };
-            let replacement = if let Some(url) = relative {
+            let replacement = if let Some(anchor_id) = &l.anchor_id {
+                let label = l.label.replace(['[', ']', '<', '>', '\\'], " ");
+                if !anchors.contains_key(&l.target_id) {
+                    anchors.insert(l.target_id.clone(), self.available_anchors(&l.target_id)?);
+                }
+                match anchors[&l.target_id].get(anchor_id) {
+                    Some(a) => format!(
+                        "{}（图片区域：x={}，y={}，宽={}，高={}；{}）",
+                        label,
+                        a.x,
+                        a.y,
+                        a.width,
+                        a.height,
+                        a.description
+                            .replace(['\n', '\r', '<', '>', '[', ']', '\\', '`', '*', '_'], " ")
+                    ),
+                    None => {
+                        warnings.push(format!("{label}：锚点已失效，保留文字提示。"));
+                        format!("{label}（图片锚点已失效）")
+                    }
+                }
+            } else if let Some(url) = relative {
                 let at = raw
                     .rfind("](researchclip://")
                     .ok_or(StorageError::Conflict)?;
@@ -535,6 +581,81 @@ fn relative_url(from: &Path, to: &Path) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn anchor_index_export_and_deleted_target_preserve_readable_text() {
+        use crate::{
+            capture::RawFrame, services::screen_capture::encode_png, storage::anchors::AnchorInput,
+        };
+        let tmp = tempfile::tempdir().unwrap();
+        let mut s = Storage::open(tmp.path().join("data")).unwrap();
+        let png = encode_png(RawFrame {
+            width_px: 100,
+            height_px: 80,
+            rgba: [0, 40, 80, 255].repeat(100 * 80),
+        })
+        .unwrap();
+        let shot=s.create_screenshot("图",serde_json::json!({"schemaVersion":1,"image":{"widthPx":100,"heightPx":80},"objects":[]}),&png).unwrap();
+        let page = s.anchor_page(&shot.id).unwrap();
+        let a = s
+            .save_anchor(AnchorInput {
+                anchor_id: None,
+                revision: None,
+                screenshot_id: shot.id.clone(),
+                image_revision: page.image_revision,
+                x: 10.,
+                y: 12.,
+                width: 20.,
+                height: 30.,
+                title: "区域".into(),
+                description: "说明".into(),
+            })
+            .unwrap();
+        let text = format!(
+            "中文😀 [区域](researchclip://screenshot/{}/anchor/{})",
+            shot.id, a.anchor_id
+        );
+        let start = "中文😀 ".encode_utf16().count();
+        let input = IndexedLink {
+            anchor_id: Some(a.anchor_id.clone()),
+            target_id: shot.id.clone(),
+            link_type: "screenshot".into(),
+            start,
+            end: text.encode_utf16().count(),
+            label: "区域".into(),
+        };
+        let id = doc(&mut s, &tmp.path().join("note.md"), &text);
+        index(&mut s, &id, &[input]);
+        assert!(s.link_details("document", &id).unwrap().outgoing[0].available);
+        assert_eq!(
+            s.link_details("screenshot", &shot.id)
+                .unwrap()
+                .backlinks
+                .len(),
+            1
+        );
+        let (portable, warnings) = s
+            .portable_links(&id, &tmp.path().join("export.md"))
+            .unwrap();
+        assert!(!portable.contains("researchclip://"));
+        assert!(portable.contains("x=10"));
+        assert!(portable.contains("说明"));
+        assert!(warnings.is_empty());
+        s.delete_anchor(&shot.id, &a.anchor_id, a.revision).unwrap();
+        assert!(!s.link_details("document", &id).unwrap().outgoing[0].available);
+        let (portable, warnings) = s
+            .portable_links(&id, &tmp.path().join("missing.md"))
+            .unwrap();
+        assert!(portable.contains("图片锚点已失效"));
+        assert_eq!(warnings.len(), 1);
+        drop(s);
+        let s = Storage::open(tmp.path().join("data")).unwrap();
+        assert_eq!(
+            s.link_details("document", &id).unwrap().outgoing[0]
+                .anchor_id
+                .as_deref(),
+            Some(a.anchor_id.as_str())
+        );
+    }
     fn doc(s: &mut Storage, p: &Path, text: &str) -> String {
         std::fs::write(p, text).unwrap();
         s.index_document(p, None).unwrap().id
@@ -545,6 +666,7 @@ mod tests {
         (
             raw,
             IndexedLink {
+                anchor_id: None,
                 target_id: id.into(),
                 link_type: kind.into(),
                 start,
@@ -737,10 +859,10 @@ mod tests {
         let db = s.database_path.clone();
         drop(s);
         let conn = rusqlite::Connection::open(&db).unwrap();
-        conn.execute_batch("DROP TABLE document_tags; DROP TABLE link_index_state; DROP TABLE link_index; PRAGMA user_version=8;").unwrap();
+        conn.execute_batch("DROP TABLE annotation_anchors;DROP TABLE document_tags; DROP TABLE link_index_state; DROP TABLE link_index; PRAGMA user_version=8;").unwrap();
         drop(conn);
         let s = Storage::open(root.clone()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 9);
+        assert_eq!(s.status().unwrap().schema_version, 10);
         let backups = std::fs::read_dir(root.join("backups"))
             .unwrap()
             .collect::<Result<Vec<_>, _>>()
@@ -770,7 +892,7 @@ mod tests {
         let path = s.database_path.clone();
         drop(s);
         let conn = rusqlite::Connection::open(&path).unwrap();
-        conn.execute_batch("DROP TABLE document_tags; DROP TABLE link_index_state; DROP TABLE link_index; CREATE TABLE link_index_state(unexpected TEXT); PRAGMA user_version=8;").unwrap();
+        conn.execute_batch("DROP TABLE annotation_anchors;DROP TABLE document_tags; DROP TABLE link_index_state; DROP TABLE link_index; CREATE TABLE link_index_state(unexpected TEXT); PRAGMA user_version=8;").unwrap();
         drop(conn);
         assert!(Storage::open(root.clone()).is_err());
         let conn = rusqlite::Connection::open(path).unwrap();

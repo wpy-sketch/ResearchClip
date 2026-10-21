@@ -3,17 +3,18 @@ import {toString} from 'mdast-util-to-string';
 import {math} from 'micromark-extension-math';
 import {mathFromMarkdown} from 'mdast-util-math';
 export type LinkKind='document'|'screenshot';
-export interface Target {id:string;kind:LinkKind}
-export interface IndexedLink {targetId:string;linkType:LinkKind;start:number;end:number;label:string}
-export function internalTarget(url:string):Target|null {const m=/^researchclip:\/\/(document|screenshot)\/([a-f0-9]{32})$/.exec(url);return m?{kind:m[1] as LinkKind,id:m[2]}:null;}
+export interface Target {id:string;kind:LinkKind;anchorId?:string}
+export interface IndexedLink {targetId:string;linkType:LinkKind;start:number;end:number;label:string;anchorId?:string}
+export function internalTarget(url:string):Target|null {const m=/^researchclip:\/\/(document|screenshot)\/([a-f0-9]{32})(?:\/anchor\/([a-f0-9]{32}))?$/.exec(url);return m&&(!m[3]||m[1]==='screenshot')?{kind:m[1] as LinkKind,id:m[2],...(m[3]?{anchorId:m[3]}:{})}:null;}
+export const targetUrl=(t:Target)=>`researchclip://${t.kind}/${t.id}${t.anchorId!==undefined&&t.anchorId!==null?`/anchor/${t.anchorId}`:''}`;
 export const targetKey=(t:Target)=>`${t.kind}:${t.id}`;
-export function linkMarkdown(target:Target,title:string){if(!internalTarget(`researchclip://${target.kind}/${target.id}`))throw Error('内部引用目标无效。');const label=Array.from(title.replace(/[\r\n\t]/g,' ')).slice(0,200).join('').replace(/[\\[\]]/g,'\\$&');return `[${label||'未命名'}](researchclip://${target.kind}/${target.id})`;}
+export function linkMarkdown(target:Target,title:string){if(!internalTarget(targetUrl(target)))throw Error('内部引用目标无效。');const label=Array.from(title.replace(/[\r\n\t]/g,' ')).slice(0,200).join('').replace(/[\\[\]]/g,'\\$&');return `[${label||'未命名'}](${targetUrl(target)})`;}
 const parse=(text:string)=>fromMarkdown(text,{extensions:[math()],mdastExtensions:[mathFromMarkdown()]});
 export function parseLinks(markdown:string):IndexedLink[]{
  const links:IndexedLink[]=[],stack:ReturnType<typeof parse>['children']= [...parse(markdown).children];
  while(stack.length){const node=stack.pop()!;
   if(node.type==='link'&&node.position){const t=internalTarget(node.url),start=node.position.start.offset,end=node.position.end.offset;
-   if(t&&start!==undefined&&end!==undefined&&markdown.slice(start,end).endsWith(`](researchclip://${t.kind}/${t.id})`))links.push({targetId:t.id,linkType:t.kind,start,end,label:Array.from(toString(node).replace(/\p{Cc}/gu,' ')).slice(0,200).join('')});
+   if(t&&start!==undefined&&end!==undefined&&markdown.slice(start,end).endsWith(`](${targetUrl(t)})`))links.push({targetId:t.id,linkType:t.kind,...(t.anchorId?{anchorId:t.anchorId}:{}),start,end,label:Array.from(toString(node).replace(/\p{Cc}/gu,' ')).slice(0,200).join('')});
    if(links.length>5000)throw Error('每篇文档最多索引5000条内部引用，已有索引保留。');
   }
   if('children'in node)stack.push(...node.children as ReturnType<typeof parse>['children']);

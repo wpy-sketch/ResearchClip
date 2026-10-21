@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Group, Image as CanvasImage, Layer, Stage } from 'react-konva';
+import { Group, Image as CanvasImage, Layer, Stage,Rect,Circle,Text } from 'react-konva';
+import type {AnchorCanvasState} from '../anchors/model';
 import type Konva from 'konva';
 import { screenToImage, validateImageSize } from './geometry';
 import { useEditorStore } from './store';
@@ -8,7 +9,8 @@ import { AnnotationNode } from './AnnotationNode';
 import {EffectPatch} from './EffectPatch';
 import { inImage } from './model';
 
-export function EditorCanvas({ session, onSize, onText }: { session: EditorSession; onSize: (size: { width: number; height: number }) => void; onText: (point: Point, id?: string) => void }) {
+export function EditorCanvas({ session, onSize, onText,anchors }: { session: EditorSession; onSize: (size: { width: number; height: number }) => void; onText: (point: Point, id?: string) => void;anchors?:AnchorCanvasState }) {
+  const anchorStart=useRef<Point|null>(null),[anchorRegion,setAnchorRegion]=useState<{x:number;y:number;width:number;height:number}|null>(null);
   const host = useRef<HTMLDivElement>(null); const stage = useRef<Konva.Stage>(null);
   const [size, setSize] = useState({ width: 1, height: 1 }); const [loaded, setLoaded] = useState<HTMLImageElement | null>(null);
   const [position, setPosition] = useState<Point | null>(null);
@@ -23,9 +25,9 @@ export function EditorCanvas({ session, onSize, onText }: { session: EditorSessi
   useEffect(()=>{if(pan.current?.cancelVersion!==cancelVersion)pan.current=null;},[cancelVersion]);
   useEffect(()=>{
     const editable=(target:EventTarget|null)=>target instanceof HTMLElement&&(target.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(target.tagName));
-    const down=(e:KeyboardEvent)=>{if(editable(e.target))return;if(e.code==='Space'&&e.target instanceof Node&&host.current?.contains(e.target)){e.preventDefault();space.current=true;setSpaceHeld(true);useEditorStore.getState().cancelGesture();}if(e.key==='Escape'){pan.current=null;useEditorStore.getState().cancelGesture();}};
+    const down=(e:KeyboardEvent)=>{if(editable(e.target))return;if(e.code==='Space'&&e.target instanceof Node&&host.current?.contains(e.target)){e.preventDefault();space.current=true;setSpaceHeld(true);useEditorStore.getState().cancelGesture();}if(e.key==='Escape'){anchorStart.current=null;setAnchorRegion(null);pan.current=null;useEditorStore.getState().cancelGesture();}};
     const up=(e:KeyboardEvent)=>{if(e.code==='Space'){space.current=false;setSpaceHeld(false);}};
-    const blur=()=>{space.current=false;setSpaceHeld(false);pan.current=null;useEditorStore.getState().cancelGesture();};
+    const blur=()=>{anchorStart.current=null;setAnchorRegion(null);space.current=false;setSpaceHeld(false);pan.current=null;useEditorStore.getState().cancelGesture();};
     window.addEventListener('keydown',down);window.addEventListener('keyup',up);window.addEventListener('blur',blur);
     return()=>{window.removeEventListener('keydown',down);window.removeEventListener('keyup',up);window.removeEventListener('blur',blur);};
   },[]);
@@ -49,7 +51,7 @@ export function EditorCanvas({ session, onSize, onText }: { session: EditorSessi
     const point = stage.current?.getPointerPosition(); if (!point) return;
     const view = useEditorStore.getState().sessions[image.id].viewport;
     if (pan.current) { const start = pan.current; const next: Viewport = { ...start.viewport, x: start.viewport.x + point.x - start.start.x, y: start.viewport.y + point.y - start.start.y, mode: 'manual' }; useEditorStore.getState().setViewport(next); setPosition(screenToImage(point,next)); }
-    else { setPosition(screenToImage(point, view)); if(!transforming.current) useEditorStore.getState().moveGesture(screenToImage(point,view)); }
+    else { setPosition(screenToImage(point, view));if(anchorStart.current){const start=anchorStart.current,end=screenToImage(point,view),x=Math.max(0,Math.min(image.widthPx-0.001,end.x)),y=Math.max(0,Math.min(image.heightPx-0.001,end.y));setAnchorRegion({x:Math.min(start.x,x),y:Math.min(start.y,y),width:Math.abs(x-start.x),height:Math.abs(y-start.y)});}else if(!transforming.current) useEditorStore.getState().moveGesture(screenToImage(point,view)); }
   };
   const visible=session.document.objects.map(a=>gesture?.imageId===image.id&&gesture.draft.id===a.id?gesture.draft:a);
   if(gesture?.imageId===image.id&&gesture.kind==='draw')visible.push(gesture.draft);
@@ -63,17 +65,24 @@ export function EditorCanvas({ session, onSize, onText }: { session: EditorSessi
           const screen=stage.current?.getPointerPosition();if(!screen)return;
           if(tool==='pan'||event.evt.button===1||space.current){event.evt.preventDefault();useEditorStore.getState().cancelGesture();pan.current={start:screen,viewport:useEditorStore.getState().sessions[image.id].viewport,cancelVersion:useEditorStore.getState().cancelVersion};return;}
           if(event.evt.button!==0)return;const raw=point();if(!raw)return;
+          if(anchors?.mode&&!anchors.disabled){if(inImage(raw,image.widthPx,image.heightPx)&&raw.x<image.widthPx&&raw.y<image.heightPx){anchorStart.current=raw;setAnchorRegion({x:raw.x,y:raw.y,width:0,height:0});}return;}
           if(tool==='select'){if(event.target===stage.current)useEditorStore.getState().select(null);}
           else if(tool==='text'){if(inImage(raw,image.widthPx,image.heightPx))onText(raw);}
           else useEditorStore.getState().beginDraw(raw);
         }}
-        onPointerMove={move} onPointerUp={() => { pan.current = null;if(!transforming.current)useEditorStore.getState().finishGesture(); }} onPointerCancel={() => { pan.current = null;useEditorStore.getState().cancelGesture(); }}
+        onPointerMove={move} onPointerUp={() => {pan.current=null;if(anchorStart.current&&anchors){const start=anchorStart.current,region=anchors.mode==='point'?{...start,width:0,height:0}:anchorRegion;anchorStart.current=null;setAnchorRegion(null);if(region&&(anchors.mode==='point'||(region.width>0&&region.height>0)))anchors.onCreate(region);return;}if(!transforming.current)useEditorStore.getState().finishGesture(); }} onPointerCancel={() => {anchorStart.current=null;setAnchorRegion(null);pan.current = null;useEditorStore.getState().cancelGesture(); }}
         onWheel={(event) => { event.evt.preventDefault();useEditorStore.getState().cancelGesture(); const at = stage.current?.getPointerPosition(); const view=useEditorStore.getState().sessions[image.id].viewport;if(at)useEditorStore.getState().zoom(view.scale * Math.exp(-event.evt.deltaY * 0.001),at); }}>
         <Layer listening={false}><Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>{loaded && !session.loadError && <CanvasImage image={loaded} width={image.widthPx} height={image.heightPx} />}{loaded&&!session.loadError&&visible.map(a=>(a.type==='mosaic'||a.type==='blur')?<EffectPatch key={a.id} source={loaded} image={image} annotation={a}/>:null)}</Group></Layer>
         <Layer><Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>
           {session.document.objects.map((original)=>{const a=gesture?.imageId===image.id&&gesture.draft.id===original.id?gesture.draft:original;return <AnnotationNode key={a.id} annotation={a} selected={session.selectedId===a.id} scale={viewport.scale} selectable={tool==='select'&&!spaceHeld&&!session.loadError} point={point} editText={(a)=>onText({x:a.x,y:a.y},a.id)} registerTransform={registerTransform} />;})}
           {gesture?.imageId===image.id&&gesture.kind==='draw'&&<AnnotationNode annotation={gesture.draft} selected={false} scale={viewport.scale} selectable={false} point={point} editText={()=>{}} registerTransform={registerTransform} />}
         </Group></Layer>
+        {anchors&&<Layer><Group x={viewport.x} y={viewport.y} scaleX={viewport.scale} scaleY={viewport.scale}>
+          {anchors.anchors.filter(a=>anchors.visible||anchors.highlight===a.anchorId).map((a,index)=><Group key={a.anchorId} x={a.x} y={a.y} draggable={!anchors.disabled&&!anchors.mode&&tool==='select'} onPointerDown={e=>{e.cancelBubble=true;}} onDragEnd={e=>{const x=Math.max(0,Math.min(image.widthPx-Math.max(a.width,.001),e.target.x())),y=Math.max(0,Math.min(image.heightPx-Math.max(a.height,.001),e.target.y()));e.target.position({x:a.x,y:a.y});anchors.onMove(a,x,y);}}>
+            {a.width>0?<Rect width={a.width} height={a.height} stroke={anchors.highlight===a.anchorId?'#ffbf47':'#37b9ac'} strokeWidth={2/viewport.scale} fill={anchors.highlight===a.anchorId?'#ffbf4755':'#37b9ac18'}/>:<Circle radius={7/viewport.scale} fill={anchors.highlight===a.anchorId?'#ffbf47':'#37b9ac'} stroke="#12212b" strokeWidth={1/viewport.scale}/>}
+            <Text text={String(index+1)} x={8/viewport.scale} y={-18/viewport.scale} fontSize={13/viewport.scale} fill={anchors.highlight===a.anchorId?'#ffbf47':'#37b9ac'}/>
+          </Group>)}{anchorRegion&&<Rect {...anchorRegion} stroke="#37b9ac" strokeWidth={2/viewport.scale} listening={false}/>}
+        </Group></Layer>}
       </Stage>
     </div><div className="editor-coordinate-status">原图 {image.widthPx} × {image.heightPx} 像素<span>{position ? `X ${position.x.toFixed(1)} · Y ${position.y.toFixed(1)}` : '鼠标位置：原图像素坐标'}</span></div>
   </div>;

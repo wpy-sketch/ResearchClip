@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v3.1.7 A11：schema10独立保存原像素点/区域锚点，绑定截图稳定ID与原图SHA256；main-only有界命令、乐观锁及A10索引扩展。Markdown跳转复用编辑器会话与viewport，不重开右侧文档；普通副本导出保留可读区域说明。无新依赖或系统协议注册，契约见[图片锚点](ANNOTATION-ANCHORS.md)。
+
 v3.1.5 A10：复用文档/截图稳定ID；schema9持久链接索引与文档标签，保存后后台CommonMark worker解析、摘要校验及事务替换。SVG图谱和受管相对链接导出复用既有文件/状态服务。协议、边界见[内部链接](INTERNAL-LINKS.md)，实测见[验收](qa/RELEASE-3.1.5.md)。
 
 v3.1.0：WebDAV沿用资源协议与schema6。`sync_configure`异步本机写入后返回经验证的Status；Zustand区分mutation busy、状态读取与停止请求，合并状态轮询并以generation丢弃过期响应。启动/冲突处理用spawn_blocking，取消AtomicBool先送达、job.try_lock只更新提示，不阻塞UI等待配置锁；前端对先于启动回执的取消再送一次以保留取消意图。`form.ts`仅做字段/凭据身份校验，后端安全验证继续独立执行。表单不因轮询remount，不持久化未保存密码。凭据读取失败返回受控错误供重输，不回退明文。无权限、依赖或数据库变更；[实际验收](qa/RELEASE-3.1.0.md)。

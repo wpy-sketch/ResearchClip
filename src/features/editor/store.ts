@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type {AnnotationAnchor} from '../anchors/model';
 import { boundHistory, recordEdit } from './history';
 import { parseDocument } from './serialization';
 import { fitViewport, validateImageSize, zoomViewport } from './geometry';
@@ -8,6 +9,8 @@ import { clampPoint, createAnnotation, drawAnnotation, inImage, moveArrowEndpoin
 interface Gesture { kind: 'draw' | 'move' | 'endpoint'; imageId: string; start: Point; original: Annotation; draft: Annotation; endpoint?: 0 | 1 }
 
 interface EditorState {
+  anchorJump:{anchor:AnnotationAnchor;serial:number}|null;
+  focusAnchor:(anchor:AnnotationAnchor)=>void;
   defaultStyle:Pick<AnnotationStyle,'color'|'strokeWidth'>;
   setDefaults:(style:Pick<AnnotationStyle,'color'|'strokeWidth'>)=>void;
   markSaved:(id:string,document:AnnotationDocument)=>void;
@@ -26,6 +29,8 @@ interface EditorState {
   moveGesture: (point: Point) => void; finishGesture: () => void; cancelGesture: () => void;
 }
 export const useEditorStore = create<EditorState>((set, get) => ({
+  anchorJump:null,
+  focusAnchor:anchor=>set({anchorJump:{anchor,serial:(get().anchorJump?.serial??0)+1}}),
   defaultStyle:{color:'#ef6262',strokeWidth:3},
   setDefaults:style=>{if(!/^#[0-9a-f]{6}$/i.test(style.color)||!Number.isInteger(style.strokeWidth)||style.strokeWidth<1||style.strokeWidth>32)return;get().cancelGesture();set({defaultStyle:{...style},style:{...get().style,...style}});},
   markSaved:(id,document)=>{const session=get().sessions[id];if(session)set({sessions:{...get().sessions,[id]:{...session,savedDocument:JSON.stringify(document)}}});},

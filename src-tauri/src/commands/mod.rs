@@ -2,6 +2,7 @@ use crate::domain::{ConnectionTestResponse, WorkspaceStatus};
 use serde::Serialize;
 use std::sync::Arc;
 use tauri::{State, WebviewWindow};
+pub mod anchors;
 pub mod capture;
 pub mod desktop;
 pub mod document;

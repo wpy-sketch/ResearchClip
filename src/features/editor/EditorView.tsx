@@ -5,7 +5,7 @@ import { pinEditor } from '../pins/api';
 import { ArrowLeft, Grid2X2, Droplets, ListOrdered, Pin, ArrowUpRight, Circle, ClipboardCopy, Download, FolderOpen, Hand, MousePointer2, Pencil, Redo2, Save, Square, Trash2, Type, Undo2, X, ZoomIn, ZoomOut } from 'lucide-react';
 import { useUiStore } from '../../app/ui-store';
 import { useEditorStore } from './store';
-import { EditorCanvas } from './EditorCanvas';
+import { AnchorWorkspace } from '../anchors/AnchorWorkspace';
 import { Modal } from '../../shared/ui/Modal';
 import { createAnnotation } from './model';
 import type { EditorTool, Point } from './types';
@@ -83,7 +83,7 @@ export function EditorView() {
         {selected?.type==='number'&&<label className="text-xs text-muted">编号数值 <input className="editor-number" type="number" aria-label="编号数值" min={1} max={9999} value={selected.value} onChange={e=>useEditorStore.getState().update({...selected,value:Number(e.target.value)})}/></label>}
         <span className="text-xs text-muted">滤镜作用于原图区域，导出 PNG 后应用效果；可编辑项目仍保留原图。</span>
       </div>
-      <EditorCanvas key={session.image.id} session={session} onSize={setSize} onText={editText}/>
+      <AnchorWorkspace key={session.image.id} session={session} onSize={setSize} onText={editText}/>
       <div className="editor-object-list" aria-label="标注对象"><span className="text-xs text-muted">标注 {session.document.objects.length}</span>{session.document.objects.map((a,index)=><button key={a.id} className={session.selectedId===a.id?'is-selected':''} onClick={()=>{setTool('select');select(a.id);}} title={`X ${a.x.toFixed(1)} · Y ${a.y.toFixed(1)}`} data-annotation-id={a.id} aria-pressed={session.selectedId===a.id}>{tools.find((t)=>t.id===a.type)?.label??a.type} {index+1}</button>)}</div>
       <p className="editor-session-notice">Ctrl+Z 撤销 · Ctrl+Y / Ctrl+Shift+Z 重做 · 空格/中键平移 · Esc 取消动作。退出前请保存到素材库或另存可编辑项目；撤销记录仅在本次会话；素材库版本历史持久保留，原图未改动。</p>
       {textTarget&&<Modal title={textTarget.id?'编辑文字':'插入文字'} onClose={()=>setTextTarget(null)}><form className="p-5" onSubmit={(e)=>{e.preventDefault();const text=String(new FormData(e.currentTarget).get('text')??'').trim();if(!text)return;const store=useEditorStore.getState();const old=textTarget.id?store.sessions[store.activeId!]?.document.objects.find((a)=>a.id===textTarget.id):null;const ok=old?.type==='text'?store.update({...old,text}):store.add({...createAnnotation('text',textTarget.point,store.style),type:'text',text,fontSize:store.style.fontSize});if(ok)setTextTarget(null);}}>

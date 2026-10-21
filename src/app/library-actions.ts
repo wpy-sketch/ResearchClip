@@ -38,11 +38,12 @@ export async function saveCaptureToLibrary(){
     await useLibraryStore.getState().refresh();useCaptureStore.setState({phase:'idle'});
   }catch(error){useCaptureStore.setState({phase:'idle',error:errorMessage(error,'素材保存失败，请保留预览后重试。')});}
 }
-export async function openLibraryEditor(id:string){
+export async function openLibraryEditor(id:string,allowed:()=>boolean=()=>true){
   const sourceId=`library-${id}`,state=useEditorStore.getState();
   // Reopening a live session keeps its unsaved edits; explicit close/reopen loads fresh DB data.
-  if(state.sessions[sourceId]){state.activate(sourceId);useUiStore.getState().navigate('editor');return;}
+  if(state.sessions[sourceId]){if(allowed()){state.activate(sourceId);useUiStore.getState().navigate('editor');}return;}
   const item=await getScreenshot(id),blob=await screenshotImage(id);
+  if(!allowed())return;
   state.open({id:sourceId,name:item.title,widthPx:item.widthPx,heightPx:item.heightPx,blob,libraryId:item.id,libraryRevision:item.revision,annotationVersion:item.annotationVersion},item.annotationData);
   if(useEditorStore.getState().activeId!==sourceId)throw new Error(useEditorStore.getState().error??'无法打开素材图片。');useUiStore.getState().navigate('editor');
 }

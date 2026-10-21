@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 9;
+pub const SCHEMA_VERSION: u32 = 10;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -117,10 +117,21 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/009_internal_links.sql"),
         )?;
     }
+    if version < 10 {
+        apply_migration(
+            connection,
+            10,
+            include_str!("../../migrations/010_annotation_anchors.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 10 {
+        connection.prepare("SELECT anchor_id,screenshot_id,image_revision,x,y,width,height,title,description,revision FROM annotation_anchors LIMIT 0")?;
+        connection.prepare("SELECT anchor_id FROM link_index LIMIT 0")?;
+    }
     if version >= 9 {
         for sql in [
             "SELECT source_id,target_id,link_type,source_location,source_end,source_line,label,updated_at FROM link_index LIMIT 0",
@@ -238,7 +249,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 9);
+        assert_eq!(storage.status().unwrap().schema_version, 10);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()

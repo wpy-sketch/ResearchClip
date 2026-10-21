@@ -3,20 +3,21 @@ import argparse, hashlib, json, os, shutil, subprocess, urllib.request, urllib.e
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');a=p.parse_args()
 root=Path(__file__).resolve().parent.parent
-assert a.version in ('3.1.4','3.1.5','3.1.6')
+assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7')
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
 if a.prepare:
     assert not any(out.iterdir()),'Refusing nonempty release staging folder'
     companions=[]
-    if a.version=='3.1.6':
-        folder=root/'artifacts/companions-v316'
+    if a.version in ('3.1.6','3.1.7'):
+        folder=root/'artifacts'/('companions-v'+a.version.replace('.',''))
         cm=json.loads((folder/'manifest.json').read_text(encoding='utf-8'));assert cm['version']==a.version
-        qa=json.loads((root/'artifacts/installer-v316-pwsh/report.json').read_text(encoding='utf-8-sig'))
+        qa_folder='installer-v316-pwsh' if a.version=='3.1.6' else f'installer-v{a.version.replace(".","")}-final'
+        qa=json.loads((root/'artifacts'/qa_folder/'report.json').read_text(encoding='utf-8-sig'))
         assert qa['result']=='passed' and qa['version']==a.version and not qa['installationStillPresent']
         assert digest(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe')==qa['installerSha256'].lower(),'Installer differs from tested payload'
-        required={'ResearchClip-WebClipper-v1.0.2-windows-x64.zip','ResearchClip-MathOCR-Setup-v1.0.4.zip','QWEN-MODEL-MANIFEST.json','MODEL-RESOURCES.txt','OFFLINE-RESOURCE-INDEX.json','ResearchClip-Guide-v3.1.6.zip'}
+        required={'ResearchClip-WebClipper-v1.0.2-windows-x64.zip','ResearchClip-MathOCR-Setup-v1.0.4.zip','QWEN-MODEL-MANIFEST.json','MODEL-RESOURCES.txt','OFFLINE-RESOURCE-INDEX.json',f'ResearchClip-Guide-v{a.version}.zip'}
         assert {x['name'] for x in cm['assets']}==required
         for x in cm['assets']:
             assert Path(x['name']).name==x['name'] and not (out/x['name']).exists()
@@ -27,7 +28,7 @@ if a.prepare:
         assert not dest.exists(),'Refusing existing release artifact'
         shutil.copyfile(src,dest)
     assets=[{'name':f.name,'size':f.stat().st_size,'sha256':digest(f)} for f in sorted(out.iterdir()) if f.is_file()]
-    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n'+('Companions: exact WebClipper v1.0.2, MathOCR Setup v1.0.4 and Qwen manifest from v3.1.3; offline model volumes remain on v3.1.2. See MODEL-RESOURCES.txt and OFFLINE-RESOURCE-INDEX.json.\nGuide includes 84 fictional exercises and 29 local images. No user data or credentials included.\n' if companions else ''),encoding='utf-8')
+    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n'+('Companions: exact WebClipper v1.0.2, MathOCR Setup v1.0.4 and Qwen manifest from v3.1.3; offline model volumes remain on v3.1.2. See MODEL-RESOURCES.txt and OFFLINE-RESOURCE-INDEX.json.\nGuide includes fictional feature exercises and local offline images; see the versioned user guide. No user data or credentials included.\n' if companions else ''),encoding='utf-8')
     f=out/'SOURCE.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
     (out/'SHA256SUMS.txt').write_text(''.join(x['sha256']+'  '+x['name']+'\n' for x in assets),encoding='utf-8')
     f=out/'SHA256SUMS.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
@@ -58,8 +59,8 @@ assert req('https://api.github.com/user')['login']=='wpy-sketch'
 assert req(base+'/git/ref/tags/v'+a.version)['object']['sha']==commit
 releases=req(base+'/releases?per_page=100');existing=next((r for r in releases if r['tag_name']=='v'+a.version),None)
 def check_history(releases):
-    if a.version!='3.1.6':return None
-    before=json.loads((root/'docs/qa/evidence/v316-prior-releases.json').read_text(encoding='utf-8'))
+    if a.version not in ('3.1.6','3.1.7'):return None
+    before=json.loads((root/f'docs/qa/evidence/v{a.version.replace(".","")}-prior-releases.json').read_text(encoding='utf-8'))
     for old in before:
         current=next((x for x in releases if x['id']==old['id']),None)
         assert current and current['tag_name']==old['tag'] and current['draft']==old['draft'] and current['prerelease']==old['prerelease'] and current['target_commitish']==old['commit'],'Historical release changed'
