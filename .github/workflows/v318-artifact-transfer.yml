@@ -1,0 +1,56 @@
+name: Restore verified v3.1.8 release executable
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: verified-v318-artifact-transfer
+  cancel-in-progress: false
+jobs:
+  restore:
+    if: github.repository == 'wpy-sketch/ResearchClip' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Restore exact tested bytes and attach only the missing executable
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib,json,lzma,os,ssl,urllib.request,urllib.parse
+          base='https://api.github.com/repos/wpy-sketch/ResearchClip'
+          name='ResearchClip-v3.1.8-windows-x64.exe'
+          size=27268096
+          expected='f7185efcff8dd8296fbd8457f3c21234bf5c81352725d00765106ea354374b15'
+          source='0e4bba8c6522eb330f49e9696519e5f27775202e'
+          class NoRedirect(urllib.request.HTTPRedirectHandler):
+              def redirect_request(self,*args,**kwargs): return None
+          client=urllib.request.build_opener(urllib.request.ProxyHandler({}),urllib.request.HTTPSHandler(context=ssl.create_default_context()),NoRedirect())
+          def request(url,data=None):
+              assert urllib.parse.urlsplit(url).hostname in ['api.github.com','uploads.github.com']
+              headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','User-Agent':'ResearchClip-Verified-Transfer','X-GitHub-Api-Version':'2022-11-28'}
+              if data is not None: headers['Content-Type']='application/octet-stream'
+              with client.open(urllib.request.Request(url,data=data,headers=headers),timeout=120) as response:
+                  return json.loads(response.read(20*1024*1024))
+          release=request(base+'/releases/419355889')
+          assert release['draft'] and release['tag_name']=='v3.1.8' and release['target_commitish']==source
+          assert request(base+'/git/ref/tags/v3.1.8')['object']['sha']==source
+          current=next((a for a in release['assets'] if a['name']==name),None)
+          if current:
+              assert current['state']=='uploaded' and current['size']==size and current['digest']=='sha256:'+expected
+              print('Existing executable verified; no write performed.')
+          else:
+              blob=request(base+'/git/blobs/02f9bd241801c5c0ab184399cb8879a6261e9870')
+              assert blob['encoding']=='base64' and blob['size']==8911044
+              compressed=base64.b64decode(''.join(blob['content'].split()),validate=True)
+              assert len(compressed)==8911044 and hashlib.sha256(compressed).hexdigest()=='d1d4f3947811bec219251b14b8dda3de8a194fb02798bb9f9874ef1db140a740'
+              decoder=lzma.LZMADecompressor(memlimit=256*1024*1024)
+              data=decoder.decompress(compressed,max_length=size+1)
+              assert decoder.eof and not decoder.unused_data and len(data)==size and hashlib.sha256(data).hexdigest()==expected
+              url=release['upload_url'].split('{')[0]
+              assert url=='https://uploads.github.com/repos/wpy-sketch/ResearchClip/releases/419355889/assets'
+              asset=request(url+'?'+urllib.parse.urlencode({'name':name}),data)
+              assert asset['name']==name and asset['state']=='uploaded' and asset['size']==size and asset['digest']=='sha256:'+expected
+              print('Restored tested executable; uploaded size and server SHA256 match: '+expected)
+          PY
