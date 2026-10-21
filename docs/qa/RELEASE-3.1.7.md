@@ -39,3 +39,7 @@
 ## Windows人工验收与已知边界
 
 原生自动化仅使用隔离PNG、SQLite、文件选择器和WebView2，不等于物理屏幕/DPI或人工科研材料验收。完整高DPI/多显示器、macOS、全部第三方编辑器/浏览器、真实第三方WebDAV两设备矩阵未在本版完成人工验证。锚点仅本机，不随WebDAV、旧标注JSON或PNG迁移。现有未签名及大chunk警告继续记录，不因版本发布消失。
+
+## 发布结果
+
+[v3.1.7 Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.7)已公开，10个附件全部经匿名下载SHA256核验；25个历史Release和176个历史附件元数据/哈希未变。独立GitHub读取确认latest=v3.1.7，draft=false。见[发布回执](evidence/v317-publication.json)。离线指南ZIP的42个成员CRC与相对链接校验通过。

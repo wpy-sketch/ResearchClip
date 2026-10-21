@@ -1,0 +1,91 @@
+{
+  "version": "3.1.7",
+  "commit": "e6e180e1e2c8fae66af674b52f2f9dcbccfdc1cf",
+  "id": 419238422,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.7",
+  "assets": [
+    {
+      "name": "MODEL-RESOURCES.txt",
+      "size": 1002,
+      "digest": "sha256:d0765bd922a051fbb9a871422e23c469ca129522289433e30cf9c4b0f987243b",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/MODEL-RESOURCES.txt"
+    },
+    {
+      "name": "OFFLINE-RESOURCE-INDEX.json",
+      "size": 21145,
+      "digest": "sha256:0958cc787a0b7beb90c9e1f66364fb48b960c5ae25619b3d88a26de7a4f26b8c",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/OFFLINE-RESOURCE-INDEX.json"
+    },
+    {
+      "name": "QWEN-MODEL-MANIFEST.json",
+      "size": 5637,
+      "digest": "sha256:f7367e6ffd4104958598b8bcf789ae7ab05d26997116d6c5b4b7481cb453d4a2",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/QWEN-MODEL-MANIFEST.json"
+    },
+    {
+      "name": "ResearchClip-Guide-v3.1.7.zip",
+      "size": 2413108,
+      "digest": "sha256:f9c1ee74bced685fae432b3c5d1a788eb38194b37c2c119ab333283db0847719",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/ResearchClip-Guide-v3.1.7.zip"
+    },
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "size": 10948,
+      "digest": "sha256:c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/ResearchClip-MathOCR-Setup-v1.0.4.zip"
+    },
+    {
+      "name": "ResearchClip-v3.1.7-windows-x64.exe",
+      "size": 27078656,
+      "digest": "sha256:3d94c31ba63c9af6532dccbf5c45c36412779ee27cc3a0d6e1ae273819cce20f",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/ResearchClip-v3.1.7-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "size": 541479,
+      "digest": "sha256:1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/ResearchClip-WebClipper-v1.0.2-windows-x64.zip"
+    },
+    {
+      "name": "ResearchClip_3.1.7_x64-setup.exe",
+      "size": 8917569,
+      "digest": "sha256:99ffa9faa269cb83ddc841b4d800ed30dd63f2f53fed54851f3a21f475fa0794",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/ResearchClip_3.1.7_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 871,
+      "digest": "sha256:73cd1259c7065b3f5839924e85dc5b2d9066feacdcf4db4146266e7cb01365d3",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 452,
+      "digest": "sha256:efbc97ca068090dd88d04e824e4da84203476c7d7a16d525c2d11bde1e4f50cb",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.7/SOURCE.txt"
+    }
+  ],
+  "historyBefore": {
+    "releases": 25,
+    "assets": 176,
+    "result": "PASS"
+  },
+  "published": true,
+  "anonymousVerified": [
+    "MODEL-RESOURCES.txt",
+    "OFFLINE-RESOURCE-INDEX.json",
+    "QWEN-MODEL-MANIFEST.json",
+    "ResearchClip-Guide-v3.1.7.zip",
+    "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+    "ResearchClip-v3.1.7-windows-x64.exe",
+    "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+    "ResearchClip_3.1.7_x64-setup.exe",
+    "SOURCE.txt",
+    "SHA256SUMS.txt"
+  ],
+  "historyAfter": {
+    "releases": 25,
+    "assets": 176,
+    "result": "PASS"
+  }
+}
