@@ -2,8 +2,8 @@
   "version": "3.1.4",
   "localCommit": "8ee6eafcdefa5dd933eb55df716e6a3e41f095f7",
   "localTag": "v3.1.4",
-  "sourcePush": "BLOCKED",
-  "release": "NOT_CREATED",
+  "sourcePush": "PASS",
+  "release": "PUBLISHED",
   "remoteLastVerifiedHead": "0426541679b374edb6e0878e4eaae2d439ee727e",
   "checks": {
     "frontend": {
@@ -57,5 +57,14 @@
       "size": 127,
       "sha256": "633a9a00e0b4ae3643f521c9f87dbf290a9434c7e5a3e72107d8cf86673375a5"
     }
-  ]
+  ],
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.4",
+  "releaseId": 419036748,
+  "anonymousVerified": [
+    "ResearchClip-v3.1.4-windows-x64.exe",
+    "ResearchClip_3.1.4_x64-setup.exe",
+    "SHA256SUMS.txt",
+    "SOURCE.txt"
+  ],
+  "history": "Initial TLS and integration-permission blocks were recovered using the existing local proxy and Git credential. v3.1.4 source/tag and all four assets published; anonymous byte/hash verification passed."
 }

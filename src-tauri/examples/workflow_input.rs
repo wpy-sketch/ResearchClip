@@ -19,6 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || mode == "dialog-open-native"
         || mode == "dialog-open-compare"
         || mode == "dialog-save-md"
+        || mode == "dialog-save-linked-md"
         || mode == "dialog-open-bib"
         || mode == "dialog-open-md"
         || mode == "dialog-model-folder"
@@ -77,6 +78,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ]
             } else if mode == "dialog-save-md" {
                 vec!["保存 Markdown 文档".encode_utf16().collect()]
+            } else if mode == "dialog-save-linked-md" {
+                vec![
+                    "导出标准Markdown副本（不覆盖已有文件）"
+                        .encode_utf16()
+                        .collect(),
+                ]
             } else if mode == "dialog-open-bib" {
                 vec!["导入 BibTeX 文献".encode_utf16().collect()]
             } else if mode == "dialog-open-md" {
@@ -132,6 +139,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             || mode == "dialog-open-native"
             || mode == "dialog-open-compare"
             || mode == "dialog-save-md"
+            || mode == "dialog-save-linked-md"
             || mode == "dialog-open-bib"
             || mode == "dialog-open-md"
             || mode == "dialog-model-folder"
@@ -185,7 +193,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     || path.extension().is_some_and(|s| {
                         if mode == "dialog-open-bib" {
                             s == "bib"
-                        } else if mode == "dialog-save-md" || mode == "dialog-open-md" {
+                        } else if mode == "dialog-save-md"
+                            || mode == "dialog-open-md"
+                            || mode == "dialog-save-linked-md"
+                        {
                             s == "md"
                         } else {
                             s == "png"

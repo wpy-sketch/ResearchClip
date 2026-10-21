@@ -1,0 +1,147 @@
+{
+  "version": "3.1.5",
+  "environment": "Windows x64 / Node22 / Rust1.99 / Tauri2-WebView2",
+  "checks": [
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "testFiles": 58,
+      "tests": 394,
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:rust (normal Windows permissions; RUST_TEST_THREADS=1)",
+      "exitCode": 0,
+      "passed": 195,
+      "failed": 0,
+      "ignored": 7,
+      "result": "PASS"
+    },
+    {
+      "command": "npm run check:rust",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "npm run format:rust",
+      "exitCode": 0,
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/links-worker-smoke.mjs",
+      "exitCode": 0,
+      "groups": 2,
+      "mode": "production bundle in DOM-free worker_threads",
+      "result": "PASS"
+    },
+    {
+      "command": "isolated npm ci --ignore-scripts --offline --cache .tools/npm-cache",
+      "exitCode": 0,
+      "installedPackages": 303,
+      "dependencyVersionAndIntegrityChanges": false,
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/links-native-smoke.mjs a10-final",
+      "exitCode": 0,
+      "groups": 5,
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/guide-native-smoke.mjs v315-final --verify-only",
+      "exitCode": 0,
+      "groups": 5,
+      "chapters": 16,
+      "guideImages": 29,
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/guide-reader-smoke.mjs v315-final-reader",
+      "exitCode": 0,
+      "groups": 9,
+      "result": "PASS"
+    },
+    {
+      "command": "npm run check:docs",
+      "exitCode": 0,
+      "documents": 106,
+      "localLinks": 612,
+      "result": "PASS"
+    },
+    {
+      "command": "npm run desktop:bundle (normal Windows permissions)",
+      "exitCode": 0,
+      "targets": [
+        "Windows x64 optimized EXE",
+        "NSIS"
+      ],
+      "result": "PASS"
+    },
+    {
+      "command": "installer-smoke.ps1 -RunId v315-final -TargetDir src-tauri/target",
+      "exitCode": 0,
+      "groups": 4,
+      "userDataFilesUnchanged": 13,
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/references-native-smoke.mjs a10-references-regression",
+      "exitCode": 0,
+      "groups": 7,
+      "crossref": {
+        "status": "PASS",
+        "title": "Measured measurement",
+        "authors": "Markus Aspelmeyer",
+        "year": "2009"
+      },
+      "result": "PASS"
+    },
+    {
+      "command": "node scripts/similarity-native-smoke.mjs a10-similarity-regression",
+      "exitCode": 0,
+      "groups": 6,
+      "actualSchemaVersionAsserted": 9,
+      "aiModelExecuted": false,
+      "result": "PASS"
+    }
+  ],
+  "nativeA10": {
+    "mode": "actual Windows packaged debug EXE/WebView2, real SQLite, worker and native Save/Open; isolated controlled capture fixture, not physical screenshot/DPI validation",
+    "checks": [
+      "native Save grants create two stable IDs; typed [[ searches real candidates and inserts document, screenshot and self links; packaged background worker indexes saved UTF16 positions into real schema9",
+      "internal preview opens an actual screenshot card; card backlink returns to the correct source occurrence after Chinese/emoji",
+      "A↔B cycle and A self-reference are indexed without recursion; native rename preserves B ID; standard Markdown export rewrites relative URLs, visibly warns for screenshot references and preserves the original",
+      "real graph project/tag/neighbor filtering, cycles, zoom/pan, dark/light 1180/760/480 layouts; background rebuild cancels and successfully reruns",
+      "actual app restart preserves IDs, links and document tags; renamed targets reopen; deleting an isolated target yields a broken link/node and a visible open error without losing source; arbitrary-path IDs rejected and original screenshot SHA256 unchanged"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "nativeRegression": {
+    "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+    "checks": [
+      "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+      "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+      "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+      "all 29 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+      "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 16 chapters; 1180/760/480 layouts do not overflow"
+    ],
+    "errors": [],
+    "result": "PASS"
+  },
+  "notValidated": [
+    "manual physical high-DPI / multi-monitor matrix",
+    "macOS",
+    "WebDAV identity/index transfer (not implemented in this scope)"
+  ],
+  "release": "pending source commit and GitHub publication",
+  "installer": {
+    "result": "passed",
+    "userDataFilesHashed": 13,
+    "installerSha256": "2A02249F78097E0729B96680F4D45C3FEABF0680E16B8D0BCAC59E386C2DA972",
+    "signatureStatus": "NotSigned",
+    "busyInstallExit": 2,
+    "busyUninstallExit": 2,
+    "installationStillPresent": false
+  }
+}

@@ -638,7 +638,7 @@ mod tests {
             c.pragma_update(None, "user_version", 2).unwrap();
         }
         let s = Storage::open(root.clone()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 8);
+        assert_eq!(s.status().unwrap().schema_version, 9);
         assert_eq!(
             s.connection
                 .query_row(

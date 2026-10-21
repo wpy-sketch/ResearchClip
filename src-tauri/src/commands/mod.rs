@@ -8,6 +8,7 @@ pub mod document;
 pub mod editor;
 pub mod import;
 pub mod library;
+pub mod links;
 pub mod markdown;
 pub mod ocr;
 pub mod pins;

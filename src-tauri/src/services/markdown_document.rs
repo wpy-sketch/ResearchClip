@@ -442,6 +442,47 @@ impl DocumentFiles {
             Ok(self.remember(path, input.markdown.as_bytes().to_vec()))
         }
     }
+    /// Reuse the existing no-overwrite file/asset pipeline for a portable copy.
+    pub fn export_link_copy(
+        &mut self,
+        token: &str,
+        destination: &Path,
+        markdown: String,
+    ) -> Result<(), CaptureError> {
+        let source = self.external_path(token)?;
+        let mut assets = Vec::new();
+        let mut pngs = Vec::new();
+        let mut total = 0;
+        for name in names(&markdown)? {
+            let png = read(
+                &asset_path(source.parent().ok_or_else(io_error)?, &name)?,
+                MAX_PNG_BYTES,
+            )?;
+            total += png.len();
+            if total > MAX_ASSETS {
+                return Err(failure("导出图片超过128MiB。"));
+            }
+            assets.push(AssetMeta {
+                name,
+                size: png.len(),
+            });
+            pngs.push(png);
+        }
+        let input = SaveInput {
+            markdown,
+            assets,
+            token: None,
+            save_as: true,
+            file_name: None,
+        };
+        let saved = self.save(
+            Some(destination),
+            &input,
+            &pngs.iter().map(Vec::as_slice).collect::<Vec<_>>(),
+        )?;
+        self.release(&saved.token);
+        Ok(())
+    }
     fn unchanged(&self, token: &str) -> Result<(), CaptureError> {
         let grant = self
             .grants
@@ -688,5 +729,35 @@ mod tests {
         );
         assert!(!d.path().join("new.md").exists());
         assert_eq!(fs::read(d.path().join("assets")).unwrap(), b"keep");
+    }
+    #[test]
+    fn portable_copy_never_overwrites_or_consumes_original_grant() {
+        let dir = tempfile::tempdir().unwrap();
+        let original = dir.path().join("original.md");
+        let copy = dir.path().join("copy.md");
+        std::fs::write(&original, "original").unwrap();
+        let mut files = DocumentFiles::default();
+        let bytes = files.open(&original).unwrap();
+        let size = u32::from_le_bytes(bytes[..4].try_into().unwrap()) as usize;
+        let meta: serde_json::Value = serde_json::from_slice(&bytes[4..4 + size]).unwrap();
+        let token = meta["token"].as_str().unwrap();
+        files
+            .export_link_copy(token, &copy, "portable".into())
+            .unwrap();
+        assert_eq!(std::fs::read_to_string(&original).unwrap(), "original");
+        assert_eq!(std::fs::read_to_string(&copy).unwrap(), "portable");
+        assert!(files.external_path(token).is_ok());
+        assert!(
+            files
+                .export_link_copy(token, &copy, "overwrite".into())
+                .is_err()
+        );
+        assert_eq!(std::fs::read_to_string(&copy).unwrap(), "portable");
+        std::fs::write(&original, "external change").unwrap();
+        assert!(
+            files
+                .export_link_copy(token, &dir.path().join("other.md"), "no".into())
+                .is_err()
+        );
     }
 }

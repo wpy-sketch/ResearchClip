@@ -709,3 +709,61 @@ html[data-window-picker="true"],html[data-window-picker="true"] body,html[data-w
 .guide-content .document-preview td,.guide-content .document-preview th{padding:10px;border:1px solid var(--rc-edge)}
 .guide-content .document-preview h4{border-left:3px solid var(--rc-accent);padding-left:12px}
 @media(max-width:700px){.guide-position{display:none}.guide-layout nav[aria-label="使用指南目录"]{padding:12px}}
+
+/* A10: local connections, distinct node shapes and a compact reading companion. */
+.internal-link{display:inline;color:var(--rc-accent);background:var(--rc-accent-soft);border-radius:5px;padding:1px 4px;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.internal-link:hover{outline:1px solid var(--rc-accent)}
+.internal-link-picker{flex-shrink:0;border:1px solid var(--rc-accent);border-radius:12px;background:var(--rc-surface);padding:12px;margin:8px;max-height:300px;overflow:auto;font-size:12px}
+.internal-link-picker header,.internal-link-picker footer{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--rc-muted);padding:4px}
+.internal-link-picker [role=listbox]{display:grid;gap:4px;margin:8px 0}
+.internal-link-picker [role=option]{display:flex;align-items:center;gap:10px;text-align:left;border-radius:8px;padding:9px;min-width:0}
+.internal-link-picker [role=option] strong{flex:1;overflow-wrap:anywhere}
+.internal-link-picker [role=option] span,.internal-link-picker small{color:var(--rc-muted);font-size:10px}
+.internal-link-picker [aria-selected=true]{background:var(--rc-accent-soft);color:var(--rc-accent)}
+.link-details{margin:12px 0;border:1px solid var(--rc-edge);background:var(--rc-container);border-radius:12px;font-size:12px}
+.link-details>summary{cursor:pointer;padding:12px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.link-details>summary span{color:var(--rc-muted);font-size:11px;font-weight:400}
+.link-details-content{padding:0 12px 12px;max-height:340px;overflow:auto}
+.link-details-content h4{font-size:12px;font-weight:600;margin:16px 0 8px}
+.link-hint{font-size:11px;line-height:1.8;color:var(--rc-muted);margin:6px 0}
+.link-row{display:flex;align-items:flex-start;flex-direction:column;gap:4px;padding:9px 10px;border:1px solid var(--rc-edge);border-radius:9px;background:var(--rc-surface);text-align:left;width:100%;margin:6px 0;overflow-wrap:anywhere}
+.link-row:hover{border-color:var(--rc-accent);background:var(--rc-accent-soft)}
+.link-row small{font-size:10px;color:var(--rc-muted)}
+.link-row.is-missing{border-style:dashed;color:var(--rc-error)}
+.link-status{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:8px 0;color:var(--rc-muted);font-size:11px}
+.link-status button,.internal-link-picker header button,.internal-link-picker footer button{color:var(--rc-accent)}
+.document-link-tags{display:flex;align-items:center;gap:10px;font-size:11px;margin:10px 0}
+.document-link-tags select{flex:1;min-width:0;max-height:90px;background:var(--rc-surface);border:1px solid var(--rc-edge);border-radius:8px;padding:5px}
+.link-export-report{margin-top:10px;padding:10px;border:1px solid var(--rc-edge);border-radius:8px;overflow-wrap:anywhere;line-height:1.8}
+.markdown-panel>.link-details{flex-shrink:0;margin:4px 8px;max-height:32vh;overflow:auto}
+.markdown-panel>.link-details .link-details-content{max-height:24vh}
+.graph-page{max-width:1500px}
+.graph-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end;padding:14px;background:var(--rc-container);border:1px solid var(--rc-edge);border-radius:14px}
+.graph-controls label{display:grid;gap:5px;font-size:11px;color:var(--rc-muted);flex:1;min-width:130px}
+.graph-controls select{background:var(--rc-surface);border:1px solid var(--rc-edge);color:var(--rc-primary);border-radius:9px;padding:9px;min-width:0}
+.graph-legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:11px;padding:16px 4px}
+.graph-legend>span:last-child{margin-left:auto;color:var(--rc-muted)}
+.graph-document{color:var(--rc-accent)}
+.graph-screenshot{color:#399a92}
+:root[data-theme=light] .graph-screenshot{color:#13736d}
+.graph-missing{color:var(--rc-error)}
+.graph-canvas{position:relative;min-height:350px;border:1px solid var(--rc-edge);border-radius:18px;overflow:hidden;background:var(--rc-container);background-image:radial-gradient(var(--rc-edge) .7px,transparent .7px);background-size:20px 20px}
+.graph-canvas svg{display:block;width:100%;height:clamp(350px,58vh,680px);touch-action:none;cursor:grab}
+.graph-canvas svg:active{cursor:grabbing}
+.graph-edge{stroke:var(--rc-muted);stroke-width:1.4;opacity:.6;fill:none}
+#graph-arrow{fill:var(--rc-muted)}
+.graph-node{cursor:pointer}
+.graph-node rect,.graph-node circle{stroke:currentColor;stroke-width:2;fill:var(--rc-surface)}
+.graph-node:focus,.graph-node:hover{outline:none;filter:drop-shadow(0 0 4px currentColor)}
+.graph-node text{fill:var(--rc-primary);font-size:12px;font-family:inherit}
+.graph-node.is-missing{color:var(--rc-error);stroke-dasharray:4 3}
+.graph-zoom{position:absolute;z-index:1;right:12px;top:12px;display:flex;align-items:center;gap:6px;background:var(--rc-surface);border:1px solid var(--rc-edge);border-radius:12px;padding:4px;font-size:11px}
+.graph-empty{position:absolute;inset:30%;display:grid;align-content:center;justify-items:center;gap:10px;color:var(--rc-muted);font-size:12px;text-align:center;pointer-events:none}
+.graph-node-list{margin-top:16px;font-size:12px}.graph-node-list summary{cursor:pointer;padding:8px;color:var(--rc-muted)}
+.graph-index-status{padding:10px 4px;font-size:11px;color:var(--rc-muted);overflow-wrap:anywhere}
+@media(max-width:700px){.graph-page{padding:16px}.graph-controls{padding:10px;gap:8px}.graph-controls .secondary-button{font-size:11px}.graph-legend{gap:10px}.graph-empty{inset:25% 10%}.graph-zoom{top:8px;right:8px}}
+
+.document-link-tools{border-top:1px solid var(--rc-edge);margin-top:12px;padding-top:8px}.document-link-tools>summary{cursor:pointer;color:var(--rc-muted);font-size:11px;padding:5px 0}
+.guide-quick-start{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:1100px){.guide-quick-start{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.guide-quick-start{grid-template-columns:1fr}}

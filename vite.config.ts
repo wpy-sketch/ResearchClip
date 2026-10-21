@@ -2,9 +2,13 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import packageInfo from './package.json' with { type: 'json' };
+import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // CommonMark's browser entity decoder requires document; use its installed
+  // pure implementation so the same parser also runs in a DOM-free Worker.
+  resolve: { alias: { 'decode-named-character-reference': fileURLToPath(import.meta.resolve('decode-named-character-reference')) } },
   define: { __APP_VERSION__: JSON.stringify(packageInfo.version) },
   clearScreen: false,
   server: {

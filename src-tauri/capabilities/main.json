@@ -6,6 +6,14 @@
     "main"
   ],
   "permissions": [
+    "allow-link-targets",
+    "allow-link-document-source",
+    "allow-replace-document-links",
+    "allow-link-details",
+    "allow-link-graph",
+    "allow-set-document-link-tags",
+    "allow-export-linked-document",
+
     "allow-similarity-ai-status",
     "allow-choose-similarity-ai-bundle",
     "allow-start-similarity-ai",

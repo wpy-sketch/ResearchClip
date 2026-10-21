@@ -12,7 +12,7 @@ export type DocumentAction='new'|'blank'|'open'|'close'|'template'|'project';
 interface TextEdit {document:MarkdownDocument;caret:{start:number;end:number}}
 const bounded=(items:TextEdit[])=>{let bytes=0;return items.slice(-100).reverse().filter(item=>{bytes+=JSON.stringify(item.document).length*2;return bytes<=8*1024*1024;}).reverse();};
 interface State {
-  projectOpenId:string|null;openProject:(id:string)=>Promise<void>;
+  projectOpenId:string|null;projectOpenOffset:number;projectLinkNavigation:boolean;openProject:(id:string,offset?:number)=>Promise<void>;
   insertText:(text:string)=>boolean;
   templateDialog:'choose'|'save'|null; setTemplateDialog:(dialog:'choose'|'save'|null)=>void;
   templateSeed:TemplateSeed|null; createFromTemplate:(seed:TemplateSeed)=>Promise<void>;
@@ -35,11 +35,11 @@ export function createDocumentStore(){
         set({phase:'opening',error:null,notice:null,pending:null});let openedToken:string|null=null;
         try{
           const disk=await openDocumentFile(action==='project'?get().projectOpenId??undefined:undefined);if(!disk)return;
-          openedToken=disk.token;const document=parseMarkdown(disk.markdown,disk.path.split(/[\\/]/).at(-1));
+          openedToken=disk.token;const parsed=parseMarkdown(disk.markdown,disk.path.split(/[\\/]/).at(-1)),offset=action==='project'?Math.min(get().projectOpenOffset,disk.markdown.length):0,document=action==='project'&&get().projectLinkNavigation?{...parsed,mode:'source' as const,blocks:[{id:newId(),type:'text' as const,markdown:disk.markdown}]}:parsed;
           for(const b of document.blocks)if(b.type==='image'&&!disk.assets[b.assetName])throw new Error('文档引用的图片缺失，当前草稿已保留。');
           const assets:Record<string,DocumentAsset>={};
           try{for(const [name,blob] of Object.entries(disk.assets))assets[name]={blob,url:URL.createObjectURL(blob)};}catch(error){dispose(assets);throw error;}
-          const old=get();dispose(old.assets);set({document,caret:{start:0,end:0},past:[],future:[],focusRequest:get().focusRequest+1,assets,token:disk.token,path:disk.path,fileName:disk.path.split(/[\\/]/).at(-1)??'untitled.md',savedFingerprint:JSON.stringify(document),pending:null,notice:'Markdown 已打开；图片与注释顺序已恢复。'});openedToken=null;await release(old.token);
+          const old=get();dispose(old.assets);set({document,caret:{start:offset,end:offset},past:[],future:[],focusRequest:get().focusRequest+1,assets,token:disk.token,path:disk.path,fileName:disk.path.split(/[\\/]/).at(-1)??'untitled.md',savedFingerprint:JSON.stringify(document),pending:null,notice:'Markdown 已打开；图片与注释顺序已恢复。'});openedToken=null;await release(old.token);
         }catch(error){set({error:errorMessage(error,'打开失败，当前文档已保留。')});}
         finally{if(openedToken)await release(openedToken);set({phase:'idle'});}
       }else if(action==='template'){
@@ -69,7 +69,7 @@ export function createDocumentStore(){
       set({caret:{start:start+inserted.length,end:start+inserted.length},past:bounded([...s.past,{document,caret:s.caret}]),future:[],focusRequest:s.focusRequest+1});return next;
     };
     return {
-      projectOpenId:null,openProject:async(id)=>{if(get().phase!=='idle'||get().pending)return;set({projectOpenId:id});await get().request('project');},
+      projectOpenId:null,projectOpenOffset:0,projectLinkNavigation:false,openProject:async(id,offset)=>{if(get().phase!=='idle'||get().pending)return;if(offset!==undefined&&(!Number.isSafeInteger(offset)||offset<0))return;set({projectOpenId:id,projectOpenOffset:offset??0,projectLinkNavigation:offset!==undefined});await get().request('project');},
       templateDialog:null,setTemplateDialog:(templateDialog)=>set({templateDialog}),
       templateSeed:null,
       createFromTemplate:async(seed)=>{if(get().phase!=='idle'||get().pending)return;try{templateDocument(seed);normalizeMarkdownName(seed.name);set({templateSeed:seed});await get().request('template');}catch(error){set({error:errorMessage(error,'模板无效。')});}},

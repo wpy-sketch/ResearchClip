@@ -33,3 +33,10 @@ Windows人工完整工作流、物理高DPI/多显示器和macOS未执行。安�
 Git直连、Schannel、OpenSSL和已有7897代理均出现TLS握手失败；代理曾成功读取远端main（0426541），后续上传失败。Edge发布页显示ERR_CONNECTION_CLOSED。连接器只读仓库访问成功，但Git blob写入返回403“Resource not accessible by integration”，另有网络传输失败及一次自动权限审查超时（不是拒绝，不据此判定不安全）。没有更改系统网络、权限或关闭TLS校验。
 
 [机器可读证据](evidence/v314-publication.json)。依照用户先上传v3.1.4再开始A10的顺序，尚未实施A10/v3.1.5；已询问是否允许网络恢复前先开发，未获得答复前不改变顺序。需要可用的GitHub上传网络，或用户明确允许调整顺序。
+
+
+## 2026-10-21交付复验：PASS
+
+后续网络恢复，通过已有7897代理与Git凭据成功推送 `8ee6eaf` 至main并创建远端v3.1.4标签。随后续传同一Release草稿：正式发布成功（draft=false、prerelease=false），4个附件全部uploaded，GitHub返回的大小和SHA256一致；全部4个附件无Authorization/Cookie匿名下载HTTP200并通过逐字节长度及SHA256校验。此前BLOCKED记录作为历史保留。
+
+[正式v3.1.4](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.4)。本地固定副本与Git bundle均保留。用户允许先进行A10的授权仍有效，此处没有改写此前失败结果。

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type NavigationView = 'screenshots' | 'favorites' | 'tags' | 'settings' | 'editor' | 'card' | 'compare' | 'guide';
+export type NavigationView = 'screenshots' | 'favorites' | 'tags' | 'settings' | 'editor' | 'card' | 'compare' | 'guide' | 'graph';
 export type Theme = 'dark' | 'light';
 export type ViewMode = 'grid' | 'list';
 

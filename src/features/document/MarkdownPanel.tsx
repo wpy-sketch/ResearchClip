@@ -1,6 +1,12 @@
+import {useProjectStore} from '../projects/store';
+import {LinkDetails} from '../links/LinkDetails';
+import {LinkPicker} from '../links/LinkPicker';
+import {wikiTrigger} from '../links/model';
+import {openInternalTarget} from '../links/navigation';
+import {errorMessage} from '../../shared/api/errors';
 import {DocumentProject} from '../projects/ProjectBar';
 import {ReferenceButton} from '../references/References';
-import {lazy,Suspense,useDeferredValue,useEffect,useMemo,useRef,useState} from 'react';
+import {lazy,Suspense,useDeferredValue,useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {ExternalOpenButton} from './ExternalOpenButton';
 import {Save,X,Undo2,Redo2,FileOutput,Eye,BookTemplate,ListTree,BookmarkPlus} from 'lucide-react';
 import {useDocumentStore,documentDirty} from './store';
@@ -14,7 +20,9 @@ import {DocumentFileName} from './DocumentFileName';
 const DocumentView=lazy(()=>import('./DocumentView').then(m=>({default:m.DocumentView})));
 export function MarkdownPanel(){
   const drop=useImageDrop('markdown');
-  const s=useDocumentStore(),[preview,setPreview]=useState(false),[live,setLive]=useState(true),[outline,setOutline]=useState(false),[previewTarget,setPreviewTarget]=useState<{offset:number}|null>(null),previewBody=useRef<HTMLDivElement>(null),input=useRef<HTMLTextAreaElement>(null),busy=s.phase!=='idle';
+  const s=useDocumentStore(),[previewState,setPreviewState]=useState<{token:string|null;value:boolean}>({token:null,value:false}),[live,setLive]=useState(true),[outline,setOutline]=useState(false),[previewTarget,setPreviewTarget]=useState<{offset:number}|null>(null),previewBody=useRef<HTMLDivElement>(null),input=useRef<HTMLTextAreaElement>(null),busy=s.phase!=='idle';
+  const preview=previewState.token===s.token&&previewState.value,setPreview=(value:boolean)=>setPreviewState({token:s.token,value});
+  const project=useProjectStore(),currentId=project.token===s.token&&s.token?project.current?.id:null;
   const document=s.document,source=document?.mode==='source';
   useEffect(()=>{
     if(!source||preview||busy||!input.current)return;
@@ -23,6 +31,8 @@ export function MarkdownPanel(){
   },[s.focusRequest,source,preview,busy]);
   let markdown='';try{if(document)markdown=templateMarkdown(document);}catch{/* Save reports validation; edits remain available. */}
   const liveMarkdown=useDeferredValue(markdown);
+  const trigger=useMemo(()=>source&&!preview?wikiTrigger(markdown,s.caret.start):null,[source,preview,markdown,s.caret.start]);
+  const internalOpen=useCallback((target:Parameters<typeof openInternalTarget>[0])=>{void openInternalTarget(target).catch(e=>useDocumentStore.setState({error:errorMessage(e,'内部引用打开失败。')}));},[]);
   const headings=useMemo(()=>outline?documentOutline(markdown):[],[outline,markdown]);
   useEffect(()=>{if(preview&&previewTarget)previewBody.current?.querySelector<HTMLElement>(`[data-heading-offset="${previewTarget.offset}"]`)?.scrollIntoView({block:'start'});},[preview,previewTarget]);
   const jump=(heading:Heading)=>{if(preview||!source){setPreview(true);setPreviewTarget({offset:heading.offset});}else{s.jumpToSource(heading.offset);if(input.current)revealSourceHeading(input.current,heading.offset);}};
@@ -39,9 +49,11 @@ export function MarkdownPanel(){
     <div className="markdown-preview-options">{source&&<button aria-pressed={live} className="text-xs" onClick={()=>setLive(!live)}>{live?'关闭实时预览':'开启实时预览'}</button>}<span>LaTeX · 离线排版</span><ExternalOpenButton/></div>
     <div className="markdown-reference-row"><DocumentProject/><ReferenceButton/></div>
     <div className="markdown-editing-workspace">{outline&&<nav className="markdown-outline" aria-label="文档大纲">{headings.length?headings.map(h=><button key={h.offset} type="button" title={`H${h.depth} · 第 ${h.line} 行 · ${h.text}`} disabled={busy} data-outline-offset={h.offset} className="outline-heading" style={{paddingLeft:8+(h.depth-1)*10}} onClick={()=>jump(h)}>{h.text}</button>):<p className="p-3 text-xs text-muted">暂无标题。使用 # 至 ###### 创建大纲。</p>}</nav>}<div className="markdown-editing-content">
-    {preview?<div ref={previewBody} className="markdown-panel-body"><MarkdownPreview markdown={markdown} assets={s.assets}/></div>:source?<textarea ref={input} aria-label="Markdown 源文" className="markdown-source" spellCheck={false} disabled={busy} placeholder="在这里输入 Markdown…" value={sourceText(document)} onChange={e=>s.editSource(e.target.value,e.target.selectionStart,e.target.selectionEnd)} onBlur={e=>s.setCaret(e.currentTarget.selectionStart,e.currentTarget.selectionEnd)} onSelect={e=>s.setCaret(e.currentTarget.selectionStart,e.currentTarget.selectionEnd)}/>:<div className="markdown-panel-body"><Suspense fallback={<p role="status">正在加载图文编排…</p>}><DocumentView/></Suspense></div>}
-    {!preview&&source&&live&&<div className="markdown-live-preview" aria-label="实时预览区域"><MarkdownPreview markdown={liveMarkdown} assets={s.assets}/></div>}
+    {preview?<div ref={previewBody} className="markdown-panel-body"><MarkdownPreview markdown={markdown} assets={s.assets} onInternalOpen={internalOpen}/></div>:source?<textarea ref={input} aria-label="Markdown 源文" className="markdown-source" spellCheck={false} disabled={busy} placeholder="在这里输入 Markdown…" value={sourceText(document)} onChange={e=>s.editSource(e.target.value,e.target.selectionStart,e.target.selectionEnd)} onBlur={e=>s.setCaret(e.currentTarget.selectionStart,e.currentTarget.selectionEnd)} onSelect={e=>s.setCaret(e.currentTarget.selectionStart,e.currentTarget.selectionEnd)}/>:<div className="markdown-panel-body"><Suspense fallback={<p role="status">正在加载图文编排…</p>}><DocumentView/></Suspense></div>}
+    {trigger&&!busy&&<LinkPicker key={`${trigger.start}:${trigger.query}`} trigger={trigger} input={input}/>}
+    {!preview&&source&&live&&<div className="markdown-live-preview" aria-label="实时预览区域"><MarkdownPreview markdown={liveMarkdown} assets={s.assets} onInternalOpen={internalOpen}/></div>}
     </div></div>
+    {currentId&&<LinkDetails key={currentId} kind="document" id={currentId} savedVersion={s.savedFingerprint}/>}
     <footer className="markdown-panel-footer">{busy?'正在处理文件…':'Markdown · UTF-8 · Ctrl+S 保存'}{s.path&&<span title={s.path}>{s.path}</span>}</footer>
   </section>;
 }

@@ -1,6 +1,13 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "link_targets",
+            "link_document_source",
+            "replace_document_links",
+            "link_details",
+            "link_graph",
+            "set_document_link_tags",
+            "export_linked_document",
             "lookup_reference_doi",
             "reference_page",
             "save_references",

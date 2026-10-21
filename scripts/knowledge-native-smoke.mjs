@@ -36,7 +36,7 @@ async function launch(){
   app.stderr.on('data',c=>{for(const line of c.toString().trim().split('\n'))if(line)report.errors.push(line);});
   await until(()=>fetch('http://127.0.0.1:9339/json/version').then(r=>r.ok).catch(()=>false),'native launch');browser=await chromium.connectOverCDP('http://127.0.0.1:9339');page=await until(()=>browser.contexts().flatMap(c=>c.pages()).find(p=>!p.url().includes('captureOverlay')),'main');
   page.on('pageerror',e=>report.errors.push(e.message));page.on('request',request=>{const url=new URL(request.url());if(url.hostname==='ipc.localhost'){const command=decodeURIComponent(url.pathname.slice(1));if(['save_knowledge_card','screenshot_page','screenshot_image'].includes(command)){const args=request.postDataJSON();calls.push({command,thumbnail:args?.thumbnail});}}});
-  await page.getByRole('button',{name:'存入素材库',exact:true}).waitFor();await until(async()=> (await call('library_status')).schemaVersion===5,'SQLite initialization');
+  await page.getByRole('button',{name:'存入素材库',exact:true}).waitFor();await until(async()=> (await call('library_status')).schemaVersion===9,'SQLite initialization');
 }
 async function close(){const exited=new Promise(resolve=>app.once('exit',resolve));execFileSync(helper,['close',String(app.pid)],{cwd:root,windowsHide:true,stdio:'pipe'});await Promise.race([exited,delay(8000).then(()=>{throw new Error('Owned app did not close');})]);assert.equal(app.exitCode,0);await browser.close();browser=undefined;await until(()=>fetch('http://127.0.0.1:9339/json/version').then(()=>false).catch(()=>true),'shutdown');}
 try{

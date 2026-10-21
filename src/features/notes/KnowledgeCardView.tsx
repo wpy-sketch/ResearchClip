@@ -1,3 +1,4 @@
+import {LinkDetails} from '../links/LinkDetails';
 import {MathOcrButton} from '../math-ocr/MathOcr';
 import {ReferenceButton} from '../references/References';
 import {SavedOcrButton} from '../ocr-index/OcrIndex';
@@ -51,6 +52,7 @@ export function KnowledgeCardView(){
         <button className="knowledge-reload" disabled={disabled||session.status==='saving'} onClick={()=>{if(dirty)setConfirmReload(true);else void reload(id);}}>重新加载已保存内容</button>
       </section>
     </div>
+    <LinkDetails kind="screenshot" id={id}/>
     {confirmReload&&<Modal title="重新加载卡片" onClose={()=>setConfirmReload(false)}><div className="p-5"><p className="text-sm">重新加载会用已保存内容替换当前卡片草稿。请先保留尚未保存的文字。</p><div className="mt-4 flex justify-end gap-2"><button className="secondary-button" onClick={()=>setConfirmReload(false)}>保留草稿</button><button className="secondary-button" onClick={()=>{setConfirmReload(false);void reload(id);}}>确认重新加载</button></div></div></Modal>}
   </div>;
 }
