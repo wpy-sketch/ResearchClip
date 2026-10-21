@@ -12,6 +12,14 @@ export function guideSections(markdown:string):GuideSection[]{
  });return roots;
 }
 const normalize=(s:string)=>s.normalize('NFKC').toLocaleLowerCase().trim();
+/** Keep example sections and their ancestors; examples live in the manual itself. */
+export function guideExamples(sections:GuideSection[]):GuideSection[]{
+ return sections.flatMap(section=>{
+  if(section.heading.depth===3&&section.heading.text.includes('功能示例'))return [section];
+  const children=guideExamples(section.children);
+  return children.length?[{...section,body:'',children}]:[];
+ });
+}
 export function searchGuide(sections:GuideSection[],query:string):GuideSection[]{
  const q=normalize(query);if(!q)return sections;
  return sections.flatMap(section=>{

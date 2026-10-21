@@ -1,13 +1,13 @@
-<!-- A09 delivery status -->
-> **v3.1.5 · A10**：Markdown稳定ID内部引用、反向链接、知识图谱和标准Markdown副本导出。真实测试、发布状态及边界见 [本版验收](docs/qa/RELEASE-3.1.5.md)。
+<!-- Current delivery status -->
+> **v3.1.6**：界面层次与指南目录优化，84项功能演练，发布包补齐兼容浏览器插件、公式OCR脚本与离线资源索引。真实测试及边界见 [本版验收](docs/qa/RELEASE-3.1.6.md)。
 
 # ResearchClip
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v3.1.5 Windows；发布与验收状态见本版记录**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v3.1.6 Windows；发布与验收状态见本版记录**。
 
-[最新已发布版本v3.1.0](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.0) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v3.1.6配套附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
 v3.1.2 新增 **本地相似图片检索**：主动生成原图特征索引，SHA完全重复组、可调整pHash/颜色距离与双图人工比较，不自动删除。可选Qwen3.5 4B随完整离线分卷包提供；轻量NSIS不含数GB模型。模型可能出错或截断，只作辅助。[算法与离线包](docs/SIMILARITY.md) · [本版变更](docs/RELEASE-NOTES-3.1.2.md) · [实际验收](docs/qa/RELEASE-3.1.2.md)。
 
@@ -31,7 +31,7 @@ v3.0.1 新增 **窗口截图**：鼠标高亮选择、Tab/Shift+Tab切换、Esc�
 - **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
 - **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
 - **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
-- **帮助**：14章任务式说明、二/三/四级标题、分层目录与正文搜索、25张离线界面图与操作示意和原尺寸放大查看。
+- **帮助**：16章任务式说明、84项功能示例、分层目录与正文搜索、29幅离线图示和原尺寸放大查看。
 
 v1.0.5 新增非破坏性标注版本历史：显式保存去重、版本说明、只读预览/对比、恢复追加新版本；schema5升级前备份，原图不重复保存。[本轮验收](docs/qa/RELEASE-1.0.5.md) · [发布核验](docs/qa/PUBLICATION-1.0.5.md)。Release继续附带兼容的 v1.0.2 浏览器插件包，不删除既有发布。
 

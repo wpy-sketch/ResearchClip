@@ -30,8 +30,8 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   color-scheme: dark;
-  --rc-canvas: #111821;
-  --rc-sidebar: #111821;
+  --rc-canvas: #121922;
+  --rc-sidebar: #161f2b;
   --rc-surface: #1d2734;
   --rc-raised: #293649;
   --rc-edge: #40516a;
@@ -50,8 +50,8 @@
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --rc-canvas: #f1f4fa;
-  --rc-sidebar: #f1f4fa;
+  --rc-canvas: #f4f6fa;
+  --rc-sidebar: #edf1f7;
   --rc-surface: #ffffff;
   --rc-raised: #e7edf7;
   --rc-edge: #cdd7e5;
@@ -767,3 +767,18 @@ html[data-window-picker="true"],html[data-window-picker="true"] body,html[data-w
 .guide-quick-start{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media(max-width:1100px){.guide-quick-start{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:850px){.guide-quick-start{grid-template-columns:1fr}}
+
+/* v3.1.6: clearer surfaces, consistent controls and a task/example directory. */
+.app-sidebar{min-height:0}.app-sidebar>nav{flex:1;min-height:0;overflow-y:auto;scrollbar-gutter:stable}.sidebar-bottom{flex-shrink:0;padding-top:12px}.sidebar-brand,.sidebar-create,.workspace-label,.sidebar-section-label{flex-shrink:0}
+.app-toolbar{border-bottom:1px solid color-mix(in srgb,var(--rc-edge) 65%,transparent);background:var(--rc-canvas)}
+.toolbar-utilities .icon-button,.toolbar-actions>.secondary-button,.view-toggle{border-radius:10px}
+.library-card{border-color:color-mix(in srgb,var(--rc-edge) 75%,transparent);box-shadow:0 2px 6px #00000006}.library-card:hover,.library-card:focus-within{border-color:var(--rc-accent)}
+.guide-workspace{max-width:1480px}.guide-layout{grid-template-columns:272px minmax(0,1fr);gap:22px}
+.guide-directory-mode{display:flex;gap:4px;padding:4px;margin-bottom:12px;border-radius:10px;background:var(--rc-raised)}.guide-directory-mode button{flex:1;min-width:0;min-height:34px;padding:5px;font-size:12px;border-radius:7px;color:var(--rc-secondary)}.guide-directory-mode button[aria-pressed=true]{background:var(--rc-surface);color:var(--rc-accent);box-shadow:0 1px 3px #00000012;font-weight:600}.guide-directory-mode span{font-size:10px;font-variant-numeric:tabular-nums}
+.guide-directory-tools>div[hidden]{display:none}.guide-directory-tools select:disabled{opacity:.6}
+.guide-content .document-preview{max-width:84ch;font-size:14px;line-height:1.95;border-radius:14px}.guide-content .document-preview>h1{font-size:26px;line-height:1.5}.guide-content .document-preview>h2{font-size:22px!important;line-height:1.55}.guide-content .document-preview>h3{font-size:17px;line-height:1.7}
+.guide-quick-start button{border-radius:12px;min-height:84px}.guide-quick-start button:hover,.guide-quick-start button:focus-visible{border-color:var(--rc-accent);background:var(--rc-accent-soft)}.guide-quick-start button>div span{line-height:1.6}
+.guide-tree-link{min-height:36px}.guide-tree [data-guide-depth="4"]>.guide-tree-row>.guide-tree-link{font-size:12px;line-height:1.7}.guide-content .document-preview blockquote{color:var(--rc-secondary);border-radius:0 10px 10px 0}
+@media(max-width:1100px){.guide-layout{grid-template-columns:minmax(0,1fr)}.guide-layout nav[aria-label="使用指南目录"]{max-height:310px}.guide-directory-tools{flex-direction:row;justify-content:space-between;flex-wrap:wrap}.guide-directory-mode{max-width:380px}.guide-directory-tools label{gap:10px}}
+@media(max-height:750px){.sidebar-create{margin-block:14px}.workspace-label{margin-bottom:10px}.sidebar-bottom{padding-top:8px}.sidebar-version{margin-top:8px;padding-top:8px}.guide-layout nav[aria-label="使用指南目录"]{max-height:calc(100vh - 190px)}}
+@media(max-width:700px){.guide-content .document-preview{padding:18px;font-size:14px}.guide-layout{gap:16px}.guide-workspace{padding:14px}.guide-layout nav[aria-label="使用指南目录"]{max-height:270px}}

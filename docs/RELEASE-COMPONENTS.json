@@ -1,0 +1,472 @@
+{
+  "schemaVersion": 1,
+  "desktopVersion": "3.1.6",
+  "reuseFrom": "v3.1.3",
+  "files": [
+    {
+      "name": "QWEN-MODEL-MANIFEST.json",
+      "sha256": "f7367e6ffd4104958598b8bcf789ae7ab05d26997116d6c5b4b7481cb453d4a2",
+      "size": 5637,
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.3/QWEN-MODEL-MANIFEST.json"
+    },
+    {
+      "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+      "sha256": "c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+      "size": 10948,
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.3/ResearchClip-MathOCR-Setup-v1.0.4.zip"
+    },
+    {
+      "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+      "sha256": "1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+      "size": 541479,
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.3/ResearchClip-WebClipper-v1.0.2-windows-x64.zip"
+    }
+  ],
+  "offlineResources": {
+    "tag": "v3.1.2",
+    "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.2",
+    "assets": [
+      {
+        "id": 658147062,
+        "name": "ResearchClip-WebClipper-v1.0.2-windows-x64.zip",
+        "size": 541479,
+        "digest": "sha256:1e456e8cc198f1b366afc47614cc5ad3dbf14410ad5a52aad21cf61d551cd4ce",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-WebClipper-v1.0.2-windows-x64.zip"
+      },
+      {
+        "id": 658147155,
+        "name": "ResearchClip-MathOCR-Setup-v1.0.4.zip",
+        "size": 10948,
+        "digest": "sha256:c263e29d81ec31ede7199f2902ddba443114828c89bd48194c4549cf9209693d",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-MathOCR-Setup-v1.0.4.zip"
+      },
+      {
+        "id": 658418005,
+        "name": "SHA256SUMS.txt",
+        "size": 3338,
+        "digest": "sha256:bbe89e899fab1dca8af44780689bf95bda692f1cd99279d304935a24dda6e71f",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/SHA256SUMS.txt"
+      },
+      {
+        "id": 658418009,
+        "name": "README-OFFLINE.txt",
+        "size": 710,
+        "digest": "sha256:e7fee8eca8b56ab29f00e88229500545f78de152032f5ad8cf6d9795c6380feb",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/README-OFFLINE.txt"
+      },
+      {
+        "id": 658418088,
+        "name": "Assemble-Offline.ps1",
+        "size": 5337,
+        "digest": "sha256:3951124d4ff7747f2667ca35754fff0c4c11d090b2bee1f2782c08ca6857f5ea",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/Assemble-Offline.ps1"
+      },
+      {
+        "id": 658418106,
+        "name": "offline-manifest.json",
+        "size": 12547,
+        "digest": "sha256:4e7f6eda1c5ae230dd7a2fe4ea67258cbadc483708eef2964baf38535ae4d49c",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/offline-manifest.json"
+      },
+      {
+        "id": 658418241,
+        "name": "ResearchClip-v3.1.2-offline.zip.025",
+        "size": 48169303,
+        "digest": "sha256:6ab1c1e2a5db6b8276436d37b7f27d4dcd5b7724038b64e3ad7a2119d092fe6c",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.025"
+      },
+      {
+        "id": 658418422,
+        "name": "ResearchClip-v3.1.2-offline.zip.001",
+        "size": 134217728,
+        "digest": "sha256:a002054d88fcfe770e8cdd41b3dbd5d0fc7218ac3c13537db2c7b11c8e3f1a49",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.001"
+      },
+      {
+        "id": 658419016,
+        "name": "ResearchClip-v3.1.2-offline.zip.002",
+        "size": 134217728,
+        "digest": "sha256:d76bf4c66251151f8f2d7d8756ef2210472cb25f6d8a4d436a93a491408f6da9",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.002"
+      },
+      {
+        "id": 658419269,
+        "name": "ResearchClip-v3.1.2-offline.zip.003",
+        "size": 134217728,
+        "digest": "sha256:80ff0b3805c5a6d993897c3a8285c83d25275dd465265be87d5d683f4b9aa792",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.003"
+      },
+      {
+        "id": 658476679,
+        "name": "ResearchClip-v3.1.2-offline.zip.006",
+        "size": 134217728,
+        "digest": "sha256:0e37e0ee2fe6acb6b250540f0a413bb11d12970a7935601527c19bd29f621c19",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.006"
+      },
+      {
+        "id": 658476685,
+        "name": "ResearchClip-v3.1.2-offline.zip.004",
+        "size": 134217728,
+        "digest": "sha256:5077e2725e8195a5888fca21297d9658cd2afbdf84808698195ad464da1d7ea3",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.004"
+      },
+      {
+        "id": 658476688,
+        "name": "ResearchClip-v3.1.2-offline.zip.005",
+        "size": 134217728,
+        "digest": "sha256:bc23f0b38ac775ffa1cba1ff38945a895aaed032fa6e41736ef73dc0383cd857",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.005"
+      },
+      {
+        "id": 658921617,
+        "name": "ResearchClip-v3.1.2-offline.zip.007",
+        "size": 134217728,
+        "digest": "sha256:9e10f97d91eebe9da3284b25136776021af11eea81f9008e17e11dd2c5f1cd50",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.007"
+      },
+      {
+        "id": 658921642,
+        "name": "ResearchClip-v3.1.2-offline.zip.009",
+        "size": 134217728,
+        "digest": "sha256:a63538537b916464fc38eb2863a39e39777e507b13babce0366e52b892372129",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.009"
+      },
+      {
+        "id": 658921662,
+        "name": "ResearchClip-v3.1.2-offline.zip.008",
+        "size": 134217728,
+        "digest": "sha256:e670eefada3649b868b08102762c91bb336c93f15d1b04460d52b51315ff945d",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.008"
+      },
+      {
+        "id": 658928477,
+        "name": "ResearchClip-v3.1.2-offline.zip.010",
+        "size": 134217728,
+        "digest": "sha256:00295a6b402af0ba6a336c8fe162c48ddfacb8652fbaaa86b6c3b021f50b8141",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.010"
+      },
+      {
+        "id": 658928619,
+        "name": "ResearchClip-v3.1.2-offline.zip.011",
+        "size": 134217728,
+        "digest": "sha256:103c06e217409cc2837f9190155abf346de6011ad15a85c67fcb1d7f39297358",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.011"
+      },
+      {
+        "id": 658928769,
+        "name": "ResearchClip-v3.1.2-offline.zip.012",
+        "size": 134217728,
+        "digest": "sha256:7f7975c8d1da5ec04934ae88088386b4acd6ead801dba2112aeb2eef39583986",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.012"
+      },
+      {
+        "id": 658943428,
+        "name": "ResearchClip-v3.1.2-offline.zip.013",
+        "size": 134217728,
+        "digest": "sha256:b6b6f644ce6a16694e2ef7c38eaf805bda44f4ca6dcc9de15da6952cae4cb54d",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.013"
+      },
+      {
+        "id": 658945657,
+        "name": "ResearchClip-v3.1.2-offline.zip.014",
+        "size": 134217728,
+        "digest": "sha256:959cdc1fe682eb17623e5da66a3b56f8b0c9162b4752befe43f36fcebadff7a7",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.014"
+      },
+      {
+        "id": 658947006,
+        "name": "ResearchClip-v3.1.2-offline.zip.015",
+        "size": 134217728,
+        "digest": "sha256:d6581179ef377bb39b8805f5e1574178297f349194722c1c42876945aa05a616",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.015"
+      },
+      {
+        "id": 658959663,
+        "name": "ResearchClip-v3.1.2-offline.zip.016",
+        "size": 134217728,
+        "digest": "sha256:b666266b2a3a753d41cd88ee4cb8f305643baf6098a1c5c828fdcd678cc931f7",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.016"
+      },
+      {
+        "id": 658976171,
+        "name": "ResearchClip-v3.1.2-offline.zip.019",
+        "size": 134217728,
+        "digest": "sha256:ecd3f1b4195ceac871f5dcf60e2d90c7a501b0adf55c835ca27e882368c2164b",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.019"
+      },
+      {
+        "id": 658976308,
+        "name": "ResearchClip-v3.1.2-offline.zip.017",
+        "size": 134217728,
+        "digest": "sha256:5302eb75e6e767d553c60aaf76c9f202b3e0762df5c2d9860af6f8bbbd66b95d",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.017"
+      },
+      {
+        "id": 659080019,
+        "name": "ResearchClip-v3.1.2-offline.zip.018",
+        "size": 134217728,
+        "digest": "sha256:2f7dc24730b8c123a177b353a07ddf56599b3d1114997468b45d854a168c6943",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.018"
+      },
+      {
+        "id": 659160048,
+        "name": "ResearchClip-v3.1.2-offline.zip.020",
+        "size": 134217728,
+        "digest": "sha256:7b862209317b913095b79e85237ad29e69b4f2b6d96f161ae6ee3c5b8f68f50c",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.020"
+      },
+      {
+        "id": 659223049,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part01",
+        "size": 16777216,
+        "digest": "sha256:63ba0ef1d084ba3b5371fd5eb2d4202926038ae5f829c6985abe50b6dcd5b186",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part01"
+      },
+      {
+        "id": 659223053,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part02",
+        "size": 16777216,
+        "digest": "sha256:c22262c5ca320741c80639a7260e8953e10e8e3aec1173fa461ebd93513bbc68",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part02"
+      },
+      {
+        "id": 659223075,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part03",
+        "size": 16777216,
+        "digest": "sha256:a3d5fa30aae25d0bc505ec6a5b3032ff45395a748dcf355562822908aafed73a",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part03"
+      },
+      {
+        "id": 659224951,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part04",
+        "size": 16777216,
+        "digest": "sha256:a0f2bca4241d1b0860adab4805fd54fb217ad478738d3ff1ffb190436d57ae5e",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part04"
+      },
+      {
+        "id": 659225050,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part05",
+        "size": 16777216,
+        "digest": "sha256:c3709ee57b700773dcf81d300dcb8ca6ab76a6ec6bba594a06ddd0e7081b09ac",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part05"
+      },
+      {
+        "id": 659225054,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part06",
+        "size": 16777216,
+        "digest": "sha256:f0da307ed72327704bc02bf7cc7980a00a7bff10af84923c622e7543f5e1cfc8",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part06"
+      },
+      {
+        "id": 659226723,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part07",
+        "size": 16777216,
+        "digest": "sha256:a2ed06851267c30fbcf33d686f520609033d114e5ed99872033b57d937ce4974",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part07"
+      },
+      {
+        "id": 659227198,
+        "name": "ResearchClip-v3.1.2-offline.zip.021.part08",
+        "size": 16777216,
+        "digest": "sha256:6fc79d6e42c5e21724b47d7f42d79b662fc638e64cb552578ca8951de3bf482d",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.021.part08"
+      },
+      {
+        "id": 659227376,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part01",
+        "size": 16777216,
+        "digest": "sha256:e4a488318450e1fde80ebe93d9632c8eff9484a5aaa773798e30934418f68772",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part01"
+      },
+      {
+        "id": 659228785,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part02",
+        "size": 16777216,
+        "digest": "sha256:ad945debc2adde217d04f6012d614bf1d4daed96eaf0bc105d9e2510ba03892e",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part02"
+      },
+      {
+        "id": 659229925,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part05",
+        "size": 16777216,
+        "digest": "sha256:eec720b94b1ae54eb903a9843034113390d5263ab1f6ed539f4d0a86c6b45eaf",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part05"
+      },
+      {
+        "id": 659229938,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part04",
+        "size": 16777216,
+        "digest": "sha256:bedd1dccdd869411469be4eab6e1a473e0c973f052f9c174c5367a8d6bb95523",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part04"
+      },
+      {
+        "id": 659230139,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part06",
+        "size": 16777216,
+        "digest": "sha256:24664206b838d47064b2d36eafb4de5404963ce3d77fb2e3446a35c300555fee",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part06"
+      },
+      {
+        "id": 659235720,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part08",
+        "size": 16777216,
+        "digest": "sha256:0416ebedf6b62efead28fe44850954f74cbf900734989ed6cb222515e2e000f1",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part08"
+      },
+      {
+        "id": 659235721,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part03",
+        "size": 16777216,
+        "digest": "sha256:055420f74b050b8adc65e56a5c5cacf461c3995cb129a00120d43a83d3ab05af",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part03"
+      },
+      {
+        "id": 659235757,
+        "name": "ResearchClip-v3.1.2-offline.zip.022.part07",
+        "size": 16777216,
+        "digest": "sha256:c9be52179f3c33ebe471c2efbf031d3ac0dc16c78fdf3abc152ed4d4028bd602",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.022.part07"
+      },
+      {
+        "id": 659237406,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part01",
+        "size": 16777216,
+        "digest": "sha256:aa6a1ea2c6c7b419cd7749feaf1547dcd5d1ee5f0c75fbe6fe035f33158c23be",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part01"
+      },
+      {
+        "id": 659239087,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part02",
+        "size": 16777216,
+        "digest": "sha256:8cebaefdc0aec6c7175b72b6f67d7eae0ccb6aa3e4a1f65a5e626b7fc9939dfe",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part02"
+      },
+      {
+        "id": 659239237,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part03",
+        "size": 16777216,
+        "digest": "sha256:15dd926c7ccd5140e9f3ffa35fe4b69f3bc5b807536e886e5445cb04fd1778f5",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part03"
+      },
+      {
+        "id": 659240455,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part04",
+        "size": 16777216,
+        "digest": "sha256:86b8eab3c8fc66dabe01c4b5b8895bc5e590a1c0705ed2d2a5e781d397db533c",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part04"
+      },
+      {
+        "id": 659241590,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part05",
+        "size": 16777216,
+        "digest": "sha256:f8983bc5476e4d78bb96b67f633e5b08a245bc501cc869db311b77199e4bf5fe",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part05"
+      },
+      {
+        "id": 659241783,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part06",
+        "size": 16777216,
+        "digest": "sha256:7646a9a1b425b4ad3f3116774d7414abbdb26f17ed15d4c72bc79e953b5b7bc0",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part06"
+      },
+      {
+        "id": 659242695,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part07",
+        "size": 16777216,
+        "digest": "sha256:1d9ca782852ab204305d334b9e590d9cf0d6488ef3d12229a26cf19c96aa91b3",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part07"
+      },
+      {
+        "id": 659243603,
+        "name": "ResearchClip-v3.1.2-offline.zip.023.part08",
+        "size": 16777216,
+        "digest": "sha256:2cc2fc00f13c322c1ae2d403fd127ec8ea7249c5db3fffa6eac245d68c8ce5b3",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.023.part08"
+      },
+      {
+        "id": 659243771,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part01",
+        "size": 16777216,
+        "digest": "sha256:51db8a97556bc33b1cc1262f172c66c00edb9c071ee52d4e6c038c513db30b3e",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part01"
+      },
+      {
+        "id": 659245849,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part03",
+        "size": 16777216,
+        "digest": "sha256:9e6360c28ee87b4ad67f66f1d7a3b9e527854ee0b5cf9620cb1624da305e4bd7",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part03"
+      },
+      {
+        "id": 659245885,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part04",
+        "size": 16777216,
+        "digest": "sha256:4e73a9f9c2985ec0aa176a960f9d25d1d8a956d244ecfba913f6e25c2cdb54c5",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part04"
+      },
+      {
+        "id": 659247698,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part05",
+        "size": 16777216,
+        "digest": "sha256:07f378637320bc7e0b3c87b532b543d1df9fb53186f5e2b8d4cf784a6329ff65",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part05"
+      },
+      {
+        "id": 659247993,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part06",
+        "size": 16777216,
+        "digest": "sha256:6eb142f9d197dfefa8777e8653c6b37993a69b6fff0271a7a4fc7a561177d85b",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part06"
+      },
+      {
+        "id": 659249414,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part07",
+        "size": 16777216,
+        "digest": "sha256:c1bf8ef57c9823a5e616c43410fe30265eb0a51c346f5944dd58916c1ba3e536",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part07"
+      },
+      {
+        "id": 659249536,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part08",
+        "size": 16777216,
+        "digest": "sha256:e4b33310085f6ab874c5db9e32a7412c87680b7f1cf35b740b5c5485814a8d39",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part08"
+      },
+      {
+        "id": 659250577,
+        "name": "Restore-Transport-Volumes.ps1",
+        "size": 3378,
+        "digest": "sha256:80f5efd71e9be6930bd4a478be5b4f90e157751ef06bf092c4736ae592487f6b",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/Restore-Transport-Volumes.ps1"
+      },
+      {
+        "id": 659250693,
+        "name": "TRANSPORT-README.txt",
+        "size": 746,
+        "digest": "sha256:816ec3ce2ffae9ef894f1fb8277c9adbeae99ae52c2d578058eaf2338f997bfe",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/TRANSPORT-README.txt"
+      },
+      {
+        "id": 659250770,
+        "name": "TRANSPORT-SHA256SUMS.txt",
+        "size": 3796,
+        "digest": "sha256:ff0c348af0de9da1a3f621a9ff4994fe8aa0262da311c944a9ee5b44cb0951e7",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/TRANSPORT-SHA256SUMS.txt"
+      },
+      {
+        "id": 659250880,
+        "name": "transport-manifest.json",
+        "size": 7460,
+        "digest": "sha256:6f740321e07b5a92e2a387464d0aadb45f6aa4e7ff31455fe927d761b37c438d",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/transport-manifest.json"
+      },
+      {
+        "id": 659252502,
+        "name": "ResearchClip-v3.1.2-offline.zip.024.part02",
+        "size": 16777216,
+        "digest": "sha256:d3fe97b84f7aa06d98487dba5afac76d855f1bf3d28af20d0be1bde1ea1a92d8",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part02"
+      }
+    ]
+  }
+}

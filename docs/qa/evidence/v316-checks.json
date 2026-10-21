@@ -1,0 +1,119 @@
+{
+  "version": "3.1.6",
+  "environment": "Windows x64, Node22, Rust1.99, Tauri2/WebView2; isolated test workspaces",
+  "frontend": {
+    "tests": 396,
+    "files": 58,
+    "checkExitCode": 0
+  },
+  "rust": {
+    "passed": 195,
+    "failed": 0,
+    "ignored": 7,
+    "exitCode": 0,
+    "formatExitCode": 0,
+    "clippyExitCode": 0
+  },
+  "cleanInstall": {
+    "packages": 303,
+    "ignoreScripts": true,
+    "offline": true,
+    "exitCode": 0,
+    "dependenciesUnchanged": true
+  },
+  "guide": {
+    "chapters": 16,
+    "examples": 84,
+    "localImages": 29
+  },
+  "worker": {
+    "groups": 2,
+    "exitCode": 0
+  },
+  "extension": {
+    "tests": 5,
+    "browserGroups": 5,
+    "exitCode": 0,
+    "sourceMatchesZip": true
+  },
+  "companionTests": {
+    "tests": 3,
+    "exitCode": 0
+  },
+  "mathOCR": {
+    "unchangedSourceFilesVerified": 5,
+    "inferenceRerun": false
+  },
+  "native": {
+    "guideReader": {
+      "result": "PASS",
+      "groups": 11,
+      "report": "artifacts/guide-reader-v316-final/report.json",
+      "exitCode": 0
+    },
+    "guideNative": {
+      "result": "PASS",
+      "groups": 6,
+      "report": "artifacts/guide-v316-final/report.json",
+      "exitCode": 0
+    },
+    "links": {
+      "result": "PASS",
+      "groups": 5,
+      "report": "artifacts/links-v316-regression/report.json",
+      "exitCode": 0
+    },
+    "references": {
+      "result": "PASS",
+      "groups": 7,
+      "report": "artifacts/references-v316-regression/report.json",
+      "exitCode": 0,
+      "crossref": {
+        "status": "PASS",
+        "title": "Measured measurement",
+        "authors": "Markus Aspelmeyer",
+        "year": "2009"
+      }
+    },
+    "similarity": {
+      "result": "PASS",
+      "groups": 6,
+      "report": "artifacts/similarity-v316-regression/report.json",
+      "exitCode": 0
+    },
+    "clipper": {
+      "result": "PASS",
+      "groups": 7,
+      "report": "artifacts/clipper-native-v316-packaged/report.json",
+      "exitCode": 0,
+      "hostBuild": "exact released v1.0.2 host; isolated per-process APPDATA"
+    },
+    "installer": {
+      "result": "passed",
+      "groups": 4,
+      "report": "artifacts/installer-v316-pwsh/report.json",
+      "exitCode": 0,
+      "userDataFilesHashed": 13,
+      "installerSha256": "C52BBB167A07C83A336CC6C46CD229B3377721AAB9368590859DE641A0E781CC",
+      "signatureStatus": "NotSigned",
+      "metadata": {
+        "version": "3.1.6",
+        "publisher": "ResearchClip",
+        "hasIcon": true,
+        "product": "ResearchClip"
+      },
+      "busyUninstallExit": 2,
+      "busyInstallExit": 2,
+      "installationStillPresent": false
+    }
+  },
+  "notRun": [
+    "macOS",
+    "full physical DPI/multiple-monitor matrix",
+    "all browser action/activeTab flows",
+    "authenticated third-party WebDAV on two devices",
+    "optional Qwen inference this version",
+    "full MathOCR inference this version",
+    "all historical large binary downloads"
+  ]
+}

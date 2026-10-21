@@ -3,20 +3,34 @@ import argparse, hashlib, json, os, shutil, subprocess, urllib.request, urllib.e
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');a=p.parse_args()
 root=Path(__file__).resolve().parent.parent
-assert a.version in ('3.1.4','3.1.5')
+assert a.version in ('3.1.4','3.1.5','3.1.6')
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
 if a.prepare:
-    for src,name in [(root/'src-tauri/target/release/researchclip.exe',f'ResearchClip-v{a.version}-windows-x64.exe'),(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe',f'ResearchClip_{a.version}_x64-setup.exe')]:
+    assert not any(out.iterdir()),'Refusing nonempty release staging folder'
+    companions=[]
+    if a.version=='3.1.6':
+        folder=root/'artifacts/companions-v316'
+        cm=json.loads((folder/'manifest.json').read_text(encoding='utf-8'));assert cm['version']==a.version
+        qa=json.loads((root/'artifacts/installer-v316-pwsh/report.json').read_text(encoding='utf-8-sig'))
+        assert qa['result']=='passed' and qa['version']==a.version and not qa['installationStillPresent']
+        assert digest(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe')==qa['installerSha256'].lower(),'Installer differs from tested payload'
+        required={'ResearchClip-WebClipper-v1.0.2-windows-x64.zip','ResearchClip-MathOCR-Setup-v1.0.4.zip','QWEN-MODEL-MANIFEST.json','MODEL-RESOURCES.txt','OFFLINE-RESOURCE-INDEX.json','ResearchClip-Guide-v3.1.6.zip'}
+        assert {x['name'] for x in cm['assets']}==required
+        for x in cm['assets']:
+            assert Path(x['name']).name==x['name'] and not (out/x['name']).exists()
+            f=folder/x['name'];assert f.stat().st_size==x['size'] and digest(f)==x['sha256']
+            companions.append((f,x['name']))
+    for src,name in [(root/'src-tauri/target/release/researchclip.exe',f'ResearchClip-v{a.version}-windows-x64.exe'),(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe',f'ResearchClip_{a.version}_x64-setup.exe'),*companions]:
         dest=out/name
         assert not dest.exists(),'Refusing existing release artifact'
         shutil.copyfile(src,dest)
-    assets=[{'name':f.name,'size':f.stat().st_size,'sha256':digest(f)} for f in sorted(out.glob('*.exe'))]
+    assets=[{'name':f.name,'size':f.stat().st_size,'sha256':digest(f)} for f in sorted(out.iterdir()) if f.is_file()]
+    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n'+('Companions: exact WebClipper v1.0.2, MathOCR Setup v1.0.4 and Qwen manifest from v3.1.3; offline model volumes remain on v3.1.2. See MODEL-RESOURCES.txt and OFFLINE-RESOURCE-INDEX.json.\nGuide includes 84 fictional exercises and 29 local images. No user data or credentials included.\n' if companions else ''),encoding='utf-8')
+    f=out/'SOURCE.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
     (out/'SHA256SUMS.txt').write_text(''.join(x['sha256']+'  '+x['name']+'\n' for x in assets),encoding='utf-8')
-    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n',encoding='utf-8')
-    for name in ['SHA256SUMS.txt','SOURCE.txt']:
-        f=out/name;assets.append({'name':name,'size':f.stat().st_size,'sha256':digest(f)})
+    f=out/'SHA256SUMS.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
     (out/'manifest.json').write_text(json.dumps({'version':a.version,'commit':commit,'assets':assets},indent=2),encoding='utf-8');print('Prepared '+a.version);raise SystemExit(0)
 m=json.loads((out/'manifest.json').read_text(encoding='utf-8'));commit=m['commit'];assert m['version']==a.version
 assert subprocess.check_output(['git','rev-parse','refs/tags/v'+a.version],cwd=root,text=True).strip()==commit
@@ -43,12 +57,23 @@ def req(url,method='GET',value=None,binary=None):
 assert req('https://api.github.com/user')['login']=='wpy-sketch'
 assert req(base+'/git/ref/tags/v'+a.version)['object']['sha']==commit
 releases=req(base+'/releases?per_page=100');existing=next((r for r in releases if r['tag_name']=='v'+a.version),None)
+def check_history(releases):
+    if a.version!='3.1.6':return None
+    before=json.loads((root/'docs/qa/evidence/v316-prior-releases.json').read_text(encoding='utf-8'))
+    for old in before:
+        current=next((x for x in releases if x['id']==old['id']),None)
+        assert current and current['tag_name']==old['tag'] and current['draft']==old['draft'] and current['prerelease']==old['prerelease'] and current['target_commitish']==old['commit'],'Historical release changed'
+        fields=lambda assets:sorted((x['id'],x['name'],x['size'],x['digest']) for x in assets)
+        assert fields(current['assets'])==fields(old['assets']),'Historical release attachments changed'
+    return {'releases':len(before),'assets':sum(len(x['assets']) for x in before),'result':'PASS'}
+history=check_history(releases)
 prior=json.loads((out/'publication.json').read_text(encoding='utf-8')) if (out/'publication.json').exists() else None
 if prior:existing=req(base+'/releases/'+str(prior['id']));assert existing['tag_name']=='v'+a.version
 if existing:assert prior and prior['id']==existing['id'] and prior['commit']==commit,'Unrecognized existing release; refusing overwrite'
 body=(root/f'docs/RELEASE-NOTES-{a.version}.md').read_text(encoding='utf-8').replace('(qa/','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/qa/').replace('(USER_GUIDE.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/USER_GUIDE.md)').replace('(INTERNAL-LINKS.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/INTERNAL-LINKS.md)')
 r=existing or req(base+'/releases','POST',{'tag_name':'v'+a.version,'target_commitish':commit,'name':'ResearchClip v'+a.version,'body':body,'draft':True,'prerelease':False})
 state=prior or {'version':a.version,'commit':commit,'id':r['id'],'url':r['html_url'],'assets':[]}
+if history:state['historyBefore']=history
 def save():(out/'publication.json').write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding='utf-8')
 save()
 assert all(asset['name'] in {x['name'] for x in m['assets']} for asset in r['assets']),'Unexpected draft assets; refusing publication'
@@ -77,4 +102,6 @@ for x in m['assets']:
         data=response.read();assert response.status==200
     assert len(data)==x['size'] and hashlib.sha256(data).hexdigest()==x['sha256']
     verified.append(x['name']);state['anonymousVerified']=verified;save();print('Anonymous hash verified '+x['name'],flush=True)
+history=check_history(req(base+'/releases?per_page=100'))
+if history:state['historyAfter']=history;save()
 print(json.dumps(state,ensure_ascii=False),flush=True)
