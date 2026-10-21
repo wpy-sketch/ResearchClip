@@ -1,0 +1,18 @@
+{
+  "name": "ResearchClip-v3.1.8-windows-x64.exe",
+  "size": 27268096,
+  "sha256": "f7185efcff8dd8296fbd8457f3c21234bf5c81352725d00765106ea354374b15",
+  "sourceCommit": "0e4bba8c6522eb330f49e9696519e5f27775202e",
+  "compressedSize": 8911044,
+  "compressedSha256": "d1d4f3947811bec219251b14b8dda3de8a194fb02798bb9f9874ef1db140a740",
+  "blob": "02f9bd241801c5c0ab184399cb8879a6261e9870",
+  "tree": "dbf041a43598230666f1327961b22f09201a5bcb",
+  "transportCommit": "8bbd0c8ee58ac0031e95a9d00ca73245da4de856",
+  "ref": "refs/heads/codex/v318-artifact-transfer",
+  "runId": 39579396012,
+  "runConclusion": "success",
+  "runUrl": "https://github.com/wpy-sketch/ResearchClip/actions/runs/39579396012",
+  "workflowCommit": "fd06822a5de3069f95a103017a7cf0be2ac8c3c9",
+  "temporaryRemoteBranchDeleted": true,
+  "businessReleaseSourceUnchanged": true
+}

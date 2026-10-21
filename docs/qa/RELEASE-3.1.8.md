@@ -41,3 +41,11 @@
 ## Windows人工验收与已知边界
 
 本轮未单独进行用户人工操作验收；以上为实际Windows自动化。macOS、多显示器/高DPI全部组合、其他软件抢占快捷键与全部第三方WebDAV/编辑器尚未完成人工验收。既有未签名与大chunk提示保留。Windows文字OCR取消需等待既有引擎返回；工作流默认整图和已有语言，精确区域/语言选择使用原面板。工作流配置恢复，未完成执行不跨重启恢复。v3.1.7曾记录一次偶发Markdown文件操作错误，文件/草稿未丢失；本轮多次原生保存未复现，未将其宣称为已修复。
+
+## 发布与附件保留
+
+[v3.1.8 Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.8)已公开，源码标签固定在`0e4bba8c6522eb330f49e9696519e5f27775202e`。独立GitHub读取确认latest=v3.1.8、draft=false、10个附件齐全；全部匿名下载后大小/SHA256一致。发布前后26个旧Release、186个旧附件的ID、版本、提交、名称、大小和摘要保持一致，见[发布回执](evidence/v318-publication.json)。离线指南ZIP有44个文件，CRC及相对链接检查通过。001–010迁移文件与v3.1.7逐文件一致。
+
+本地大EXE上传先后遇到写超时和连接重置；每次先只读确认草稿资产状态再续传。最终通过临时压缩Git对象传输，由[一次性GitHub任务](https://github.com/wpy-sketch/ResearchClip/actions/runs/39579396012)还原原始27268096字节、核对固定SHA256并附加缺失EXE；未重新编译业务程序。原EXE、GitHub服务端摘要及最终匿名下载摘要均为`f7185efcff8dd8296fbd8457f3c21234bf5c81352725d00765106ea354374b15`。仅删除提交哈希匹配的本任务临时分支，并移除一次性任务文件；运行记录保留，见[传输记录](evidence/v318-transfer.json)。还原使用GitHub官方[Blob API](https://docs.github.com/en/rest/git/blobs)与[最小任务权限](https://docs.github.com/en/actions/tutorials/authenticate-with-github_token)，无新增应用依赖。
+
+后续建议补齐高DPI/多显示器及macOS人工验收；此建议不启动新开发阶段。
