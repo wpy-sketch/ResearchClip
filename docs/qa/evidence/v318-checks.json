@@ -1,0 +1,129 @@
+{
+  "version": "3.1.8",
+  "reports": {
+    "commands-a12-context": {
+      "mode": "actual packaged Windows WebView2, SQLite, native keyboard SendInput, real Windows OCR and local Python/ONNX; isolated controlled images/configuration; not a complete hardware/manual matrix",
+      "checks": [
+        "actual Windows SendInput Ctrl+Shift+P opens palette; normalized multi-term/no-match search and Enter execute; Rust blocks global capture collision",
+        "no-Markdown workflow stops before any capture or file creation",
+        "actual UI builder only connects compatible actions; two custom configs atomically persist; incompatible IPC config is rejected without changing stored bytes",
+        "OCR command resolves the active material card original rather than a stale screenshot preview",
+        "real Windows OCR reaches editable confirmation with decoded original; changing text clears confirmation, no insertion before consent, confirmed insertion occurs once",
+        "cancelling actual confirmation stops insertion and preserves current Markdown",
+        "actual existing Python/ONNX formula preset pauses for user confirmation, renders KaTeX, and inserts display math into the same document",
+        "choosing an already-managed image creates no duplicate card; result links to the existing stable screenshot ID",
+        "actual region capture of an owned Edge fixture runs capture→card preset and creates exactly one new SQLite material card",
+        "actual physical capture→Windows OCR→explicit confirmation→Markdown preset completes with owned screen text",
+        "Escape cancels actual capture overlay, starts no card write, and leaves the prior completed card intact",
+        "actual missing-model failure identifies formula step; restoring isolated models and retrying resumes without repeating completed image selection",
+        "actual settings file write failure preserves external bytes and builder form, shows an error, and succeeds after test-owned file restoration",
+        "native Markdown save and recent-document stable-ID reopen restore actual confirmed source",
+        "actual command palette contained at 1440/760/480 widths in both themes, with current Markdown intact",
+        "actual restart restores saved custom configurations and source records, starts no execution and performs no repeated write"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    "anchors-v318-regression": {
+      "mode": "actual Windows packaged debug EXE, WebView2/Konva, SQLite and native Save/Open; isolated generated PNG, not physical capture/DPI validation",
+      "checks": [
+        "actual canvas click creates a stable point anchor in original pixels with title/description and verified original SHA256",
+        "actual rectangle drawing saves a bounded original-pixel region; point and rectangle have distinct IDs",
+        "dragging an existing marker opens confirmation; saving moves it without changing its stable ID",
+        "marker visibility and actual canvas zoom leave stored original-pixel coordinates unchanged",
+        "actual screenshot/anchor picker inserts two stable references at the caret and native Markdown Save writes exact source",
+        "click opens the actual image editor, centers rendered yellow marker pixels, and preserves unsaved Markdown source/status",
+        "split resizing and consecutive region/point jumps retain source and latest target; highlight expires after three seconds",
+        "annotation version changes retain the original image revision; mismatched image revision and arbitrary-path IDs are rejected",
+        "native standard Markdown export replaces proprietary anchor URLs with readable coordinates and description without modifying source",
+        "confirmed anchor deletion retains source text and yields an explicit broken-reference error rather than another location",
+        "actual process restart preserves surviving anchor/ID/region, deleted reference in saved source, new annotation version and immutable original hash"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    "guide-v318-final": {
+      "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+      "checks": [
+        "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+        "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+        "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+        "actual WebView2 example directory shows 110 examples and locates the selected source heading",
+        "all 31 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+        "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 18 chapters; 1180/760/480 layouts do not overflow"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    "guide-reader-v318-final": {
+      "mode": "local isolated headless Edge renderer; no native capture, user database, credential or clipboard claims",
+      "checks": [
+        "18 chapters and nested subsections mount; absent Markdown document has no split",
+        "third-level step navigation scrolls and keyboard-focuses the actual matching H4, active location follows",
+        "collapse all removes children and active step falls back to visible parent",
+        "nested search retains ancestors, reports no results and clear restores navigation",
+        "110 examples across all 18 chapters, example-only search, actual heading jump and directory mode restoration",
+        "all 31 whitelisted offline guide images actually decode",
+        "whitelisted local guide image opens with Enter and closes with Escape",
+        "dark: guide and directory contained at seven widths 480–1440",
+        "light: guide and directory contained at seven widths 480–1440",
+        "guide navigation/unmount and remount preserves independent Markdown draft; cancel/discard closes split correctly",
+        "600px-high window keeps bottom help reachable and sidebar scroll reaches settings"
+      ],
+      "errors": [],
+      "result": "PASS"
+    },
+    "clipper-native-v318-packaged": {
+      "mode": "actual Windows Native Messaging Host stdin/stdout -> authenticated local IPC -> actual Tauri/WebView2/SQLite/files; no browser activeTab claim",
+      "checks": [
+        "real independent host handles desktop-not-running and rejects a different extension origin with binary UTF-8 framing",
+        "desktop connection is opt-in, actual host ping succeeds, and forged local IPC token is rejected",
+        "actual extracted article persists in chosen project; duplicate request returns same document and changed payload under same ID is rejected",
+        "saved article opens in existing Markdown split with source/code intact, local HTML inert, and explicit missing-asset source status",
+        "real PNG bytes are validated and copied to managed relative assets; standard UTF-8 Markdown and independent disk reads match with original PNG hash unchanged",
+        "existing unsaved document stays on Cancel; explicit discard opens clipped image, editing and saving reuse original Markdown service, close removes split",
+        "stop releases endpoint; actual process restart retains clips/project grouping/edited Markdown and requires explicit re-enable"
+      ],
+      "errors": [],
+      "hostBuild": "exact released v1.0.2 host; isolated per-process APPDATA",
+      "result": "PASS"
+    },
+    "installer-v318-final": {
+      "version": "3.1.8",
+      "mode": "actual NSIS, isolated install path, read-only user-data hashes, process fixture for busy guard",
+      "checks": [
+        "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+        "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+        "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+        "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+      ],
+      "commands": [
+        "D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\release\\bundle\\nsis\\ResearchClip_3.1.8_x64-setup.exe /S /NS /D=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v318-final\\安装验收 Test",
+        "D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v318-final\\安装验收 Test\\uninstall.exe /S _?=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v318-final\\安装验收 Test",
+        "D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\release\\bundle\\nsis\\ResearchClip_3.1.8_x64-setup.exe /S /NS /D=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v318-final\\安装验收 Test",
+        "D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v318-final\\安装验收 Test\\uninstall.exe /S"
+      ],
+      "result": "passed",
+      "userDataFilesHashed": 13,
+      "installerSha256": "A8AA80D108F9A758512A7FB458490766243D6034FF8FD0B68C6CC1D8924DE5E6",
+      "signatureStatus": "NotSigned",
+      "installedPayloadSha256": "6553BF7A9AB3D700B8E0ECC715A73C5627F26E39E4FBF78B2049BF5FFAB773D2",
+      "metadata": {
+        "product": "ResearchClip",
+        "version": "3.1.8",
+        "hasIcon": true,
+        "publisher": "ResearchClip"
+      },
+      "busyUninstallExit": 2,
+      "busyInstallExit": 2,
+      "quiescence": {
+        "codes": [
+          0
+        ],
+        "needed": 0,
+        "result": "PASS"
+      },
+      "installationStillPresent": false
+    }
+  }
+}

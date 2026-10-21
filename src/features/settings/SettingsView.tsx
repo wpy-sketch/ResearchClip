@@ -7,6 +7,7 @@ import { useUiStore } from '../../app/ui-store';
 import { useAppStore } from '../../app/store';
 import { useSettingsStore } from './store';
 import {useDesktopStore} from '../desktop/store';
+import {useCommandUi} from '../commands/runtime';
 
 export function SettingsView() {
   const { theme, viewMode, fontFamily, fontSize, windowThemeError } = useUiStore();
@@ -19,6 +20,7 @@ export function SettingsView() {
     <div className="page-heading"><div><h2>设置</h2><p>个性化工作区，管理采集、文件与设备间同步。</p></div></div>
     <nav className="settings-shortcuts" aria-label="设置分类">{[{id:'appearance-title',name:'外观与字体',description:'主题 · 阅读密度'},{id:'shortcut-title',name:'截图与文件',description:'快捷键 · 保存位置'},{id:'webdav-title',name:'跨设备同步',description:'项目范围 · 冲突处理'},{id:'clipper-title',name:'浏览器剪藏',description:'本地连接 · 安装指南'}].map(item=><button key={item.id} onClick={()=>{const node=document.getElementById(item.id);if(node){node.tabIndex=-1;node.scrollIntoView({block:'start'});node.focus({preventScroll:true});}}}><strong>{item.name}</strong><span>{item.description}</span></button>)}</nav>
     <ClipperSettings/><SyncSettings/><MathOcrSettings/>
+    <section className="settings-section"><h3>命令与工作流</h3><p>Ctrl+Shift+P打开命令面板。此组合保留给应用内命令，不注册为全局截图键。</p><button className="secondary-button" onClick={()=>useCommandUi.setState({open:true,tab:'workflows',error:null})}>管理自定义工作流</button></section>
     {(error || snapshot.storageError) && <p className="error-banner mb-5" role="alert">{error ?? snapshot.storageError}</p>}
     <section className="settings-section" aria-labelledby="appearance-title"><h3 id="appearance-title">外观</h3><p className="settings-description">选择舒适的主题与字体。</p><div className="theme-options" role="group" aria-label="主题选择">
       {([{ id: 'dark', label: '深色', icon: Moon }, { id: 'light', label: '浅色', icon: Sun },{id:'system',label:'跟随系统',icon:Monitor}] as const).map(({ id, label, icon: Icon }) => <button key={id} className={`theme-option ${snapshot.preferences.theme === id ? 'is-selected' : ''}`} disabled={busy} aria-pressed={snapshot.preferences.theme === id} onClick={() => void change({ theme: id })}><span className={`theme-preview ${id==='system'?theme:id}`} aria-hidden="true"><span /><span><i /><i /><i /></span></span><span className="flex items-center gap-2 text-[13px]"><Icon size={15} />{label}{snapshot.preferences.theme === id && <Check className="ml-auto text-accent" size={15} />}</span></button>)}

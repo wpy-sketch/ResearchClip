@@ -5,6 +5,7 @@ import {QuickSearch} from '../../features/library/QuickSearch';
 import { useUiStore } from '../ui-store';
 import { useSettingsStore } from '../../features/settings/store';
 import {useDocumentStore} from '../../features/document/store';
+import {CommandButton} from '../../features/commands/CommandCenter';
 
 const titles = { screenshots: '截图素材', favorites: '收藏', tags: '标签', settings: '设置', editor: '图片编辑器',card:'科研知识卡片',compare:'图片对比',guide:'使用指南',graph:'知识图谱' };
 
@@ -18,6 +19,7 @@ export function Toolbar() {
       <div className="toolbar-primary-row">
         <QuickSearch/>
         <div className="toolbar-utilities">
+          <CommandButton/>
           <ClipboardImportButton/>
           <RecoverPinsButton/>
           <button className="icon-button" aria-label={theme === 'dark' ? '切换为浅色主题' : '切换为深色主题'} title={theme === 'dark' ? '切换为浅色主题' : '切换为深色主题'} onClick={toggleTheme}>{theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}</button>

@@ -3,14 +3,14 @@ import argparse, hashlib, json, os, shutil, subprocess, urllib.request, urllib.e
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');a=p.parse_args()
 root=Path(__file__).resolve().parent.parent
-assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7')
+assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8')
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
 if a.prepare:
     assert not any(out.iterdir()),'Refusing nonempty release staging folder'
     companions=[]
-    if a.version in ('3.1.6','3.1.7'):
+    if a.version in ('3.1.6','3.1.7','3.1.8'):
         folder=root/'artifacts'/('companions-v'+a.version.replace('.',''))
         cm=json.loads((folder/'manifest.json').read_text(encoding='utf-8'));assert cm['version']==a.version
         qa_folder='installer-v316-pwsh' if a.version=='3.1.6' else f'installer-v{a.version.replace(".","")}-final'
@@ -59,7 +59,7 @@ assert req('https://api.github.com/user')['login']=='wpy-sketch'
 assert req(base+'/git/ref/tags/v'+a.version)['object']['sha']==commit
 releases=req(base+'/releases?per_page=100');existing=next((r for r in releases if r['tag_name']=='v'+a.version),None)
 def check_history(releases):
-    if a.version not in ('3.1.6','3.1.7'):return None
+    if a.version not in ('3.1.6','3.1.7','3.1.8'):return None
     before=json.loads((root/f'docs/qa/evidence/v{a.version.replace(".","")}-prior-releases.json').read_text(encoding='utf-8'))
     for old in before:
         current=next((x for x in releases if x['id']==old['id']),None)

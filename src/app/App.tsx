@@ -29,6 +29,7 @@ import {ImportStatus} from '../features/import/ImportControls';
 import {OcrPanel} from '../features/ocr/OcrPanel';
 import {SimilarityPanel} from '../features/similarity/SimilarityPanel';
 import {References} from '../features/references/References';
+import {CommandCenter} from '../features/commands/CommandCenter';
 
 export function App() {
   const initialize = useAppStore((state) => state.initialize);
@@ -63,6 +64,7 @@ export function App() {
       <Sidebar />
       <div className="app-main">
         <Toolbar />
+        <CommandCenter/>
         <DesktopExperience/>
         <PendingCardNotice/>
         <MarkdownExportStatus/>

@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v3.1.8 A12：7种类型化动作、单运行有限执行器、检查点和显式校对；复用截图/OCR/公式/Markdown与设置文件，保留全局键冲突检测。无新依赖、数据库迁移、脚本或自动执行权限，见[命令与工作流](COMMAND-WORKFLOWS.md)。
+
 v3.1.7 A11：schema10独立保存原像素点/区域锚点，绑定截图稳定ID与原图SHA256；main-only有界命令、乐观锁及A10索引扩展。Markdown跳转复用编辑器会话与viewport，不重开右侧文档；普通副本导出保留可读区域说明。无新依赖或系统协议注册，契约见[图片锚点](ANNOTATION-ANCHORS.md)。
 
 v3.1.5 A10：复用文档/截图稳定ID；schema9持久链接索引与文档标签，保存后后台CommonMark worker解析、摘要校验及事务替换。SVG图谱和受管相对链接导出复用既有文件/状态服务。协议、边界见[内部链接](INTERNAL-LINKS.md)，实测见[验收](qa/RELEASE-3.1.5.md)。

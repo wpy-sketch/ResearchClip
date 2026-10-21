@@ -494,6 +494,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Some("full-default") => VIRTUAL_KEY(0x31),
         Some("full-new") => VIRTUAL_KEY(0x34),
         Some("paste") => VIRTUAL_KEY(0x56),
+        Some("palette") => VIRTUAL_KEY(0x50),
         _ => return Err("unsupported helper shortcut".into()),
     };
     let mut keys = vec![VK_CONTROL];

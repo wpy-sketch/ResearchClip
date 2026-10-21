@@ -31,6 +31,55 @@ pub struct Preferences {
     pub close_to_tray: bool,
     #[serde(default = "default_markdown_split_percent")]
     pub markdown_split_percent: u8,
+    #[serde(default)]
+    pub workflows: Vec<WorkflowConfig>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct WorkflowConfig {
+    pub id: String,
+    pub title: String,
+    pub actions: Vec<String>,
+}
+fn validate_workflows(workflows: &[WorkflowConfig]) -> Result<(), CaptureError> {
+    let mut ids = std::collections::BTreeSet::new();
+    if workflows.len() > 16 {
+        return Err(invalid());
+    }
+    for workflow in workflows {
+        if !workflow
+            .id
+            .strip_prefix("custom-")
+            .is_some_and(crate::storage::files::id_valid)
+            || !ids.insert(&workflow.id)
+            || workflow.title.trim().is_empty()
+            || workflow.title.encode_utf16().count() > 80
+            || workflow.title.chars().any(char::is_control)
+            || !(2..=8).contains(&workflow.actions.len())
+        {
+            return Err(invalid());
+        }
+        let mut value = "none";
+        let mut visited = std::collections::BTreeSet::new();
+        for action in &workflow.actions {
+            let (input, output) = match action.as_str() {
+                "capture" | "select" => ("none", "image"),
+                "card" => ("image", "result"),
+                "ocr" | "formula" => ("image", "draft"),
+                "confirm" => ("draft", "confirmed"),
+                "insert" => ("confirmed", "result"),
+                _ => return Err(invalid()),
+            };
+            if input != value || !visited.insert(action) {
+                return Err(invalid());
+            }
+            value = output;
+        }
+        if value != "result" {
+            return Err(invalid());
+        }
+    }
+    Ok(())
 }
 fn default_markdown_split_percent() -> u8 {
     50
@@ -64,6 +113,7 @@ impl Default for Preferences {
             annotation_width: default_annotation_width(),
             close_to_tray: false,
             markdown_split_percent: default_markdown_split_percent(),
+            workflows: vec![],
         }
     }
 }
@@ -80,6 +130,7 @@ pub struct PreferencesPatch {
     pub annotation_width: Option<u8>,
     pub close_to_tray: Option<bool>,
     pub markdown_split_percent: Option<u8>,
+    pub workflows: Option<Vec<WorkflowConfig>>,
     // Paths can only be changed by the Rust folder-dialog command.
 }
 #[derive(Clone, Debug, Serialize)]
@@ -137,6 +188,7 @@ pub fn shortcut(value: &str) -> Result<Shortcut, CaptureError> {
     Ok(parsed)
 }
 fn validate(value: &Preferences) -> Result<(), CaptureError> {
+    validate_workflows(&value.workflows)?;
     if value.schema_version != 1
         || !["dark", "light", "system"].contains(&value.theme.as_str())
         || !["grid", "list"].contains(&value.view_mode.as_str())
@@ -204,6 +256,9 @@ fn write_preferences(path: &Path, value: &Preferences) -> Result<(), CaptureErro
 }
 fn same_key(a: &str, b: &str) -> bool {
     shortcut(a).ok().map(|s| s.id()) == shortcut(b).ok().map(|s| s.id())
+}
+fn palette_key(key: &str) -> bool {
+    same_key(key, "Ctrl+Shift+P")
 }
 fn bindings(snapshot: &SettingsSnapshot) -> [Option<String>; 2] {
     [
@@ -301,7 +356,14 @@ impl SettingsService {
         }
         if state.snapshot.registered_shortcut.is_none() {
             let key = state.snapshot.preferences.capture_shortcut.clone();
-            match register(&key, true) {
+            match if palette_key(&key) {
+                Err(CaptureError::new(
+                    ErrorCode::ShortcutConflict,
+                    "Ctrl+Shift+P已保留给命令面板，请重新设置区域截图快捷键；原配置保留。",
+                ))
+            } else {
+                register(&key, true)
+            } {
                 Ok(()) => {
                     state.snapshot.registered_shortcut = Some(key);
                     state.snapshot.shortcut_error = None;
@@ -311,7 +373,11 @@ impl SettingsService {
         }
         if state.snapshot.registered_fullscreen_shortcut.is_none() {
             let key = state.snapshot.preferences.fullscreen_shortcut.clone();
-            if same_key(&key, &state.snapshot.preferences.capture_shortcut) {
+            if palette_key(&key) {
+                state.snapshot.fullscreen_shortcut_error = Some(
+                    "Ctrl+Shift+P已保留给命令面板，请重新设置全屏截图快捷键；原配置保留。".into(),
+                );
+            } else if same_key(&key, &state.snapshot.preferences.capture_shortcut) {
                 state.snapshot.fullscreen_shortcut_error =
                     Some("全屏与区域截图快捷键相同，请为全屏选择其他组合。区域设置已保留。".into());
             } else {
@@ -369,6 +435,17 @@ impl SettingsService {
         }
         if let Some(v) = patch.close_to_tray {
             next.close_to_tray = v;
+        }
+        if let Some(v) = patch.workflows {
+            next.workflows = v;
+        }
+        if (edit_region && palette_key(&next.capture_shortcut))
+            || (edit_full && palette_key(&next.fullscreen_shortcut))
+        {
+            return Err(CaptureError::new(
+                ErrorCode::ShortcutConflict,
+                "Ctrl+Shift+P已保留给命令面板，请选择其他截图快捷键。原绑定未改变。",
+            ));
         }
         if let Some(v) = directory {
             next.save_directory = Some(v);
@@ -445,6 +522,130 @@ impl SettingsService {
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn workflow(actions: &[&str]) -> WorkflowConfig {
+        WorkflowConfig {
+            id: format!("custom-{}", "a".repeat(32)),
+            title: "校对工作流".into(),
+            actions: actions.iter().map(|s| s.to_string()).collect(),
+        }
+    }
+    #[test]
+    fn workflows_persist_reload_and_reject_unknown_actions_cycles_and_missing_confirmation() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.json");
+        let service = registered_service(path.clone());
+        let value = workflow(&["capture", "ocr", "confirm", "insert"]);
+        service
+            .update(
+                PreferencesPatch {
+                    workflows: Some(vec![value.clone()]),
+                    ..Default::default()
+                },
+                None,
+                |_, _| panic!("workflow changes must not touch global keys"),
+            )
+            .unwrap();
+        assert_eq!(
+            SettingsService::load(path.clone())
+                .snapshot()
+                .unwrap()
+                .preferences
+                .workflows,
+            vec![value]
+        );
+        let bytes = fs::read(&path).unwrap();
+        for actions in [
+            &["capture", "shell"][..],
+            &["capture", "insert"],
+            &["select", "formula", "insert"],
+            &["capture", "ocr", "capture", "card"],
+            &["select"],
+        ] {
+            assert!(
+                service
+                    .update(
+                        PreferencesPatch {
+                            workflows: Some(vec![workflow(actions)]),
+                            ..Default::default()
+                        },
+                        None,
+                        |_, _| panic!("invalid workflows must not register")
+                    )
+                    .is_err()
+            );
+            assert_eq!(fs::read(&path).unwrap(), bytes);
+        }
+        assert!(validate_workflows(&vec![workflow(&["select", "card"]); 17]).is_err());
+        assert!(
+            validate_workflows(&[workflow(&["select", "card"]), workflow(&["select", "card"])])
+                .is_err()
+        );
+    }
+    #[test]
+    fn workflow_write_failure_preserves_snapshot_and_old_preferences_without_replaying_actions() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.json");
+        let service = registered_service(path.clone());
+        fs::write(&path, b"future or corrupt external settings").unwrap();
+        assert!(
+            service
+                .update(
+                    PreferencesPatch {
+                        workflows: Some(vec![workflow(&["select", "card"])]),
+                        ..Default::default()
+                    },
+                    None,
+                    |_, _| panic!("no shortcuts")
+                )
+                .is_err()
+        );
+        assert!(service.snapshot().unwrap().preferences.workflows.is_empty());
+        assert_eq!(
+            fs::read(&path).unwrap(),
+            b"future or corrupt external settings"
+        );
+    }
+    #[test]
+    fn palette_shortcut_conflict_is_blocked_and_legacy_binding_is_preserved_but_not_registered() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("settings.json");
+        let service = registered_service(path.clone());
+        for patch in [
+            PreferencesPatch {
+                capture_shortcut: Some("shift+control+KeyP".into()),
+                ..Default::default()
+            },
+            PreferencesPatch {
+                fullscreen_shortcut: Some("Ctrl+Shift+P".into()),
+                ..Default::default()
+            },
+        ] {
+            assert!(
+                service
+                    .update(patch, None, |_, _| panic!("reserved key cannot register"))
+                    .is_err()
+            );
+        }
+        let value = Preferences {
+            capture_shortcut: "Ctrl+Shift+P".into(),
+            ..Default::default()
+        };
+        fs::write(&path, serde_json::to_vec(&value).unwrap()).unwrap();
+        let legacy = SettingsService::load(path.clone());
+        legacy
+            .initialize(|key, _| {
+                assert!(!palette_key(key));
+                Ok(())
+            })
+            .unwrap();
+        let snapshot = legacy.snapshot().unwrap();
+        assert!(snapshot.registered_shortcut.is_none());
+        assert!(snapshot.shortcut_error.unwrap().contains("命令面板"));
+        assert_eq!(
+            read_preferences(&path).unwrap().capture_shortcut,
+            "Ctrl+Shift+P"
+        );
+    }
     fn registered_service(path: PathBuf) -> SettingsService {
         let s = SettingsService::load(path);
         s.initialize(|_, _| Ok(())).unwrap();
