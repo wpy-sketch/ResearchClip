@@ -26,7 +26,7 @@
 | links-native-smoke a10-final | PASS / 0 | 最终schema9/闭合wiki输入/真实Worker/选择器/SQLite/重启，5组 |
 | guide-native-smoke v315-final --verify-only | PASS / 0 | 原有素材、标注、卡片、对比、Markdown和16章29图，5组 |
 | guide-reader-smoke v315-final-reader | PASS / 0 | 9组；深浅色7种宽度、目录、键盘与图片放大 |
-| npm run check:docs | PASS / 0 | 当前106文档、612本地链接，版本与权限、001–008不可变性检查 |
+| npm run check:docs | PASS / 0 | 106文档；当次612本地链接（后续发布记录增加链接后重新核验），版本与权限、001–008不可变性检查 |
 
 [机器可读证据](evidence/v315-checks.json)。实际Windows是打包debug程序的自动化回归；没有用浏览器或Mock替代原生结果。
 
@@ -35,7 +35,7 @@
 
 ## Windows人工验收与已知边界
 
-本轮自动化原生回归单独记录，不代替人工科研资料审阅或物理硬件矩阵。完整高DPI、多显示器、macOS、跨设备ID映射和所有第三方Markdown软件均未验证。文档映射/索引/文档标签仅本机；外部重命名不自动跟踪。v3.1.4已恢复网络并完成源码、标签、4附件及匿名哈希验证；v3.1.5待最终构建后上传。用户已允许网络恢复前先开发A10。无PDF及独立备份恢复系统。
+本轮自动化原生回归单独记录，不代替人工科研资料审阅或物理硬件矩阵。完整高DPI、多显示器、macOS、跨设备ID映射和所有第三方Markdown软件均未验证。文档映射/索引/文档标签仅本机；外部重命名不自动跟踪。v3.1.4已恢复网络并完成源码、标签、4附件及匿名哈希验证；v3.1.5源码、标签及4个附件均已上传并通过匿名哈希复核。用户已允许网络恢复前先开发A10。无PDF及独立备份恢复系统。
 
 
 ## 原生问题修复与回归
@@ -64,3 +64,14 @@
 内部候选搜索（完整和未闭合wiki输入）、稳定ID文档/截图引用、预览跳转、来源位置反向链接、重命名、失效提示、标准Markdown相对链接与警告、SVG图谱缩放/平移/打开/邻居/项目/标签、后台索引及取消、安全边界、重启一致性、界面与指南均已实现并按上述范围验证。无新增第三方依赖；没有实现本轮排除的PDF和独立备份系统。人工完整硬件矩阵仍未验证，不能视为本版已完成的验收。
 
 新增业务集中于 `src/features/links/`、`storage/links.rs`、`commands/links.rs`、迁移009；导航、文档/卡片UI和共享素材库schema契约增量接入。文件服务仅新增标准Markdown副本，复用受限授权与不可覆盖落盘。旧存储文件改动为schema9状态/测试夹具同步。构建配置只切换既有实体解码包的纯实现。其余改动为版本、指南、测试和发布证据。原有两个未跟踪发布运输脚本保留，未纳入本版提交。
+
+
+## GitHub交付：PASS
+
+- [v3.1.5正式Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.5)，draft=false、prerelease=false，独立匿名API核对Latest=v3.1.5。
+- 源码提交 `ef614db74b89cbeee5cbf2c3bfc13722b1ade721` 与远端v3.1.5标签一致，main已推送。
+- Windows优化EXE、NSIS、SHA256SUMS.txt、SOURCE.txt共4件，逐件GitHubuploaded、大小和SHA256一致；全部无Authorization/Cookie匿名下载HTTP200，长度和SHA256逐一匹配。
+- [v3.1.4正式Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.4)先发布；独立复核确认4件旧附件仍完整，未覆盖既有版本或移动标签。
+- [发布证据](evidence/v315-publication.json)。固定本地副本位于 `artifacts/publish-v315/`，源码Git bundle也已校验。产品代码与版本标签在发布核验时保持不变；本段属于发布后的文档跟进。
+
+本次请求已完成，不自动开始后续阶段。建议下一步由用户在实际科研工作区进行人工验收，完整高DPI/多显示器、macOS和跨设备身份同步仍需各自明确范围与环境。

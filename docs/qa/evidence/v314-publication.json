@@ -66,5 +66,38 @@
     "SHA256SUMS.txt",
     "SOURCE.txt"
   ],
-  "history": "Initial TLS and integration-permission blocks were recovered using the existing local proxy and Git credential. v3.1.4 source/tag and all four assets published; anonymous byte/hash verification passed."
+  "history": "Initial TLS and integration-permission blocks were recovered using the existing local proxy and Git credential. v3.1.4 source/tag and all four assets published; anonymous byte/hash verification passed.",
+  "publicMetadata": {
+    "version": "3.1.4",
+    "releaseId": 419036748,
+    "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.4",
+    "publishedAt": "2026-10-21T01:24:18Z",
+    "assets": [
+      {
+        "name": "ResearchClip-v3.1.4-windows-x64.exe",
+        "size": 26193408,
+        "digest": "sha256:1c7dbbe047140dddaa8c9511504f0b5989223bb7d8c02bb46158ae9a5cdbb2bb",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.4/ResearchClip-v3.1.4-windows-x64.exe"
+      },
+      {
+        "name": "ResearchClip_3.1.4_x64-setup.exe",
+        "size": 8385303,
+        "digest": "sha256:b3c2b5dd8dc51ca52f894dbbf634b89bd6057fb8e402ed7fd49c1716d9de6177",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.4/ResearchClip_3.1.4_x64-setup.exe"
+      },
+      {
+        "name": "SHA256SUMS.txt",
+        "size": 203,
+        "digest": "sha256:9cc04a5e5be83261df54ae39c0ab79ea000725beb7f39666a9012d5ba5b7521a",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.4/SHA256SUMS.txt"
+      },
+      {
+        "name": "SOURCE.txt",
+        "size": 127,
+        "digest": "sha256:633a9a00e0b4ae3643f521c9f87dbf290a9434c7e5a3e72107d8cf86673375a5",
+        "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.4/SOURCE.txt"
+      }
+    ]
+  },
+  "sourceTagCommit": "8ee6eafcdefa5dd933eb55df716e6a3e41f095f7"
 }

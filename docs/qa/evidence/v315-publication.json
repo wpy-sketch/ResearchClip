@@ -1,0 +1,46 @@
+{
+  "version": "3.1.5",
+  "releaseId": 419066195,
+  "url": "https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.5",
+  "publishedAt": "2026-10-21T02:09:40Z",
+  "assets": [
+    {
+      "name": "ResearchClip-v3.1.5-windows-x64.exe",
+      "size": 26976768,
+      "digest": "sha256:aff085b292e4e6198d80b77116bd753ac9a478477d9115426b1084bc3a01fa63",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.5/ResearchClip-v3.1.5-windows-x64.exe"
+    },
+    {
+      "name": "ResearchClip_3.1.5_x64-setup.exe",
+      "size": 8737524,
+      "digest": "sha256:2a02249f78097e0729b96680f4d45c3feabf0680e16b8d0bcac59e386c2da972",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.5/ResearchClip_3.1.5_x64-setup.exe"
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "size": 203,
+      "digest": "sha256:b4bda02636fb40756aa7ed47ab905e6682fe572c41c0f2d7fb1c30b3375f332b",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.5/SHA256SUMS.txt"
+    },
+    {
+      "name": "SOURCE.txt",
+      "size": 127,
+      "digest": "sha256:4f100dbbc176e604141ab6a45670efc2f18f1442ff9bc64d8fb3e093aa08748f",
+      "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.5/SOURCE.txt"
+    }
+  ],
+  "sourceCommit": "ef614db74b89cbeee5cbf2c3bfc13722b1ade721",
+  "sourcePush": "PASS",
+  "tagCommitVerified": true,
+  "draft": false,
+  "prerelease": false,
+  "latest": true,
+  "anonymousDownloadsVerified": [
+    "ResearchClip-v3.1.5-windows-x64.exe",
+    "ResearchClip_3.1.5_x64-setup.exe",
+    "SHA256SUMS.txt",
+    "SOURCE.txt"
+  ],
+  "publicMetadataAudit": true,
+  "verifiedAtUtc": "2026-10-21T02:12:47.338268+00:00"
+}

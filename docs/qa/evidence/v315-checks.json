@@ -103,6 +103,13 @@
       "actualSchemaVersionAsserted": 9,
       "aiModelExecuted": false,
       "result": "PASS"
+    },
+    {
+      "command": "publish-desktop-release.py 3.1.5 and independent anonymous API metadata audit",
+      "exitCode": 0,
+      "assets": 4,
+      "latest": "v3.1.5",
+      "result": "PASS"
     }
   ],
   "nativeA10": {
@@ -134,7 +141,7 @@
     "macOS",
     "WebDAV identity/index transfer (not implemented in this scope)"
   ],
-  "release": "pending source commit and GitHub publication",
+  "release": "PUBLISHED; source/tag and all four assets uploaded; anonymous hash verification passed",
   "installer": {
     "result": "passed",
     "userDataFilesHashed": 13,
