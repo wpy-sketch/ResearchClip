@@ -120,3 +120,5 @@ v3.1.9已公开，10附件匿名摘要通过；其历史失败与未验项在此
 画布修正后的证据：[原生标注5组](evidence/v400-advanced-native.json)、[短窗像素与布局5组](evidence/v400-renderer-canvas.json)、[锚点11组](evidence/v400-anchors-canvas.json)、[原生指南6组](evidence/v400-guide-canvas.json)。无新依赖；编译与实际安装版API核对未发现本轮引入未经确认的API。
 
 最终机器摘要：[检查汇总](evidence/v400-checks.json)、[确切安装器](evidence/v400-installer.json)。NSIS为未签名版本；安装器SHA256 `f4234e72d46f183b88c88ad9230b799c51ea8497fb47c6fc1ec5aaddacef3001`，原始EXE SHA256 `b09249e72b7b246570b3419873968b35445af8b61c33b251ee4a7574eda67591`。全量53组Windows GUI、Host5组及无头布局/像素18组分别记录，不混为人工硬件验收。
+
+公开交付已完成：[v4.0.0 Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v4.0.0)，10个附件匿名下载SHA256通过，28个历史Release/206附件元数据保持；完整回执见[本版发布记录](RELEASE-4.0.0.md)。没有新增下一业务功能，人工与未解决项状态保持上文。

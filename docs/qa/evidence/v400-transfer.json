@@ -1,0 +1,18 @@
+{
+  "name": "ResearchClip-v4.0.0-windows-x64.exe",
+  "size": 27878400,
+  "sha256": "b09249e72b7b246570b3419873968b35445af8b61c33b251ee4a7574eda67591",
+  "sourceCommit": "532e7f39aeb8aeda0e7c9899b5ba35ea3c960eb4",
+  "compressedSize": 9030256,
+  "compressedSha256": "9a9c60b6817a8e89ee244bb9e86a1fe4779df681c107397b13175cfcb0cd2289",
+  "blob": "d9ce51aa10ca609793ab16a88445aa4f3e61c8cf",
+  "tree": "b95e36b9c2daca95193829ce076bd25e3b2ba49d",
+  "transportCommit": "b708b5a7c358becde20d4e78659f548eb7cc4602",
+  "ref": "refs/heads/codex/v400-artifact-transfer",
+  "workflowRun": 39731475974,
+  "workflowHead": "37648bac4cd7875c6186fe544c5b7952327d370d",
+  "runResult": "success",
+  "remoteTemporaryRefRemovedWithExactLease": true,
+  "workflowRemoved": true,
+  "anonymousOriginalHashVerified": true
+}
