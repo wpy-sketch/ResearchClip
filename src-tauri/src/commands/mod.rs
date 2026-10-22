@@ -7,6 +7,7 @@ pub mod capture;
 pub mod desktop;
 pub mod document;
 pub mod editor;
+pub mod embeddings;
 pub mod import;
 pub mod library;
 pub mod links;

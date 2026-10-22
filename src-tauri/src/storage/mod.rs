@@ -1,5 +1,6 @@
 pub mod anchors;
 pub mod clips;
+pub mod embeddings;
 pub(crate) mod files;
 pub mod knowledge;
 pub mod library;
@@ -117,7 +118,7 @@ mod tests {
         let root = temporary.path().join("科研工作区");
         let storage = Storage::open(root.clone()).unwrap();
         let status = storage.status().unwrap();
-        assert_eq!(status.schema_version, 10);
+        assert_eq!(status.schema_version, 11);
         assert!(root.join("researchclip.sqlite3").is_file());
         for name in ["originals", "thumbnails", "exports"] {
             assert!(root.join(name).is_dir());
@@ -157,7 +158,7 @@ mod tests {
             )
             .unwrap();
         assert_eq!(note, "keep me");
-        assert_eq!(storage.status().unwrap().schema_version, 10);
+        assert_eq!(storage.status().unwrap().schema_version, 11);
     }
 
     #[test]
@@ -230,7 +231,7 @@ mod tests {
         let storage = Storage::open(temporary.path().to_path_buf()).unwrap();
         let json = serde_json::to_value(storage.status().unwrap()).unwrap();
         assert_eq!(json["appName"], "ResearchClip");
-        assert_eq!(json["schemaVersion"], 10);
+        assert_eq!(json["schemaVersion"], 11);
         assert!(json.get("data_dir").is_none());
     }
     #[test]

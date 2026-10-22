@@ -1,0 +1,18 @@
+{
+  "mode": "local isolated headless Edge renderer; no native capture, user database, credential or clipboard claims",
+  "checks": [
+    "18 chapters and nested subsections mount; absent Markdown document has no split",
+    "third-level step navigation scrolls and keyboard-focuses the actual matching H4, active location follows",
+    "collapse all removes children and active step falls back to visible parent",
+    "nested search retains ancestors, reports no results and clear restores navigation",
+    "114 examples across all 18 chapters, example-only search, actual heading jump and directory mode restoration",
+    "all 31 whitelisted offline guide images actually decode",
+    "whitelisted local guide image opens with Enter and closes with Escape",
+    "dark: guide and directory contained at seven widths 480–1440",
+    "light: guide and directory contained at seven widths 480–1440",
+    "guide navigation/unmount and remount preserves independent Markdown draft; cancel/discard closes split correctly",
+    "600px-high window keeps bottom help reachable and sidebar scroll reaches settings"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

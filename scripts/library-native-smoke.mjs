@@ -43,7 +43,7 @@ async function launch(){
     if(url.hostname==='ipc.localhost'&&decodeURIComponent(url.pathname.slice(1))==='screenshot_image')imageRequests.push(request.postDataJSON());
   });
   await page.getByRole('button',{name:'存入素材库',exact:true}).waitFor();
-  await until(async()=> (await call('library_status')).schemaVersion===10,'real SQLite');
+  await until(async()=> (await call('library_status')).schemaVersion===11,'real SQLite');
 }
 async function close(){
   const exited=new Promise(resolve=>app.once('exit',resolve));

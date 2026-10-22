@@ -23,7 +23,7 @@ async function openFile(path){await page.getByRole('button',{name:'打开 Markdo
 async function selectWiki(query,targetTitle){await editor().fill((await editor().inputValue())+'\n\n[['+query+(query==='Apollonius'?']]':''));const picker=page.getByRole('region',{name:'内部引用候选',exact:true});await picker.getByRole('option').filter({hasText:targetTitle}).waitFor();await picker.getByRole('option').filter({hasText:targetTitle}).click();await picker.waitFor({state:'detached'});}
 async function saveCurrent(){await page.getByRole('button',{name:'保存 Markdown',exact:true}).click();await page.getByRole('status').filter({hasText:'Markdown 与 assets 已保存'}).waitFor();}
 try{
- await launch();assert.equal((await call('library_status')).schemaVersion,10);assert.equal(await page.locator('[data-markdown-panel]').count(),0);
+ await launch();assert.equal((await call('library_status')).schemaVersion,11);assert.equal(await page.locator('[data-markdown-panel]').count(),0);
  const b=await saveNew('Apollonius Circle.md','# Apollonius Circle\n\nTarget B.');await page.getByRole('button',{name:'关闭文档',exact:true}).click();
  const a=await saveNew('A10-A.md','中文😀\n\nA10 source.');
  const shot=await page.evaluate(async()=>{const invoke=window.__TAURI_INTERNALS__.invoke,c=await invoke('current_capture'),png=await invoke('capture_result_png',{captureId:c.captureId}),meta=new TextEncoder().encode(JSON.stringify({title:'A10测试图',document:{schemaVersion:1,image:{widthPx:320,heightPx:200},objects:[]}})),body=new Uint8Array(4+meta.length+png.byteLength);new DataView(body.buffer).setUint32(0,meta.length,true);body.set(meta,4);body.set(new Uint8Array(png),meta.length+4);return invoke('create_screenshot',body.buffer);});

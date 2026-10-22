@@ -10,6 +10,87 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     let args: Vec<String> = std::env::args().collect();
     let mode = args.get(1).ok_or("expected hold, probe, or send")?;
+    if mode == "fixture-foreground" {
+        use windows::Win32::{
+            Foundation::{HWND, LPARAM},
+            UI::WindowsAndMessaging::{
+                EnumWindows, HWND_TOPMOST, SWP_NOMOVE, SWP_NOSIZE, SWP_SHOWWINDOW,
+                SetForegroundWindow, SetWindowPos,
+            },
+        };
+        use windows::core::BOOL;
+        let pid: u32 = args.get(2).ok_or("expected owned browser PID")?.parse()?;
+        let title = args.get(3).ok_or("expected unique fixture title")?;
+        let suffix = title
+            .strip_prefix("ResearchClip A12 capture ")
+            .ok_or("not an owned test fixture title")?;
+        if pid == 0
+            || suffix.is_empty()
+            || suffix.len() > 60
+            || !suffix
+                .bytes()
+                .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
+        {
+            return Err("invalid fixture identity".into());
+        }
+        struct Fixture {
+            pid: u32,
+            title: String,
+            window: Option<HWND>,
+            count: u32,
+        }
+        unsafe extern "system" fn find_fixture(hwnd: HWND, data: LPARAM) -> BOOL {
+            let fixture = unsafe { &mut *(data.0 as *mut Fixture) };
+            let mut pid = 0;
+            unsafe {
+                GetWindowThreadProcessId(hwnd, Some(&mut pid));
+            }
+            let mut value = [0u16; 256];
+            let length = unsafe { GetWindowTextW(hwnd, &mut value) };
+            let title = String::from_utf16_lossy(&value[..length as usize]);
+            if pid == fixture.pid
+                && (title == fixture.title || title.starts_with(&(fixture.title.clone() + " - ")))
+            {
+                fixture.window = Some(hwnd);
+                fixture.count += 1;
+            }
+            BOOL(1)
+        }
+        let mut fixture = Fixture {
+            pid,
+            title: title.clone(),
+            window: None,
+            count: 0,
+        };
+        unsafe {
+            EnumWindows(
+                Some(find_fixture),
+                LPARAM((&mut fixture as *mut Fixture) as isize),
+            )?;
+        }
+        if fixture.count != 1 {
+            return Err("expected one owned fixture browser window".into());
+        }
+        let window = fixture.window.ok_or("fixture disappeared")?;
+        unsafe {
+            SetWindowPos(
+                window,
+                Some(HWND_TOPMOST),
+                0,
+                0,
+                0,
+                0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW,
+            )?;
+            let _ = SetForegroundWindow(window);
+        }
+        std::thread::sleep(std::time::Duration::from_millis(100));
+        if unsafe { GetForegroundWindow() } != window {
+            return Err("owned fixture is not foreground; capture must not start".into());
+        }
+        println!("OWNED_FIXTURE_FOREGROUND");
+        return Ok(());
+    }
     if mode == "close"
         || mode == "minimize"
         || mode == "dialog-cancel"
@@ -72,6 +153,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             count: 0,
             titles: if mode == "dialog-model-folder" {
                 vec![
+                    "选择语义模型八份文件所在目录".encode_utf16().collect(),
                     "选择完整离线包中的 similarity-ai 文件夹"
                         .encode_utf16()
                         .collect(),

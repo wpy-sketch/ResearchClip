@@ -647,3 +647,8 @@ WindowCaptureService、独立 window-picker 选择层、DWM物理边界与WGC/D3
 ## v3.1.3 A09 文献引用
 
 采用 schema8 增量表和现有文件/笔记服务；Crossref 只在明确查询时访问，确认后才入库；BibTeX预览导入、来源快照、稳定引用键和参数化本机搜索。相似检索移至侧栏并限制项目/收藏候选范围；不改原图或现有 WebDAV 协议。协议与边界见[文献设计](REFERENCES.md)，实际阶段验收见[A09结果](qa/RELEASE-3.1.3.md)。
+
+
+## A13 / v3.1.9 本地图文语义检索
+
+EmbeddingService复用本地Python边界与素材库，schema11保存派生512维向量，默认不联网、不索引；详情见[语义搜索设计](SEMANTIC-SEARCH.md)。无新增依赖，普通搜索继续独立运行。

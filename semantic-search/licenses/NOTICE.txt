@@ -1,0 +1,16 @@
+ResearchClip optional semantic search model sources
+
+OpenAI CLIP ViT-B/32: Copyright (c) 2021 OpenAI. MIT License.
+ONNX int8 image conversion: Xenova/clip-vit-base-patch32,
+revision d15189d7028b43f1d3e65039190477f6af591c2a.
+
+Sentence Transformers clip-ViT-B-32-multilingual-v1:
+Nils Reimers and contributors; model card declares Apache License 2.0.
+Official ONNX text encoder, tokenizer and 2_Dense projection:
+revision 58edf8cada9e398793dca955574a48cbb7f18be2.
+
+ResearchClip does not modify the downloaded weight files or bundle them in
+the desktop installer. It applies the source-defined image preprocessing,
+masked mean pooling and linear projection with local ONNX Runtime.
+See accompanying CLIP-MIT.txt, APACHE-2.0.txt, models.json and
+docs/SEMANTIC-SEARCH.md for fixed source URLs, hashes and limitations.

@@ -1,3 +1,4 @@
+import {SemanticPanel} from '../semantic/SemanticPanel';
 import {useCaptureStore} from '../capture/store';
 import {OcrIndexControls} from '../ocr-index/OcrIndex';
 import {useSelectionStore} from '../projects/selection';
@@ -25,6 +26,7 @@ import {clearLibraryFilters} from './use-search';
 import {useMarkdownExportStore} from '../export/store';
 
 export function LibraryView({favorites}: {favorites:boolean}) {
+  const [searchMode,setSearchMode]=useState<'ordinary'|'semantic'>('ordinary');
   const drop=useImageDrop('library');
   const capturePreview=useCaptureStore(s=>s.preview),captureError=useCaptureStore(s=>s.error);
   const captureTools=useRef<HTMLDetailsElement>(null);
@@ -57,8 +59,9 @@ export function LibraryView({favorites}: {favorites:boolean}) {
   return <div className={`page-container library-page image-drop-target ${drop.over?'is-drag-over':''}`} data-image-drop-target="library" {...drop.handlers}>
     <div className="page-heading"><div><h2>{favorites ? '收藏' : '截图素材'}</h2>
       <p>{favorites ? '将值得反复回看的图像，留在这里。' : '图像和标注保存在本机应用数据目录中。'}</p>
-    </div><span className="subtle-badge">{viewMode === 'grid' ? '网格视图' : '列表视图'}</span></div>
+    </div><div className="library-search-mode" role="group" aria-label="搜索模式"><button aria-pressed={searchMode==='ordinary'} onClick={()=>setSearchMode('ordinary')}>普通搜索</button><button aria-pressed={searchMode==='semantic'} onClick={()=>setSearchMode('semantic')}>图文语义 · 实验</button></div><span className="subtle-badge library-view-badge">{viewMode === 'grid' ? '网格视图' : '列表视图'}</span></div>
     <ProjectBar/>
+    {searchMode==='semantic'?<SemanticPanel favorites={favorites}/>:<>
     <OcrIndexControls/>
     <p className="image-drop-hint" title="每批最多10张、合计64 MiB；单张20 MiB、16,777,216像素。详见使用指南。">拖入图片或点击顶部剪贴板图标导入。支持 PNG、JPG / JPEG、WebP。</p>
     {!favorites && (items.length ? <details className="library-capture-tools" ref={captureTools}><summary>截图工具 · 全屏、区域、窗口与长截图</summary><CapturePanel/></details> : <CapturePanel/>)}
@@ -137,5 +140,6 @@ export function LibraryView({favorites}: {favorites:boolean}) {
       </form>}
       {operationError && <p className="error-banner m-3" role="alert">{operationError}</p>}
     </Modal>}
+    </>}
   </div>;
 }

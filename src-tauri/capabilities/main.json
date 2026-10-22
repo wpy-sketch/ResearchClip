@@ -6,6 +6,11 @@
     "main"
   ],
   "permissions": [
+    "allow-semantic-status",
+    "allow-semantic-start",
+    "allow-semantic-cancel",
+    "allow-semantic-clear",
+    "allow-semantic-import",
     "allow-annotation-anchors",
     "allow-resolve-annotation-anchor",
     "allow-save-annotation-anchor",

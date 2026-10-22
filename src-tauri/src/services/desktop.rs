@@ -156,6 +156,9 @@ pub fn request_exit(app: &AppHandle) -> Result<(), CaptureError> {
         .cancel();
     app.state::<Arc<super::similarity_index::SimilarityIndex>>()
         .cancel();
+    let _ = app
+        .state::<Arc<super::embeddings::EmbeddingService>>()
+        .cancel();
     app.state::<Arc<super::ocr_index::OcrIndexService>>()
         .cancel();
     app.state::<Arc<super::scrolling::ScrollService>>().cancel();
@@ -245,6 +248,16 @@ pub fn finish_exit(app: &AppHandle, approved: bool) -> Result<(), CaptureError> 
         if ai_deadline.elapsed() > std::time::Duration::from_secs(3) {
             service.cancel();
             return Err(failure("本地AI仍在释放资源，请稍后再次退出。"));
+        }
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
+    let semantic = app.state::<Arc<super::embeddings::EmbeddingService>>();
+    let _ = semantic.cancel();
+    let semantic_deadline = std::time::Instant::now();
+    while semantic.busy() {
+        if semantic_deadline.elapsed() > std::time::Duration::from_secs(3) {
+            service.cancel();
+            return Err(failure("语义索引仍在释放资源，请稍后再次退出。"));
         }
         std::thread::sleep(std::time::Duration::from_millis(25));
     }

@@ -1,19 +1,19 @@
 """Publish a new verified local desktop build without overwriting old releases."""
 import argparse, hashlib, json, os, shutil, subprocess, urllib.request, urllib.error, urllib.parse, ssl, time
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');p.add_argument('--defer-raw',action='store_true',help='Prepare only a draft and defer the raw EXE to verified transport; never publish.');a=p.parse_args()
 root=Path(__file__).resolve().parent.parent
-assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8')
+assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0')
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
 if a.prepare:
     assert not any(out.iterdir()),'Refusing nonempty release staging folder'
     companions=[]
-    if a.version in ('3.1.6','3.1.7','3.1.8'):
+    if a.version in ('3.1.6','3.1.7','3.1.8','3.1.9','4.0.0'):
         folder=root/'artifacts'/('companions-v'+a.version.replace('.',''))
         cm=json.loads((folder/'manifest.json').read_text(encoding='utf-8'));assert cm['version']==a.version
-        qa_folder='installer-v316-pwsh' if a.version=='3.1.6' else f'installer-v{a.version.replace(".","")}-final'
+        qa_folder='installer-v316-pwsh' if a.version=='3.1.6' else 'installer-v319-verified' if a.version=='3.1.9' else f'installer-v{a.version.replace(".","")}-final'
         qa=json.loads((root/'artifacts'/qa_folder/'report.json').read_text(encoding='utf-8-sig'))
         assert qa['result']=='passed' and qa['version']==a.version and not qa['installationStillPresent']
         assert digest(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe')==qa['installerSha256'].lower(),'Installer differs from tested payload'
@@ -59,7 +59,7 @@ assert req('https://api.github.com/user')['login']=='wpy-sketch'
 assert req(base+'/git/ref/tags/v'+a.version)['object']['sha']==commit
 releases=req(base+'/releases?per_page=100');existing=next((r for r in releases if r['tag_name']=='v'+a.version),None)
 def check_history(releases):
-    if a.version not in ('3.1.6','3.1.7','3.1.8'):return None
+    if a.version not in ('3.1.6','3.1.7','3.1.8','3.1.9','4.0.0'):return None
     before=json.loads((root/f'docs/qa/evidence/v{a.version.replace(".","")}-prior-releases.json').read_text(encoding='utf-8'))
     for old in before:
         current=next((x for x in releases if x['id']==old['id']),None)
@@ -72,6 +72,7 @@ prior=json.loads((out/'publication.json').read_text(encoding='utf-8')) if (out/'
 if prior:existing=req(base+'/releases/'+str(prior['id']));assert existing['tag_name']=='v'+a.version
 if existing:assert prior and prior['id']==existing['id'] and prior['commit']==commit,'Unrecognized existing release; refusing overwrite'
 body=(root/f'docs/RELEASE-NOTES-{a.version}.md').read_text(encoding='utf-8').replace('(qa/','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/qa/').replace('(USER_GUIDE.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/USER_GUIDE.md)').replace('(INTERNAL-LINKS.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/INTERNAL-LINKS.md)')
+body=body.replace('(SEMANTIC-SEARCH.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/SEMANTIC-SEARCH.md)')
 r=existing or req(base+'/releases','POST',{'tag_name':'v'+a.version,'target_commitish':commit,'name':'ResearchClip v'+a.version,'body':body,'draft':True,'prerelease':False})
 state=prior or {'version':a.version,'commit':commit,'id':r['id'],'url':r['html_url'],'assets':[]}
 if history:state['historyBefore']=history
@@ -88,9 +89,14 @@ for x in sorted(m['assets'],key=lambda x:x['size']):
         assert current['state']=='uploaded' and current['size']==x['size'] and current['digest']=='sha256:'+x['sha256'],'Existing asset differs; refusing overwrite'
         print('Verified existing '+x['name'],flush=True);continue
     assert r['draft'],'Cannot modify published assets'
+    if a.defer_raw and x['name']==f'ResearchClip-v{a.version}-windows-x64.exe':
+        print('Deferred raw EXE; draft will remain unpublished',flush=True);continue
     result=req(r['upload_url'].split('{')[0]+'?'+urllib.parse.urlencode({'name':x['name']}),'POST',binary=f.read_bytes())
     assert result['state']=='uploaded' and result['size']==x['size'] and result['digest']=='sha256:'+x['sha256']
     state['assets'].append({'name':x['name'],'size':result['size'],'digest':result['digest'],'url':result['browser_download_url']});save();print('Uploaded '+x['name'],flush=True)
+if a.defer_raw:
+    assert r['draft'];state['deferredRaw']=True;save();print('Draft prepared; final publication and anonymous verification still required',flush=True);raise SystemExit(0)
+state.pop('deferredRaw',None)
 if r['draft']:r=req(base+'/releases/'+str(r['id']),'PATCH',{'tag_name':'v'+a.version,'target_commitish':commit,'draft':False,'prerelease':False,'make_latest':'true'})
 assert not r['draft'] and not r['prerelease'];state['published']=True;state['url']=r['html_url'];assert r['tag_name']=='v'+a.version;save()
 release=req(base+'/releases/'+str(r['id']));assert len(release['assets'])==len(m['assets'])

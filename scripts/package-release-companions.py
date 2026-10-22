@@ -63,7 +63,8 @@ def main():
     guide = (root / 'docs/USER_GUIDE.md').read_text(encoding='utf-8')
     names = {'docs/USER_GUIDE.md', 'docs/RELEASE-COMPONENTS.md', 'docs/RELEASE-COMPONENTS.json', f'docs/qa/RELEASE-{version}.md', 'browser-extension/README.md', 'browser-extension/PROTOCOL.md', 'docs/qa/RELEASE-1.0.2.md'}
     names.add('docs/ANNOTATION-ANCHORS.md')
-    names.add('docs/COMMAND-WORKFLOWS.md')
+    names.update(['docs/COMMAND-WORKFLOWS.md', 'docs/SEMANTIC-SEARCH.md', 'semantic-search/README.md', 'semantic-search/models.json'])
+    names.update(str(p.relative_to(root)).replace('\\', '/') for p in (root / 'semantic-search/licenses').iterdir() if p.is_file())
     names.update('docs/' + name for name in re.findall(r'!\[[^\]]*\]\((images/[^)]+)\)', guide))
     names.update(str(p.relative_to(root)).replace('\\', '/') for p in (root / 'docs/examples').iterdir() if p.is_file())
     with zipfile.ZipFile(out / f'ResearchClip-Guide-v{version}.zip', 'x', compression=zipfile.ZIP_DEFLATED) as archive:

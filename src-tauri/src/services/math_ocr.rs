@@ -122,6 +122,13 @@ impl MathOcrService {
             error: self.initial_error.clone(),
         })
     }
+    pub(crate) fn runtime_python(&self) -> Result<PathBuf, CaptureError> {
+        self.python
+            .lock()
+            .map_err(|_| failure("本地运行时状态异常。"))?
+            .clone()
+            .ok_or_else(|| failure("请先选择本地Python运行时。"))
+    }
     pub fn configure(&self, python: PathBuf) -> Result<(), CaptureError> {
         if let Some(error) = &self.initial_error {
             return Err(failure(error));
@@ -393,12 +400,27 @@ fn execute_script(
     timeout: Duration,
     cancelled: impl Fn() -> bool,
 ) -> Result<serde_json::Value, CaptureError> {
+    execute_worker(
+        python, script, MODELS, kind, models, image, timeout, cancelled,
+    )
+}
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn execute_worker(
+    python: &Path,
+    script: &str,
+    manifest: &str,
+    kind: &str,
+    models: &Path,
+    image: Option<&Path>,
+    timeout: Duration,
+    cancelled: impl Fn() -> bool,
+) -> Result<serde_json::Value, CaptureError> {
     files::ordinary(python).map_err(|_| failure("Python运行时不可用。"))?;
     let mut command = Command::new(python);
     command
         .args(["-I", "-c", script, kind])
         .arg(models)
-        .arg(MODELS)
+        .arg(manifest)
         .stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::null())
@@ -474,6 +496,10 @@ fn execute_script(
             "MODEL_MISSING" => "本地公式模型缺失，请在设置中主动下载或导入。",
             "MODEL_INVALID" => "模型摘要校验失败，未执行推理。请保留并检查模型文件。",
             "MODEL_CONFLICT" => "模型目录已有不同文件，未覆盖，请检查或选择离线模型。",
+            "QUERY_INVALID" => "查询无效，请输入1至500个可见字符。",
+            "EMBEDDING_FAILED" => {
+                "本地图文推理失败，请核对运行时依赖与CPU兼容性；普通搜索仍可使用。"
+            }
             "NO_FORMULA" => "未检测到足够的图像内容，请框选清晰公式。",
             "TOKEN_LIMIT" => "公式过长或模型未正常结束，请缩小选区并人工核对。",
             _ => "本地公式识别失败。请检查Python依赖、模型和图片；可重新识别。",

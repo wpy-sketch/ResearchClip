@@ -1,0 +1,412 @@
+{
+  "environment": "Windows-11-10.0.26200-SP0",
+  "processor": "",
+  "python": "3.12.14",
+  "ort": "1.31.0",
+  "providers": [
+    "CPUExecutionProvider"
+  ],
+  "threads": 2,
+  "modelBytes": 228030489,
+  "verifyMs": 164.49,
+  "imageLoadMs": 634.62,
+  "textLoadMs": 297.25,
+  "imageMs": [
+    24.62,
+    25.85,
+    24.59,
+    24.09,
+    36.14,
+    28.26
+  ],
+  "peakWorkingSetBytes": 301867008,
+  "results": [
+    {
+      "query": "数学公式",
+      "expected": "formula",
+      "rank": 1,
+      "ms": 5.71,
+      "results": [
+        {
+          "category": "formula",
+          "score": 0.301511
+        },
+        {
+          "category": "pursuit",
+          "score": 0.240082
+        },
+        {
+          "category": "neural",
+          "score": 0.238294
+        },
+        {
+          "category": "flow",
+          "score": 0.235532
+        },
+        {
+          "category": "software",
+          "score": 0.20483
+        },
+        {
+          "category": "landscape",
+          "score": 0.189755
+        }
+      ]
+    },
+    {
+      "query": "神经网络结构图",
+      "expected": "neural",
+      "rank": 1,
+      "ms": 5.02,
+      "results": [
+        {
+          "category": "neural",
+          "score": 0.307868
+        },
+        {
+          "category": "pursuit",
+          "score": 0.254102
+        },
+        {
+          "category": "flow",
+          "score": 0.250094
+        },
+        {
+          "category": "formula",
+          "score": 0.237262
+        },
+        {
+          "category": "software",
+          "score": 0.209564
+        },
+        {
+          "category": "landscape",
+          "score": 0.191332
+        }
+      ]
+    },
+    {
+      "query": "追逃轨迹图",
+      "expected": "pursuit",
+      "rank": 2,
+      "ms": 4.22,
+      "results": [
+        {
+          "category": "formula",
+          "score": 0.238387
+        },
+        {
+          "category": "pursuit",
+          "score": 0.233519
+        },
+        {
+          "category": "neural",
+          "score": 0.230554
+        },
+        {
+          "category": "flow",
+          "score": 0.22504
+        },
+        {
+          "category": "landscape",
+          "score": 0.215704
+        },
+        {
+          "category": "software",
+          "score": 0.215269
+        }
+      ]
+    },
+    {
+      "query": "流程图",
+      "expected": "flow",
+      "rank": 1,
+      "ms": 4.4,
+      "results": [
+        {
+          "category": "flow",
+          "score": 0.269785
+        },
+        {
+          "category": "formula",
+          "score": 0.26623
+        },
+        {
+          "category": "pursuit",
+          "score": 0.258242
+        },
+        {
+          "category": "neural",
+          "score": 0.25677
+        },
+        {
+          "category": "software",
+          "score": 0.219827
+        },
+        {
+          "category": "landscape",
+          "score": 0.209927
+        }
+      ]
+    },
+    {
+      "query": "软件界面截图",
+      "expected": "software",
+      "rank": 3,
+      "ms": 5.01,
+      "results": [
+        {
+          "category": "flow",
+          "score": 0.254379
+        },
+        {
+          "category": "neural",
+          "score": 0.243351
+        },
+        {
+          "category": "software",
+          "score": 0.23875
+        },
+        {
+          "category": "formula",
+          "score": 0.238611
+        },
+        {
+          "category": "pursuit",
+          "score": 0.234329
+        },
+        {
+          "category": "landscape",
+          "score": 0.210849
+        }
+      ]
+    },
+    {
+      "query": "自然风景",
+      "expected": "landscape",
+      "rank": 1,
+      "ms": 4.25,
+      "results": [
+        {
+          "category": "landscape",
+          "score": 0.242133
+        },
+        {
+          "category": "formula",
+          "score": 0.202117
+        },
+        {
+          "category": "pursuit",
+          "score": 0.196294
+        },
+        {
+          "category": "neural",
+          "score": 0.190154
+        },
+        {
+          "category": "flow",
+          "score": 0.180784
+        },
+        {
+          "category": "software",
+          "score": 0.175773
+        }
+      ]
+    },
+    {
+      "query": "a mathematical formula",
+      "expected": "formula",
+      "rank": 1,
+      "ms": 4.1,
+      "results": [
+        {
+          "category": "formula",
+          "score": 0.322366
+        },
+        {
+          "category": "flow",
+          "score": 0.248606
+        },
+        {
+          "category": "neural",
+          "score": 0.239848
+        },
+        {
+          "category": "pursuit",
+          "score": 0.237534
+        },
+        {
+          "category": "software",
+          "score": 0.202647
+        },
+        {
+          "category": "landscape",
+          "score": 0.182813
+        }
+      ]
+    },
+    {
+      "query": "a neural network architecture diagram",
+      "expected": "neural",
+      "rank": 1,
+      "ms": 4.97,
+      "results": [
+        {
+          "category": "neural",
+          "score": 0.335861
+        },
+        {
+          "category": "flow",
+          "score": 0.296906
+        },
+        {
+          "category": "pursuit",
+          "score": 0.270374
+        },
+        {
+          "category": "formula",
+          "score": 0.242492
+        },
+        {
+          "category": "software",
+          "score": 0.209729
+        },
+        {
+          "category": "landscape",
+          "score": 0.194772
+        }
+      ]
+    },
+    {
+      "query": "pursuit and evasion trajectories plotted on a graph",
+      "expected": "pursuit",
+      "rank": 1,
+      "ms": 6.53,
+      "results": [
+        {
+          "category": "pursuit",
+          "score": 0.368518
+        },
+        {
+          "category": "neural",
+          "score": 0.273149
+        },
+        {
+          "category": "flow",
+          "score": 0.261324
+        },
+        {
+          "category": "formula",
+          "score": 0.242575
+        },
+        {
+          "category": "software",
+          "score": 0.193703
+        },
+        {
+          "category": "landscape",
+          "score": 0.175444
+        }
+      ]
+    },
+    {
+      "query": "a flowchart",
+      "expected": "flow",
+      "rank": 3,
+      "ms": 3.62,
+      "results": [
+        {
+          "category": "formula",
+          "score": 0.244031
+        },
+        {
+          "category": "pursuit",
+          "score": 0.229621
+        },
+        {
+          "category": "flow",
+          "score": 0.229455
+        },
+        {
+          "category": "neural",
+          "score": 0.226644
+        },
+        {
+          "category": "software",
+          "score": 0.220966
+        },
+        {
+          "category": "landscape",
+          "score": 0.220257
+        }
+      ]
+    },
+    {
+      "query": "a screenshot of software",
+      "expected": "software",
+      "rank": 2,
+      "ms": 4.41,
+      "results": [
+        {
+          "category": "flow",
+          "score": 0.280147
+        },
+        {
+          "category": "software",
+          "score": 0.27786
+        },
+        {
+          "category": "neural",
+          "score": 0.260677
+        },
+        {
+          "category": "formula",
+          "score": 0.247168
+        },
+        {
+          "category": "pursuit",
+          "score": 0.243442
+        },
+        {
+          "category": "landscape",
+          "score": 0.237247
+        }
+      ]
+    },
+    {
+      "query": "a natural landscape",
+      "expected": "landscape",
+      "rank": 1,
+      "ms": 4.24,
+      "results": [
+        {
+          "category": "landscape",
+          "score": 0.249436
+        },
+        {
+          "category": "pursuit",
+          "score": 0.201737
+        },
+        {
+          "category": "neural",
+          "score": 0.193849
+        },
+        {
+          "category": "formula",
+          "score": 0.193653
+        },
+        {
+          "category": "flow",
+          "score": 0.176313
+        },
+        {
+          "category": "software",
+          "score": 0.167167
+        }
+      ]
+    }
+  ],
+  "top1": 8,
+  "total": 12,
+  "fixtureNotes": "Three authored controlled diagrams; real formula rendered STIX fixture; actual Windows app screenshot; scikit-learn china.jpg CC BY sample. Small convenience set, not a general benchmark."
+}

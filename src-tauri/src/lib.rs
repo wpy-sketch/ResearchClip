@@ -137,6 +137,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 None
             }
             .unwrap_or(app.path().app_data_dir()?);
+            app.manage(Arc::new(services::embeddings::EmbeddingService::new(
+                path.join("semantic-v1"),
+            )));
             let math_root = path.join("math-ocr-v1");
             let math =
                 services::math_ocr::MathOcrService::new(math_root.clone()).unwrap_or_else(|e| {
@@ -215,6 +218,11 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::similarity_ai::choose_similarity_ai_bundle,
             commands::similarity_ai::start_similarity_ai,
             commands::similarity_ai::cancel_similarity_ai,
+            commands::embeddings::semantic_status,
+            commands::embeddings::semantic_start,
+            commands::embeddings::semantic_cancel,
+            commands::embeddings::semantic_clear,
+            commands::embeddings::semantic_import,
             commands::similarity::similarity_status,
             commands::references::lookup_reference_doi,
             commands::anchors::annotation_anchors,
@@ -359,6 +367,9 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 }
             }
             tauri::RunEvent::Exit => {
+                let _ = app
+                    .state::<Arc<services::embeddings::EmbeddingService>>()
+                    .cancel();
                 let _ = app
                     .state::<Arc<services::math_ocr::MathOcrService>>()
                     .cancel();

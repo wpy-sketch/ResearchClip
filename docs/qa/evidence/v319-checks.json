@@ -1,0 +1,86 @@
+{
+  "version": "3.1.9",
+  "validationDates": [
+    "2026-10-21",
+    "2026-10-22"
+  ],
+  "frontend": {
+    "command": "npm run check",
+    "exit": 0,
+    "files": 63,
+    "tests": 424
+  },
+  "rust": {
+    "command": "npm run test:rust",
+    "exit": 0,
+    "passed": 210,
+    "ignored": 7,
+    "failed": 0
+  },
+  "clippy": {
+    "command": "npm run check:rust",
+    "exit": 0
+  },
+  "format": {
+    "command": "npm run format:rust",
+    "exit": 0
+  },
+  "pythonWorker": {
+    "command": "python -m unittest discover -s semantic-search -p test_worker.py",
+    "exit": 0,
+    "tests": 3
+  },
+  "companionTests": {
+    "command": "python scripts/test-release-companions.py",
+    "exit": 0,
+    "tests": 3
+  },
+  "native": {
+    "semanticDownload": {
+      "exit": 0,
+      "groups": 14
+    },
+    "semanticRecheck": {
+      "exit": 0,
+      "groups": 13
+    },
+    "commands": {
+      "exit": 0,
+      "groups": 13,
+      "notRun": "three physical capture cases; controlled foreground unavailable"
+    },
+    "guide": {
+      "exit": 0,
+      "groups": 6
+    },
+    "guideHeadless": {
+      "exit": 0,
+      "groups": 11
+    }
+  },
+  "installer": {
+    "result": "passed",
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ],
+    "userDataFilesHashed": 14,
+    "installerSha256": "704A362BDADB7CC508268103E80B42F2E0AEE7103099A7FC228A26A18C92C65B",
+    "signatureStatus": "NotSigned",
+    "busyInstallExit": 2,
+    "busyUninstallExit": 2,
+    "installationStillPresent": false
+  },
+  "knownFailures": [
+    "A11 second Markdown save returned generic I/O failure; source and draft retained; not fixed in A13",
+    "one semantic native exit emitted WebView invalid-window-handle warning; unchanged assertion independent rerun passed; not declared universally fixed"
+  ],
+  "notRun": [
+    "GPU inference",
+    "macOS",
+    "full Windows manual DPI/multi-monitor matrix",
+    "dedicated 2000-image performance benchmark"
+  ]
+}

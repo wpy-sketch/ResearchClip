@@ -136,10 +136,10 @@ mod tests {
     fn v9_migration_preserves_image_and_creates_verified_snapshot() {
         let (temp, s, id) = setup();
         let bytes = s.screenshot_image(&id, false).unwrap();
-        s.connection.execute_batch("DROP TABLE annotation_anchors; ALTER TABLE link_index DROP COLUMN anchor_id; PRAGMA user_version=9;").unwrap();
+        s.connection.execute_batch("DROP TABLE semantic_embeddings;DROP TABLE annotation_anchors; ALTER TABLE link_index DROP COLUMN anchor_id; PRAGMA user_version=9;").unwrap();
         drop(s);
         let s = Storage::open(temp.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 10);
+        assert_eq!(s.status().unwrap().schema_version, 11);
         assert_eq!(s.screenshot_image(&id, false).unwrap(), bytes);
         assert!(s.anchor_page(&id).unwrap().anchors.is_empty());
         assert!(
