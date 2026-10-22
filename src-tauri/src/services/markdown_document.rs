@@ -38,6 +38,14 @@ fn io_error() -> CaptureError {
         "Markdown 文件操作失败，请检查文件、权限或磁盘空间；原文件未主动删除，可能留下本次未引用的assets。",
     )
 }
+fn io_at(operation: &str, error: &std::io::Error) -> CaptureError {
+    failure(&format!(
+        "Markdown{operation}失败（系统错误{}）；原文件与编辑草稿保留，请检查权限、文件占用或磁盘空间后重试。",
+        error
+            .raw_os_error()
+            .map_or_else(|| "未知".into(), |n| n.to_string())
+    ))
+}
 pub fn asset_name(name: &str) -> bool {
     name.strip_prefix("researchclip-")
         .and_then(|s| s.strip_suffix(".png"))
@@ -192,7 +200,7 @@ pub fn unpack(bytes: &[u8]) -> Result<(SaveInput, Vec<&[u8]>), CaptureError> {
 }
 fn read(path: &Path, limit: usize) -> Result<Vec<u8>, CaptureError> {
     ordinary(path).map_err(|_| io_error())?;
-    let file = File::open(path).map_err(|_| io_error())?;
+    let file = File::open(path).map_err(|e| io_at("读取", &e))?;
     if !file.metadata().map_err(|_| io_error())?.is_file()
         || file.metadata().map_err(|_| io_error())?.len() > limit as u64
     {
@@ -420,14 +428,16 @@ impl DocumentFiles {
             }
         }
         let mut stage = tempfile::NamedTempFile::new_in(path.parent().ok_or_else(io_error)?)
-            .map_err(|_| io_error())?;
+            .map_err(|e| io_at("创建暂存文件", &e))?;
         stage
             .write_all(input.markdown.as_bytes())
             .and_then(|_| stage.as_file().sync_all())
-            .map_err(|_| io_error())?;
+            .map_err(|e| io_at("写入暂存文件", &e))?;
         if updating {
             self.unchanged(input.token.as_deref().unwrap_or(""))?;
-            stage.persist(&path).map_err(|_| io_error())?;
+            stage
+                .persist(&path)
+                .map_err(|e| io_at("原子替换", &e.error))?;
             let token = input.token.clone().ok_or_else(io_error)?;
             self.grants.get_mut(&token).ok_or_else(io_error)?.bytes =
                 input.markdown.as_bytes().to_vec();
@@ -628,6 +638,44 @@ mod tests {
         v.markdown.push_str("**next**\n");
         s.save(None, &v, &[]).unwrap();
         assert_eq!(fs::read_to_string(p).unwrap(), v.markdown);
+    }
+    #[test]
+    fn repeated_atomic_saves_keep_exact_bytes_and_reopen() {
+        let d = tempfile::tempdir().unwrap();
+        let p = d.path().join("连续保存 中文.md");
+        let mut files = DocumentFiles::default();
+        let mut v = input();
+        v.token = Some(files.save(Some(&p), &v, &[]).unwrap().token);
+        for index in 0..100 {
+            v.markdown = format!("# 第{index}次保存\n\n[锚点](researchclip://anchor/invalid)\n");
+            files.save(None, &v, &[]).unwrap();
+            assert_eq!(fs::read_to_string(&p).unwrap(), v.markdown);
+        }
+        assert!(DocumentFiles::default().open(&p).is_ok());
+    }
+    #[cfg(target_os = "windows")]
+    #[test]
+    fn locked_replacement_reports_system_error_and_keeps_grant_for_retry() {
+        use std::os::windows::fs::OpenOptionsExt;
+        let d = tempfile::tempdir().unwrap();
+        let p = d.path().join("locked.md");
+        let mut files = DocumentFiles::default();
+        let mut v = input();
+        let original = v.markdown.clone();
+        v.token = Some(files.save(Some(&p), &v, &[]).unwrap().token);
+        let locked = fs::OpenOptions::new()
+            .read(true)
+            .share_mode(1)
+            .open(&p)
+            .unwrap();
+        v.markdown.push_str("\n草稿仍在");
+        let error = files.save(None, &v, &[]).err().unwrap();
+        assert!(error.message.contains("原子替换"));
+        assert!(error.message.contains("系统错误"));
+        assert_eq!(fs::read_to_string(&p).unwrap(), original);
+        drop(locked);
+        files.save(None, &v, &[]).unwrap();
+        assert_eq!(fs::read_to_string(&p).unwrap(), v.markdown);
     }
     #[test]
     fn no_overwrite_and_external_conflict() {

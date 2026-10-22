@@ -1,0 +1,9 @@
+{
+  "mode": "actual Windows advanced editor, real original/project/PNG disk operations; controlled PNG, not screen capture",
+  "checks": [
+    "actual zoom-out mosaic, zoom-in blur, numbered clicks, delete without renumbering and manual number/size save via real system dialog; original bytes unchanged"
+  ],
+  "errors": [],
+  "result": "FAIL",
+  "failure": "AssertionError [ERR_ASSERTION]: 169.87135613983 != 70\n    at near (file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/advanced-native-smoke.mjs:31:34)\n    at file:///D:/%E6%96%87%E6%A1%A3/ChatGPT/ResearchClip/scripts/advanced-native-smoke.mjs:31:158"
+}

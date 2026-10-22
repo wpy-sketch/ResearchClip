@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {isTauri} from '@tauri-apps/api/core';
 import {Search,Sparkles,StopCircle} from 'lucide-react';
-import {semanticCall,semanticStatus,validateSemanticQuery} from './api';
+import {semanticCall,semanticStatus,validateSemanticQuery,mergeSemanticStatus} from './api';
 import type {SemanticStatus} from './api';
 import {chooseMathRuntime} from '../math-ocr/api';
 import {errorMessage} from '../../shared/api/errors';
@@ -19,8 +19,8 @@ export function SemanticPanel({favorites}:{favorites:boolean}){
   const [status,setStatus]=useState<SemanticStatus|null>(null),[query,setQuery]=useState(''),[error,setError]=useState<string|null>(null),[pending,setPending]=useState(false),[confirm,setConfirm]=useState<'download'|'clear'|'rebuild'|null>(null);
   const alive=useRef(true),request=useRef(false);const {projectId,unclassified}=useLibraryStore();
   const busy=pending||status?.job.phase==='running'||status?.job.phase==='cancelling';
-  useEffect(()=>{alive.current=true;let timer:ReturnType<typeof setTimeout>|undefined;async function poll(){try{const next=await semanticStatus();if(alive.current){setStatus(next);timer=setTimeout(()=>void poll(),['running','cancelling'].includes(next.job.phase)?700:3000);}}catch(e){if(alive.current){setError(errorMessage(e,'语义状态读取失败。'));timer=setTimeout(()=>void poll(),5000);}}}if(isTauri())void poll();return()=>{alive.current=false;if(timer)clearTimeout(timer);};},[]);
-  async function run(action:()=>Promise<unknown>){if(request.current)return;request.current=true;setPending(true);setError(null);try{await action();if(alive.current)setStatus(await semanticStatus());}catch(e){if(alive.current)setError(errorMessage(e,'语义操作失败，原图与普通搜索保留。'));}finally{request.current=false;if(alive.current)setPending(false);}}
+  useEffect(()=>{alive.current=true;let active=true;let timer:ReturnType<typeof setTimeout>|undefined;async function poll(){try{const next=await semanticStatus();if(active){setStatus(current=>mergeSemanticStatus(current,next));timer=setTimeout(()=>void poll(),['running','cancelling'].includes(next.job.phase)?700:3000);}}catch(e){if(active){setError(errorMessage(e,'语义状态读取失败。'));timer=setTimeout(()=>void poll(),5000);}}}if(isTauri())void poll();return()=>{active=false;alive.current=false;if(timer)clearTimeout(timer);};},[]);
+  async function run(action:()=>Promise<unknown>){if(request.current)return;request.current=true;setPending(true);setError(null);try{await action();const next=await semanticStatus();if(alive.current)setStatus(current=>mergeSemanticStatus(current,next));}catch(e){if(alive.current)setError(errorMessage(e,'语义操作失败，原图与普通搜索保留。'));}finally{request.current=false;if(alive.current)setPending(false);}}
   const start=(kind:'index'|'query'|'download',rebuild=false)=>run(async()=>{if(kind==='query')validateSemanticQuery(query);await semanticCall('semantic_start',{kind,query:kind==='query'?query:null,rebuild,scope:{projectId,unclassified,favorites},confirmed:kind!=='query'});});
   const job=status?.job,scopeMatches=job?.scope?.projectId===(projectId??null)&&job?.scope?.unclassified===unclassified&&job?.scope?.favorites===favorites,results=!busy&&job?.kind==='query'&&job.phase==='completed'&&scopeMatches?job.results:null;
   return <section className="semantic-panel" aria-label="离线图文语义检索" aria-busy={busy}>

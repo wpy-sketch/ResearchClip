@@ -1,0 +1,38 @@
+{
+  "mode": "actual Windows advanced editor, real original/project/PNG disk operations; controlled PNG, not screen capture",
+  "checks": [
+    "actual zoom-out mosaic, zoom-in blur, numbered clicks, delete without renumbering and manual number/size save via real system dialog; original bytes unchanged",
+    "actual selection drag and Transformer resize preserve original-pixel region, strength and one-step undo/redo",
+    "real PNG contains pixelated constant cells and blurred discontinuity; unchanged outside pixels, full resolution, identical bytes at different viewport zooms, no selection handles",
+    "actual JSON reopen restores editable effect/number objects; changing blur strength modifies exported PNG while preserving number values",
+    "real SQLite save and process restart retain advanced annotations; project reopens after restart, original remains byte-identical"
+  ],
+  "errors": [],
+  "pixels": {
+    "outside": [
+      5,
+      5,
+      180,
+      255
+    ],
+    "m1": [
+      60,
+      52,
+      180,
+      255
+    ],
+    "m2": [
+      60,
+      52,
+      180,
+      255
+    ],
+    "blur": [
+      141,
+      60,
+      180,
+      255
+    ]
+  },
+  "result": "PASS"
+}

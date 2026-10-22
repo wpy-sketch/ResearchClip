@@ -1,0 +1,12 @@
+{
+  "mode": "actual standalone Windows Host process with hostile/partial stdio frames, no UI or real user configuration",
+  "checks": [
+    "different extension origin rejected before reading stdin",
+    "oversize declared frame rejected without allocating it",
+    "truncated frame, malformed JSON and unknown local path field rejected",
+    "incomplete native caller times out after actual ten-second read deadline",
+    "absent desktop endpoint produces a user-facing recoverable error"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

@@ -1,0 +1,18 @@
+{
+  "mode": "actual Windows packaged debug EXE, WebView2/Konva, SQLite and native Save/Open; isolated generated PNG, not physical capture/DPI validation",
+  "checks": [
+    "actual canvas click creates a stable point anchor in original pixels with title/description and verified original SHA256",
+    "actual rectangle drawing saves a bounded original-pixel region; point and rectangle have distinct IDs",
+    "dragging an existing marker opens confirmation; saving moves it without changing its stable ID",
+    "marker visibility and actual canvas zoom leave stored original-pixel coordinates unchanged",
+    "actual screenshot/anchor picker inserts two stable references at the caret and native Markdown Save writes exact source",
+    "click opens the actual image editor, centers rendered yellow marker pixels, and preserves unsaved Markdown source/status",
+    "split resizing and consecutive region/point jumps retain source and latest target; highlight expires after three seconds",
+    "annotation version changes retain the original image revision; mismatched image revision and arbitrary-path IDs are rejected",
+    "native standard Markdown export replaces proprietary anchor URLs with readable coordinates and description without modifying source",
+    "confirmed anchor deletion retains source text and yields an explicit broken-reference error rather than another location",
+    "actual process restart preserves surviving anchor/ID/region, deleted reference in saved source, new annotation version and immutable original hash"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

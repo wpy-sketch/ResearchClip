@@ -1,0 +1,79 @@
+{
+  "version": "4.0.0",
+  "date": "2026-10-22",
+  "environment": "Windows 11 x64; isolated automated workspaces, not full manual/hardware certification",
+  "frontend": {
+    "files": 63,
+    "passed": 428,
+    "exit": 0
+  },
+  "rust": {
+    "passed": 212,
+    "failed": 0,
+    "ignored": 7,
+    "exit": 0
+  },
+  "clippy": {
+    "allTargets": true,
+    "denyWarnings": true,
+    "exit": 0
+  },
+  "formatRust": {
+    "exit": 0
+  },
+  "semanticWorker": {
+    "passed": 3,
+    "exit": 0
+  },
+  "companionSafety": {
+    "passed": 3,
+    "exit": 0
+  },
+  "extension": {
+    "passed": 5,
+    "exit": 0
+  },
+  "nativeGui": {
+    "anchors": 11,
+    "commands": 13,
+    "semantic": 13,
+    "links": 5,
+    "guide": 6,
+    "advancedEditor": 5
+  },
+  "headlessRenderer": {
+    "guide": 13,
+    "editor": 5
+  },
+  "host": {
+    "passed": 5,
+    "exit": 0
+  },
+  "installer": {
+    "checks": 4,
+    "exit": 0,
+    "existingDataFilesUnchanged": 14
+  },
+  "artifacts": {
+    "rawExe": {
+      "size": 27878400,
+      "sha256": "b09249e72b7b246570b3419873968b35445af8b61c33b251ee4a7574eda67591"
+    },
+    "installer": {
+      "sha256": "f4234e72d46f183b88c88ad9230b799c51ea8497fb47c6fc1ec5aaddacef3001"
+    }
+  },
+  "notRun": [
+    "physical Windows DPI/multi-display matrix",
+    "three physical workflow capture cases (foreground guard blocked)",
+    "third-party WebDAV/TLS provider authentication",
+    "long-duration leak stress",
+    "GPU inference and macOS"
+  ],
+  "unresolved": [
+    "historical intermittent Markdown save I/O not reproduced/root-caused",
+    "historical intermittent WebView shutdown PostMessage invalid handle"
+  ],
+  "newDependencies": 0,
+  "schema": 11
+}

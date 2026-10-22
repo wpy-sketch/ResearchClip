@@ -3,6 +3,17 @@ export const MODEL_ID='clip-b32-multilingual-int8-v1';
 export interface SemanticResult {items:{id:string;title:string;score:number}[];stale:number;searched:number}
 export interface SemanticJob {phase:''|'running'|'cancelling'|'cancelled'|'completed'|'failed';kind:string;generation:number;total:number;scanned:number;computed:number;skipped:number;error:string|null;results:SemanticResult|null;query:string|null;scope:{projectId:string|null;unclassified:boolean;favorites:boolean}|null}
 export interface SemanticStatus {modelId:string;modelBytes:number;modelsPresent:boolean;configured:boolean;stats:{total:number;ready:number};job:SemanticJob}
+// Polling and action responses can finish in either order. A job never returns
+// to an earlier generation, phase or scan position within the same process.
+export function mergeSemanticStatus(current:SemanticStatus|null,next:SemanticStatus):SemanticStatus{
+  if(!current)return next;
+  const a=current.job,b=next.job;
+  if(b.generation<a.generation)return current;
+  if(b.generation>a.generation)return next;
+  const terminal=(phase:SemanticJob['phase'])=>['completed','cancelled','failed'].includes(phase);
+  if((terminal(a.phase)&&!terminal(b.phase))||(a.phase==='cancelling'&&b.phase==='running')||b.scanned<a.scanned||b.computed<a.computed||b.skipped<a.skipped)return current;
+  return next;
+}
 const count=(v:unknown)=>Number.isSafeInteger(v)&&Number(v)>=0;
 export function validateSemanticQuery(query:string){if(!query.trim()||[...query].length>500||[...query].some(c=>c.charCodeAt(0)<32||c.charCodeAt(0)===127))throw Error('请输入1至500个可见字符。');}
 export function parseSemanticStatus(value:unknown):SemanticStatus{

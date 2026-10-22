@@ -1,0 +1,12 @@
+{
+  "mode": "actual Windows packaged debug EXE/WebView2, real SQLite, worker and native Save/Open; isolated controlled capture fixture, not physical screenshot/DPI validation",
+  "checks": [
+    "native Save grants create two stable IDs; typed [[ searches real candidates and inserts document, screenshot and self links; packaged background worker indexes saved UTF16 positions into real schema11",
+    "internal preview opens an actual screenshot card; card backlink returns to the correct source occurrence after Chinese/emoji",
+    "A↔B cycle and A self-reference are indexed without recursion; native rename preserves B ID; standard Markdown export rewrites relative URLs, visibly warns for screenshot references and preserves the original",
+    "real graph project/tag/neighbor filtering, cycles, zoom/pan, dark/light 1180/760/480 layouts; background rebuild cancels and successfully reruns",
+    "actual app restart preserves IDs, links and document tags; renamed targets reopen; deleting an isolated target yields a broken link/node and a visible open error without losing source; arbitrary-path IDs rejected and original screenshot SHA256 unchanged"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

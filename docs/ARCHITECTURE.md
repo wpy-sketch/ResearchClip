@@ -652,3 +652,8 @@ WindowCaptureService、独立 window-picker 选择层、DWM物理边界与WGC/D3
 ## A13 / v3.1.9 本地图文语义检索
 
 EmbeddingService复用本地Python边界与素材库，schema11保存派生512维向量，默认不联网、不索引；详情见[语义搜索设计](SEMANTIC-SEARCH.md)。无新增依赖，普通搜索继续独立运行。
+
+
+## v4.0.0 独立验收与阅读布局
+
+不增加业务模块、依赖、数据库迁移或Tauri权限，schema保持11。语义界面对异步响应按任务代次与单调进度合并，并清理旧effect轮询；Markdown I/O失败增加操作/OS错误码，原子保存与外部变化校验不变。指南继续复用同一Markdown源和标题目录，六条任务路线、字号自适应和有界滚动。实际证据与未解决问题见[独立验收报告](qa/ADVANCED_FEATURE_REPORT.md)。

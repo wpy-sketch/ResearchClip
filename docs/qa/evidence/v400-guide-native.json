@@ -1,0 +1,13 @@
+{
+  "mode": "actual Windows WebView2, real SQLite, controlled illustrative charts (not experiment data or live capture), native Save/Open",
+  "checks": [
+    "active screenshot completion stays visible with populated library; real project/grid/list render six SQLite-backed illustrative charts; empty bulk bar has one visible select-all action and capture empty state is compact",
+    "existing editable arrow/text load at original coordinates; knowledge-card note and tag are actually saved before illustrative screenshots",
+    "two library images enter comparison with the shared viewport; Markdown inserts the annotated composite and saves exact source/assets through a real system dialog, then fully closes",
+    "actual WebView2 example directory shows 114 examples and locates the selected source heading",
+    "all 31 bundled guide images really decode; keyboard opens a full-size guide figure and Escape removes the dialog",
+    "guide quick route scrolls/highlights the real chapter; empty search/clear restores all 18 chapters; 1180/760/480 layouts do not overflow"
+  ],
+  "errors": [],
+  "result": "PASS"
+}

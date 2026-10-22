@@ -1,0 +1,23 @@
+{
+  "mode": "actual packaged Windows WebView2, SQLite, native keyboard SendInput, real Windows OCR and local Python/ONNX; isolated controlled images/configuration; not a complete hardware/manual matrix",
+  "checks": [
+    "actual Windows SendInput Ctrl+Shift+P opens palette; normalized multi-term/no-match search and Enter execute; Rust blocks global capture collision",
+    "no-Markdown workflow stops before any capture or file creation",
+    "actual UI builder only connects compatible actions; two custom configs atomically persist; incompatible IPC config is rejected without changing stored bytes",
+    "OCR command resolves the active material card original rather than a stale screenshot preview",
+    "real Windows OCR reaches editable confirmation with decoded original; changing text clears confirmation, no insertion before consent, confirmed insertion occurs once",
+    "cancelling actual confirmation stops insertion and preserves current Markdown",
+    "actual existing Python/ONNX formula preset pauses for user confirmation, renders KaTeX, and inserts display math into the same document",
+    "choosing an already-managed image creates no duplicate card; result links to the existing stable screenshot ID",
+    "actual missing-model failure identifies formula step; restoring isolated models and retrying resumes without repeating completed image selection",
+    "actual settings file write failure preserves external bytes and builder form, shows an error, and succeeds after test-owned file restoration",
+    "native Markdown save and recent-document stable-ID reopen restore actual confirmed source",
+    "actual command palette contained at 1440/760/480 widths in both themes, with current Markdown intact",
+    "actual restart restores saved custom configurations and source records, starts no execution and performs no repeated write"
+  ],
+  "errors": [],
+  "notRun": [
+    "Physical capture-card preset, physical capture-OCR preset and capture-overlay Escape: owned test window foreground unavailable; no physical capture claims."
+  ],
+  "result": "PASS"
+}

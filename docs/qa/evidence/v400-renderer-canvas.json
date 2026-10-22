@@ -1,0 +1,56 @@
+{
+  "mode": "real Edge canvas pixel/render tests using explicit fixtures; not native screen capture",
+  "checks": [
+    "real PNG pixels show constant mosaic cells and reduced blur variance; stronger blur verified",
+    "outside unchanged, transparent alpha preserved, numbered vector remains above later image effects",
+    "0.5x/1x/2x viewport and selected Transformer do not change full-resolution exported RGBA pixels",
+    "actual live base-layer preview contains the same mosaic pixels as PNG export",
+    "600px-high windows at 1180/760/480 widths retain a reachable 240px canvas through outer scrolling without horizontal overflow"
+  ],
+  "errors": [],
+  "metrics": {
+    "outsideBefore": [
+      0,
+      255,
+      100,
+      255
+    ],
+    "outsideAfter": [
+      0,
+      255,
+      100,
+      255
+    ],
+    "mosaic1": [
+      128,
+      128,
+      100,
+      255
+    ],
+    "mosaic2": [
+      128,
+      128,
+      100,
+      255
+    ],
+    "beforeVariance": 16256.243649902342,
+    "blurVariance": 0.2499999023420969,
+    "alpha": 128,
+    "originalAlpha": 128,
+    "blurAlpha": 128,
+    "strongerVariance": 0.14666931152169127,
+    "numberPixel": [
+      204,
+      51,
+      17,
+      255
+    ],
+    "effectPixel": [
+      128,
+      128,
+      100,
+      255
+    ]
+  },
+  "result": "PASS"
+}

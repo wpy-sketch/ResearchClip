@@ -1,0 +1,25 @@
+{
+  "version": "4.0.0",
+  "mode": "actual NSIS, isolated install path, read-only user-data hashes, process fixture for busy guard",
+  "checks": [
+    "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+    "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+    "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+    "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+  ],
+  "result": "passed",
+  "userDataFilesHashed": 14,
+  "installerSha256": "F4234E72D46F183B88C88AD9230B799C51EA8497FB47C6FC1EC5AADDACEF3001",
+  "signatureStatus": "NotSigned",
+  "installedPayloadSha256": "4EB32C87E36556EE2C4491D1DCAACB3B8EC5A949001FDDC4E0620DF832E3862D",
+  "busyUninstallExit": 2,
+  "busyInstallExit": 2,
+  "quiescence": {
+    "codes": [
+      0
+    ],
+    "result": "PASS",
+    "needed": 0
+  },
+  "installationStillPresent": false
+}
