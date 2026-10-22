@@ -99,3 +99,12 @@
 | 可选GPU、完整人工/硬件矩阵 | NOT_IMPLEMENTED / NOT_RUN：本版只CPU，GPU只是评估替代；人工步骤保留上文 |
 
 发布准备包含10个附件，插件/MathOCR/旧Qwen资源索引全部保留；发布前历史快照27个Release、196个资产。公开发布与匿名下载核验回执完成后补记，不以本节替代上传完成。
+
+
+## 公开发布回执（2026-10-22）
+
+[v3.1.9 Release](https://github.com/wpy-sketch/ResearchClip/releases/tag/v3.1.9)已公开，源码标签固定`8b2e4ab0c7283a6210886ccdc759b5d04ff62e97`。独立GitHub读取确认latest=v3.1.9、draft=false、10个附件；全部匿名下载大小/SHA256通过。发布前后27个旧Release、196个旧附件ID/版本/提交/名称/大小/摘要一致：[完整回执](evidence/v319-publication.json)。
+
+大EXE沿用已验证的压缩Git对象传输，[一次性任务](https://github.com/wpy-sketch/ResearchClip/actions/runs/39703346030)不重新编译，只在固定源码/Release/摘要守卫下还原测试字节；原EXE与服务端及匿名下载SHA256均为`1ae637e26d0d79589d40095f61108bf7f44e612fa52bd233dcd88cd6ac4cc6d5`。只删除精确租约匹配的本任务临时分支，并移除一次性任务文件：[运输记录](evidence/v319-transfer.json)。正式安装器SHA256为`704a362bdadb7cc508268103e80b42f2e0aee7103099a7fc228a26a18c92c65b`。
+
+指南ZIP50个文件，CRC与全部内置相对链接通过；浏览器插件和MathOCR仍与既有正式附件逐字节一致，旧Qwen资源URL/摘要保留。v3.1.8的001–010迁移逐文件未变。上述已知Markdown二次保存失败、偶发退出告警及人工/硬件未验项仍保留，后续独立验收继续追查。
