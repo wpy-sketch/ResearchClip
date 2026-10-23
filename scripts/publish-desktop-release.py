@@ -3,7 +3,7 @@ import argparse, hashlib, json, os, shutil, subprocess, urllib.request, urllib.e
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');p.add_argument('--defer-raw',action='store_true',help='Prepare only a draft and defer the raw EXE to verified transport; never publish.');a=p.parse_args()
 root=Path(__file__).resolve().parent.parent
-assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0')
+assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.0','4.1.1')
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
@@ -23,6 +23,19 @@ if a.prepare:
             assert Path(x['name']).name==x['name'] and not (out/x['name']).exists()
             f=folder/x['name'];assert f.stat().st_size==x['size'] and digest(f)==x['sha256']
             companions.append((f,x['name']))
+    if a.version in ('4.1.0','4.1.1'):
+        qa=json.loads((root/f'artifacts/installer-v{a.version.replace(".","")}-final/report.json').read_text(encoding='utf-8-sig'))
+        assert qa['result']=='passed' and qa['version']==a.version and not qa['installationStillPresent']
+        assert digest(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe')==qa['installerSha256'].lower(),'Installer differs from tested payload'
+        import zipfile
+        guide=out/f'ResearchClip-Guide-v{a.version}.zip'
+        with zipfile.ZipFile(guide,'x',compression=zipfile.ZIP_DEFLATED) as archive:
+            for path in sorted((root/'docs').rglob('*')):
+                if path.is_file() and path.suffix.lower() in ('.md','.json','.png','.jpg','.svg'):
+                    archive.write(path,path.relative_to(root).as_posix())
+        with zipfile.ZipFile(guide) as archive:
+            assert archive.testzip() is None
+        assert (root/f'docs/qa/RELEASE-{a.version}.md').is_file()
     for src,name in [(root/'src-tauri/target/release/researchclip.exe',f'ResearchClip-v{a.version}-windows-x64.exe'),(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe',f'ResearchClip_{a.version}_x64-setup.exe'),*companions]:
         dest=out/name
         assert not dest.exists(),'Refusing existing release artifact'
@@ -73,6 +86,14 @@ if prior:existing=req(base+'/releases/'+str(prior['id']));assert existing['tag_n
 if existing:assert prior and prior['id']==existing['id'] and prior['commit']==commit,'Unrecognized existing release; refusing overwrite'
 body=(root/f'docs/RELEASE-NOTES-{a.version}.md').read_text(encoding='utf-8').replace('(qa/','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/qa/').replace('(USER_GUIDE.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/USER_GUIDE.md)').replace('(INTERNAL-LINKS.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/INTERNAL-LINKS.md)')
 body=body.replace('(SEMANTIC-SEARCH.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/SEMANTIC-SEARCH.md)')
+if a.version in ('4.1.0','4.1.1'):
+    import re,posixpath
+    def absolute_doc_link(match):
+        target=match.group(1)
+        if '://' in target or target.startswith('#') or target.startswith('mailto:'):
+            return match.group(0)
+        return '('+f'https://github.com/wpy-sketch/ResearchClip/blob/v{a.version}/'+posixpath.normpath('docs/'+target)+')'
+    body=re.sub(r'(?<=\])\(([^)]+)\)',absolute_doc_link,body)
 r=existing or req(base+'/releases','POST',{'tag_name':'v'+a.version,'target_commitish':commit,'name':'ResearchClip v'+a.version,'body':body,'draft':True,'prerelease':False})
 state=prior or {'version':a.version,'commit':commit,'id':r['id'],'url':r['html_url'],'assets':[]}
 if history:state['historyBefore']=history

@@ -325,7 +325,10 @@ mod tests {
             .unwrap();
         drop(conn);
         let mut s = Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 11);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            crate::storage::migrations::SCHEMA_VERSION
+        );
         let snapshots = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .collect::<std::io::Result<Vec<_>>>()

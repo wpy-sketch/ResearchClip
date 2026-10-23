@@ -74,7 +74,9 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/002_libr
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_projects.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/004_ocr_index.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/005_annotation_revisions.sql'], { cwd: root, stdio: 'pipe' });
-assert.equal(read('src-tauri/src/storage/migrations.rs').includes('pub const SCHEMA_VERSION: u32 = 11;'),true);
+const currentSchema = Number(read('src-tauri/src/storage/migrations.rs').match(/pub const SCHEMA_VERSION: u32 = (\d+);/)?.[1]);
+assert.equal(currentSchema, 12);
+assert.ok(existsSync(join(root, 'src-tauri/migrations/012_research_resources.sql')));
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/006_sync.sql'], { cwd: root, stdio: 'pipe' });
 const similarityCommands=['similarity_status','start_similarity_index','cancel_similarity_index','find_similar_images','duplicate_image_groups'];for(const command of similarityCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::similarity::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 const semanticCommands=['semantic_status','semantic_start','semantic_cancel','semantic_clear','semantic_import'];for(const command of semanticCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::embeddings::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}
@@ -83,7 +85,7 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/009_inte
 const anchorCommands=['annotation_anchors','resolve_annotation_anchor','save_annotation_anchor','delete_annotation_anchor'];for(const command of anchorCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::anchors::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pending_file_deletions'));
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: 'schema v11; published migrations001–011 unchanged' }, null, 2));
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: `schema v${currentSchema}; published migrations001–011 unchanged` }, null, 2));
 
 for(const command of ["annotation_history","annotation_revision","save_annotation_revision","restore_annotation_revision"]){assert.ok(main.permissions.includes("allow-"+command.replaceAll("_","-")));assert.ok(read("src-tauri/src/lib.rs").includes("commands::revisions::"+command));assert.ok(read("src-tauri/build.rs").includes("\""+command+"\""));}
 
@@ -94,4 +96,6 @@ const linkCommands=['link_targets','link_document_source','replace_document_link
 for(const command of linkCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::links::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 execFileSync('git',['diff','--exit-code','--','src-tauri/migrations/008_references.sql'],{cwd:root,stdio:'pipe'});
 
-execFileSync('git',['diff','--exit-code','v3.1.9','--','src-tauri/migrations'],{cwd:root,stdio:'pipe'});
+const publishedMigrations = readdirSync(join(root, 'src-tauri/migrations')).filter(name => /^0(?:0[1-9]|1[01])_/.test(name)).map(name => `src-tauri/migrations/${name}`);
+assert.equal(publishedMigrations.length, 11);
+execFileSync('git',['diff','--exit-code','v3.1.9','--',...publishedMigrations],{cwd:root,stdio:'pipe'});

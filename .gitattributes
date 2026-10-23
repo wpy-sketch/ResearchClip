@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a9aad032f83305094675c8505ebddd042ae160cfa02b8b6c03f172008fbc28bd
-size 82
+* text=auto
+*.png binary
+*.ico binary
+*.icns binary

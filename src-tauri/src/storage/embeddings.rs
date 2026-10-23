@@ -138,12 +138,16 @@ mod tests {
     fn schema10_upgrade_snapshot_and_failed_migration_preserve_existing_data() {
         let (temp, s, id) = setup();
         let original = s.screenshot_image(&id, false).unwrap();
+        crate::storage::resources::discard_schema12_test_fixture(&s.connection);
         s.connection
             .execute_batch("DROP TABLE semantic_embeddings; PRAGMA user_version=10;")
             .unwrap();
         drop(s);
         let s = Storage::open(temp.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 11);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            crate::storage::migrations::SCHEMA_VERSION
+        );
         assert_eq!(s.screenshot_image(&id, false).unwrap(), original);
         let backups: Vec<_> = std::fs::read_dir(temp.path().join("backups"))
             .unwrap()
@@ -157,6 +161,7 @@ mod tests {
             10
         );
         assert!(old.prepare("SELECT * FROM semantic_embeddings").is_err());
+        crate::storage::resources::discard_schema12_test_fixture(&s.connection);
         s.connection.execute_batch("DROP TABLE semantic_embeddings; CREATE TABLE semantic_embeddings(unexpected TEXT); INSERT INTO semantic_embeddings VALUES('keep'); PRAGMA user_version=10;").unwrap();
         drop(s);
         assert!(Storage::open(temp.path().into()).is_err());

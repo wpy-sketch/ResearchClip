@@ -859,10 +859,14 @@ mod tests {
         let db = s.database_path.clone();
         drop(s);
         let conn = rusqlite::Connection::open(&db).unwrap();
+        crate::storage::resources::discard_schema12_test_fixture(&conn);
         conn.execute_batch("DROP TABLE semantic_embeddings;DROP TABLE annotation_anchors;DROP TABLE document_tags; DROP TABLE link_index_state; DROP TABLE link_index; PRAGMA user_version=8;").unwrap();
         drop(conn);
         let s = Storage::open(root.clone()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 11);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            crate::storage::migrations::SCHEMA_VERSION
+        );
         let backups = std::fs::read_dir(root.join("backups"))
             .unwrap()
             .collect::<Result<Vec<_>, _>>()
@@ -892,6 +896,7 @@ mod tests {
         let path = s.database_path.clone();
         drop(s);
         let conn = rusqlite::Connection::open(&path).unwrap();
+        crate::storage::resources::discard_schema12_test_fixture(&conn);
         conn.execute_batch("DROP TABLE semantic_embeddings;DROP TABLE annotation_anchors;DROP TABLE document_tags; DROP TABLE link_index_state; DROP TABLE link_index; CREATE TABLE link_index_state(unexpected TEXT); PRAGMA user_version=8;").unwrap();
         drop(conn);
         assert!(Storage::open(root.clone()).is_err());

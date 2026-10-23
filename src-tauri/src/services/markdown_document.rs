@@ -228,6 +228,18 @@ fn target(path: &Path) -> Result<PathBuf, CaptureError> {
     let parent = parent.canonicalize().map_err(|_| io_error())?;
     Ok(parent.join(path.file_name().ok_or_else(io_error)?))
 }
+/// File identity for registration/relink. This reads only an explicitly selected/registered Markdown.
+pub fn file_fingerprint(path: &Path) -> Result<(PathBuf, String, u64), CaptureError> {
+    use sha2::{Digest, Sha256};
+    let path = target(path)?;
+    let bytes = read(&path, MAX_TEXT)?;
+    std::str::from_utf8(&bytes).map_err(|_| failure("Markdown不是有效UTF-8。"))?;
+    Ok((
+        path,
+        format!("{:x}", Sha256::digest(&bytes)),
+        bytes.len() as u64,
+    ))
+}
 fn asset_path(parent: &Path, name: &str) -> Result<PathBuf, CaptureError> {
     if !asset_name(name) {
         return Err(failure("图片名称无效。"));

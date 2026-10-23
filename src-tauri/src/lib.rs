@@ -7,6 +7,7 @@ pub mod qa_math;
 pub mod qa_ocr;
 #[cfg(debug_assertions)]
 pub mod qa_revisions;
+pub mod research;
 pub mod services;
 mod storage;
 

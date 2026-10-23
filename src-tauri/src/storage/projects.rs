@@ -99,7 +99,7 @@ impl Storage {
         let tx = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        let count:i64=tx.query_row("SELECT (SELECT count(*) FROM screenshot_projects WHERE project_id=?1)+(SELECT count(*) FROM markdown_documents WHERE project_id=?1)",[id],|r|r.get(0))?;
+        let count:i64=tx.query_row("SELECT (SELECT count(*) FROM screenshot_projects WHERE project_id=?1)+(SELECT count(*) FROM markdown_documents WHERE project_id=?1)+(SELECT count(*) FROM research_relations WHERE target_type='project' AND target_id=?1 AND origin='model')",[id],|r|r.get(0))?;
         if count != 0 {
             return Err(StorageError::Invalid(
                 "只能删除空项目；请先移出图片和文档。此操作不删除项目内资料。",
@@ -318,7 +318,10 @@ impl Storage {
         path: &Path,
         previous: Option<&Path>,
     ) -> Result<ProjectDocument, StorageError> {
-        let canonical = path.canonicalize()?;
+        let (canonical, content_hash, byte_size) =
+            crate::services::markdown_document::file_fingerprint(path).map_err(|_| {
+                StorageError::Invalid("Markdown身份读取失败；文件已保留，项目登记未提交。")
+            })?;
         let path = canonical
             .to_str()
             .ok_or(StorageError::Invalid("文档路径编码无效。"))?;
@@ -355,6 +358,7 @@ impl Storage {
             [path],
             |r| r.get(0),
         )?;
+        tx.execute("INSERT INTO research_document_fingerprints VALUES(?1,?2,?3) ON CONFLICT(document_id) DO UPDATE SET content_hash=excluded.content_hash,byte_size=excluded.byte_size",params![id,content_hash,byte_size])?;
         tx.commit()?;
         Ok(self.connection.query_row(
             "SELECT id,name,project_id,updated_at FROM markdown_documents WHERE id=?1",
@@ -638,7 +642,10 @@ mod tests {
             c.pragma_update(None, "user_version", 2).unwrap();
         }
         let s = Storage::open(root.clone()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 11);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            crate::storage::migrations::SCHEMA_VERSION
+        );
         assert_eq!(
             s.connection
                 .query_row(

@@ -43,7 +43,12 @@ describe('native persisted library contract',()=>{
   });
   it('validates opaque IDs, managed refs, revisions, dimensions and future annotation versions',()=>{
     expect(parseScreenshot(item)).toEqual(item);for(const bad of [{...item,id:'../x'},{...item,originalImagePath:'C:/private.png'},{...item,revision:0},{...item,widthPx:33},{...item,annotationData:{...doc,schemaVersion:109}}])expect(()=>parseScreenshot(bad)).toThrow();
-    expect(parseSummary({...item,imageAvailable:true,thumbnailAvailable:false}).imageAvailable).toBe(true);expect(()=>parseSummary(item)).toThrow();expect(parseStatus({schemaVersion:11,pendingWrites:1,pendingCleanup:0,warnings:['保留原图']})).toMatchObject({pendingWrites:1});expect(()=>parseStatus({schemaVersion:109})).toThrow();expect(()=>parseStatus({schemaVersion:8,pendingWrites:0,pendingCleanup:0,warnings:[]})).toThrow();expect(()=>parseStatus({schemaVersion:10,pendingWrites:0,pendingCleanup:0,warnings:[]})).toThrow();
+    expect(parseSummary({...item,imageAvailable:true,thumbnailAvailable:false}).imageAvailable).toBe(true);expect(()=>parseSummary(item)).toThrow();expect(parseStatus({schemaVersion:12,pendingWrites:1,pendingCleanup:0,warnings:['保留原图']})).toMatchObject({pendingWrites:1});expect(()=>parseStatus({schemaVersion:109})).toThrow();expect(()=>parseStatus({schemaVersion:8,pendingWrites:0,pendingCleanup:0,warnings:[]})).toThrow();expect(()=>parseStatus({schemaVersion:10,pendingWrites:0,pendingCleanup:0,warnings:[]})).toThrow();
+  });
+  it('accepts migrated schema12 status and rejects old or future database contracts',()=>{
+    const status={schemaVersion:12,pendingWrites:0,pendingCleanup:0,warnings:[]};
+    expect(parseStatus(status)).toEqual(status);
+    for(const schemaVersion of [11,13,109])expect(()=>parseStatus({...status,schemaVersion})).toThrow('工作区状态无效');
   });
   it('propagates native errors and refuses browser-only persistence',async()=>{
     native.isTauri.mockReturnValue(false);await expect(createScreenshot(new Blob(['PNG']),'A',doc)).rejects.toThrow('桌面');expect(native.invoke).not.toHaveBeenCalled();native.isTauri.mockReturnValue(true);native.invoke.mockRejectedValue({code:'FILE_UNAVAILABLE',message:'图片保存失败'});await expect(createScreenshot(new Blob(['PNG']),'A',doc)).rejects.toMatchObject({code:'FILE_UNAVAILABLE'});

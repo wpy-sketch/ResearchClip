@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 11;
+pub const SCHEMA_VERSION: u32 = 12;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -131,10 +131,28 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/011_semantic_embeddings.sql"),
         )?;
     }
+    if version < 12 {
+        apply_migration(
+            connection,
+            12,
+            include_str!("../../migrations/012_research_resources.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 12 {
+        for sql in [
+            "SELECT resource_type,id,title,format_version,revision,data_json FROM research_resource_catalog LIMIT 0",
+            "SELECT source_type,source_id,target_type,target_id,relation_type,origin FROM research_resource_edges LIMIT 0",
+            "SELECT instance_id,library_id,item_key,resource_type,resource_id FROM research_zotero_keys LIMIT 0",
+            "SELECT document_id,content_hash,byte_size FROM research_document_fingerprints LIMIT 0",
+        ] {
+            connection.prepare(sql)?;
+        }
+    }
+
     if version >= 11 {
         connection.prepare("SELECT screenshot_id,embedding_model_id,embedding_version,image_hash,embedding_data,source_stamp,updated_at FROM semantic_embeddings LIMIT 0")?;
     }
@@ -259,7 +277,7 @@ mod tests {
             .execute("INSERT INTO app_metadata VALUES ('research','保留')", [])
             .unwrap();
         let storage = crate::storage::Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(storage.status().unwrap().schema_version, 11);
+        assert_eq!(storage.status().unwrap().schema_version, SCHEMA_VERSION);
         let backup = std::fs::read_dir(tmp.path().join("backups"))
             .unwrap()
             .next()

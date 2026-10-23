@@ -482,10 +482,14 @@ mod tests {
             id = add(&mut s, "Keep", 30);
         }
         let conn = rusqlite::Connection::open(tmp.path().join("researchclip.sqlite3")).unwrap();
+        crate::storage::resources::discard_schema12_test_fixture(&conn);
         conn.execute_batch("DROP TABLE semantic_embeddings;DROP TABLE annotation_anchors;DROP TABLE document_tags;DROP TABLE link_index_state;DROP TABLE link_index;DROP TABLE screenshot_references;DROP TABLE document_references;DROP TABLE literature_references;DROP TRIGGER image_features_source_changed;DROP TABLE image_features;PRAGMA user_version=6;").unwrap();
         drop(conn);
         let s = Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 11);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            crate::storage::migrations::SCHEMA_VERSION
+        );
         assert_eq!(s.screenshot_image(&id, false).unwrap(), png(30));
         assert_eq!(s.feature_stats().unwrap().ready, 0);
         assert!(

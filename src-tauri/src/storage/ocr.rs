@@ -306,7 +306,10 @@ mod tests {
             .unwrap();
         drop(conn);
         let s = Storage::open(t.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 11);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            crate::storage::migrations::SCHEMA_VERSION
+        );
         assert_eq!(
             std::fs::read_dir(t.path().join("backups")).unwrap().count(),
             1
