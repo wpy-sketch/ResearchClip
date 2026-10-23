@@ -7,7 +7,8 @@ vi.mock('../notes/store',()=>({useCardStore:{getState:()=>({flushAll:mock.flushA
 vi.mock('../editor/store',()=>({useEditorStore:{getState:()=>mock.editor}}));
 vi.mock('../import/store',()=>({useImportStore:{getState:()=>mock.importing}}));
 vi.mock('../export/store',()=>({useMarkdownExportStore:{getState:()=>mock.exporting}}));
-vi.mock('../document/store',()=>({useDocumentStore:{getState:()=>mock.document},documentDirty:()=>mock.documentDirty}));
+vi.mock('../document/store',()=>({allDocumentStores:()=>[{getState:()=>mock.document}],useDocumentStore:{getState:()=>mock.document},documentDirty:()=>mock.documentDirty}));
+vi.mock('../workspace/manager',()=>({workspaceManager:{focusDocument:vi.fn()}}));
 vi.mock('../settings/store',()=>({useSettingsStore:{getState:()=>mock.settings}}));
 beforeEach(()=>{useBatchStore.setState({busy:false});vi.clearAllMocks();mock.flushAll.mockResolvedValue(true);mock.completeDesktopExit.mockResolvedValue(undefined);mock.editor={gesture:null,sessions:{}};mock.importing.busy=false;mock.exporting.busy=false;mock.settings.phase='idle';mock.documentDirty=false;mock.document.phase='idle';mock.document.save.mockResolvedValue(false);useDesktopStore.setState(useDesktopStore.getInitialState(),true);});
 describe('graceful explicit exit',()=>{

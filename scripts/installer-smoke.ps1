@@ -104,6 +104,10 @@ try {
   $report.installedPayloadSha256 = $expectedHash
   Assert-Check ((Get-FileHash -LiteralPath $installedExe -Algorithm SHA256).Hash -eq $expectedHash) 'Installed executable differs from bundled executable.'
   # Read PE resources in a short-lived process: icon/version APIs can retain image mappings.
+  if ([Version]$version -ge [Version]'4.1.1') {
+    $notice = Join-Path $installRoot 'licenses/flexlayout-react-MIT.txt'
+    Assert-Check ((Test-Path -LiteralPath $notice) -and ((Get-FileHash -LiteralPath $notice -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath (Join-Path $projectRoot 'docs/licenses/flexlayout-react-MIT.txt') -Algorithm SHA256).Hash)) 'Installed FlexLayout MIT notice missing or changed.'
+  }
   $metadata = & (Get-Process -Id $PID).Path -NoProfile -File (Join-Path $PSScriptRoot 'installer-metadata.ps1') -InstalledPath $installedExe -Version $version
   Assert-Check ($LASTEXITCODE -eq 0) 'Installed metadata/icon inspection failed.'
   $report.metadata = $metadata | ConvertFrom-Json

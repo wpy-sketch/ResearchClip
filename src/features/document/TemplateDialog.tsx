@@ -1,26 +1,27 @@
 import {useEffect,useState} from 'react';
 import {Modal} from '../../shared/ui/Modal';
-import {useDocumentStore} from './store';
+import {useDocumentApi} from './store';
 import {builtInTemplates,templateMarkdown,type TemplateInfo} from './templates';
 import {listTemplates,loadTemplate,saveTemplate,renameTemplate,deleteTemplate} from './template-api';
 import {errorMessage} from '../../shared/api/errors';
 import {normalizeMarkdownName} from './file-name';
 export function TemplateDialog({mode}:{mode:'choose'|'save'}){
+  const documentApi=useDocumentApi();
   const [custom,setCustom]=useState<TemplateInfo[]>([]),[selected,setSelected]=useState('builtin:0'),[name,setName]=useState(mode==='save'?'我的模板':'untitled'),[rename,setRename]=useState(''),[busy,setBusy]=useState(true),[error,setError]=useState<string|null>(null),[deleting,setDeleting]=useState(false);
-  const close=()=>useDocumentStore.getState().setTemplateDialog(null),item=custom.find(t=>t.id===selected);
+  const close=()=>documentApi.getState().setTemplateDialog(null),item=custom.find(t=>t.id===selected);
   useEffect(()=>{let active=true;listTemplates().then(rows=>{if(active)setCustom(rows);}).catch(e=>{if(active)setError(errorMessage(e,'无法读取模板。'));}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};},[]);
   const task=async(action:()=>Promise<void>)=>{if(busy)return;setBusy(true);setError(null);try{await action();}catch(e){setError(errorMessage(e,'模板操作失败；当前文档未改动。'));}finally{setBusy(false);}};
   return <Modal title={mode==='choose'?'新建模板文档':'保存为模板'} onClose={()=>{if(!busy)close();}}><form className="template-form p-5" onSubmit={event=>{
     event.preventDefault();void task(async()=>{
       const normalized=normalizeMarkdownName(name),display=normalized.slice(0,-3);if(!display.trim()||display.length>80)throw new Error('模板或文档名称最多80个字符。');
       if(mode==='save'){
-        const s=useDocumentStore.getState();if(!s.document||s.phase!=='idle')throw new Error('文档正在处理，请稍后重试。');
+        const s=documentApi.getState();if(!s.document||s.phase!=='idle')throw new Error('文档正在处理，请稍后重试。');
         const markdown=templateMarkdown(s.document),refs=new Set([...markdown.matchAll(/\]\(assets\/(researchclip-[a-f0-9]{32}\.png)\)/g)].map(m=>m[1]));
         if([...refs].some(n=>!s.assets[n]))throw new Error('文档图片缺失，未保存模板。');
-        await saveTemplate({name:display,markdown,assets:Object.fromEntries(Object.entries(s.assets).filter(([n])=>refs.has(n)).map(([n,a])=>[n,a.blob]))});useDocumentStore.setState({notice:'自定义模板已保存；当前 Markdown 文件保持不变。'});close();
+        await saveTemplate({name:display,markdown,assets:Object.fromEntries(Object.entries(s.assets).filter(([n])=>refs.has(n)).map(([n,a])=>[n,a.blob]))});documentApi.setState({notice:'自定义模板已保存；当前 Markdown 文件保持不变。'});close();
       }else{
         const seed=item?await loadTemplate(item):builtInTemplates[Number(selected.split(':')[1])];if(!seed)throw new Error('模板已不存在，请重新选择。');
-        await useDocumentStore.getState().createFromTemplate({...seed,name:display});close();
+        await documentApi.getState().createFromTemplate({...seed,name:display});close();
       }
     });
   }}>

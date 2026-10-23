@@ -9,6 +9,7 @@ import { clampPoint, createAnnotation, drawAnnotation, inImage, moveArrowEndpoin
 interface Gesture { kind: 'draw' | 'move' | 'endpoint'; imageId: string; start: Point; original: Annotation; draft: Annotation; endpoint?: 0 | 1 }
 
 interface EditorState {
+  pendingIo:number;beginIo:()=>()=>void;
   anchorJump:{anchor:AnnotationAnchor;serial:number}|null;
   focusAnchor:(anchor:AnnotationAnchor)=>void;
   defaultStyle:Pick<AnnotationStyle,'color'|'strokeWidth'>;
@@ -17,7 +18,7 @@ interface EditorState {
   sessions: Record<string, EditorSession>; activeId: string | null; tool: EditorTool; error: string | null;
   style: AnnotationStyle; gesture: Gesture | null; cancelVersion: number;
   open: (source: Omit<EditorImage, 'url'>, document?: unknown) => void; undo: () => void; redo: () => void; close: (id: string, discard?:boolean) => boolean; activate: (id: string) => void;
-  setTool: (tool: EditorTool) => void; fit: (width: number, height: number) => void;
+  setTool: (tool: EditorTool) => void; fit: (width: number, height: number) => void;fitSession:(id:string,width:number,height:number)=>void;
   setViewport: (viewport: Viewport) => void; zoom: (scale: number, anchor: Point) => void;
   imageFailed: (id: string, message: string | null) => void; serialize: (id: string) => AnnotationDocument;
   bindLibrary:(id:string,libraryId:string,libraryRevision:number,name:string,annotationVersion?:number)=>void;
@@ -29,6 +30,7 @@ interface EditorState {
   moveGesture: (point: Point) => void; finishGesture: () => void; cancelGesture: () => void;
 }
 export const useEditorStore = create<EditorState>((set, get) => ({
+  pendingIo:0,beginIo:()=>{set(s=>({pendingIo:s.pendingIo+1}));let done=false;return()=>{if(!done){done=true;set(s=>({pendingIo:Math.max(0,s.pendingIo-1)}));}};},
   anchorJump:null,
   focusAnchor:anchor=>set({anchorJump:{anchor,serial:(get().anchorJump?.serial??0)+1}}),
   defaultStyle:{color:'#ef6262',strokeWidth:3},
@@ -50,6 +52,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   close: (id, discard=false) => {
     const session = get().sessions[id]; if (!session) return true;
+    if(get().pendingIo>0)return false;
     if(!discard&&(get().gesture?.imageId===id||JSON.stringify(session.document)!==session.savedDocument))return false;
     if (get().activeId === id) get().cancelGesture();
     URL.revokeObjectURL(session.image.url);
@@ -58,10 +61,8 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   },
   activate: (id) => { if (get().sessions[id]) { get().cancelGesture(); set({ activeId: id, error: null }); } },
   setTool: (tool) => { get().cancelGesture(); set({ tool }); },
-  fit: (width, height) => {
-    const session = get().activeId ? get().sessions[get().activeId!] : null; if (!session) return;
-    get().setViewport(fitViewport(session.image.widthPx, session.image.heightPx, width, height));
-  },
+  fitSession:(id,width,height)=>{const session=get().sessions[id];if(!session||width<=0||height<=0||![width,height].every(Number.isFinite))return;set({sessions:{...get().sessions,[id]:{...session,viewport:fitViewport(session.image.widthPx,session.image.heightPx,width,height)}}});},
+  fit:(width,height)=>{const id=get().activeId;if(id)get().fitSession(id,width,height);},
   setViewport: (viewport) => {
     const id = get().activeId; if (!id || !get().sessions[id] || ![viewport.x, viewport.y, viewport.scale].every(Number.isFinite) || viewport.scale <= 0) return;
     set({ sessions: { ...get().sessions, [id]: { ...get().sessions[id], viewport } } });

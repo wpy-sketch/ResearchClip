@@ -87,7 +87,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let main = owned.main.first().copied();
         println!(
             "{}",
-            serde_json::json!({"mainCount":owned.main.len(),"trayCount":owned.tray.len(),"popupCount":owned.popup.len(),"visible":main.is_some_and(|w|unsafe{IsWindowVisible(w)}.as_bool()),"minimized":main.is_some_and(|w|unsafe{IsIconic(w)}.as_bool()),"mainHandle":main.map(|w|w.0 as usize)})
+            serde_json::json!({"mainCount":owned.main.len(),"trayCount":owned.tray.len(),"popupCount":owned.popup.len(),"visible":main.is_some_and(|w|unsafe{IsWindowVisible(w)}.as_bool()),"minimized":main.is_some_and(|w|unsafe{IsIconic(w)}.as_bool()),"maximized":main.is_some_and(|w|unsafe{IsZoomed(w)}.as_bool()),"mainHandle":main.map(|w|w.0 as usize)})
         );
         return Ok(());
     }
@@ -95,6 +95,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("Expected one owned main window and one native tray window".into());
     }
     match mode.as_str() {
+        "maximize" => unsafe {
+            let _ = ShowWindow(owned.main[0], SW_MAXIMIZE);
+        },
+        "restore" => unsafe {
+            let _ = ShowWindow(owned.main[0], SW_RESTORE);
+        },
         "minimize" => unsafe {
             let _ = ShowWindow(owned.main[0], SW_MINIMIZE);
         },

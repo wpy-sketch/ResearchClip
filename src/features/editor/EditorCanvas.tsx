@@ -15,13 +15,13 @@ export function EditorCanvas({ session, onSize, onText,anchors }: { session: Edi
   const [size, setSize] = useState({ width: 1, height: 1 }); const [loaded, setLoaded] = useState<HTMLImageElement | null>(null);
   const [position, setPosition] = useState<Point | null>(null);
   const pan = useRef<{ start: Point; viewport: Viewport; cancelVersion: number } | null>(null);
+  const { image, viewport } = session;
   const tool = useEditorStore((s) => s.tool);
-  const gesture = useEditorStore((s) => s.gesture);
+  const gesture = useEditorStore((s) => s.gesture?.imageId===image.id?s.gesture:null);
   const cancelVersion = useEditorStore((s)=>s.cancelVersion);
   const space = useRef(false); const [spaceHeld,setSpaceHeld]=useState(false);
   const transforming = useRef(false);
   const registerTransform = useCallback((active:boolean)=>{transforming.current=active;},[]);
-  const { image, viewport } = session;
   useEffect(()=>{if(pan.current?.cancelVersion!==cancelVersion)pan.current=null;},[cancelVersion]);
   useEffect(()=>{
     const editable=(target:EventTarget|null)=>target instanceof HTMLElement&&(target.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(target.tagName));
@@ -44,7 +44,7 @@ export function EditorCanvas({ session, onSize, onText,anchors }: { session: Edi
       const bounds = element.getBoundingClientRect(); const next = { width: Math.max(1, Math.floor(bounds.width)), height: Math.max(1, Math.floor(bounds.height)) };
       setSize(next); onSize(next);
       const state = useEditorStore.getState(); const current = state.sessions[image.id];
-      if (current?.viewport.mode === 'fit' && state.activeId === image.id) state.fit(next.width, next.height);
+      if (current?.viewport.mode === 'fit') state.fitSession(image.id,next.width,next.height);
     }); observer.observe(element); return () => observer.disconnect();
   }, [image.id, onSize]);
   const move = () => {

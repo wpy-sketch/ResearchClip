@@ -1,5 +1,7 @@
 # Research IDE 技术决策记录
 
+Step02实施说明：[科研工作区](WORKSPACE_SYSTEM.md)。前述Step00选型状态为历史时间点，当前增量仅新增固定版FlexLayout。
+
 实施状态更新：本轮仅落地Step01资源模型，复用既有依赖；具体契约见[RESOURCE_MODEL](RESOURCE_MODEL.md)。IDE、PDF、Zotero、HarmonyOS及Agent候选接口仍未集成。
 
 日期：2026-10-23。状态：Step 00 设计，未安装候选依赖、未升级锁文件。参见[现状](CURRENT_STATE.md)、[目标](TARGET_ARCHITECTURE.md)、[路线](../ROADMAP_RESEARCH_IDE.md)。

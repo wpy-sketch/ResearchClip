@@ -23,7 +23,8 @@ import {useDesktopExperience} from '../features/desktop/use-desktop-experience';
 const KnowledgeGraph=lazy(()=>import('../features/links/KnowledgeGraph').then(m=>({default:m.KnowledgeGraph})));
 const CompareView=lazy(()=>import('../features/compare/CompareView').then(m=>({default:m.CompareView})));
 const GuideView=lazy(()=>import('../features/guide/GuideView').then(m=>({default:m.GuideView})));
-const EditorView = lazy(() => import('../features/editor/EditorView').then((module) => ({ default: module.EditorView })));
+
+import {workspaceManager} from '../features/workspace/manager';
 import {WorkspaceSplit} from '../features/document/WorkspaceSplit';
 import {ImportStatus} from '../features/import/ImportControls';
 import {OcrPanel} from '../features/ocr/OcrPanel';
@@ -32,6 +33,7 @@ import {References} from '../features/references/References';
 import {CommandCenter} from '../features/commands/CommandCenter';
 
 export function App() {
+  const explorer=workspaceManager.state(s=>s.explorer);
   const initialize = useAppStore((state) => state.initialize);
   const error = useAppStore((state) => state.initializationError);
   const activeView = useUiStore((state) => state.activeView);
@@ -61,7 +63,7 @@ export function App() {
   return (
     <div className="app-shell" onDragOver={event=>{if(Array.from(event.dataTransfer.types).includes('Files'))event.preventDefault();}} onDrop={event=>{if(Array.from(event.dataTransfer.types).includes('Files'))event.preventDefault();}}>
       <a className="skip-link" href="#workspace-content">跳到主内容</a>
-      <Sidebar />
+      {explorer&&<Sidebar />}
       <div className="app-main">
         <Toolbar />
         <CommandCenter/>
@@ -73,7 +75,7 @@ export function App() {
         <WorkspaceSplit><main id="workspace-content" className="workspace-scroll" tabIndex={-1}>
           {error && <div className="error-banner" role="alert">{error}</div>}
           {settingsError && activeView !== 'settings' && <div className="error-banner" role="alert">{settingsError}<button className="secondary-button ml-3" onClick={() => useUiStore.getState().navigate('settings')}>打开设置</button></div>}
-          {activeView==='graph'?<Suspense fallback={<p role="status">正在加载知识图谱…</p>}><KnowledgeGraph/></Suspense>:activeView==='compare'?<Suspense fallback={<p role="status">正在加载对比工作区…</p>}><CompareView/></Suspense>:activeView==='guide'?<Suspense fallback={<p role="status">正在加载使用指南…</p>}><GuideView/></Suspense>:activeView === 'editor' ? <Suspense fallback={<p className="p-6 text-sm text-muted" role="status">正在加载编辑器…</p>}><EditorView /></Suspense> : activeView==='card'?<KnowledgeCardView key={cardId}/>:activeView === 'settings' ? <SettingsView /> : activeView === 'tags' ? <TagsView /> : <LibraryView favorites={activeView === 'favorites'} />}
+          {activeView==='graph'?<Suspense fallback={<p role="status">正在加载知识图谱…</p>}><KnowledgeGraph/></Suspense>:activeView==='compare'?<Suspense fallback={<p role="status">正在加载对比工作区…</p>}><CompareView/></Suspense>:activeView==='guide'?<Suspense fallback={<p role="status">正在加载使用指南…</p>}><GuideView/></Suspense>:activeView === 'editor' ? <p className="workspace-open-editor-hint">图片已在独立编辑标签中打开。可从上方标签切换，或返回截图素材。</p> : activeView==='card'?<KnowledgeCardView key={cardId}/>:activeView === 'settings' ? <SettingsView /> : activeView === 'tags' ? <TagsView /> : <LibraryView favorites={activeView === 'favorites'} />}
         </main></WorkspaceSplit>
         <footer className="workspace-footer"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-faint" />本地工作区</span><span>图片与标注保存在本机</span></footer>
       </div>

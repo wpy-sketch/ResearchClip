@@ -1,5 +1,7 @@
 # ResearchClip Research IDE：目标架构
 
+Step02实施说明：[科研工作区](WORKSPACE_SYSTEM.md)。前述Step00选型状态为历史时间点，当前增量仅新增固定版FlexLayout。
+
 实施状态更新：Step01统一资源标识与关联层已按[资源模型契约](RESOURCE_MODEL.md)实现，验证见[Step01报告](../qa/RESOURCE_MODEL_STEP01.md)。其余目标仍为设计提案，未授权实施；本文件的schema11现状描述属于Step00时间点。
 
 日期：2026-10-23。状态：Step 00 设计提案，**未实现、未执行迁移、不是后续开发授权**。现状见 [CURRENT_STATE](CURRENT_STATE.md)，选型依据见 [TECHNOLOGY_DECISIONS](TECHNOLOGY_DECISIONS.md)，顺序与阶段门槛见 [路线图](../ROADMAP_RESEARCH_IDE.md)。

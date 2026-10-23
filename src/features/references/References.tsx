@@ -10,7 +10,8 @@ import {errorMessage} from '../../shared/api/errors';
 const provenance={manual:'手动录入',crossref:'Crossref 自动获取 · 待人工核对',bibtex:'BibTeX 文件导入 · 待人工核对',edited:'人工修订 · 原来源记录保留'};
 export function ReferenceButton({screenshotId}:{screenshotId?:string}){
  const document=useDocumentStore(s=>s.document),token=useDocumentStore(s=>s.token),project=useProjectStore();
- const target:Target|undefined=screenshotId?{kind:'screenshot',id:screenshotId}:token&&project.token===token&&project.current?{kind:'document',id:project.current.id}:undefined;
+ const current=token?(project.byToken?.[token]??(project.token===token?project.current:null)):null;
+ const target:Target|undefined=screenshotId?{kind:'screenshot',id:screenshotId}:current?{kind:'document',id:current.id}:undefined;
  return <button className="secondary-button" title={!screenshotId&&!target?'保存 Markdown 后可持久关联；现在可浏览文献和插入引用':'查找、关联文献和复制 BibTeX'} onClick={()=>useReferenceStore.getState().show(target,document?.id)}><BookMarked size={15}/>关联文献</button>;
 }
 export function References(){const s=useReferenceStore();return s.open?<ReferenceDialog key={`${s.target?.kind}:${s.target?.id}:${s.documentId}`} target={s.target} documentId={s.documentId} onClose={s.close}/>:null;}

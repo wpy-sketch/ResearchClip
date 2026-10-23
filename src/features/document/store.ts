@@ -1,4 +1,5 @@
 import {create} from 'zustand';
+import {createContext,useContext} from 'react';
 import {getScreenshot,getKnowledgeCard,screenshotImage} from '../../shared/api/library';
 import {useEditorStore} from '../editor/store';
 import {useCardStore} from '../notes/store';
@@ -11,7 +12,7 @@ import {normalizeMarkdownName} from './file-name';
 export type DocumentAction='new'|'blank'|'open'|'close'|'template'|'project';
 interface TextEdit {document:MarkdownDocument;caret:{start:number;end:number}}
 const bounded=(items:TextEdit[])=>{let bytes=0;return items.slice(-100).reverse().filter(item=>{bytes+=JSON.stringify(item.document).length*2;return bytes<=8*1024*1024;}).reverse();};
-interface State {
+export interface DocumentState {
   projectOpenId:string|null;projectOpenOffset:number;projectLinkNavigation:boolean;openProject:(id:string,offset?:number)=>Promise<void>;
   insertText:(text:string)=>boolean;
   templateDialog:'choose'|'save'|null; setTemplateDialog:(dialog:'choose'|'save'|null)=>void;
@@ -25,10 +26,10 @@ interface State {
   editTitle:(title:string)=>void;editBlock:(id:string,text:string)=>void;addText:(afterId?:string)=>void;move:(id:string,delta:-1|1)=>void;remove:(id:string)=>void;
   addImages:(ids:string[])=>Promise<boolean>;save:(saveAs?:boolean)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
 }
-export const documentDirty=(s:Pick<State,'document'|'savedFingerprint'>)=>Boolean(s.document&&(s.savedFingerprint===null||JSON.stringify(s.document)!==s.savedFingerprint));
+export const documentDirty=(s:Pick<DocumentState,'document'|'savedFingerprint'>)=>Boolean(s.document&&(s.savedFingerprint===null||JSON.stringify(s.document)!==s.savedFingerprint));
 const dispose=(assets:Record<string,DocumentAsset>)=>Object.values(assets).forEach(a=>URL.revokeObjectURL(a.url));
 export function createDocumentStore(){
-  return create<State>((set,get)=>{
+  return create<DocumentState>((set,get)=>{
     const release=async(token:string|null)=>{try{await releaseDocument(token);}catch{set({error:'旧文档文件授权未能释放；已有文件未改动，请保存当前文档后重启。'});}};
     const run=async(action:DocumentAction)=>{
       if(action==='open'||action==='project'){
@@ -160,4 +161,21 @@ export function createDocumentStore(){
     };
   });
 }
-export const useDocumentStore=createDocumentStore();
+export type DocumentStore=ReturnType<typeof createDocumentStore>;
+const baseDocumentStore=createDocumentStore();
+const activeDocument=create<{store:DocumentStore}>(()=>({store:baseDocumentStore}));
+const liveDocuments=new Set<DocumentStore>([baseDocumentStore]);
+export const DocumentSessionContext=createContext<DocumentStore|null>(null);
+export function useDocumentApi(){const local=useContext(DocumentSessionContext),active=activeDocument(s=>s.store);return local??active;}
+export function focusDocumentStore(store:DocumentStore){liveDocuments.add(store);activeDocument.setState({store});}
+export function allDocumentStores(){return [...liveDocuments];}
+export function retainDocumentStore(store:DocumentStore){liveDocuments.add(store);}
+export function releaseDocumentStore(store:DocumentStore){liveDocuments.delete(store);if(activeDocument.getState().store===store)activeDocument.setState({store:liveDocuments.values().next().value??baseDocumentStore});}
+export const useDocumentStore=Object.assign(function useDocumentStore<T=DocumentState>(selector:(s:DocumentState)=>T=(s=>s as unknown as T)){
+  const store=useDocumentApi();return store(selector);
+},{
+  getState:()=>activeDocument.getState().store.getState(),
+  getInitialState:()=>baseDocumentStore.getInitialState(),
+  setState:((...args:Parameters<DocumentStore['setState']>)=>activeDocument.getState().store.setState(...args)) as DocumentStore['setState'],
+  subscribe:(listener:Parameters<DocumentStore['subscribe']>[0])=>activeDocument.getState().store.subscribe(listener),
+});

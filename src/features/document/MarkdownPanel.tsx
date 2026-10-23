@@ -10,7 +10,7 @@ import {ReferenceButton} from '../references/References';
 import {lazy,Suspense,useDeferredValue,useCallback,useEffect,useMemo,useRef,useState} from 'react';
 import {ExternalOpenButton} from './ExternalOpenButton';
 import {Save,X,Undo2,Redo2,FileOutput,Eye,BookTemplate,ListTree,BookmarkPlus} from 'lucide-react';
-import {useDocumentStore,documentDirty} from './store';
+import {useDocumentApi,useDocumentStore,documentDirty} from './store';
 import {sourceText} from './model';
 import {MarkdownPreview} from './MarkdownPreview';
 import {templateMarkdown} from './templates';
@@ -20,20 +20,21 @@ import {ClipboardImportButton} from '../import/ImportControls';
 import {DocumentFileName} from './DocumentFileName';
 const DocumentView=lazy(()=>import('./DocumentView').then(m=>({default:m.DocumentView})));
 export function MarkdownPanel(){
+  const documentApi=useDocumentApi();
   const drop=useImageDrop('markdown');
   const s=useDocumentStore(),[previewState,setPreviewState]=useState<{token:string|null;value:boolean}>({token:null,value:false}),[live,setLive]=useState(true),[outline,setOutline]=useState(false),[previewTarget,setPreviewTarget]=useState<{offset:number}|null>(null),previewBody=useRef<HTMLDivElement>(null),input=useRef<HTMLTextAreaElement>(null),busy=s.phase!=='idle';
   const preview=previewState.token===s.token&&previewState.value,setPreview=(value:boolean)=>setPreviewState({token:s.token,value});
-  const project=useProjectStore(),currentId=project.token===s.token&&s.token?project.current?.id:null;
+  const project=useProjectStore(),currentId=s.token?(project.byToken?.[s.token]?.id??(project.token===s.token?project.current?.id:null)):null;
   const document=s.document,source=document?.mode==='source';
   useEffect(()=>{
     if(!source||preview||busy||!input.current)return;
-    const node=input.current,nodeState=useDocumentStore.getState();node.focus();node.setSelectionRange(nodeState.caret.start,nodeState.caret.end);
+    const node=input.current,nodeState=documentApi.getState();node.focus();node.setSelectionRange(nodeState.caret.start,nodeState.caret.end);
     revealSourceHeading(node,nodeState.caret.start);
-  },[s.focusRequest,source,preview,busy]);
+  },[s.focusRequest,source,preview,busy,documentApi]);
   let markdown='';try{if(document)markdown=templateMarkdown(document);}catch{/* Save reports validation; edits remain available. */}
   const liveMarkdown=useDeferredValue(markdown);
   const trigger=useMemo(()=>source&&!preview?wikiTrigger(markdown,s.caret.start):null,[source,preview,markdown,s.caret.start]);
-  const internalOpen=useCallback((target:Parameters<typeof openInternalTarget>[0])=>{void openInternalTarget(target).catch(e=>useDocumentStore.setState({error:errorMessage(e,'内部引用打开失败。')}));},[]);
+  const internalOpen=useCallback((target:Parameters<typeof openInternalTarget>[0])=>{void openInternalTarget(target).catch(e=>documentApi.setState({error:errorMessage(e,'内部引用打开失败。')}));},[documentApi]);
   const headings=useMemo(()=>outline?documentOutline(markdown):[],[outline,markdown]);
   useEffect(()=>{if(preview&&previewTarget)previewBody.current?.querySelector<HTMLElement>(`[data-heading-offset="${previewTarget.offset}"]`)?.scrollIntoView({block:'start'});},[preview,previewTarget]);
   const jump=(heading:Heading)=>{if(preview||!source){setPreview(true);setPreviewTarget({offset:heading.offset});}else{s.jumpToSource(heading.offset);if(input.current)revealSourceHeading(input.current,heading.offset);}};

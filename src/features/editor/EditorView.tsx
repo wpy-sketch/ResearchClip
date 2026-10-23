@@ -16,8 +16,10 @@ import {InsertButton} from '../document/InsertButton';
 import {OcrButton} from '../ocr/OcrButton';
 import {renderComposite} from './export';
 const tools = [{id:'select',label:'选择',icon:MousePointer2},{id:'pan',label:'平移',icon:Hand},{id:'rectangle',label:'矩形',icon:Square},{id:'ellipse',label:'椭圆',icon:Circle},{id:'arrow',label:'箭头',icon:ArrowUpRight},{id:'pen',label:'自由画笔',icon:Pencil},{id:'text',label:'文字',icon:Type},{id:'mosaic',label:'马赛克',icon:Grid2X2},{id:'blur',label:'局部模糊',icon:Droplets},{id:'number',label:'编号',icon:ListOrdered}] as const;
-export function EditorView() {
-  const { sessions, activeId, tool, style, error, activate, close, setTool, fit, zoom, setStyle, removeSelected, select } = useEditorStore();
+export function EditorView({sessionId}:{sessionId?:string}={}) {
+  const { sessions, activeId:globalActiveId, tool, style, error, activate, close, setTool, fit, zoom, setStyle, removeSelected, select } = useEditorStore();
+  const activeId=sessionId??globalActiveId;
+  const host=useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 1, height: 1 });
   const [textTarget,setTextTarget] = useState<{point:Point;id?:string}|null>(null);
   const [closeTarget,setCloseTarget] = useState<string|null>(null);
@@ -29,7 +31,7 @@ export function EditorView() {
   const selected=session?.document.objects.find((a)=>a.id===session.selectedId);
   const editText=useCallback((point:Point,id?:string)=>setTextTarget({point,id}),[]);
   const operation = async (action: 'open' | 'project' | 'save' | 'copy' | 'library' | 'pin') => {
-    if (locked.current) return; locked.current=true; setBusy(true); setIoError(null); setIoMessage(null); useEditorStore.getState().cancelGesture();
+    if (locked.current) return; locked.current=true; setBusy(true); setIoError(null); setIoMessage(null); const finishIo=useEditorStore.getState().beginIo();useEditorStore.getState().cancelGesture();
     try {
       if (action==='open') {
         const data=await openProject(); if(data) { const id=crypto.randomUUID();useEditorStore.getState().open({id,name:'已加载项目',widthPx:data.widthPx,heightPx:data.heightPx,blob:data.blob},data.project.document); if(useEditorStore.getState().activeId!==id)throw new Error(useEditorStore.getState().error??'无法打开项目。');setIoMessage('项目已恢复，全部标注可以继续编辑。'); }
@@ -42,11 +44,11 @@ export function EditorView() {
         if(result){if(action==='project')useEditorStore.getState().markSaved(session.image.id,session.document);setIoMessage(action==='copy'?result:action==='project'?`可编辑项目已保存：${result}。请将 JSON 与 original PNG 一起保留。`:`合成 PNG 已导出：${result}`);}
       }
     } catch(e) { setIoError(e instanceof Error?e.message:e&&typeof e==='object'&&'message' in e?String(e.message):'操作失败，请重试。'); }
-    finally { locked.current=false;setBusy(false); }
+    finally { finishIo();locked.current=false;setBusy(false); }
   };
   useEffect(()=>{
     const key=(event:KeyboardEvent)=>{
-      if(locked.current)return;
+      if(locked.current||sessionId&&(useEditorStore.getState().activeId!==sessionId||!(event.target instanceof Node)||!host.current?.contains(event.target)))return;
       if(document.querySelector('dialog[open]'))return;
       const target=event.target;if(target instanceof HTMLElement&&(target.closest('[data-markdown-panel]')||target.isContentEditable||['INPUT','TEXTAREA','SELECT'].includes(target.tagName)))return;
       if((event.ctrlKey||event.metaKey)&&!event.altKey){const k=event.key.toLowerCase();if(k==='z'||k==='y'){event.preventDefault();const state=useEditorStore.getState();if(k==='y'||event.shiftKey)state.redo();else state.undo();return;}}
@@ -55,9 +57,9 @@ export function EditorView() {
       const toolKeys:Record<string,EditorTool>={v:'select',h:'pan',r:'rectangle',e:'ellipse',a:'arrow',p:'pen',t:'text'};
       if(!event.ctrlKey&&!event.altKey&&!event.metaKey&&toolKeys[event.key.toLowerCase()]){event.preventDefault();useEditorStore.getState().setTool(toolKeys[event.key.toLowerCase()]);}
     };window.addEventListener('keydown',key);return()=>{window.removeEventListener('keydown',key);useEditorStore.getState().cancelGesture();};
-  },[]);
+  },[sessionId]);
   const textObject=textTarget?.id?session?.document.objects.find((a)=>a.id===textTarget.id):null;
-  return <div className="editor-page" inert={busy}>
+  return <div ref={host} className="editor-page" inert={busy}>
     <div className="editor-heading"><button className="secondary-button" onClick={() => useUiStore.getState().navigate('screenshots')}><ArrowLeft size={15} />返回截图</button><h2>图片编辑器</h2><span className="text-xs text-muted">原图保持不变</span></div>
     <div className="editor-toolbar" role="group" aria-label="项目和导出"><MathOcrButton disabled={!session||Boolean(session.loadError)||Boolean(useEditorStore.getState().gesture)} libraryId={session?.image.libraryId} name={session?.image.name??'公式图片'} image={async()=>{if(!session)throw Error('没有可识别图片。');return session.image.blob;}}/><OcrButton disabled={!session||Boolean(session.loadError)||Boolean(useEditorStore.getState().gesture)} name={session?.image.name??"编辑器图片"} image={async()=>{if(!session)throw new Error("没有可识别的图片。");return renderComposite(session.image.blob,session.document);}}/><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('pin')}><Pin size={15}/>贴图</button><InsertButton editor disabled={!session||Boolean(session.loadError)||Boolean(useEditorStore.getState().gesture)}/><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('library')}><Save size={15}/>保存到素材库</button>{session&&<RevisionHistoryButton session={session}/>}<button className="secondary-button" onClick={()=>void operation('open')}><FolderOpen size={15}/>打开项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('project')}><Save size={15}/>另存可编辑项目</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('save')}><Download size={15}/>导出标注 PNG</button><button className="secondary-button" disabled={!session||Boolean(session.loadError)} onClick={()=>void operation('copy')}><ClipboardCopy size={15}/>复制合成图片</button></div>
     {session&&<div className="revision-save-bar"><span className="revision-version">{session.image.annotationVersion?`编辑基准 v${session.image.annotationVersion}`:"尚未存入素材库"}{JSON.stringify(session.document)!==session.savedDocument?" · 未保存修改":""}</span><label>版本说明<input aria-label="版本说明" maxLength={500} disabled={!session.image.libraryId} value={revisionDescription} onChange={e=>{const value=e.target.value;setRevisionDescriptions(previous=>({...previous,[session.image.id]:value}));}} placeholder={session.image.libraryId?"可选，例如：调整论文图注":"首次保存自动创建 v1"}/></label><span>仅显式保存创建版本，原图始终保留</span></div>}
@@ -65,7 +67,7 @@ export function EditorView() {
     {ioMessage&&<p className="mx-3 break-all text-xs text-secondary" role="status">{ioMessage}</p>}
     {ioError&&<p className="error-banner m-3" role="alert">{ioError}</p>}
     {error && <p className="error-banner m-3" role="alert">{error}</p>}
-    <div className="editor-tabs" role="tablist" aria-label="编辑中的图片">{Object.values(sessions).map((s) => <div className="flex items-center" key={s.image.id}><button role="tab" aria-selected={s.image.id === activeId} onClick={() => activate(s.image.id)} className={s.image.id === activeId ? 'is-selected' : ''}>{s.image.name}</button><button className="icon-button" aria-label={`关闭图片 ${s.image.name}`} onClick={() => {if(!close(s.image.id))setCloseTarget(s.image.id);}}><X size={13} /></button></div>)}</div>
+    {!sessionId&&<div className="editor-tabs" role="tablist" aria-label="编辑中的图片">{Object.values(sessions).map((s) => <div className="flex items-center" key={s.image.id}><button role="tab" aria-selected={s.image.id === activeId} onClick={() => activate(s.image.id)} className={s.image.id === activeId ? 'is-selected' : ''}>{s.image.name}</button><button className="icon-button" aria-label={`关闭图片 ${s.image.name}`} onClick={() => {if(!close(s.image.id))setCloseTarget(s.image.id);}}><X size={13} /></button></div>)}</div>}
     {session ? <>
       <div className="editor-toolbar"><div className="flex flex-wrap gap-1" role="group" aria-label="编辑工具">{tools.map(({id,label,icon:Icon})=><button key={id} className="icon-button" title={label} aria-label={`${label}工具`} aria-pressed={tool===id} disabled={Boolean(session.loadError)} onClick={()=>setTool(id as EditorTool)}><Icon size={17}/></button>)}</div>
         <button className="icon-button" aria-label="撤销" title="撤销 (Ctrl+Z)" disabled={!session.history.past.length} onClick={()=>useEditorStore.getState().undo()}><Undo2 size={16}/></button><button className="icon-button" aria-label="重做" title="重做 (Ctrl+Y / Ctrl+Shift+Z)" disabled={!session.history.future.length} onClick={()=>useEditorStore.getState().redo()}><Redo2 size={16}/></button>

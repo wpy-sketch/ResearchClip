@@ -1,6 +1,6 @@
 # ResearchClip Research IDE 分阶段升级路线
 
-本轮交付状态：Step00五份审查/规划/基线文档已完成；Step01数据访问层与schema12已完成并通过隔离旧库Windows演练，详见[资源模型](architecture/RESOURCE_MODEL.md)和[实际验收](qa/RESOURCE_MODEL_STEP01.md)。当前停止；Step02及后续未实施。下文迁移排期以Step00的schema11起点描述，schema12现已落地。
+本轮交付状态：Step00五份审查/规划/基线文档已完成；Step01数据访问层与schema12已完成并通过隔离旧库Windows演练，详见[资源模型](architecture/RESOURCE_MODEL.md)和[实际验收](qa/RESOURCE_MODEL_STEP01.md)。Step02工作区已实现，见[工作台架构](architecture/WORKSPACE_SYSTEM.md)；实际使用版本1本地布局记录，SQLite保持12，无需原提案schema13布局表。Step03将在v4.1.1正式发布后按用户新请求实施，其余阶段未实施。下文迁移排期以Step00的schema11起点描述，schema12现已落地。
 
 日期：2026-10-23。Step 00完成调研后停止；未来阶段只有用户单独指定才实施。用户随后明确授权在Step 00完成后实施Step 01统一资源模型；这不授权Step 02或其他业务集成。参见[现状](architecture/CURRENT_STATE.md)、[目标](architecture/TARGET_ARCHITECTURE.md)、[决策](architecture/TECHNOLOGY_DECISIONS.md)、[基线](qa/BASELINE_REPORT.md)。
 
@@ -35,7 +35,7 @@ Markdown导出PDF、独立备份/恢复产品不在路线内。迁移前一致�
 | 候选schema | 变化 | 兼容策略 |
 | --- | --- | --- |
 | 12 / Step01 | 同ID资源适配/目录、类型版本、关联、外部库键、PDF位置/标准批注/私有ink/代码/证据/Agent元数据等效模型 | 旧表ID/路径/正文不重写；新模型只存元数据，不提前实现新业务 |
-| 13 / Step02 | 布局/会话资源引用 | 不存正文/授权token；旧设置比例仍可读取 |
+| 12不变 / Step02 | 实际采用localStorage布局版本1 | 不存正文/授权token；旧文档文件和数据库不变 |
 | 14 / Step03 | 插件连接与文献来源快照增量 | library namespace和key组合；同DOI仅候选，不自动合并 |
 | 15 / Step04 | PDF受管导入/激活意图、内容版本和索引扩展 | 不使用PNG专用路径函数；位置绑定hash |
 | 16 / Step05 | 标准批注提交队列/回执 | Zotero是权威，幂等写回先探针；不写其SQLite |

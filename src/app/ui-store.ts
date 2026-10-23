@@ -7,6 +7,7 @@ export type ViewMode = 'grid' | 'list';
 /** UI only. No persistence middleware, localStorage, file writes or database calls. */
 interface UiState {
   activeView: NavigationView;
+  navigationSerial:number;
   theme: Theme;
   viewMode: ViewMode;
   fontFamily: 'system' | 'sans' | 'serif';
@@ -29,14 +30,14 @@ interface UiState {
 }
 
 export const useUiStore = create<UiState>((set) => ({
-  activeView: 'screenshots', theme: 'dark', viewMode: 'grid', fontFamily: 'system', fontSize: 16, showWelcome: true,
+  navigationSerial:0,activeView: 'screenshots', theme: 'dark', viewMode: 'grid', fontFamily: 'system', fontSize: 16, showWelcome: true,
   overlay: null, searchQuery: '', windowThemeError: null,
-  navigate: (activeView) => set({ activeView, overlay: null }),
+  navigate: (activeView) => set(state=>({ activeView, overlay: null,navigationSerial:state.navigationSerial+1 })),
   setTheme: (theme) => set({ theme }),
   toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
   setViewMode: (viewMode) => set({ viewMode }),
   dismissWelcome: () => set({ showWelcome: false }),
-  openGuide: () => set({ activeView: 'guide', showWelcome: true, overlay: null }),
+  openGuide: () => set(state=>({ activeView: 'guide', showWelcome: true, overlay: null,navigationSerial:state.navigationSerial+1 })),
   openSearch: () => set({ overlay: 'search' }),
   openCapture: () => set({ overlay: 'capture' }),
   closeOverlay: () => set({ overlay: null }),

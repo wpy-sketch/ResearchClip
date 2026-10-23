@@ -1,4 +1,4 @@
-> **v4.1.0 · 统一科研资源模型**：在现有截图与 Markdown 数据之上增加类型化资源关联和 SQLite schema12 安全迁移。现有资料兼容、实际测试与已知问题见 [v4.1.0发布说明](docs/RELEASE-NOTES-4.1.0.md)。
+> **v4.1.1 · 科研工作区**：独立文档与图片标签、双向拆分、隐藏与布局恢复；未打开Markdown时不显示空白分栏。使用方法见[指南第19章](docs/USER_GUIDE.md)，实际测试与限制见[v4.1.1发布说明](docs/RELEASE-NOTES-4.1.1.md)。
 
 <!-- Current delivery status -->
 > **v4.0.0 · 独立验收与界面完善**：修复语义任务状态竞争，改善缩放阅读和六条任务路线；保留A01–A13与完整配套组件。实际结果及未解决问题见 [高级功能验收报告](docs/qa/ADVANCED_FEATURE_REPORT.md)。
@@ -7,7 +7,7 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.0 Windows；发布与验收状态见本版记录**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.1 Windows；发布与验收状态见本版记录**。
 
 [GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.0.0配套附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 

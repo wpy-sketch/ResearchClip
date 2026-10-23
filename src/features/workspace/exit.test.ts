@@ -1,0 +1,18 @@
+import {beforeEach,describe,it,expect,vi} from 'vitest';
+import {useDesktopStore} from '../desktop/store';
+const mock=vi.hoisted(()=>({completeDesktopExit:vi.fn(),flushAll:vi.fn(),docs:[] as Array<{getState:()=>{document:{id:string};dirty:boolean;pending:null;phase:string;save:()=>Promise<boolean>}}>,active:0}));
+vi.mock('../../shared/api/desktop',()=>({getDesktopStatus:vi.fn(),desktopAction:vi.fn(),completeDesktopExit:mock.completeDesktopExit}));
+vi.mock('../notes/store',()=>({useCardStore:{getState:()=>({flushAll:mock.flushAll})}}));
+vi.mock('../editor/store',()=>({useEditorStore:{getState:()=>({gesture:null,sessions:{}})}}));
+vi.mock('../projects/batch',()=>({useBatchStore:{getState:()=>({busy:false})}}));
+vi.mock('../import/store',()=>({useImportStore:{getState:()=>({busy:false})}}));
+vi.mock('../export/store',()=>({useMarkdownExportStore:{getState:()=>({busy:false})}}));
+vi.mock('../settings/store',()=>({useSettingsStore:{getState:()=>({phase:'idle'})}}));
+vi.mock('../document/store',()=>({allDocumentStores:()=>mock.docs,useDocumentStore:{getState:()=>mock.docs[mock.active].getState()},documentDirty:(s:{dirty:boolean})=>s.dirty}));
+vi.mock('./manager',()=>({workspaceManager:{focusDocument:(s:unknown)=>{mock.active=mock.docs.indexOf(s as typeof mock.docs[number]);}}}));
+beforeEach(()=>{vi.clearAllMocks();mock.active=0;mock.flushAll.mockResolvedValue(true);mock.completeDesktopExit.mockResolvedValue(undefined);useDesktopStore.setState(useDesktopStore.getInitialState(),true);mock.docs=['first','hidden-other-workspace'].map(id=>{const s={document:{id},dirty:true,pending:null,phase:'idle',save:vi.fn(async()=>false)};return {getState:()=>s};});});
+describe('all-workspace exit guard',()=>{
+ it('requires an explicit decision for every dirty document, including hidden or other workspaces',async()=>{await useDesktopStore.getState().requestQuit();expect(mock.active).toBe(0);await useDesktopStore.getState().documentQuit('discard');expect(mock.active).toBe(1);expect(useDesktopStore.getState().phase).toBe('document');expect(mock.completeDesktopExit).not.toHaveBeenCalled();await useDesktopStore.getState().documentQuit('discard');expect(mock.completeDesktopExit).toHaveBeenCalledExactlyOnceWith(true);expect(mock.docs[0].getState().dirty).toBe(true);});
+ it('failed save or cancelling a later document keeps all buffers and cancels exit',async()=>{await useDesktopStore.getState().requestQuit();await useDesktopStore.getState().documentQuit('discard');await useDesktopStore.getState().documentQuit('save');expect(useDesktopStore.getState().phase).toBe('document');expect(mock.completeDesktopExit).not.toHaveBeenCalled();await useDesktopStore.getState().documentQuit('cancel');expect(mock.completeDesktopExit).toHaveBeenCalledWith(false);expect(mock.docs.every(s=>s.getState().dirty)).toBe(true);expect(useDesktopStore.getState().discardedDocuments).toEqual([]);});
+ it('refuses exit if any inactive document is still writing',async()=>{mock.docs[1].getState().phase='saving';await useDesktopStore.getState().requestQuit();expect(mock.completeDesktopExit).toHaveBeenCalledExactlyOnceWith(false);expect(mock.flushAll).not.toHaveBeenCalled();});
+});

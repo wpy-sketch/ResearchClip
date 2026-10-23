@@ -5,6 +5,7 @@ import { resizeAnnotation } from './model';
 const source = { id: 'one', name: '截图 1', widthPx: 800, heightPx: 600, blob: new Blob(['original']) };
 beforeEach(() => { vi.restoreAllMocks(); useEditorStore.setState(useEditorStore.getInitialState(), true); vi.spyOn(URL, 'createObjectURL').mockImplementation(() => `blob:${crypto.randomUUID()}`); vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {}); });
 describe('independent image editor sessions', () => {
+ it('blocks disposal during overlapping file operations and releases each operation exactly once',()=>{const s=useEditorStore.getState();s.open(source);const finishA=s.beginIo(),finishB=s.beginIo();expect(s.close('one',true)).toBe(false);finishA();finishA();expect(useEditorStore.getState().pendingIo).toBe(1);expect(s.close('one',true)).toBe(false);finishB();expect(useEditorStore.getState().pendingIo).toBe(0);expect(s.close('one',true)).toBe(true);});
   it('refuses to close an unsaved tab and retains its editable data and image URL',()=>{
     const s=useEditorStore.getState();s.open(source);s.add({id:'unsaved',type:'rectangle',x:5,y:8,width:20,height:30,color:'#123456',strokeWidth:3});
     const doc=s.serialize('one');expect(s.close('one')).toBe(false);expect(s.serialize('one')).toEqual(doc);expect(URL.revokeObjectURL).not.toHaveBeenCalled();
@@ -75,3 +76,5 @@ describe('independent image editor sessions', () => {
     s.imageFailed('one','读取失败'); expect(useEditorStore.getState().sessions.one.loadError).toBe('读取失败');
   });
 });
+
+describe('docked image resize isolation',()=>{it('fits an inactive image without switching focus or modifying either annotation history',()=>{const s=useEditorStore.getState();s.open(source);s.open({...source,id:'two'});s.activate('one');const before=useEditorStore.getState().sessions.one;s.fitSession('two',320,200);const next=useEditorStore.getState();expect(next.activeId).toBe('one');expect(next.sessions.one).toBe(before);expect(next.sessions.two.viewport.scale).toBeLessThan(1);expect(next.sessions.two.history).toEqual({past:[],future:[]});s.fitSession('two',NaN,0);expect(useEditorStore.getState().sessions.two).toBe(next.sessions.two);});});

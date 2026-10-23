@@ -11,3 +11,5 @@
 实际重跑（2026-10-23）：npm run check退出0，63文件429测试；npm run test:rust退出0，230通过/7忽略；fmt/Clippy退出0；文档检查132份/774链接通过。Windows NSIS和debug构建退出0，resources-native release-v410六组通过。NSIS隔离安装/忙进程拒绝/卸载/用户数据哈希保护四组通过，测试安装已清除；签名为NotSigned。此安装测试不启动正式应用读取真实资料，不等同真实用户升级人工通过。
 
 沙箱首轮前端缓存加载失败、Rust122通过/108失败/7忽略、NSIS启动系统DLL重定位错误623；正常Windows权限重跑以上通过。首轮失败日志保留于artifacts/release-v410，不改断言掩盖环境失败。
+
+发布传输调整：原始EXE直连/代理上传超时，改为便携ZIP内包含相同EXE字节，安装器不变；验证ZIP完整性及解压后的EXE SHA256。只替换本轮未发布草稿的校验清单与未完成附件，不修改任何历史正式Release。

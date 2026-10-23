@@ -1,8 +1,11 @@
 """Publish a new verified local desktop build without overwriting old releases."""
 import argparse, hashlib, json, os, shutil, subprocess, urllib.request, urllib.error, urllib.parse, ssl, time
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');p.add_argument('--defer-raw',action='store_true',help='Prepare only a draft and defer the raw EXE to verified transport; never publish.');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('version');p.add_argument('--prepare',action='store_true');p.add_argument('--defer-raw',action='store_true',help='Prepare only a draft and defer the raw EXE to verified transport; never publish.');p.add_argument('--installer-run-id');a=p.parse_args()
 root=Path(__file__).resolve().parent.parent
+if a.installer_run_id:
+    import re
+    assert re.fullmatch('v'+a.version.replace('.','')+'-[a-z0-9-]{1,48}',a.installer_run_id),'Unsafe installer evidence ID'
 assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.0','4.1.1')
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -24,19 +27,26 @@ if a.prepare:
             f=folder/x['name'];assert f.stat().st_size==x['size'] and digest(f)==x['sha256']
             companions.append((f,x['name']))
     if a.version in ('4.1.0','4.1.1'):
-        qa=json.loads((root/f'artifacts/installer-v{a.version.replace(".","")}-final/report.json').read_text(encoding='utf-8-sig'))
+        qa_id=a.installer_run_id or ('v'+a.version.replace('.','')+'-final')
+        qa=json.loads((root/f'artifacts/installer-{qa_id}/report.json').read_text(encoding='utf-8-sig'))
         assert qa['result']=='passed' and qa['version']==a.version and not qa['installationStillPresent']
         assert digest(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe')==qa['installerSha256'].lower(),'Installer differs from tested payload'
         import zipfile
         guide=out/f'ResearchClip-Guide-v{a.version}.zip'
         with zipfile.ZipFile(guide,'x',compression=zipfile.ZIP_DEFLATED) as archive:
             for path in sorted((root/'docs').rglob('*')):
-                if path.is_file() and path.suffix.lower() in ('.md','.json','.png','.jpg','.svg'):
+                if path.is_file() and path.suffix.lower() in ('.md','.json','.png','.jpg','.svg','.txt'):
                     archive.write(path,path.relative_to(root).as_posix())
         with zipfile.ZipFile(guide) as archive:
             assert archive.testzip() is None
         assert (root/f'docs/qa/RELEASE-{a.version}.md').is_file()
     for src,name in [(root/'src-tauri/target/release/researchclip.exe',f'ResearchClip-v{a.version}-windows-x64.exe'),(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe',f'ResearchClip_{a.version}_x64-setup.exe'),*companions]:
+        if a.version in ('4.1.0','4.1.1') and name==f'ResearchClip-v{a.version}-windows-x64.exe':
+            import zipfile
+            with zipfile.ZipFile(out/name.replace('.exe','.zip'),'x',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as archive:
+                archive.write(src,'researchclip.exe')
+                if a.version=='4.1.1':archive.write(root/'docs/licenses/flexlayout-react-MIT.txt','licenses/flexlayout-react-MIT.txt')
+            continue
         dest=out/name
         assert not dest.exists(),'Refusing existing release artifact'
         shutil.copyfile(src,dest)
