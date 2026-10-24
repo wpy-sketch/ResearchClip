@@ -3,6 +3,7 @@ import {beforeEach,describe,it,expect,vi} from 'vitest';
 import {useDesktopStore} from './store';
 const mock=vi.hoisted(()=>({getDesktopStatus:vi.fn(),desktopAction:vi.fn(),completeDesktopExit:vi.fn(),flushAll:vi.fn(),editor:{gesture:null as unknown,sessions:{} as Record<string,{document:unknown;savedDocument:string}>},importing:{busy:false},exporting:{busy:false},settings:{phase:'idle'},documentDirty:false,document:{phase:'idle',save:vi.fn()}}));
 vi.mock('../../shared/api/desktop',()=>mock);
+vi.mock('../commands/platform/runtime',()=>({commandTasks:{getSnapshot:()=>[]}}));
 vi.mock('../notes/store',()=>({useCardStore:{getState:()=>({flushAll:mock.flushAll})}}));
 vi.mock('../editor/store',()=>({useEditorStore:{getState:()=>mock.editor}}));
 vi.mock('../import/store',()=>({useImportStore:{getState:()=>mock.importing}}));

@@ -1,5 +1,7 @@
 # ResearchClip Research IDE：目标架构
 
+Step03受控命令实施见[COMMAND_SYSTEM](COMMAND_SYSTEM.md)，SQLite保持12，无新增依赖。
+
 Step02实施说明：[科研工作区](WORKSPACE_SYSTEM.md)。前述Step00选型状态为历史时间点，当前增量仅新增固定版FlexLayout。
 
 实施状态更新：Step01统一资源标识与关联层已按[资源模型契约](RESOURCE_MODEL.md)实现，验证见[Step01报告](../qa/RESOURCE_MODEL_STEP01.md)。其余目标仍为设计提案，未授权实施；本文件的schema11现状描述属于Step00时间点。

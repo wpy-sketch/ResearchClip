@@ -6,11 +6,12 @@ root=Path(__file__).resolve().parent.parent
 if a.installer_run_id:
     import re
     assert re.fullmatch('v'+a.version.replace('.','')+'-[a-z0-9-]{1,48}',a.installer_run_id),'Unsafe installer evidence ID'
-assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.0','4.1.1')
+assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.0','4.1.1','4.1.2')
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
 if a.prepare:
+    assert json.loads((root/'package.json').read_text(encoding='utf-8'))['version']==a.version,'Current source version differs'
     assert not any(out.iterdir()),'Refusing nonempty release staging folder'
     companions=[]
     if a.version in ('3.1.6','3.1.7','3.1.8','3.1.9','4.0.0'):
@@ -26,32 +27,44 @@ if a.prepare:
             assert Path(x['name']).name==x['name'] and not (out/x['name']).exists()
             f=folder/x['name'];assert f.stat().st_size==x['size'] and digest(f)==x['sha256']
             companions.append((f,x['name']))
-    if a.version in ('4.1.0','4.1.1'):
+    if a.version=='4.1.2':
+        folder=root/'artifacts/companions-v412';cm=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
+        assert cm['version']==a.version and cm['history']['sourceAssets']==226 and cm['history']['releases']==31
+        for x in cm['assets']:
+            assert Path(x['name']).name==x['name'];source=folder/x['name']
+            assert source.stat().st_size==x['size'] and digest(source)==x['sha256']
+            companions.append((source,x['name']))
+    if a.version in ('4.1.0','4.1.1','4.1.2'):
         qa_id=a.installer_run_id or ('v'+a.version.replace('.','')+'-final')
         qa=json.loads((root/f'artifacts/installer-{qa_id}/report.json').read_text(encoding='utf-8-sig'))
         assert qa['result']=='passed' and qa['version']==a.version and not qa['installationStillPresent']
         assert digest(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe')==qa['installerSha256'].lower(),'Installer differs from tested payload'
         import zipfile
         guide=out/f'ResearchClip-Guide-v{a.version}.zip'
-        with zipfile.ZipFile(guide,'x',compression=zipfile.ZIP_DEFLATED) as archive:
-            for path in sorted((root/'docs').rglob('*')):
-                if path.is_file() and path.suffix.lower() in ('.md','.json','.png','.jpg','.svg','.txt'):
-                    archive.write(path,path.relative_to(root).as_posix())
-        with zipfile.ZipFile(guide) as archive:
-            assert archive.testzip() is None
+        if a.version=='4.1.2':
+            from release_asset_io import write_guide
+            write_guide(root,guide,a.version)
+        else:
+            with zipfile.ZipFile(guide,'x',compression=zipfile.ZIP_DEFLATED) as archive:
+                for path in sorted((root/'docs').rglob('*')):
+                    if path.is_file() and path.suffix.lower() in ('.md','.json','.png','.jpg','.svg','.txt'):
+                        archive.write(path,path.relative_to(root).as_posix())
+            with zipfile.ZipFile(guide) as archive:
+                assert archive.testzip() is None
         assert (root/f'docs/qa/RELEASE-{a.version}.md').is_file()
     for src,name in [(root/'src-tauri/target/release/researchclip.exe',f'ResearchClip-v{a.version}-windows-x64.exe'),(root/f'src-tauri/target/release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe',f'ResearchClip_{a.version}_x64-setup.exe'),*companions]:
-        if a.version in ('4.1.0','4.1.1') and name==f'ResearchClip-v{a.version}-windows-x64.exe':
+        if a.version in ('4.1.0','4.1.1','4.1.2') and name==f'ResearchClip-v{a.version}-windows-x64.exe':
             import zipfile
             with zipfile.ZipFile(out/name.replace('.exe','.zip'),'x',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as archive:
                 archive.write(src,'researchclip.exe')
-                if a.version=='4.1.1':archive.write(root/'docs/licenses/flexlayout-react-MIT.txt','licenses/flexlayout-react-MIT.txt')
+                if a.version in ('4.1.1','4.1.2'):archive.write(root/'docs/licenses/flexlayout-react-MIT.txt','licenses/flexlayout-react-MIT.txt')
             continue
         dest=out/name
         assert not dest.exists(),'Refusing existing release artifact'
-        shutil.copyfile(src,dest)
+        if a.version=='4.1.2' and src.parent.name=='companions-v412':os.link(src,dest)
+        else:shutil.copyfile(src,dest)
     assets=[{'name':f.name,'size':f.stat().st_size,'sha256':digest(f)} for f in sorted(out.iterdir()) if f.is_file()]
-    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n'+('Companions: exact WebClipper v1.0.2, MathOCR Setup v1.0.4 and Qwen manifest from v3.1.3; offline model volumes remain on v3.1.2. See MODEL-RESOURCES.txt and OFFLINE-RESOURCE-INDEX.json.\nGuide includes fictional feature exercises and local offline images; see the versioned user guide. No user data or credentials included.\n' if companions else ''),encoding='utf-8')
+    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n'+('All 226 attachments from 31 previous releases through v4.1.1 are included in verified history volumes; see HISTORY-README.txt and HISTORY-TRANSPORT.json. Optional companion installers are also attached directly. No user data or credentials included.\n' if a.version=='4.1.2' else 'Companions: exact WebClipper v1.0.2, MathOCR Setup v1.0.4 and Qwen manifest from v3.1.3; offline model volumes remain on v3.1.2. See MODEL-RESOURCES.txt and OFFLINE-RESOURCE-INDEX.json.\nGuide includes fictional feature exercises and local offline images; see the versioned user guide. No user data or credentials included.\n' if companions else ''),encoding='utf-8')
     f=out/'SOURCE.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
     (out/'SHA256SUMS.txt').write_text(''.join(x['sha256']+'  '+x['name']+'\n' for x in assets),encoding='utf-8')
     f=out/'SHA256SUMS.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
@@ -82,8 +95,9 @@ assert req('https://api.github.com/user')['login']=='wpy-sketch'
 assert req(base+'/git/ref/tags/v'+a.version)['object']['sha']==commit
 releases=req(base+'/releases?per_page=100');existing=next((r for r in releases if r['tag_name']=='v'+a.version),None)
 def check_history(releases):
-    if a.version not in ('3.1.6','3.1.7','3.1.8','3.1.9','4.0.0'):return None
+    if a.version not in ('3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.2'):return None
     before=json.loads((root/f'docs/qa/evidence/v{a.version.replace(".","")}-prior-releases.json').read_text(encoding='utf-8'))
+    if a.version=='4.1.2':assert {x['id'] for x in releases if x['tag_name']!='v4.1.2'}=={x['id'] for x in before},'New historical release appeared; refresh the archive before publication'
     for old in before:
         current=next((x for x in releases if x['id']==old['id']),None)
         assert current and current['tag_name']==old['tag'] and current['draft']==old['draft'] and current['prerelease']==old['prerelease'] and current['target_commitish']==old['commit'],'Historical release changed'
@@ -96,7 +110,7 @@ if prior:existing=req(base+'/releases/'+str(prior['id']));assert existing['tag_n
 if existing:assert prior and prior['id']==existing['id'] and prior['commit']==commit,'Unrecognized existing release; refusing overwrite'
 body=(root/f'docs/RELEASE-NOTES-{a.version}.md').read_text(encoding='utf-8').replace('(qa/','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/qa/').replace('(USER_GUIDE.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/USER_GUIDE.md)').replace('(INTERNAL-LINKS.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/INTERNAL-LINKS.md)')
 body=body.replace('(SEMANTIC-SEARCH.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/SEMANTIC-SEARCH.md)')
-if a.version in ('4.1.0','4.1.1'):
+if a.version in ('4.1.0','4.1.1','4.1.2'):
     import re,posixpath
     def absolute_doc_link(match):
         target=match.group(1)
@@ -109,37 +123,74 @@ state=prior or {'version':a.version,'commit':commit,'id':r['id'],'url':r['html_u
 if history:state['historyBefore']=history
 def save():(out/'publication.json').write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding='utf-8')
 save()
-assert all(asset['name'] in {x['name'] for x in m['assets']} for asset in r['assets']),'Unexpected draft assets; refusing publication'
-for x in sorted(m['assets'],key=lambda x:x['size']):
-    f=out/x['name'];assert digest(f)==x['sha256']
-    import urllib.parse
-    current=next((asset for asset in r['assets'] if asset['name']==x['name']),None)
-    if current and current['state']=='starter' and current['size']==0:
-        assert r['draft'];req(base+'/releases/assets/'+str(current['id']),'DELETE');current=None
-    if current:
-        assert current['state']=='uploaded' and current['size']==x['size'] and current['digest']=='sha256:'+x['sha256'],'Existing asset differs; refusing overwrite'
-        print('Verified existing '+x['name'],flush=True);continue
-    assert r['draft'],'Cannot modify published assets'
-    if a.defer_raw and x['name']==f'ResearchClip-v{a.version}-windows-x64.exe':
-        print('Deferred raw EXE; draft will remain unpublished',flush=True);continue
-    result=req(r['upload_url'].split('{')[0]+'?'+urllib.parse.urlencode({'name':x['name']}),'POST',binary=f.read_bytes())
-    assert result['state']=='uploaded' and result['size']==x['size'] and result['digest']=='sha256:'+x['sha256']
-    state['assets'].append({'name':x['name'],'size':result['size'],'digest':result['digest'],'url':result['browser_download_url']});save();print('Uploaded '+x['name'],flush=True)
+if a.version=='4.1.2':
+    from release_asset_io import read_assets,transfers,verified
+    current_assets=read_assets(req,base,r['id'])
+    for asset in current_assets:
+        if asset['state']=='starter' and asset['size']==0:
+            assert r['draft'] and asset['name'] in {x['name'] for x in m['assets']}
+            req(base+'/releases/assets/'+str(asset['id']),'DELETE')
+    current_assets=read_assets(req,base,r['id'])
+    def upload(x):
+        assert r['draft'],'Cannot modify published assets'
+        f=out/x['name'];assert digest(f)==x['sha256']
+        return req(r['upload_url'].split('{')[0]+'?'+urllib.parse.urlencode({'name':x['name']}),'POST',binary=f.read_bytes())
+    for x,result in transfers(m['assets'],current_assets,upload,workers=4):
+        state['assets'].append({'name':x['name'],'size':result['size'],'digest':result['digest'],'url':result['browser_download_url']});save();print('Uploaded '+x['name'],flush=True)
+    current_assets=read_assets(req,base,r['id']);assert len(current_assets)==len(m['assets'])
+    for x in m['assets']:verified(x,next(asset for asset in current_assets if asset['name']==x['name']))
+else:
+    assert all(asset['name'] in {x['name'] for x in m['assets']} for asset in r['assets']),'Unexpected draft assets; refusing publication'
+    for x in sorted(m['assets'],key=lambda x:x['size']):
+        f=out/x['name'];assert digest(f)==x['sha256']
+        import urllib.parse
+        current=next((asset for asset in r['assets'] if asset['name']==x['name']),None)
+        if current and current['state']=='starter' and current['size']==0:
+            assert r['draft'];req(base+'/releases/assets/'+str(current['id']),'DELETE');current=None
+        if current:
+            assert current['state']=='uploaded' and current['size']==x['size'] and current['digest']=='sha256:'+x['sha256'],'Existing asset differs; refusing overwrite'
+            print('Verified existing '+x['name'],flush=True);continue
+        assert r['draft'],'Cannot modify published assets'
+        if a.defer_raw and x['name']==f'ResearchClip-v{a.version}-windows-x64.exe':
+            print('Deferred raw EXE; draft will remain unpublished',flush=True);continue
+        result=req(r['upload_url'].split('{')[0]+'?'+urllib.parse.urlencode({'name':x['name']}),'POST',binary=f.read_bytes())
+        assert result['state']=='uploaded' and result['size']==x['size'] and result['digest']=='sha256:'+x['sha256']
+        state['assets'].append({'name':x['name'],'size':result['size'],'digest':result['digest'],'url':result['browser_download_url']});save();print('Uploaded '+x['name'],flush=True)
 if a.defer_raw:
     assert r['draft'];state['deferredRaw']=True;save();print('Draft prepared; final publication and anonymous verification still required',flush=True);raise SystemExit(0)
 state.pop('deferredRaw',None)
 if r['draft']:r=req(base+'/releases/'+str(r['id']),'PATCH',{'tag_name':'v'+a.version,'target_commitish':commit,'draft':False,'prerelease':False,'make_latest':'true'})
 assert not r['draft'] and not r['prerelease'];state['published']=True;state['url']=r['html_url'];assert r['tag_name']=='v'+a.version;save()
-release=req(base+'/releases/'+str(r['id']));assert len(release['assets'])==len(m['assets'])
+release=req(base+'/releases/'+str(r['id']))
+if a.version=='4.1.2':release['assets']=read_assets(req,base,r['id'])
+assert len(release['assets'])==len(m['assets'])
 state['assets']=[{'name':asset['name'],'size':asset['size'],'digest':asset['digest'],'url':asset['browser_download_url']} for asset in release['assets']];save()
 public=urllib.request.build_opener(urllib.request.ProxyHandler({'https':os.environ['RESEARCHCLIP_RELEASE_PROXY']} if os.environ.get('RESEARCHCLIP_RELEASE_PROXY') else {}),urllib.request.HTTPSHandler(context=ssl.create_default_context()))
-verified=[]
-for x in m['assets']:
-    remote=next(asset for asset in release['assets'] if asset['name']==x['name'])
-    with public.open(urllib.request.Request(remote['browser_download_url'],headers={'User-Agent':'ResearchClip-Anonymous-Verify'}),timeout=60) as response:
-        data=response.read();assert response.status==200
-    assert len(data)==x['size'] and hashlib.sha256(data).hexdigest()==x['sha256']
-    verified.append(x['name']);state['anonymousVerified']=verified;save();print('Anonymous hash verified '+x['name'],flush=True)
+if a.version=='4.1.2':
+    from concurrent.futures import ThreadPoolExecutor,as_completed
+    verified_names=set(state.get('anonymousVerified',[]));assert verified_names<={x['name'] for x in m['assets']}
+    def anonymous(x):
+        remote=next(asset for asset in release['assets'] if asset['name']==x['name'])
+        for attempt in range(3):
+            try:
+                with public.open(urllib.request.Request(remote['browser_download_url'],headers={'User-Agent':'ResearchClip-Anonymous-Verify'}),timeout=180) as response:
+                    data=response.read();assert response.status==200
+                assert len(data)==x['size'] and hashlib.sha256(data).hexdigest()==x['sha256'];return x['name']
+            except (urllib.error.URLError,ConnectionError,TimeoutError):
+                if attempt==2:raise
+                time.sleep(2)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        futures=[pool.submit(anonymous,x) for x in m['assets'] if x['name'] not in verified_names]
+        for future in as_completed(futures):
+            name=future.result();verified_names.add(name);state['anonymousVerified']=sorted(verified_names);save();print('Anonymous hash verified '+name,flush=True)
+else:
+    verified=[]
+    for x in m['assets']:
+        remote=next(asset for asset in release['assets'] if asset['name']==x['name'])
+        with public.open(urllib.request.Request(remote['browser_download_url'],headers={'User-Agent':'ResearchClip-Anonymous-Verify'}),timeout=60) as response:
+            data=response.read();assert response.status==200
+        assert len(data)==x['size'] and hashlib.sha256(data).hexdigest()==x['sha256']
+        verified.append(x['name']);state['anonymousVerified']=verified;save();print('Anonymous hash verified '+x['name'],flush=True)
 history=check_history(req(base+'/releases?per_page=100'))
 if history:state['historyAfter']=history;save()
 print(json.dumps(state,ensure_ascii=False),flush=True)

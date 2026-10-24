@@ -1,3 +1,4 @@
+import {commandTasks} from '../commands/platform/runtime';
 import {useBatchStore} from '../projects/batch';
 import {create} from 'zustand';
 import {getDesktopStatus,desktopAction,completeDesktopExit} from '../../shared/api/desktop';
@@ -23,6 +24,7 @@ export const useDesktopStore=create<State>((set,get)=>({discardedDocuments:[],sn
   requestQuit:async(resume=false)=>{
     if(get().phase!=='idle')return;set({phase:'checking',error:null,...(!resume?{discardedDocuments:[]}:{})});
     try{
+      if(commandTasks.getSnapshot().some(t=>t.phase==='running'||t.phase==='cancelling'))throw new Error('退出已取消：科研资源命令尚未结束，请取消或等待完成后重试。');
       if(useEditorStore.getState().pendingIo>0)throw new Error('正在处理图片文件，请完成后重试退出。');
       if(useBatchStore.getState().busy)throw new Error('正在批量处理资料，请完成后重试退出。');
       if(useImportStore.getState().busy)throw new Error('正在导入图片，请完成后重试退出。');

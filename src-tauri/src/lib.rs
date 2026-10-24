@@ -343,6 +343,8 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::markdown::export_knowledge_markdown,
             commands::library::save_knowledge_card,
             commands::library::open_card_source,
+            commands::research_commands::resolve_research_resource,
+            commands::research_commands::prepare_research_command,
             commands::library::get_screenshot,
             commands::library::screenshot_image,
             commands::library::update_screenshot,

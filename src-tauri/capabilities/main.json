@@ -78,6 +78,8 @@
     "allow-library-status",
     "allow-reconcile-library",
     "allow-list-screenshots",
+    "allow-resolve-research-resource",
+    "allow-prepare-research-command",
     "allow-get-screenshot",
     "allow-screenshot-image",
     "allow-update-screenshot",

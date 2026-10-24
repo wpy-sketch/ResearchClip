@@ -1,5 +1,7 @@
 # Research IDE 技术决策记录
 
+Step03受控命令实施见[COMMAND_SYSTEM](COMMAND_SYSTEM.md)，SQLite保持12，无新增依赖。
+
 Step02实施说明：[科研工作区](WORKSPACE_SYSTEM.md)。前述Step00选型状态为历史时间点，当前增量仅新增固定版FlexLayout。
 
 实施状态更新：本轮仅落地Step01资源模型，复用既有依赖；具体契约见[RESOURCE_MODEL](RESOURCE_MODEL.md)。IDE、PDF、Zotero、HarmonyOS及Agent候选接口仍未集成。

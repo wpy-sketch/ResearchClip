@@ -16,6 +16,7 @@ pub mod ocr;
 pub mod pins;
 pub mod references;
 pub mod region;
+pub mod research_commands;
 pub mod scrolling;
 pub mod similarity;
 pub mod similarity_ai;

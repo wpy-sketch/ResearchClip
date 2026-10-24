@@ -1,15 +1,15 @@
-> **v4.1.1 · 科研工作区**：独立文档与图片标签、双向拆分、隐藏与布局恢复；未打开Markdown时不显示空白分栏。使用方法见[指南第19章](docs/USER_GUIDE.md)，实际测试与限制见[v4.1.1发布说明](docs/RELEASE-NOTES-4.1.1.md)。
+> **v4.1.2 · 受控科研命令**：按稳定资源类型与ID打开文档/图片、向指定Markdown插入素材，新增任务取消和安全诊断。保留v4.1.1工作区；本Release集中提供此前31版226个附件。见[本版说明](docs/RELEASE-NOTES-4.1.2.md)与[组件下载指南](docs/RELEASE-COMPONENTS.md)。
 
 <!-- Current delivery status -->
-> **v4.0.0 · 独立验收与界面完善**：修复语义任务状态竞争，改善缩放阅读和六条任务路线；保留A01–A13与完整配套组件。实际结果及未解决问题见 [高级功能验收报告](docs/qa/ADVANCED_FEATURE_REPORT.md)。
+> **历史v4.0.0 · 独立验收与界面完善**：修复语义任务状态竞争，改善缩放阅读和六条任务路线；保留A01–A13与完整配套组件。实际结果及未解决问题见 [高级功能验收报告](docs/qa/ADVANCED_FEATURE_REPORT.md)。
 
 # ResearchClip
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.1 Windows；发布与验收状态见本版记录**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.2 Windows；发布与验收状态见本版记录**。
 
-[GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.0.0配套附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.2配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
 v3.1.2 新增 **本地相似图片检索**：主动生成原图特征索引，SHA完全重复组、可调整pHash/颜色距离与双图人工比较，不自动删除。可选Qwen3.5 4B随完整离线分卷包提供；轻量NSIS不含数GB模型。模型可能出错或截断，只作辅助。[算法与离线包](docs/SIMILARITY.md) · [本版变更](docs/RELEASE-NOTES-3.1.2.md) · [实际验收](docs/qa/RELEASE-3.1.2.md)。
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "desktopVersion": "4.0.0",
+  "desktopVersion": "4.1.2",
   "reuseFrom": "v3.1.3",
   "files": [
     {
@@ -468,5 +468,20 @@
         "url": "https://github.com/wpy-sketch/ResearchClip/releases/download/v3.1.2/ResearchClip-v3.1.2-offline.zip.024.part02"
       }
     ]
+  },
+  "historicalAttachments": {
+    "throughVersion": "4.1.1",
+    "releases": 31,
+    "assets": 226,
+    "originalBytes": 4117989169,
+    "archive": {
+      "name": "ResearchClip-History-through-v4.1.1.zip",
+      "size": 3728704762,
+      "sha256": "8faa561b4282aeb7343bc7e7ebb8c4ae59f8ca07d73f1840c1953cacd331786f"
+    },
+    "volumes": 223,
+    "transport": "HISTORY-TRANSPORT.json",
+    "contents": "HISTORY-CONTENTS.json",
+    "assembler": "Assemble-Release-History.ps1"
   }
 }

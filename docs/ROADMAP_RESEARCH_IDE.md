@@ -1,8 +1,8 @@
 # ResearchClip Research IDE 分阶段升级路线
 
-本轮交付状态：Step00五份审查/规划/基线文档已完成；Step01数据访问层与schema12已完成并通过隔离旧库Windows演练，详见[资源模型](architecture/RESOURCE_MODEL.md)和[实际验收](qa/RESOURCE_MODEL_STEP01.md)。Step02工作区已实现，见[工作台架构](architecture/WORKSPACE_SYSTEM.md)；实际使用版本1本地布局记录，SQLite保持12，无需原提案schema13布局表。Step03将在v4.1.1正式发布后按用户新请求实施，其余阶段未实施。下文迁移排期以Step00的schema11起点描述，schema12现已落地。
+本轮交付状态：Step00五份审查/规划/基线文档已完成；Step01数据访问层与schema12已完成并通过隔离旧库Windows演练，详见[资源模型](architecture/RESOURCE_MODEL.md)和[实际验收](qa/RESOURCE_MODEL_STEP01.md)。Step02工作区已实现，见[工作台架构](architecture/WORKSPACE_SYSTEM.md)；实际使用版本1本地布局记录，SQLite保持12，无需原提案schema13布局表。v4.1.1已正式发布；Step03框架和少量示例已实现，见[命令架构](architecture/COMMAND_SYSTEM.md)与[本轮验收](qa/COMMAND_SYSTEM_STEP03.md)。本轮停止于Step03，其余阶段未实施。下文迁移排期以Step00的schema11起点描述，schema12现已落地。
 
-日期：2026-10-23。Step 00完成调研后停止；未来阶段只有用户单独指定才实施。用户随后明确授权在Step 00完成后实施Step 01统一资源模型；这不授权Step 02或其他业务集成。参见[现状](architecture/CURRENT_STATE.md)、[目标](architecture/TARGET_ARCHITECTURE.md)、[决策](architecture/TECHNOLOGY_DECISIONS.md)、[基线](qa/BASELINE_REPORT.md)。
+日期：2026-10-23。Step 00完成调研后停止；未来阶段只有用户单独指定才实施。用户随后明确授权在Step 00完成后实施Step 01统一资源模型；这是当时的授权边界；用户随后明确授权Step02、再于v4.1.1发布后实施Step03，仍不授权Step04及其他业务集成。参见[现状](architecture/CURRENT_STATE.md)、[目标](architecture/TARGET_ARCHITECTURE.md)、[决策](architecture/TECHNOLOGY_DECISIONS.md)、[基线](qa/BASELINE_REPORT.md)。
 
 Markdown导出PDF、独立备份/恢复产品不在路线内。迁移前一致性快照和保存故障处理继续保留。
 

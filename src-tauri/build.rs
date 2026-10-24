@@ -129,6 +129,8 @@ fn main() {
             "export_knowledge_markdown",
             "save_knowledge_card",
             "open_card_source",
+            "resolve_research_resource",
+            "prepare_research_command",
             "get_screenshot",
             "screenshot_image",
             "update_screenshot",

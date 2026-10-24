@@ -28,3 +28,12 @@
 @container (max-width:900px){.research-panel .guide-layout{grid-template-columns:minmax(0,1fr);gap:14px}.research-panel .guide-layout nav{position:static;max-height:230px}.research-panel .guide-quick-start{grid-template-columns:repeat(2,minmax(0,1fr))}.research-panel .guide-workspace>.page-heading{flex-wrap:wrap;gap:8px}}
 @container (max-width:520px){.research-panel .guide-quick-start{grid-template-columns:1fr}.research-panel .markdown-editing-workspace{flex-direction:column}.research-panel .markdown-outline{width:100%;max-width:100%;max-height:90px;border-right:0}.research-panel .markdown-panel-actions{flex-wrap:nowrap;overflow-x:auto;flex-shrink:0}.research-panel .markdown-panel-actions>button{flex-shrink:0}.research-panel .guide-reading-bar{flex-wrap:wrap}.research-panel .guide-content{min-width:0}.research-panel .guide-content img{max-width:100%}}
 @container (max-height:360px){.research-panel .markdown-panel-header{padding-block:4px}.research-panel .markdown-panel-actions{padding-block:3px}.research-panel .markdown-live-preview{max-height:160px}}
+
+/* FlexLayout measures DOMRects. Normalize its coordinate plane under ancestor CSS zoom;
+   scale the business content back within each pane so text keeps the requested zoom. */
+.research-workspace[data-css-scaled=true] .dock-layout>.flexlayout__layout{right:auto;bottom:auto;width:calc(100% * var(--workspace-layout-scale));height:calc(100% * var(--workspace-layout-scale));transform:scale(calc(1 / var(--workspace-layout-scale)));transform-origin:top left}
+.research-workspace[data-css-scaled=true] .research-panel{zoom:var(--workspace-layout-scale);width:100%;height:100%}
+
+.app-main{container-type:inline-size}
+@container(max-width:900px){.app-toolbar{padding:8px 10px;gap:6px}.app-toolbar .toolbar-primary-row,.app-toolbar .toolbar-secondary-row{gap:8px}.app-toolbar .toolbar-actions{gap:4px}.app-toolbar .markdown-action-label,.app-toolbar .breadcrumb-parent,.app-toolbar .toolbar-divider{display:none}.app-toolbar .toolbar-actions>.secondary-button{width:32px;height:32px;min-height:32px;padding:0;justify-content:center}.app-toolbar .toolbar-utilities{gap:3px}.app-toolbar .toolbar-utilities .icon-button{width:32px;height:32px}}
+.research-workspace[data-css-scaled=true] .dock-layout{min-height:0}
