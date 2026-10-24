@@ -9,7 +9,7 @@
 
 面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.5 Windows；发布与验收状态见本版记录**。
 
-[GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.5发布检查](docs/qa/RELEASE-4.1.5.md) · [v4.1.5配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.5正式发布回执](docs/qa/PUBLICATION-4.1.5.md) · [v4.1.5配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
 v3.1.2 新增 **本地相似图片检索**：主动生成原图特征索引，SHA完全重复组、可调整pHash/颜色距离与双图人工比较，不自动删除。可选Qwen3.5 4B随完整离线分卷包提供；轻量NSIS不含数GB模型。模型可能出错或截断，只作辅助。[算法与离线包](docs/SIMILARITY.md) · [本版变更](docs/RELEASE-NOTES-3.1.2.md) · [实际验收](docs/qa/RELEASE-3.1.2.md)。
 
