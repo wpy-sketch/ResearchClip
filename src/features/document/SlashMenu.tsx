@@ -1,0 +1,28 @@
+import {useEffect,useRef,useState,type RefObject} from 'react';
+import {useDocumentApi,useDocumentStore} from './store';
+import {textTarget,restoreTextTarget} from './text-target';
+import {slashTrigger} from './projection';
+import {formatSelection,type FormatAction} from './formatting';
+import {LibraryPicker} from './LibraryPicker';
+const commands=[{name:'heading',label:'标题',action:'h1'},{name:'table',label:'表格',action:'table'},{name:'image',label:'素材图片',action:null},{name:'math',label:'块级公式',action:'mathBlock'},{name:'code',label:'代码块',action:'codeBlock'},{name:'quote',label:'引用',action:'quote'}] as const;
+interface OpenMenu {node:HTMLTextAreaElement;from:number;to:number;query:string;documentId:string;expected:string;blockId:string;base:number}
+export function SlashMenu({panel,preview}:{panel:RefObject<HTMLElement|null>;preview:boolean}){
+ const api=useDocumentApi(),s=useDocumentStore(),[menu,setMenu]=useState<OpenMenu|null>(null),[selected,setSelected]=useState(0),[picker,setPicker]=useState<OpenMenu|null>(null),composing=useRef(false),dismissed=useRef<string|null>(null),frame=useRef(0),updateFrame=useRef(0),items=commands.filter(c=>c.name.startsWith(menu?.query??''));
+ const choose=(name:string)=>{const m=menu,state=api.getState();if(!m||!state.document||state.document.id!==m.documentId||state.phase!=='idle'||!m.node.isConnected)return;const current=textTarget(state.document,m.node);if(!current||current.raw!==m.expected){setMenu(null);return;}const command=commands.find(c=>c.name===name);if(!command)return;setMenu(null);
+  if(name==='image'){setPicker(m);return;}
+  const cleared=current.raw.slice(0,m.from)+current.raw.slice(m.to),edit=formatSelection(cleared,{start:m.from,end:m.from},command.action as FormatAction);if(name==='heading'||name==='quote'){edit.start=m.from+2;edit.end=edit.start;}state.setCaret(current.from+m.from,current.from+m.to,current.key==='source'?undefined:current.key);
+  if(current.key==='source')state.editSource(current.whole.slice(0,current.from)+edit.text+current.whole.slice(current.to),current.from+edit.start,current.from+edit.end);else state.editBlock(current.key,edit.text,edit.start,edit.end);
+  if(api.getState().error)return;cancelAnimationFrame(frame.current);frame.current=requestAnimationFrame(()=>{const doc=api.getState().document;if(doc&&m.node.isConnected){const range=restoreTextTarget(m.node,doc,api.getState().caret);if(range){m.node.focus();m.node.setSelectionRange(range.start,range.end);}}});
+ };
+ useEffect(()=>{const host=panel.current;if(!host)return;
+  const update=(event:Pick<Event,'target'>)=>{const node=event.target,state=api.getState();if(preview||picker||composing.current||!(node instanceof HTMLTextAreaElement)||!node.matches('[data-markdown-target]')||!state.document||state.phase!=='idle'){if(!picker)setMenu(null);return;}const target=textTarget(state.document,node);if(!target)return;const trigger=slashTrigger(target.raw,target.start,target.end),signature=target.key+':'+target.from+':'+target.raw+':'+target.start;
+   if(!trigger){dismissed.current=null;setMenu(null);return;}if(dismissed.current===signature)return;setMenu({node,...trigger,documentId:state.document.id,expected:target.raw,blockId:target.key,base:target.from});setSelected(0);};
+  const schedule=(event:Pick<Event,'target'>)=>{const node=event.target;cancelAnimationFrame(updateFrame.current);updateFrame.current=requestAnimationFrame(()=>update({target:node}));};
+  const key=(event:KeyboardEvent)=>{if(!menu||preview||picker||composing.current||event.isComposing||event.keyCode===229||event.ctrlKey||event.metaKey||event.altKey)return;if(event.target!==menu.node)return;if(event.key==='Escape'){event.preventDefault();event.stopPropagation();dismissed.current=menu.blockId+':'+menu.base+':'+menu.expected+':'+menu.to;setMenu(null);}else if(items.length&&['ArrowDown','ArrowUp','Enter'].includes(event.key)){event.preventDefault();event.stopPropagation();if(event.key==='Enter')choose(items[Math.min(selected,items.length-1)].name);else setSelected(n=>(n+(event.key==='ArrowDown'?1:items.length-1))%items.length);}};
+  const start=()=>{composing.current=true;setMenu(null);};const end=(event:Event)=>{composing.current=false;schedule(event);};
+  for(const name of ['input','select','click','focusin'])host.addEventListener(name,schedule);host.addEventListener('keydown',key,true);host.addEventListener('compositionstart',start);host.addEventListener('compositionend',end);
+  return()=>{for(const name of ['input','select','click','focusin'])host.removeEventListener(name,schedule);host.removeEventListener('keydown',key,true);host.removeEventListener('compositionstart',start);host.removeEventListener('compositionend',end);};
+ });
+ useEffect(()=>()=>{cancelAnimationFrame(frame.current);cancelAnimationFrame(updateFrame.current);},[]);
+ return <>{menu&&!preview&&<div className="md-slash-menu" role="listbox" aria-label="Markdown 斜杠命令">{items.length?items.map((c,index)=><button key={c.name} type="button" role="option" aria-selected={index===selected} onMouseDown={e=>e.preventDefault()} onClick={()=>choose(c.name)}><code>/{c.name}</code><span>{c.label}</span></button>):<p>没有匹配命令；Esc保留原文</p>}<small>↑↓选择 · Enter插入 · Esc取消</small></div>}{picker&&<LibraryPicker busy={s.phase!=='idle'} operationError={s.error} onClose={()=>setPicker(null)} onAdd={async ids=>{const doc=api.getState().document;if(!doc||doc.id!==picker.documentId)return false;const target=textTarget(doc,picker.node);if(!target||target.raw!==picker.expected)return false;return api.getState().insertImagesAt(ids,{documentId:picker.documentId,blockId:target.key,from:target.from+picker.from,to:target.from+picker.to,expected:target.whole});}}/>}</>;
+}

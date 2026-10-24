@@ -31,7 +31,7 @@ def reconstruct(recipe,output,load):
    print('Reconstructed segment',target.tell(),'/',recipe['archive']['size'],flush=True)
  assert output.stat().st_size==recipe['archive']['size'] and sha(output)==recipe['archive']['sha256'],'Exact archive digest differs'
 def main():
- p=argparse.ArgumentParser();p.add_argument('mode',choices=['local-reconstruct','reconstruct412','inherit413','verify412','verify413']);p.add_argument('--target-release',type=int);p.add_argument('--target-commit');p.add_argument('--run-id',default='ci');args=p.parse_args();assert re.fullmatch('[a-z0-9-]{1,60}',args.run_id)
+ p=argparse.ArgumentParser();p.add_argument('mode',choices=['local-reconstruct','reconstruct412','inherit413','verify412','verify413','inherit414','verify414']);p.add_argument('--target-release',type=int);p.add_argument('--target-commit');p.add_argument('--run-id',default='ci');args=p.parse_args();assert re.fullmatch('[a-z0-9-]{1,60}',args.run_id)
  recipe=json.loads((ROOT/'docs/qa/evidence/v412-archive-recipe.json').read_text(encoding='utf-8'));out=ROOT/'artifacts'/('release-transport-'+args.run_id);out.mkdir(parents=True)
  if args.mode=='local-reconstruct':
   reconstruct(recipe,out/'history.zip',lambda item:ROOT/'artifacts/history-assets'/item['sha256']);print('PASS exact local archive');return
@@ -46,11 +46,11 @@ def main():
   try:
    with opener.open(req,timeout=300) as response:body=response.read();return json.loads(body) if body else None
   except urllib.error.HTTPError as error:raise RuntimeError('GitHub '+method+' HTTP '+str(error.code)) from None
- release=request(BASE+'/releases/'+str(args.target_release));tag='v4.1.2' if args.mode.endswith('412') else 'v4.1.3'
+ release=request(BASE+'/releases/'+str(args.target_release));tag='v'+{'412':'4.1.2','413':'4.1.3','414':'4.1.4'}[args.mode[-3:]]
  assert request(BASE+'/git/ref/tags/'+tag)['object']['sha']==args.target_commit
  assert not release['prerelease'] and release['tag_name']==tag and release['target_commitish']==args.target_commit
  if args.mode.startswith('verify'):
-  assert not release['draft'];assets=read_assets(request,BASE,release['id']);assert len(assets)==(237 if tag=='v4.1.2' else 243)
+  assert not release['draft'];assets=read_assets(request,BASE,release['id']);assert len(assets)=={'v4.1.2':237,'v4.1.3':243,'v4.1.4':249}[tag]
   def anonymous(item,keep=False):
    url=item['browser_download_url'];assert url.startswith('https://github.com/wpy-sketch/ResearchClip/releases/download/'+tag+'/') and item['state']=='uploaded'
    digest=hashlib.sha256();total=0;pieces=[]
@@ -98,10 +98,11 @@ def main():
    number=int(item['name'].rsplit('.',1)[1]);assert 1<=number<=223
    with archive.open('rb') as stream:stream.seek((number-1)*16777216);return stream.read(item['size'])
  else:
-  source=request(BASE+'/releases/tags/v4.1.2');assert not source['draft'] and not source['prerelease'] and source['id']==recipe['releaseId']
-  frozen=json.loads((ROOT/'docs/qa/evidence/v413-prior-releases.json').read_text(encoding='utf-8'));old=next(x for x in frozen if x['tag']=='v4.1.2');current=read_assets(request,BASE,source['id']);assert len(current)==len(old['assets'])==237
+  previous='v4.1.3' if args.mode=='inherit414' else 'v4.1.2';previous_count=243 if args.mode=='inherit414' else 237
+  source=request(BASE+'/releases/tags/'+previous);assert not source['draft'] and not source['prerelease'] and source['id']==(422602338 if args.mode=='inherit414' else recipe['releaseId'])
+  frozen=json.loads((ROOT/('docs/qa/evidence/v414-prior-releases.json' if args.mode=='inherit414' else 'docs/qa/evidence/v413-prior-releases.json')).read_text(encoding='utf-8'));old=next(x for x in frozen if x['tag']==previous);current=read_assets(request,BASE,source['id']);assert len(current)==len(old['assets'])==previous_count
   assert sorted((x['id'],x['name'],x['size'],x['digest']) for x in current)==sorted((x['id'],x['name'],x['size'],x['digest']) for x in old['assets'])
-  expected=[{'name':x['name'],'size':x['size'],'sha256':x['digest'][7:],'source':x['browser_download_url']} for x in current if x['name'] not in ('SOURCE.txt','SHA256SUMS.txt')];assert len(expected)==235
+  expected=[{'name':x['name'],'size':x['size'],'sha256':x['digest'][7:],'source':x['browser_download_url']} for x in current if x['name'] not in ('SOURCE.txt','SHA256SUMS.txt')];assert len(expected)==previous_count-2
   def payload(item):return load(item).read_bytes()
  existing=read_assets(request,BASE,release['id']);by_name={x['name']:x for x in existing}
  for item in expected:

@@ -27,6 +27,7 @@ def write_guide(root,path,version):
         for name in archive.namelist():
             if not name.endswith('.md'):continue
             for href in re.findall(r'\[[^\]]*\]\(([^)]+)\)',archive.read(name).decode('utf-8')):
+                href=re.sub(r'''\s+(?:"[^"]*"|'[^']*')$''','',href)
                 if re.match(r'^(?:[a-zA-Z][a-zA-Z0-9+.-]*:|#|/)',href):continue
                 target=posixpath.normpath(posixpath.join(posixpath.dirname(name),urllib.parse.unquote(href.split('#')[0])))
                 assert target in archive.namelist(),'Broken packaged guide link: '+name+': '+href

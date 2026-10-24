@@ -15,7 +15,7 @@ for (const file of docs) {
   const content = read(file);
   assert.equal((content.match(/^\s*```/gm) ?? []).length % 2, 0, `Unclosed Markdown fence: ${file}`);
   for (const match of content.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
-    const target = match[1].split('#')[0];
+    const target = match[1].replace(/\s+(?:"[^"]*"|'[^']*')$/, '').split('#')[0];
     if (!target || /^[a-z][\w+.-]*:/i.test(target)) continue;
     assert.ok(existsSync(resolve(root, dirname(file), decodeURIComponent(target))), `Missing local link: ${file}: ${target}`);
     links += 1;

@@ -1,5 +1,7 @@
 # ResearchClip Research IDE 分阶段升级路线
 
+用户后续Step05为Markdown保真编辑，已按[先行选型](architecture/EDITOR_STEP05_DECISION.md)增量实现，见[验收](qa/MARKDOWN_STEP05.md)；其编号不对应下文最初路线的Zotero阶段。用户另行授权Step06高效内容编辑，必须待v4.1.4发布完成后开始，届时单独记录实际范围与结果。
+
 本轮交付状态：Step00五份审查/规划/基线文档已完成；Step01数据访问层与schema12已完成并通过隔离旧库Windows演练，详见[资源模型](architecture/RESOURCE_MODEL.md)和[实际验收](qa/RESOURCE_MODEL_STEP01.md)。Step02工作区已实现，见[工作台架构](architecture/WORKSPACE_SYSTEM.md)；实际使用版本1本地布局记录，SQLite保持12，无需原提案schema13布局表。v4.1.1已正式发布；Step03框架和少量示例已实现，见[命令架构](architecture/COMMAND_SYSTEM.md)与[本轮验收](qa/COMMAND_SYSTEM_STEP03.md)。随后用户明确授权v4.1.3现有Markdown工具栏增量，已实现并验证，见[工具栏架构](architecture/MARKDOWN_TOOLS.md)和[实际验收](qa/MARKDOWN_TOOLS_4.1.3.md)。该扩展不实施Zotero/PDF/IDE/Agent大型业务。下文迁移排期以Step00的schema11起点描述，schema12现已落地。
 
 日期：2026-10-23。Step 00完成调研后停止；未来阶段只有用户单独指定才实施。用户随后明确授权在Step 00完成后实施Step 01统一资源模型；这是当时的授权边界；用户随后明确授权Step02、再于v4.1.1发布后实施Step03，仍不授权Step04及其他业务集成。参见[现状](architecture/CURRENT_STATE.md)、[目标](architecture/TARGET_ARCHITECTURE.md)、[决策](architecture/TECHNOLOGY_DECISIONS.md)、[基线](qa/BASELINE_REPORT.md)。

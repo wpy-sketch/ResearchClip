@@ -95,7 +95,10 @@ pub(crate) fn names(markdown: &str) -> Result<BTreeSet<String>, CaptureError> {
         let name = tail
             .split_once(')')
             .ok_or_else(|| failure("图片相对引用无效。"))?
-            .0;
+            .0
+            .split_whitespace()
+            .next()
+            .unwrap_or("");
         if name.starts_with("researchclip-") {
             if !asset_name(name) {
                 return Err(failure("图片引用越界或名称无效。"));
@@ -764,6 +767,17 @@ mod tests {
                 .is_err()
         );
         assert!(s.save(None, &input(), &[]).is_err());
+    }
+    #[test]
+    fn titled_managed_images_keep_the_same_bounded_relative_asset() {
+        let name = format!("researchclip-{}.png", "e".repeat(32));
+        for title in ["\"中文标题\"", "'title'", "\"title(with parentheses)\""] {
+            assert_eq!(
+                names(&format!("![alt](assets/{name} {title})")).unwrap(),
+                BTreeSet::from([name.clone()])
+            );
+        }
+        assert!(names("](assets/researchclip-../../x.png \"title\")").is_err());
     }
     #[test]
     fn failed_write_missing_image_and_invalid_utf8_preserve_existing_files() {

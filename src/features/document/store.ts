@@ -25,7 +25,7 @@ export interface DocumentState {
   phase:'idle'|'adding'|'saving'|'opening'|'renaming';error:string|null;notice:string|null;pending:DocumentAction|null;
   request:(action:DocumentAction)=>Promise<void>;resolvePending:(choice:'save'|'discard'|'cancel')=>Promise<void>;
   editTitle:(title:string)=>void;editBlock:(id:string,text:string,start?:number,end?:number)=>void;addText:(afterId?:string)=>void;move:(id:string,delta:-1|1)=>void;remove:(id:string)=>void;
-  addImages:(ids:string[])=>Promise<boolean>;save:(saveAs?:boolean)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
+  addImages:(ids:string[])=>Promise<boolean>;insertImagesAt:(ids:string[],target:{documentId:string;blockId:string;from:number;to:number;expected:string})=>Promise<boolean>;reorderBlocks:(id:string,before:string|null,expected:string[])=>void;save:(saveAs?:boolean)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
 }
 export const documentDirty=(s:Pick<DocumentState,'document'|'savedFingerprint'>)=>Boolean(s.document&&(s.savedFingerprint===null||JSON.stringify(s.document)!==s.savedFingerprint));
 const dispose=(assets:Record<string,DocumentAsset>)=>Object.values(assets).forEach(a=>URL.revokeObjectURL(a.url));
@@ -113,7 +113,7 @@ export function createDocumentStore(){
       request:async(action)=>{if(get().phase!=='idle'){set({error:'文档正在处理，请等待完成。'});return;}if(documentDirty(get())){set({pending:action});return;}await run(action);},
       resolvePending:async(choice)=>{const action=get().pending;if(!action||get().phase!=='idle')return;if(choice==='cancel'){set({pending:null,templateSeed:null});return;}if(choice==='save'&&!await get().save())return;await run(action);},
       editTitle:(title)=>change(doc=>({...doc,title})),
-      editBlock:(id,text,start=text.length,end=start)=>{const s=get(),block=s.document?.blocks.find(b=>b.id===id);if(!s.document||s.phase!=='idle'||!block)return;const value=text.replaceAll('\r\n','\n'),document={...s.document,blocks:s.document.blocks.map(b=>b.id===id?b.type==='image'?{...b,caption:value}:{...b,markdown:value}:b)};try{serializeDocument(document);}catch(error){set({error:errorMessage(error,'文档过大，原内容保留。')});return;}if((block.type==='image'?block.caption:block.markdown)===value){set({caret:{start,end,blockId:id}});return;}set({document,caret:{start,end,blockId:id},past:bounded([...s.past,{document:s.document,caret:s.caret}]),future:[],notice:null,error:null});},
+      editBlock:(id,text,start=text.length,end=start)=>{const s=get(),block=s.document?.blocks.find(b=>b.id===id);if(!s.document||s.phase!=='idle'||!block)return;const value=text,document={...s.document,blocks:s.document.blocks.map(b=>b.id===id?b.type==='image'?{...b,caption:value}:{...b,markdown:value}:b)};try{serializeDocument(document);}catch(error){set({error:errorMessage(error,'文档过大，原内容保留。')});return;}if((block.type==='image'?block.caption:block.markdown)===value){set({caret:{start,end,blockId:id}});return;}set({document,caret:{start,end,blockId:id},past:bounded([...s.past,{document:s.document,caret:s.caret}]),future:[],notice:null,error:null});},
       addText:(afterId)=>change(doc=>{if(doc.blocks.length>=MAX_BLOCKS){set({error:'每份文档最多100个内容块。'});return doc;}const blocks=[...doc.blocks],index=afterId?blocks.findIndex(b=>b.id===afterId)+1:blocks.length;blocks.splice(index,0,{id:newId(),type:'text',markdown:''});return {...doc,blocks};}),
       move:(id,delta)=>change(doc=>moveBlock(doc,id,delta)),
       remove:(id)=>change(doc=>{const block=doc.blocks.find(b=>b.id===id);if(block?.type==='image'){const assets={...get().assets};if(assets[block.assetName])URL.revokeObjectURL(assets[block.assetName].url);delete assets[block.assetName];set({assets});}return {...doc,blocks:doc.blocks.filter(b=>b.id!==id)};}),
@@ -138,6 +138,15 @@ export function createDocumentStore(){
         }catch(error){dispose(assets);set({error:errorMessage(error,'添加失败，已有内容未改动。'),notice:null});return false;}
         finally{set({phase:'idle'});}
       },
+      reorderBlocks:(id,before,expected)=>{const s=get(),doc=s.document;if(!doc||doc.mode==='source'||s.phase!=='idle')return;const order=doc.blocks.map(b=>b.id);if(JSON.stringify(order)!==JSON.stringify(expected)||!order.includes(id)||(before!==null&&!order.includes(before))){set({error:'内容块已变化，请重新拖动；原文未改动。'});return;}if(id===before)return;const blocks=doc.blocks.filter(b=>b.id!==id),at=before===null?blocks.length:blocks.findIndex(b=>b.id===before);blocks.splice(at,0,doc.blocks.find(b=>b.id===id)!);if(blocks.every((b,i)=>b===doc.blocks[i]))return;set({document:{...doc,blocks},past:bounded([...s.past,{document:doc,caret:s.caret}]),future:[],focusRequest:s.focusRequest+1,error:null,notice:'已整体移动图文块，可撤销。'});},
+      insertImagesAt:async(ids,target)=>{const before=get(),doc=before.document,block=doc?.blocks.find(b=>b.id===target.blockId),field=doc?.mode==='source'&&target.blockId==='source'?sourceText(doc):block?(block.type==='image'?block.caption:block.markdown):null;
+        if(!doc||before.phase!=='idle'||doc.id!==target.documentId||field!==target.expected||!Number.isSafeInteger(target.from)||!Number.isSafeInteger(target.to)||target.from<0||target.to<target.from||target.to>field.length){set({error:'插图目标已变化，当前文档未改动。'});return false;}
+        if(doc.mode==='source')get().setCaret(target.from,target.to);
+        if(!await get().addImages(ids)){set({caret:before.caret});return false;}
+        if(doc.mode==='source')return true;
+        try{const after=get(),added=after.document!.blocks.filter(b=>!doc.blocks.some(old=>old.id===b.id)),value=field.slice(0,target.from)+field.slice(target.to),blocks=doc.blocks.map(b=>b.id===target.blockId?b.type==='image'?{...b,caption:value}:{...b,markdown:value}:b),at=blocks.findIndex(b=>b.id===target.blockId);blocks.splice(at+1,0,...added);const document={...doc,blocks};serializeDocument(document);set({document,past:bounded([...before.past,{document:doc,caret:before.caret}]),future:[],caret:{start:target.from,end:target.from,blockId:target.blockId},focusRequest:after.focusRequest+1,error:null});return true;}
+        catch(error){const after=get();for(const [name,asset]of Object.entries(after.assets))if(!before.assets[name])URL.revokeObjectURL(asset.url);set({document:doc,assets:before.assets,past:before.past,future:before.future,caret:before.caret,error:errorMessage(error,'插图失败，原文已保留。')});return false;}
+      },
       rename:async(name)=>{
         const s=get();if(!s.document||s.phase!=='idle')return false;
         set({phase:'renaming',error:null,notice:null});
@@ -150,9 +159,9 @@ export function createDocumentStore(){
         finally{set({phase:'idle'});}
       },
       save:async(saveAs=false)=>{
-        const s=get();if(!s.document||s.phase!=='idle')return false;set({phase:'saving',error:null,notice:null});
+        const s=get();if(!s.document||s.phase!=='idle')return false;if(!saveAs&&s.token&&!documentDirty(s)){set({notice:'内容未修改，本次未重写文件。',error:null});return true;}set({phase:'saving',error:null,notice:null});
         try{
-          const markdown=serializeDocument(s.document),references=new Set([...markdown.matchAll(/\]\(assets\/(researchclip-[a-f0-9]{32}\.png)\)/g)].map(match=>match[1]));
+          const markdown=serializeDocument(s.document),references=new Set([...markdown.matchAll(/\]\(assets\/(researchclip-[a-f0-9]{32}\.png)(?=[\s)])/g)].map(match=>match[1]));
           if([...references].some(name=>!s.assets[name]))throw new Error('Markdown 引用的本地图片缺失，请恢复图片或移除对应引用。');
           const assets=Object.fromEntries(Object.entries(s.assets).filter(([name])=>references.has(name)).map(([name,a])=>[name,a.blob]));
           const result=await saveDocumentFile(markdown,assets,s.token,saveAs,s.fileName??'untitled.md');if(!result){set({notice:'已取消保存；文档未改动。'});return false;}
