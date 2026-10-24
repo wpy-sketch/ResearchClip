@@ -29,3 +29,5 @@ describe('scoped shortcuts and literal search',()=>{
 });
 
 it('case folding retains original UTF-16 offsets when Unicode lowercase expands',()=>{expect(findText('İ甲 İ乙','乙',0)).toEqual({start:4,end:5});expect(replaceAllText('İ甲 İ乙','乙','新')).toEqual({text:'İ甲 İ新',count:1});});
+
+it('rejects oversized replacement before building a string and keeps literal input intact',()=>{const original='a'.repeat(160000);expect(()=>replaceAllText(original,'a','b'.repeat(4096))).toThrow('原文和撤销记录未改动');expect(original).toBe('a'.repeat(160000));expect(replaceAllText('aaa','a','')).toEqual({text:'',count:3});});

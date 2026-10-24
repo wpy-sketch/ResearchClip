@@ -1,3 +1,4 @@
+import {MAX_TEXT_BYTES} from './model';
 export type FormatAction='h1'|'h2'|'h3'|'h4'|'h5'|'h6'|'bold'|'italic'|'strike'|'highlight'|'bullet'|'ordered'|'task'|'quote'|'rule'|'link'|'table'|'code'|'codeBlock'|'math'|'mathBlock';
 export interface TextSelection {start:number;end:number}
 export interface TextChange extends TextSelection {text:string}
@@ -76,6 +77,6 @@ export function findText(text:string,query:string,from:number,matchCase=false):T
  return start<0?null:{start,end:start+query.length};
 }
 export function replaceAllText(text:string,query:string,value:string,matchCase=false):{text:string;count:number}{
- if(!query)return {text,count:0};const source=matchCase?text:fold(text),needle=matchCase?query:fold(query);let offset=0,count=0,result='';
+ if(!query)return {text,count:0};const source=matchCase?text:fold(text),needle=matchCase?query:fold(query);let matches=0;for(let at=source.indexOf(needle);at>=0;at=source.indexOf(needle,at+query.length))matches++;if(text.length+matches*(value.length-query.length)>MAX_TEXT_BYTES)throw new Error('替换后文档超过2 MiB，原文和撤销记录未改动。');let offset=0,count=0,result='';
  for(let at=source.indexOf(needle);at>=0;at=source.indexOf(needle,offset)){result+=text.slice(offset,at)+value;offset=at+query.length;count++;}return {text:result+text.slice(offset),count};
 }
