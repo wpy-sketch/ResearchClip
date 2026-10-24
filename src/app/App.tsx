@@ -48,6 +48,7 @@ export function App() {
   useEffect(() => { void initialize(); }, [initialize]);
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
+      if(event.defaultPrevented||event.isComposing||event.keyCode===229||(event.target instanceof Element&&event.target.closest('[data-markdown-panel]')))return;
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         useUiStore.getState().openSearch();

@@ -1,0 +1,82 @@
+import assert from 'node:assert/strict';
+import {spawn,execFileSync} from 'node:child_process';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {join,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import {setTimeout as delay} from 'node:timers/promises';
+import {chromium} from 'playwright-core';
+const root=dirname(dirname(fileURLToPath(import.meta.url))),id=process.argv[2];
+assert.match(id??'',/^[a-z0-9-]{1,60}$/);
+const out=join(root,'artifacts',`markdown-toolbar-native-${id}`),settings=join(out,'settings');
+await mkdir(out);await mkdir(settings);
+// This builder creates ONLY a new test workspace, from the unchanged published 001-011 migrations.
+// Controlled PNGs test storage/UI compatibility, never physical capture or real literature.
+const seed=String.raw`
+import json, sqlite3, struct, sys, zlib, hashlib
+from pathlib import Path
+repo=Path.cwd().resolve();out=Path(sys.argv[1]).resolve()
+assert out.is_relative_to(repo/'artifacts')
+w=out/'settings'/'workspace';w.mkdir();docs=out/'documents';docs.mkdir();(docs/'assets').mkdir()
+assert not (w/'researchclip.sqlite3').exists()
+c=sqlite3.connect(w/'researchclip.sqlite3')
+for i,sql in enumerate(sorted((repo/'src-tauri'/'migrations').glob('*.sql'))[:11],1):
+ c.executescript(sql.read_text(encoding='utf-8'));c.execute('PRAGMA user_version='+str(i));c.commit()
+shot='a'*32;doc='c'*32
+chunk=lambda t,b:struct.pack('>I',len(b))+t+b+struct.pack('>I',zlib.crc32(t+b)&0xffffffff)
+png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',32,24,8,6,0,0,0))+chunk(b'IDAT',zlib.compress((b'\0'+bytes([20,40,80,255])*32)*24))+chunk(b'IEND',b'')
+for folder in ['originals','thumbnails']:
+ (w/folder).mkdir();(w/folder/(shot+'.png')).write_bytes(png)
+annotation=json.dumps({'schemaVersion':1,'image':{'widthPx':32,'heightPx':24},'objects':[]},ensure_ascii=False)
+c.execute('INSERT INTO screenshots(id,title,original_image_path,thumbnail_path,annotation_data,width_px,height_px,created_at,updated_at) VALUES(?,?,?,?,?,32,24,1,1)',(shot,'升级前素材','originals/'+shot+'.png','thumbnails/'+shot+'.png',annotation))
+c.execute('INSERT INTO notes VALUES(?,?,?,NULL,1,1,1)',('d'*32,shot,'旧笔记必须保留'))
+asset='researchclip-'+'e'*32+'.png';(docs/'assets'/asset).write_bytes(png)
+link='[旧截图链接](researchclip://screenshot/'+shot+')';body='# 旧研究记录\n\n'+link+'\n\n![旧图](assets/'+asset+')\n';path=docs/'旧研究记录.md';path.write_text(body,encoding='utf-8',newline='')
+c.execute('INSERT INTO markdown_documents VALUES(?,?,?,NULL,1,1)',(doc,'\\\\?\\'+str(path),'旧研究记录.md'))
+start=body.index(link);c.execute("INSERT INTO link_index VALUES(?,?,'screenshot',?,?,3,'旧截图链接',1,NULL)",(doc,shot,start,start+len(link)))
+other=docs/'对照记录.md';other.write_text('# 对照记录\n\nIndependent B\n',encoding='utf-8',newline='')
+c.execute('INSERT INTO markdown_documents VALUES(?,?,?,NULL,1,1)',('f'*32,'\\\\?\\'+str(other),'对照记录.md'))
+title='图文格式练习';block='e'*32;caption='图片下面的中文注释';imagebody='![练习图](assets/'+asset+')\n\n'+caption
+head=lambda kind,value:'<!-- ResearchClip:'+kind+' '+json.dumps(value,ensure_ascii=False,separators=(',',':'))+' -->\n'
+structured=head('document',{'version':1,'id':'8'*32,'title':title})+'# '+title+'\n\n'+head('block',{'id':block,'type':'image','assetName':asset,'sourceScreenshotId':shot,'alt':'练习图','length':len(imagebody)})+imagebody+'\n<!-- ResearchClip:end -->\n\n'
+sp=docs/'图文格式练习.md';sp.write_text(structured,encoding='utf-8',newline='')
+c.execute('INSERT INTO markdown_documents VALUES(?,?,?,NULL,1,1)',('9'*32,'\\\\?\\'+str(sp),'图文格式练习.md'))
+c.commit();c.close()
+(out/'fixture.json').write_text(json.dumps({'shot':shot,'doc':doc,'markdown':body,'pngHash':hashlib.sha256(png).hexdigest(),'mdHash':hashlib.sha256(body.encode()).hexdigest()},ensure_ascii=False),encoding='utf-8')
+`;
+execFileSync('python',['-c',seed,out],{cwd:root,windowsHide:true,stdio:'pipe'});
+await writeFile(join(settings,'settings.json'),JSON.stringify({schemaVersion:1,theme:'dark',viewMode:'grid',fontFamily:'system',fontSize:16,captureShortcut:'Ctrl+Alt+Shift+F7',fullscreenShortcut:'Ctrl+Alt+Shift+F8',saveDirectory:null,closeToTray:false}));
+// The existing v11 Rust service stores canonical Windows verbatim paths; the fixture uses that same form.
+const fixture=JSON.parse(await readFile(join(out,'fixture.json'),'utf8'));
+const report={mode:'actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access',checks:[],errors:[]};
+let app,browser,page;
+async function until(fn,name,ms=25000){let last;const start=Date.now();while(Date.now()-start<ms){try{const v=await fn();if(v)return v;}catch(e){last=e;}await delay(120);}throw Error(`Timed out ${name}: ${last?.message??''}`);}
+const call=(name,args)=>page.evaluate(async({name,args})=>{try{return await window.__TAURI_INTERNALS__.invoke(name,args);}catch(e){throw Error(e?.message??String(e));}},{name,args});
+const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+async function launch(){
+ assert.equal(await fetch('http://127.0.0.1:9403/json/version').then(()=>true).catch(()=>false),false,'test CDP port must be free');
+ app=spawn(join(root,'src-tauri/target/debug/researchclip.exe'),[],{cwd:root,windowsHide:true,stdio:['ignore','pipe','pipe'],env:{...process.env,RESEARCHCLIP_TEST_SETTINGS_DIR:settings,WEBVIEW2_USER_DATA_FOLDER:join(out,'profile'),WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS:'--remote-debugging-port=9403 --remote-debugging-address=127.0.0.1'}});
+ app.stderr.on('data',data=>{for(const line of data.toString().trim().split('\n'))if(line)report.errors.push(line);});
+ await until(()=>fetch('http://127.0.0.1:9403/json/version').then(r=>r.ok).catch(()=>false),'native startup');browser=await chromium.connectOverCDP('http://127.0.0.1:9403');
+ page=await until(()=>browser.contexts().flatMap(c=>c.pages()).find(p=>p.url().includes('tauri')&&!p.url().includes('captureOverlay')),'main WebView');page.on('pageerror',e=>report.errors.push(e.message));await page.setViewportSize({width:1440,height:1000});
+ report.startup = await call('library_status');
+ await page.getByRole('button',{name:'截图素材',exact:true}).click();
+ await page.locator(`[data-screenshot-id="${fixture.shot}"]`).waitFor();
+}
+async function quit(){await call('desktop_action',{action:'exit'});await until(()=>app.exitCode!==null,'native graceful exit');assert.equal(app.exitCode,0);await browser.close();browser=null;app=null;await until(()=>fetch('http://127.0.0.1:9403/json/version').then(()=>false).catch(()=>true),'CDP cleanup');}
+
+async function open(title){await page.keyboard.press('Control+Shift+p');await page.getByRole('option').filter({hasText:'打开最近文档'}).click();await page.getByRole('dialog',{name:'打开最近文档',exact:true}).getByRole('button').filter({hasText:title}).click();await page.locator('.markdown-panel-header').filter({hasText:title}).waitFor();return page.locator('[data-markdown-panel]').filter({has:page.locator('.markdown-panel-header').filter({hasText:title})});}
+async function select(input,start,end){await input.evaluate((node,{start,end})=>{node.focus();node.setSelectionRange(start,end);node.dispatchEvent(new Event('select',{bubbles:true}));},{start,end});await delay(100);}
+try{
+ await launch();assert.equal(await page.locator('[data-markdown-panel]').count(),0);const a=await open('旧研究记录.md'),input=a.getByRole('textbox',{name:'Markdown 源文',exact:true}),tools=a.getByRole('toolbar',{name:'Markdown 格式工具栏',exact:true});
+ await input.fill('前缀中文后缀');await select(input,2,4);await a.getByRole('toolbar',{name:'选区浮动工具栏',exact:true}).getByRole('button',{name:'选区粗体',exact:true}).click();await until(()=>input.evaluate(n=>n.value==='前缀**中文**后缀'&&n.selectionStart===4&&n.selectionEnd===6&&document.activeElement===n),'selected native bold');assert.equal(await tools.getByRole('button',{name:'粗体',exact:true}).getAttribute('aria-pressed'),'true');await page.screenshot({path:join(out,'native-selection.png')});await input.press('Control+z');assert.equal(await input.inputValue(),'前缀中文后缀');await input.press('Control+y');assert.equal(await input.inputValue(),'前缀**中文**后缀');report.checks.push('actual native WebView selection-only floating bold, focus/caret restoration, active state and existing undo/redo pass');
+ await input.fill('科研链接');await select(input,0,4);await input.press('Control+k');await a.getByLabel('链接地址',{exact:true}).fill('https://example.org/research');await a.getByRole('button',{name:'插入链接',exact:true}).click();await until(()=>input.inputValue().then(t=>t==='[科研链接](https://example.org/research)'),'native link');assert.equal(await page.locator('.quick-search').count(),0);await input.press('Control+s');await until(()=>a.locator('.markdown-panel-header [role=status]').innerText().then(t=>t==='已保存'),'native source save');assert.equal(await readFile(join(out,'documents','旧研究记录.md'),'utf8'),'[科研链接](https://example.org/research)');report.checks.push('scoped native Ctrl+K avoids global search, original Rust file save writes exact ordinary UTF-8 .md');
+ await input.fill('甲\n乙\n尾');await select(input,0,4);await tools.getByRole('button',{name:'任务列表',exact:true}).click();assert.equal(await input.inputValue(),'- [ ] 甲\n- [ ] 乙\n尾');await input.press('Control+z');assert.equal(await input.inputValue(),'甲\n乙\n尾');await select(input,0,0);await input.press('Control+h');await a.getByLabel('查找文本',{exact:true}).fill('甲');await a.getByLabel('替换文本',{exact:true}).fill('中文');await a.getByRole('button',{name:'全部替换',exact:true}).click();assert.equal(await input.inputValue(),'中文\n乙\n尾');await input.press('Control+z');assert.equal(await input.inputValue(),'甲\n乙\n尾');await a.getByRole('button',{name:'关闭查找替换',exact:true}).click();report.checks.push('native multiline task formatting and literal replacement use one undo step each');
+ await input.fill('输入法');await select(input,0,3);await input.evaluate(n=>n.dispatchEvent(new CompositionEvent('compositionstart',{bubbles:true,data:'中'})));await input.press('Control+b');assert.equal(await input.inputValue(),'输入法');await input.evaluate(n=>n.dispatchEvent(new CompositionEvent('compositionend',{bubbles:true,data:'中'})));await input.press('Control+i');await until(()=>input.inputValue().then(t=>t==='*输入法*'),'native composition end');report.checks.push('synthetic composition in actual WebView suppresses editor shortcuts; physical Windows IME acceptance still manual');
+ await input.fill('# 工具栏练习\n\n~~删除~~ ==高亮==\n\n| 一 | 二 |\n| --- | --- |\n| 中 | 文 |\n\n- [x] 完成\n\n$x^2$');await a.getByRole('button',{name:'预览 Markdown',exact:true}).click();assert.equal(await a.locator('mark').innerText(),'高亮');assert.equal(await a.locator('table').count(),1);assert.equal(await a.locator('input[type=checkbox][disabled]').count(),1);await a.getByRole('button',{name:'继续编辑',exact:true}).click();await select(input,11,13);await page.screenshot({path:join(out,'native-toolbar.png')});await input.press('Control+s');await until(()=>a.locator('.markdown-panel-header [role=status]').innerText().then(t=>t==='已保存'),'native preview source save');const expectedSource=await input.inputValue();report.checks.push('actual native safe GFM/highlight/math preview and source toggle preserve source and explicit save');
+ const b=await open('图文格式练习.md'),caption=b.getByRole('textbox',{name:'图片注释 1',exact:true}),btools=b.getByRole('toolbar',{name:'Markdown 格式工具栏',exact:true});await caption.waitFor();assert.equal(await b.locator('[data-block-id]').count(),1);assert.equal(await b.locator('[data-block-id] img').count(),1);await select(caption,5,7);await btools.getByRole('button',{name:'粗体',exact:true}).click();await until(()=>caption.inputValue().then(t=>t==='图片下面的**中文**注释'),'caption bold');await caption.press('Control+z');assert.equal(await caption.inputValue(),'图片下面的中文注释');await caption.press('Control+Shift+z');assert.equal(await caption.inputValue(),'图片下面的**中文**注释');await caption.press('Control+s');await until(()=>b.locator('.markdown-panel-header [role=status]').innerText().then(t=>t==='已保存'),'structured save');const structured=await readFile(join(out,'documents','图文格式练习.md'),'utf8');assert.ok(structured.includes('<!-- ResearchClip:document '));assert.ok(structured.includes('"sourceScreenshotId":"'+fixture.shot+'"'));assert.ok(structured.indexOf('![练习图]')<structured.indexOf('图片下面的**中文**注释'));assert.equal(digest(await readFile(join(out,'documents','assets','researchclip-'+'e'.repeat(32)+'.png'))),fixture.pngHash);report.checks.push('original structured image caption formats/undoes/redoes/saves without conversion, retaining block IDs, screenshot link, image-before-caption and exact asset bytes');
+ await btools.getByRole('button',{name:'图片',exact:true}).click();const picker=page.getByRole('dialog',{name:'从素材库添加图片',exact:true});await picker.getByRole('checkbox',{name:'添加图片 升级前素材',exact:true}).check();await picker.getByRole('button',{name:'添加所选 1 张',exact:true}).click();const secondCaption=b.getByRole('textbox',{name:'图片注释 2',exact:true});await secondCaption.waitFor();await secondCaption.fill('删除练习注释');await select(secondCaption,0,2);await btools.getByRole('button',{name:'粗体',exact:true}).click();await b.getByRole('button',{name:'删除内容块 2',exact:true}).click();assert.equal(await b.locator('[data-block-id] img').count(),1);assert.equal(await caption.inputValue(),'图片下面的**中文**注释');assert.equal(await btools.getByRole('button',{name:'工具栏撤销',exact:true}).isDisabled(),true);assert.equal(await btools.getByRole('button',{name:'工具栏重做',exact:true}).isDisabled(),true);assert.equal(digest(await readFile(join(out,'documents','assets','researchclip-'+'e'.repeat(32)+'.png'))),fixture.pngHash);await caption.press('Control+s');await until(()=>b.locator('.markdown-panel-header [role=status]').innerText().then(t=>t==='已保存'),'save after structural test');report.checks.push('existing image picker inserts a managed image; deleting its edited caption block clears stale text history and preserves the first image and exact asset');
+ await page.getByRole('button',{name:'向下拆分当前面板',exact:true}).click();await delay(180);for(const width of [480,760,1440]){await page.setViewportSize({width,height:850});await delay(120);const bounds=await btools.evaluate(n=>({right:n.getBoundingClientRect().right,width:innerWidth,scroll:document.documentElement.scrollWidth}));assert.ok(bounds.right<=bounds.width+1&&bounds.scroll<=bounds.width+1,JSON.stringify(bounds));}report.checks.push('native split editors and toolbar remain contained at 480/760/1440 widths; CSS browser scale matrix is recorded separately');
+ await quit();await launch();assert.equal(await page.locator('[data-markdown-panel]').count(),0);const reopened=await open('图文格式练习.md');assert.equal(await reopened.getByRole('textbox',{name:'图片注释 1',exact:true}).inputValue(),'图片下面的**中文**注释');const reopenedSource=await open('旧研究记录.md');assert.equal(await reopenedSource.getByRole('textbox',{name:'Markdown 源文',exact:true}).inputValue(),expectedSource);await quit();const savedSettings=JSON.parse(await readFile(join(settings,'settings.json'),'utf8'));assert.equal(savedSettings.captureShortcut,'Ctrl+Alt+Shift+F7');assert.equal(savedSettings.fullscreenShortcut,'Ctrl+Alt+Shift+F8');assert.equal(digest(await readFile(join(settings,'workspace','originals',`${fixture.shot}.png`))),fixture.pngHash);assert.deepEqual(report.errors,[]);report.checks.push('real process restart reopens exact source/caption data; original PNG and configured global capture shortcuts remain unchanged');report.result='PASS';
+}catch(e){report.result='FAIL';report.failure=e.stack;process.exitCode=1;if(page&&!page.isClosed())await page.screenshot({path:join(out,'failure.png')}).catch(()=>{});}
+finally{if(browser)await browser.close().catch(()=>{});if(app&&app.exitCode===null)app.kill();await writeFile(join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));}

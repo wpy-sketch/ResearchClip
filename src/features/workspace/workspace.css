@@ -17,7 +17,7 @@
 .workspace-open-editor-hint{padding:24px;font-size:.85rem;color:var(--rc-muted)}
 @container (max-width:700px){.workspace-layout-tools{padding:5px;gap:3px}.workspace-picker{max-width:170px}.workspace-picker select{max-width:120px}.workspace-tool-divider{display:none}.workspace-zoom{margin-left:0}.workspace-layout-message{flex-wrap:wrap}.research-panel .markdown-action-label,.research-panel .document-action-label{display:none}.research-panel .markdown-preview-options{flex-wrap:wrap}}
 @media(max-width:900px){.app-sidebar{width:180px;padding-inline:8px}.sidebar-create{padding-inline:12px;margin-inline:0}.app-toolbar{padding-inline:12px}.toolbar-utilities{gap:3px}}
-@media(max-width:650px){.app-sidebar{width:156px;padding-inline:5px}.nav-button{padding-inline:10px;gap:8px}.workspace-footer{font-size:.64rem;padding-inline:8px}.workspace-footer>span:last-child{display:none}}
+@media(max-width:650px){.app-sidebar{width:76px;padding-inline:5px}.nav-button{padding-inline:10px;gap:8px}.workspace-footer{font-size:.64rem;padding-inline:8px}.workspace-footer>span:last-child{display:none}}
 @media(max-height:600px){.workspace-layout-tools{padding-block:3px}.workspace-layout-message{max-height:65px;overflow:auto}.research-panel .markdown-panel-actions{padding-block:3px}.research-panel .editor-heading{padding-block:6px}}
 
 /* Each dock pane responds to its own size, including a tall window split into short panes. */

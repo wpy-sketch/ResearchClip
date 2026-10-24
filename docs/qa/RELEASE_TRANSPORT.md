@@ -13,3 +13,5 @@ v4.1.3只继承前版235个不冲突的附件，按冻结237附件快照验证�
 官方依据：[Release二进制下载](https://docs.github.com/en/rest/releases/assets)、[Actions最小权限与不可信输入](https://docs.github.com/en/actions/reference/security/secure-use)。
 
 首轮公开校验40076513062在SOURCE文本解析处失败：Windows发布文件使用CRLF，原检查仅接受LF；文件原字节SHA核对已成功。解析已改为逐行核对版本和精确提交，新增LF/CRLF及错误版本/提交拒绝测试，不更改附件字节或放宽摘要校验。失败记录保留，重跑结果另行记录。
+
+实际结果：重建/补传工作流40075692657成功；237项匿名下载工作流40076703895成功。本地接收器与冻结237项清单逐项匹配、发布器旧31版226附件终审均退出0。完整运行环境和摘要见[发布回执](PUBLICATION-4.1.2.md)。

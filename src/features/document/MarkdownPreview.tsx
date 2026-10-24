@@ -1,3 +1,5 @@
+import remarkGfm from 'remark-gfm';
+import {remarkHighlight} from './highlight';
 import Markdown,{defaultUrlTransform} from 'react-markdown';
 import {internalTarget,type Target} from '../links/model';
 import remarkMath from 'remark-math';
@@ -17,5 +19,5 @@ export function MarkdownPreview({markdown,assets,guideImages=emptyGuideImages,on
     a:({children,href})=>{const target=href?internalTarget(href):null;return target&&onInternalOpen?<button type="button" className="internal-link" title="打开内部引用" onClick={()=>onInternalOpen(target)}>{children}</button>:<span className="underline">{children}</span>;},
     img:({src,alt})=>{const name=src?.startsWith('assets/')?src.slice(7):'',asset=assetNameValid(name)?assets[name]:undefined,url=asset?.url??(src&&Object.hasOwn(guideImages,src)?guideImages[src]:undefined);return url?(onImageOpen?<button className="guide-image-open" aria-label={`放大图片：${alt??'操作图示'}`} onClick={()=>onImageOpen(url,alt??'操作图示')}><img src={url} alt={alt??''} loading="lazy"/></button>:<img src={url} alt={alt??''} loading="lazy"/>):<span className="text-muted">[图片不可预览：{alt??'外部或缺失资源'}]</span>;}
   }),[assets,guideImages,onImageOpen,onInternalOpen]);
-  return <section className="document-preview rounded-xl border border-edge p-5" aria-label="Markdown 实时预览"><Markdown skipHtml urlTransform={url=>internalTarget(url)?url:defaultUrlTransform(url)} remarkPlugins={[remarkMath,mathBudget]} components={components}>{markdown}</Markdown></section>;
+  return <section className="document-preview rounded-xl border border-edge p-5" aria-label="Markdown 实时预览"><Markdown skipHtml urlTransform={url=>internalTarget(url)?url:defaultUrlTransform(url)} remarkPlugins={[remarkMath,remarkGfm,remarkHighlight,mathBudget]} components={components}>{markdown}</Markdown></section>;
 }

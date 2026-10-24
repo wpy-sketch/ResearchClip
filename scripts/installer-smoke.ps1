@@ -104,6 +104,10 @@ try {
   $report.installedPayloadSha256 = $expectedHash
   Assert-Check ((Get-FileHash -LiteralPath $installedExe -Algorithm SHA256).Hash -eq $expectedHash) 'Installed executable differs from bundled executable.'
   # Read PE resources in a short-lived process: icon/version APIs can retain image mappings.
+  if ([Version]$version -ge [Version]'4.1.3') {
+    $markdownNotice = Join-Path $installRoot 'licenses/remark-gfm-NOTICES.txt'
+    Assert-Check ((Test-Path -LiteralPath $markdownNotice) -and ((Get-FileHash -LiteralPath $markdownNotice -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath (Join-Path $projectRoot 'docs/licenses/remark-gfm-NOTICES.txt') -Algorithm SHA256).Hash)) 'Installed Markdown notices missing or changed.'
+  }
   if ([Version]$version -ge [Version]'4.1.1') {
     $notice = Join-Path $installRoot 'licenses/flexlayout-react-MIT.txt'
     Assert-Check ((Test-Path -LiteralPath $notice) -and ((Get-FileHash -LiteralPath $notice -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath (Join-Path $projectRoot 'docs/licenses/flexlayout-react-MIT.txt') -Algorithm SHA256).Hash)) 'Installed FlexLayout MIT notice missing or changed.'

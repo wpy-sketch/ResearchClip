@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "desktopVersion": "4.1.2",
+  "desktopVersion": "4.1.3",
   "reuseFrom": "v3.1.3",
   "files": [
     {
@@ -470,10 +470,9 @@
     ]
   },
   "historicalAttachments": {
-    "throughVersion": "4.1.1",
-    "releases": 31,
-    "assets": 226,
-    "originalBytes": 4117989169,
+    "throughVersion": "4.1.2",
+    "releases": 32,
+    "assets": 463,
     "archive": {
       "name": "ResearchClip-History-through-v4.1.1.zip",
       "size": 3728704762,
@@ -482,6 +481,13 @@
     "volumes": 223,
     "transport": "HISTORY-TRANSPORT.json",
     "contents": "HISTORY-CONTENTS.json",
-    "assembler": "Assemble-Release-History.ps1"
+    "assembler": "Assemble-Release-History.ps1",
+    "archiveThroughVersion": "4.1.1",
+    "baseArchiveOriginalAssets": 226,
+    "baseArchiveReleases": 31,
+    "baseArchiveOriginalBytes": 4117989169,
+    "inventory": "V413-HISTORY-INVENTORY.json",
+    "previousMetadata": "ResearchClip-v4.1.2-Release-Metadata.zip",
+    "readme": "RELEASE-HISTORY-v4.1.3.txt"
   }
 }

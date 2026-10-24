@@ -1,12 +1,14 @@
 # ResearchClip Research IDE 分阶段升级路线
 
-本轮交付状态：Step00五份审查/规划/基线文档已完成；Step01数据访问层与schema12已完成并通过隔离旧库Windows演练，详见[资源模型](architecture/RESOURCE_MODEL.md)和[实际验收](qa/RESOURCE_MODEL_STEP01.md)。Step02工作区已实现，见[工作台架构](architecture/WORKSPACE_SYSTEM.md)；实际使用版本1本地布局记录，SQLite保持12，无需原提案schema13布局表。v4.1.1已正式发布；Step03框架和少量示例已实现，见[命令架构](architecture/COMMAND_SYSTEM.md)与[本轮验收](qa/COMMAND_SYSTEM_STEP03.md)。本轮停止于Step03，其余阶段未实施。下文迁移排期以Step00的schema11起点描述，schema12现已落地。
+本轮交付状态：Step00五份审查/规划/基线文档已完成；Step01数据访问层与schema12已完成并通过隔离旧库Windows演练，详见[资源模型](architecture/RESOURCE_MODEL.md)和[实际验收](qa/RESOURCE_MODEL_STEP01.md)。Step02工作区已实现，见[工作台架构](architecture/WORKSPACE_SYSTEM.md)；实际使用版本1本地布局记录，SQLite保持12，无需原提案schema13布局表。v4.1.1已正式发布；Step03框架和少量示例已实现，见[命令架构](architecture/COMMAND_SYSTEM.md)与[本轮验收](qa/COMMAND_SYSTEM_STEP03.md)。随后用户明确授权v4.1.3现有Markdown工具栏增量，已实现并验证，见[工具栏架构](architecture/MARKDOWN_TOOLS.md)和[实际验收](qa/MARKDOWN_TOOLS_4.1.3.md)。该扩展不实施Zotero/PDF/IDE/Agent大型业务。下文迁移排期以Step00的schema11起点描述，schema12现已落地。
 
 日期：2026-10-23。Step 00完成调研后停止；未来阶段只有用户单独指定才实施。用户随后明确授权在Step 00完成后实施Step 01统一资源模型；这是当时的授权边界；用户随后明确授权Step02、再于v4.1.1发布后实施Step03，仍不授权Step04及其他业务集成。参见[现状](architecture/CURRENT_STATE.md)、[目标](architecture/TARGET_ARCHITECTURE.md)、[决策](architecture/TECHNOLOGY_DECISIONS.md)、[基线](qa/BASELINE_REPORT.md)。
 
 Markdown导出PDF、独立备份/恢复产品不在路线内。迁移前一致性快照和保存故障处理继续保留。
 
-## 1. 阶段依赖与退出门槛
+## 1. Step00原始路线的依赖与退出门槛
+
+以下保留最初规划编号，不能当成后续用户提示词的步骤编号：用户Step03实际指定统一命令框架，原路线中的Zotero阶段仍未实施。
 
 | 阶段 | 范围/依赖 | 验收条件 | 失败回退 |
 | --- | --- | --- | --- |

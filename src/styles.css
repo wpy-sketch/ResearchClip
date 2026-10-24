@@ -70,7 +70,7 @@
 }
 
 @layer base {
-  body { @apply m-0 min-w-[480px] bg-canvas text-primary text-sm; }
+  body { @apply m-0 min-w-0 bg-canvas text-primary text-sm; }
   button, input { font: inherit; }
   button { @apply cursor-pointer; }
   button:disabled { @apply cursor-not-allowed; }
