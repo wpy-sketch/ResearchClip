@@ -11,3 +11,5 @@ v4.1.3只继承前版235个不冲突的附件，按冻结237附件快照验证�
 工具脚本：scripts/github-release-transfer.py，配套本地重建/摘要拒绝/禁止覆盖测试。冻结配方和上传清单位于本目录evidence。原附件下载URL和ID均为公开Release记录；不包含用户资料或凭据。CI实际运行结果在后续发布凭据记录，本文本身不表示CI已经通过。
 
 官方依据：[Release二进制下载](https://docs.github.com/en/rest/releases/assets)、[Actions最小权限与不可信输入](https://docs.github.com/en/actions/reference/security/secure-use)。
+
+首轮公开校验40076513062在SOURCE文本解析处失败：Windows发布文件使用CRLF，原检查仅接受LF；文件原字节SHA核对已成功。解析已改为逐行核对版本和精确提交，新增LF/CRLF及错误版本/提交拒绝测试，不更改附件字节或放宽摘要校验。失败记录保留，重跑结果另行记录。

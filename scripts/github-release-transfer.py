@@ -7,6 +7,8 @@ ROOT=Path(__file__).resolve().parent.parent
 BASE='https://api.github.com/repos/wpy-sketch/ResearchClip'
 def sha(path):
  with path.open('rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
+def validate_source_receipt(source,tag,commit):
+ lines=source.decode('utf-8').splitlines();assert lines and lines[0]=='ResearchClip '+tag and 'Commit: '+commit in lines
 def reconstruct(recipe,output,load):
  assert recipe['schemaVersion']==1 and 0<recipe['archive']['size']<=5*1024**3 and len(recipe['segments'])<=1000
  assert sum(x['size'] for x in recipe['segments'])==recipe['archive']['size']
@@ -65,7 +67,7 @@ def main():
   assert set(checks)=={x['name'] for x in assets if x['name']!='SHA256SUMS.txt'}
   for item in assets:
    if item['name']!='SHA256SUMS.txt':assert item['digest']=='sha256:'+checks[item['name']]
-  source=anonymous(next(x for x in assets if x['name']=='SOURCE.txt'),True).decode('utf-8');assert source.startswith('ResearchClip '+tag+'\n') and '\nCommit: '+args.target_commit+'\n' in source
+  validate_source_receipt(anonymous(next(x for x in assets if x['name']=='SOURCE.txt'),True),tag,args.target_commit)
   if tag=='v4.1.2':
    frozen=json.loads((ROOT/'docs/qa/evidence/v412-upload-manifest.json').read_text(encoding='utf-8'));assert sorted((x['name'],x['size'],x['sha256']) for x in frozen['assets'])==sorted((x['name'],x['size'],x['digest'][7:]) for x in assets)
   results=[]
