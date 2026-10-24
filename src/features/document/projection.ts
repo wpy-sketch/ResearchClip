@@ -23,14 +23,15 @@ export function projectMarkdown(raw:string):SourceProjection{
  const nodes=fromMarkdown(raw.slice(body),{extensions:[math()],mdastExtensions:[mathFromMarkdown()]}).children;
  if(nodes.length>300)return fallback('超过300个可视块，保留整篇原文编辑，暂停块拖动。');
  const refs:string[]=[];
+ const tableNode=(node:typeof nodes[number])=>{if(node.type!=='paragraph')return false;const rows=raw.slice(body+(node.position?.start.offset??0),body+(node.position?.end.offset??0)).split(/\r\n|\n|\r/);if(rows.length<2||!rows[0].includes('|'))return false;const cells=rows[1].trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(c=>c.trim());return cells.length>0&&cells.every(c=>/^:?-{3,}:?$/.test(c));};
  for(let index=0;index<nodes.length;index++){
   const node=nodes[index],from=body+(node.position?.start.offset??0);let to=body+(node.position?.end.offset??0);
   const image=node.type==='paragraph'&&node.children.some(c=>c.type==='image'||c.type==='imageReference')&&node.children.every(c=>c.type==='image'||c.type==='imageReference'||c.type==='text'&&!c.value.trim());
   // Ordinary Markdown has no caption metadata: consecutive prose immediately below an
   // image belongs to its visible group. Lists/headings/code/math/another image end it.
-  if(image){while(index+1<nodes.length){const next=nodes[index+1];if(next.type!=='paragraph'||next.children.some(c=>c.type==='image'||c.type==='imageReference'))break;to=body+(next.position?.end.offset??0);index++;}}
+  if(image){while(index+1<nodes.length){const next=nodes[index+1];if(next.type!=='paragraph'||tableNode(next)||next.children.some(c=>c.type==='image'||c.type==='imageReference'))break;to=body+(next.position?.end.offset??0);index++;}}
   if(node.type==='definition')refs.push(raw.slice(from,to));
-  blocks.push({from,to,kind:image?'image':node.type,image,fixed:false});
+  blocks.push({from,to,kind:image?'image':tableNode(node)?'table':node.type,image,fixed:false});
  }
  if(!blocks.length)blocks.push({from:0,to:raw.length,kind:'paragraph',image:false,fixed:false});
  return {blocks,reason:null,references:refs.join('\n\n')};

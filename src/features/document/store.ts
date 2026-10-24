@@ -1,3 +1,4 @@
+import {withLegacyImageTitle} from './content-model';
 import {create} from 'zustand';
 import {createContext,useContext} from 'react';
 import {getScreenshot,getKnowledgeCard,screenshotImage} from '../../shared/api/library';
@@ -25,6 +26,7 @@ export interface DocumentState {
   phase:'idle'|'adding'|'saving'|'opening'|'renaming';error:string|null;notice:string|null;pending:DocumentAction|null;
   request:(action:DocumentAction)=>Promise<void>;resolvePending:(choice:'save'|'discard'|'cancel')=>Promise<void>;
   editTitle:(title:string)=>void;editBlock:(id:string,text:string,start?:number,end?:number)=>void;addText:(afterId?:string)=>void;move:(id:string,delta:-1|1)=>void;remove:(id:string)=>void;
+  editImage:(id:string,alt:string,title:string)=>boolean;duplicateImage:(id:string)=>boolean;
   addImages:(ids:string[])=>Promise<boolean>;insertImagesAt:(ids:string[],target:{documentId:string;blockId:string;from:number;to:number;expected:string})=>Promise<boolean>;reorderBlocks:(id:string,before:string|null,expected:string[])=>void;save:(saveAs?:boolean)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
 }
 export const documentDirty=(s:Pick<DocumentState,'document'|'savedFingerprint'>)=>Boolean(s.document&&(s.savedFingerprint===null||JSON.stringify(s.document)!==s.savedFingerprint));
@@ -104,7 +106,7 @@ export function createDocumentStore(){
         set({phase:'adding',error:null});let url:string|undefined;
         try{const {renderComposite}=await import('../editor/export');const blob=await renderComposite(session.image.blob,session.document);
           if(Object.values(s.assets).reduce((n,a)=>n+a.blob.size,blob.size)>MAX_ASSET_BYTES)throw new Error('文档图片合计超过128 MiB。');
-          const id=newId(),assetName=`researchclip-${id}.png`,block:ImageBlock={id,type:'image',assetName,sourceScreenshotId:session.image.libraryId??null,alt:session.image.name.slice(0,200),caption:''};
+          const id=newId(),assetName=`researchclip-${id}.png`,block:ImageBlock={id,type:'image',assetName,sourceScreenshotId:session.image.libraryId??null,alt:session.image.name.slice(0,200),caption:'注释：'};
           url=URL.createObjectURL(blob);const document=append(s.document,[block],s.caret);serializeDocument(document);
           set({document,...appendedHistory(s,document),assets:{...s.assets,[assetName]:{blob,url}},notice:'当前标注合成图已插入 Markdown，原图未改动。'});return true;
         }catch(error){if(url)URL.revokeObjectURL(url);set({error:errorMessage(error,'插入图片失败。')});return false;}finally{set({phase:'idle'});}
@@ -117,6 +119,8 @@ export function createDocumentStore(){
       addText:(afterId)=>change(doc=>{if(doc.blocks.length>=MAX_BLOCKS){set({error:'每份文档最多100个内容块。'});return doc;}const blocks=[...doc.blocks],index=afterId?blocks.findIndex(b=>b.id===afterId)+1:blocks.length;blocks.splice(index,0,{id:newId(),type:'text',markdown:''});return {...doc,blocks};}),
       move:(id,delta)=>change(doc=>moveBlock(doc,id,delta)),
       remove:(id)=>change(doc=>{const block=doc.blocks.find(b=>b.id===id);if(block?.type==='image'){const assets={...get().assets};if(assets[block.assetName])URL.revokeObjectURL(assets[block.assetName].url);delete assets[block.assetName];set({assets});}return {...doc,blocks:doc.blocks.filter(b=>b.id!==id)};}),
+      editImage:(id,alt,title)=>{const s=get(),doc=s.document,block=doc?.blocks.find(b=>b.id===id);if(!doc||doc.mode==='source'||s.phase!=='idle'||block?.type!=='image')return false;try{if(alt.length>200||/[\r\n\0]/.test(alt))throw new Error('图片替代文本限200字且不能换行。');const caption=withLegacyImageTitle(block.caption,title),document={...doc,blocks:doc.blocks.map(b=>b.id===id?{...block,alt,caption}:b)};serializeDocument(document);if(alt===block.alt&&caption===block.caption)return true;set({document,past:bounded([...s.past,{document:doc,caret:s.caret}]),future:[],error:null,notice:'图片属性已修改，可撤销；图题保存在可读注释中。'});return true;}catch(e){set({error:errorMessage(e,'图片属性修改失败，原内容保留。')});return false;}},
+      duplicateImage:(id)=>{const s=get(),doc=s.document,block=doc?.blocks.find(b=>b.id===id);if(!doc||doc.mode==='source'||s.phase!=='idle'||block?.type!=='image')return false;let url:string|undefined;try{const asset=s.assets[block.assetName];if(!asset)throw new Error('图片资源缺失，不能复制。');if(doc.blocks.length>=MAX_BLOCKS||Object.keys(s.assets).length>=MAX_IMAGES||Object.values(s.assets).reduce((n,a)=>n+a.blob.size,asset.blob.size)>MAX_ASSET_BYTES)throw new Error('复制超过文档资源预算，原内容保留。');const nextId=newId(),name=`researchclip-${nextId}.png`,copy={...block,id:nextId,assetName:name},blocks=[...doc.blocks];blocks.splice(blocks.findIndex(b=>b.id===id)+1,0,copy);const document={...doc,blocks};serializeDocument(document);url=URL.createObjectURL(asset.blob);set({document,assets:{...s.assets,[name]:{blob:asset.blob,url}},past:bounded([...s.past,{document:doc,caret:s.caret}]),future:[],error:null,notice:'已复制图片和整段注释，原图未改动，可撤销。'});return true;}catch(e){if(url)URL.revokeObjectURL(url);set({error:errorMessage(e,'复制图片失败，原内容保留。')});return false;}},
       addImages:async(ids)=>{
         const s=get();if(!s.document||s.phase!=='idle')return false;
         if(!ids.length||new Set(ids).size!==ids.length||ids.some(id=>!/^[a-f0-9]{32}$/.test(id))||s.document.blocks.length+ids.length>MAX_BLOCKS||Object.keys(s.assets).length+ids.length>MAX_IMAGES){set({error:'图片选择无效或超过32张图片/100块上限。'});return false;}
@@ -131,7 +135,7 @@ export function createDocumentStore(){
             const source=await screenshotImage(id),blob=await renderComposite(source,image.annotationData);
             size+=blob.size;if(size>MAX_ASSET_BYTES)throw new Error('文档图片合计超过128 MiB。');
             const blockId=newId(),name=`researchclip-${blockId}.png`,caption=useCardStore.getState().sessions[id]?.draft?.content??card.note?.content??'';
-            assets[name]={blob,url:URL.createObjectURL(blob)};blocks.push({id:blockId,type:'image',assetName:name,sourceScreenshotId:id,alt:image.title,caption:caption.replaceAll('\r\n','\n')});
+            assets[name]={blob,url:URL.createObjectURL(blob)};blocks.push({id:blockId,type:'image',assetName:name,sourceScreenshotId:id,alt:image.title,caption:caption.trim()?caption.replaceAll('\r\n','\n'):'注释：'});
           }
           const document=append(s.document,blocks,s.caret);serializeDocument(document);
           set({document,...appendedHistory(s,document),assets:{...s.assets,...assets},notice:`已添加 ${blocks.length} 张含标注的图片；注释为添加时的笔记快照。`});return true;
@@ -179,6 +183,8 @@ const liveDocuments=new Set<DocumentStore>([baseDocumentStore]);
 export const DocumentSessionContext=createContext<DocumentStore|null>(null);
 export function useDocumentApi(){const local=useContext(DocumentSessionContext),active=activeDocument(s=>s.store);return local??active;}
 export function focusDocumentStore(store:DocumentStore){liveDocuments.add(store);activeDocument.setState({store});}
+/** Capture a stable session owner before asynchronous work; active tabs may change. */
+export function getActiveDocumentStore(){return activeDocument.getState().store;}
 export function allDocumentStores(){return [...liveDocuments];}
 export function retainDocumentStore(store:DocumentStore){liveDocuments.add(store);}
 export function releaseDocumentStore(store:DocumentStore){liveDocuments.delete(store);if(activeDocument.getState().store===store)activeDocument.setState({store:liveDocuments.values().next().value??baseDocumentStore});}

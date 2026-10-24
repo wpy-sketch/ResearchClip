@@ -1,4 +1,4 @@
-> **v4.1.4 · Markdown保真编辑**：源码、近所见即所得、实时/只读预览、双向比例滚动、六种斜杠命令及图文整体拖动。原文为唯一权威；覆盖此前33版706个附件。见[本版说明](docs/RELEASE-NOTES-4.1.4.md)、[实际验收](docs/qa/MARKDOWN_STEP05.md)与[下载指南](docs/RELEASE-COMPONENTS.md)。
+> **v4.1.5 · Markdown高效内容编辑**：网格表格、图片图题/替代文本与整体操作、代码语言/高亮/复制/行号/折叠、最近格式和快捷插入，保持原文及受管assets。覆盖此前34版955个附件。见[本版说明](docs/RELEASE-NOTES-4.1.5.md)、[实际验收](docs/qa/MARKDOWN_STEP06.md)与[下载指南](docs/RELEASE-COMPONENTS.md)。
 
 <!-- Current delivery status -->
 > **历史v4.0.0 · 独立验收与界面完善**：修复语义任务状态竞争，改善缩放阅读和六条任务路线；保留A01–A13与完整配套组件。实际结果及未解决问题见 [高级功能验收报告](docs/qa/ADVANCED_FEATURE_REPORT.md)。
@@ -7,9 +7,9 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.4 Windows；发布与验收状态见本版记录**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.5 Windows；发布与验收状态见本版记录**。
 
-[GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.4正式发布回执](docs/qa/PUBLICATION-4.1.4.md) · [v4.1.4配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
+[GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.5发布检查](docs/qa/RELEASE-4.1.5.md) · [v4.1.5配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
 v3.1.2 新增 **本地相似图片检索**：主动生成原图特征索引，SHA完全重复组、可调整pHash/颜色距离与双图人工比较，不自动删除。可选Qwen3.5 4B随完整离线分卷包提供；轻量NSIS不含数GB模型。模型可能出错或截断，只作辅助。[算法与离线包](docs/SIMILARITY.md) · [本版变更](docs/RELEASE-NOTES-3.1.2.md) · [实际验收](docs/qa/RELEASE-3.1.2.md)。
 

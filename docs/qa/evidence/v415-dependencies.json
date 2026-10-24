@@ -1,0 +1,19 @@
+{
+  "result": "PASS",
+  "officialRegistry": "https://registry.npmjs.org",
+  "newPackages": {
+    "lowlight": {
+      "version": "3.3.0",
+      "license": "MIT",
+      "integrity": "sha512-0JNhgFoPvP6U6lE/UdVsSq99tn6DhjjpAj5MxG49ewd2mOBVtwWYIT8ClyABhq198aXXODMU6Ox8DrGy/CpTZQ=="
+    },
+    "highlight.js": {
+      "version": "11.11.2",
+      "license": "BSD-3-Clause",
+      "integrity": "sha512-oaXMACAU0kzOMXBjWpNcX+vlwSBCIAiZ9BHa7gA15NOTtT2L/l8OSZDuqS2XppOhZBPJ7hm4o8ep2kyuip2uEQ=="
+    }
+  },
+  "existingVersionsUnchanged": true,
+  "cleanInstall": "npm ci --ignore-scripts, exit0",
+  "licenses": "docs/licenses/lowlight-NOTICES.txt contains both actual installed license texts"
+}

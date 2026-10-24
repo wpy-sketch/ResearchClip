@@ -1,7 +1,7 @@
 """Accept only a successful trusted CI run whose anonymous bytes match the local manifest."""
 import argparse,hashlib,json,os,re,subprocess,urllib.request,urllib.error,urllib.parse
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument('version',choices=['4.1.2','4.1.3','4.1.4']);p.add_argument('run',type=int);p.add_argument('job',type=int);a=p.parse_args();root=Path(__file__).resolve().parent.parent
+p=argparse.ArgumentParser();p.add_argument('version',choices=['4.1.2','4.1.3','4.1.4','4.1.5']);p.add_argument('run',type=int);p.add_argument('job',type=int);a=p.parse_args();root=Path(__file__).resolve().parent.parent
 out=root/('artifacts/publish-v'+a.version.replace('.',''));manifest=json.loads((out/'manifest.json').read_text(encoding='utf-8'));publication=json.loads((out/'publication.json').read_text(encoding='utf-8'));assert publication.get('published') and manifest['commit']==publication['commit']
 c=subprocess.run(['git','-c','credential.interactive=false','credential','fill'],input='protocol=https\nhost=github.com\n\n',text=True,capture_output=True,check=True).stdout;token=dict(x.split('=',1) for x in c.splitlines() if '=' in x)['password'];base='https://api.github.com/repos/wpy-sketch/ResearchClip'
 class NoRedirect(urllib.request.HTTPRedirectHandler):
