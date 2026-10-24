@@ -47,7 +47,7 @@ def read_assets(request,base,release_id):
     return result
 
 def transfers(expected,existing,upload,workers=4):
-    assert 1<=workers<=4 and len(expected)<=1000
+    assert 1<=workers<=8 and len(expected)<=1000
     names=set()
     for item in expected:
         name=item['name'];assert PurePosixPath(name).name==name and '\\' not in name and ':' not in name and name not in ('.','..') and re.fullmatch(r'[a-f0-9]{64}',item['sha256']) and item['size']>0
@@ -66,3 +66,7 @@ def transfers(expected,existing,upload,workers=4):
         except BaseException:
             for future in futures:future.cancel()
             raise
+
+
+def interrupted_upload(expected,actual,owned_draft):
+    return bool(owned_draft and actual['name']==expected['name'] and actual['state']=='starter' and actual['size'] in (0,expected['size']) and actual.get('digest') is None)

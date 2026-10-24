@@ -1,5 +1,5 @@
 import threading,time,unittest
-from release_asset_io import read_assets,transfers
+from release_asset_io import read_assets,transfers,interrupted_upload
 def expected(n):return {'name':f'file{n}.zip','size':10,'sha256':'a'*64}
 def actual(item):return {'name':item['name'],'state':'uploaded','size':item['size'],'digest':'sha256:'+item['sha256']}
 class ReleaseTransferTests(unittest.TestCase):
@@ -25,7 +25,13 @@ class ReleaseTransferTests(unittest.TestCase):
    time.sleep(.03)
    with lock:state['active']-=1
    return actual(item)
-  self.assertEqual(len(list(transfers([expected(i) for i in range(12)],[],upload,workers=4))),12);self.assertLessEqual(state['peak'],4);self.assertGreater(state['peak'],1)
+  self.assertEqual(len(list(transfers([expected(i) for i in range(12)],[],upload,workers=8))),12);self.assertLessEqual(state['peak'],8);self.assertGreater(state['peak'],1)
+ def test_rejects_excessive_concurrency(self):
+  with self.assertRaises(AssertionError):list(transfers([expected(1)],[],lambda _:self.fail('upload started'),workers=9))
+ def test_incomplete_cleanup_is_only_for_owned_draft_expected_name_and_size(self):
+  e=expected(1);a={**actual(e),'state':'starter','digest':None}
+  self.assertTrue(interrupted_upload(e,a,True))
+  for changed,owned in [({**a,'size':11},True),({**a,'name':'unknown'},True),({**a,'digest':'sha256:'+e['sha256']},True),(actual(e),True),(a,False)]:self.assertFalse(interrupted_upload(e,changed,owned))
  def test_pages_release_assets_beyond_first_hundred(self):
   pages=[]
   def request(url):
