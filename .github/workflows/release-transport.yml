@@ -4,7 +4,7 @@ on:
     inputs:
       mode:
         type: choice
-        options: [reconstruct412, inherit413]
+        options: [reconstruct412, inherit413, verify412, verify413]
         required: true
       target_release:
         type: string
@@ -19,6 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   transport:
+    if: inputs.mode == 'reconstruct412' || inputs.mode == 'inherit413'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
@@ -35,6 +36,30 @@ jobs:
           git fetch --depth=1 origin "$SOURCE_SHA"
           git checkout --detach FETCH_HEAD
       - name: Verify bytes and fill the authorized draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TRANSFER_MODE: ${{ inputs.mode }}
+          TARGET_RELEASE: ${{ inputs.target_release }}
+          TARGET_COMMIT: ${{ inputs.target_commit }}
+        run: python3 scripts/github-release-transfer.py "$TRANSFER_MODE" --target-release "$TARGET_RELEASE" --target-commit "$TARGET_COMMIT" --run-id "ci-${{ github.run_id }}"
+  public-verification:
+    if: inputs.mode == 'verify412' || inputs.mode == 'verify413'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Fetch exact trusted repository commit
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_SHA" =~ ^[a-f0-9]{40}$ ]]
+          git init .
+          git remote add origin https://github.com/wpy-sketch/ResearchClip.git
+          git fetch --depth=1 origin "$SOURCE_SHA"
+          git checkout --detach FETCH_HEAD
+      - name: Verify every public asset without download authorization
         env:
           GH_TOKEN: ${{ github.token }}
           TRANSFER_MODE: ${{ inputs.mode }}

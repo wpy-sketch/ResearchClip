@@ -29,7 +29,7 @@ def reconstruct(recipe,output,load):
    print('Reconstructed segment',target.tell(),'/',recipe['archive']['size'],flush=True)
  assert output.stat().st_size==recipe['archive']['size'] and sha(output)==recipe['archive']['sha256'],'Exact archive digest differs'
 def main():
- p=argparse.ArgumentParser();p.add_argument('mode',choices=['local-reconstruct','reconstruct412','inherit413']);p.add_argument('--target-release',type=int);p.add_argument('--target-commit');p.add_argument('--run-id',default='ci');args=p.parse_args();assert re.fullmatch('[a-z0-9-]{1,60}',args.run_id)
+ p=argparse.ArgumentParser();p.add_argument('mode',choices=['local-reconstruct','reconstruct412','inherit413','verify412','verify413']);p.add_argument('--target-release',type=int);p.add_argument('--target-commit');p.add_argument('--run-id',default='ci');args=p.parse_args();assert re.fullmatch('[a-z0-9-]{1,60}',args.run_id)
  recipe=json.loads((ROOT/'docs/qa/evidence/v412-archive-recipe.json').read_text(encoding='utf-8'));out=ROOT/'artifacts'/('release-transport-'+args.run_id);out.mkdir(parents=True)
  if args.mode=='local-reconstruct':
   reconstruct(recipe,out/'history.zip',lambda item:ROOT/'artifacts/history-assets'/item['sha256']);print('PASS exact local archive');return
@@ -44,9 +44,39 @@ def main():
   try:
    with opener.open(req,timeout=300) as response:body=response.read();return json.loads(body) if body else None
   except urllib.error.HTTPError as error:raise RuntimeError('GitHub '+method+' HTTP '+str(error.code)) from None
- release=request(BASE+'/releases/'+str(args.target_release));tag='v4.1.2' if args.mode=='reconstruct412' else 'v4.1.3'
- assert release['draft'] and not release['prerelease'] and release['tag_name']==tag and release['target_commitish']==args.target_commit,'Only the exact authorized draft is writable'
+ release=request(BASE+'/releases/'+str(args.target_release));tag='v4.1.2' if args.mode.endswith('412') else 'v4.1.3'
  assert request(BASE+'/git/ref/tags/'+tag)['object']['sha']==args.target_commit
+ assert not release['prerelease'] and release['tag_name']==tag and release['target_commitish']==args.target_commit
+ if args.mode.startswith('verify'):
+  assert not release['draft'];assets=read_assets(request,BASE,release['id']);assert len(assets)==(237 if tag=='v4.1.2' else 243)
+  def anonymous(item,keep=False):
+   url=item['browser_download_url'];assert url.startswith('https://github.com/wpy-sketch/ResearchClip/releases/download/'+tag+'/') and item['state']=='uploaded'
+   digest=hashlib.sha256();total=0;pieces=[]
+   with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'ResearchClip-Anonymous-CI-Verify'}),timeout=180) as response:
+    assert response.status==200
+    while chunk:=response.read(1024*1024):
+     total+=len(chunk);assert total<=item['size'];digest.update(chunk)
+     if keep:assert total<=1024*1024;pieces.append(chunk)
+   assert total==item['size'] and 'sha256:'+digest.hexdigest()==item['digest']
+   return b''.join(pieces) if keep else {'name':item['name'],'size':total,'sha256':digest.hexdigest()}
+  sums=next(x for x in assets if x['name']=='SHA256SUMS.txt');checks={}
+  for line in anonymous(sums,True).decode('utf-8').splitlines():
+   digest,name=line.split('  ',1);assert re.fullmatch('[a-f0-9]{64}',digest) and Path(name).name==name and '\\' not in name and name not in checks;checks[name]=digest
+  assert set(checks)=={x['name'] for x in assets if x['name']!='SHA256SUMS.txt'}
+  for item in assets:
+   if item['name']!='SHA256SUMS.txt':assert item['digest']=='sha256:'+checks[item['name']]
+  source=anonymous(next(x for x in assets if x['name']=='SOURCE.txt'),True).decode('utf-8');assert source.startswith('ResearchClip '+tag+'\n') and '\nCommit: '+args.target_commit+'\n' in source
+  if tag=='v4.1.2':
+   frozen=json.loads((ROOT/'docs/qa/evidence/v412-upload-manifest.json').read_text(encoding='utf-8'));assert sorted((x['name'],x['size'],x['sha256']) for x in frozen['assets'])==sorted((x['name'],x['size'],x['digest'][7:]) for x in assets)
+  results=[]
+  with ThreadPoolExecutor(max_workers=4) as pool:
+   for future in as_completed([pool.submit(anonymous,x) for x in assets]):
+    result=future.result();results.append(result);print('Anonymous hash verified',result['name'],flush=True)
+  result={'result':'PASS','mode':args.mode,'releaseId':release['id'],'tag':tag,'sourceCommit':args.target_commit,'workflowCommit':os.environ.get('GITHUB_SHA'),'publicVerifiedAssets':sorted(results,key=lambda x:x['name']),'verificationEnvironment':'GitHub-hosted Ubuntu24.04, anonymous public HTTP, no Authorization on downloads'}
+  (out/'verification.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
+  if os.environ.get('GITHUB_STEP_SUMMARY'):Path(os.environ['GITHUB_STEP_SUMMARY']).write_text('PASS: anonymous public bytes verified for '+str(len(results))+' assets of '+tag+'\n',encoding='utf-8')
+  print(json.dumps(result),flush=True);return
+ assert release['draft'],'Only the exact authorized draft is writable'
  cache=out/'cache';cache.mkdir()
  def load(item):
   assert re.fullmatch('[a-f0-9]{64}',item['sha256']) and 0<item['size']<=512*1024**2
