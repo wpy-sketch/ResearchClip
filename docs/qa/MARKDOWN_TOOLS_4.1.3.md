@@ -1,11 +1,13 @@
 # Markdown 工具栏验收记录
 
+最终结果：525项前端、236项Rust（7忽略）、31组原生、实际安装检查通过；243个公开附件全部匿名校验，32版463个历史附件保持。见[正式回执](PUBLICATION-4.1.3.md)。
+
 本轮目标：现有Markdown编辑器增加固定/选区浮动工具栏，沿用文件、图文块、分栏和独立会话；不推进后续PDF/IDE/Agent功能。环境Windows x64、Node22、React19、Tauri2/WebView2、SQLite12。没有数据库迁移或真实用户资料修改。架构与文件职责见[工具栏设计](../architecture/MARKDOWN_TOOLS.md)。
 
-## 已执行与待完成
+## 实际检查与候选记录
 
 - npm ci：退出0，锁文件干净安装成功。新增remark-gfm4.0.1及18个新增包，许可已核对。
-- 最终npm run check：退出0，69文件524测试通过，类型/lint/生产构建通过（artifacts/dock-evaluation/v413-check-history-atomic.log）。新增选区/历史/查找/Unicode/资源删除断言。npm run format:rust、test:rust、check:rust均退出0，236通过/7忽略。
+- 前一候选npm run check：退出0，69文件524测试通过，类型/lint/生产构建通过（artifacts/dock-evaluation/v413-check-history-atomic.log）。新增选区/历史/查找/Unicode/资源删除断言。npm run format:rust、test:rust、check:rust均退出0，236通过/7忽略。
 - node scripts/markdown-toolbar-smoke.mjs v413-final：退出0，10组实际DOM/键盘交互；选区与浮动栏、焦点/光标、撤销重做、Ctrl+K作用域、多行标题/列表、代码公式/表格、查找替换、组合事件、两主题、480/760/1440宽度及75–200% CSS缩放、原图文文本字段通过。
 - npm run tauri -- build --debug --no-bundle：退出0，实际Windows调试应用。
 - node scripts/markdown-toolbar-native-smoke.mjs v413-second：退出0，8组实际Windows WebView2，真实Rust保存与进程重启，图片块ID/sourceScreenshotId/图片在上注释在下、PNG/assets哈希保持。
@@ -20,7 +22,7 @@
 - 插图验证失败时不改变正文/光标/撤销历史，既有图文模式插入文本也重新开始文字历史，避免旧快照吞掉新增块；新增单元回归覆盖。
 - 最终隔离正式安装构建和安装检查均退出0，详见[发布QA](RELEASE-4.1.3.md)。
 
-公开发布与下载校验待完成，尚未记录不代表通过。
+最终正式版已完成243项公开匿名校验与历史终审，见[发布回执](PUBLICATION-4.1.3.md)。下文保留候选测试轨迹，不把旧候选数字当最终结果。
 
 ## 修复与未通过记录
 
