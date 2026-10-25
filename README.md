@@ -1,4 +1,4 @@
-> **v4.2.1 · PDF清晰显示与Zotero配置**：按可见区域与实际显示密度重新绘制，完善阅读器/API配置助手、连接测试与自然缩放布局；原创论文页＋回形夹图标，指南28章191练习51图。[本版说明](docs/RELEASE-NOTES-4.2.1.md) · [实际验收](docs/qa/RELEASE-4.2.1.md)。
+> **v4.2.1 · PDF清晰显示与Zotero配置**：按可见区域与实际显示密度重新绘制，完善阅读器/API配置助手、连接测试与自然缩放布局；原创论文页＋回形夹图标，指南28章191练习51图。[正式发布回执](docs/qa/PUBLICATION-4.2.1.md) · [本版说明](docs/RELEASE-NOTES-4.2.1.md) · [实际验收](docs/qa/RELEASE-4.2.1.md)。
 
 > **v4.1.9 · 原生工作区PDF阅读器**：本地只读PDF标签、连续单双页、缩放旋转、目录缩略图、文字复制和全文搜索，保存阅读位置并与Markdown并排；SQLite15。见[本版说明](docs/RELEASE-NOTES-4.1.9.md)、[Step10验收](docs/qa/PDF_READER_STEP10.md)与[发布检查](docs/qa/RELEASE-4.1.9.md)。
 
