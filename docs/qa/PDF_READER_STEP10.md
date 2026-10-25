@@ -1,6 +1,6 @@
 # Step10 PDF阅读器验收记录
 
-本轮目标：在既有可停靠工作区增量接入本地只读PDF阅读，并发布v4.1.9。复用React/Tauri2/FlexLayout、原资源目录、SQLite、Markdown文件与会话服务；不改原PDF页结构、不增加PDF导出、Zotero写回或独立备份恢复。开发、构建及安装验收已完成，正式发布/附件下载核验尚在进行。
+本轮目标：在既有可停靠工作区增量接入本地只读PDF阅读，并发布v4.1.9。复用React/Tauri2/FlexLayout、原资源目录、SQLite、Markdown文件与会话服务；不改原PDF页结构、不增加PDF导出、Zotero写回或独立备份恢复。开发、构建及安装验收已完成，正式发布及279附件实际匿名下载核验已完成，见[正式回执](PUBLICATION-4.1.9.md)。
 
 ## 实现与设计
 
@@ -24,7 +24,7 @@ scripts/prepare-pdf-assets.mjs仅复制阅读所需静态资源及许可，排�
 
 ## 实际检查与已解决问题
 
-Windows WebView2本地Worker/Canvas/文字层平台实验通过，真实PDF图像和文字实际渲染，destroy后Worker释放。实际原生验收已验证中文CMap、嵌入字体、OpenJPEG本地WASM、文字鼠标选区和原生剪贴板、四向旋转、目录缩略图/搜索、多PDF、重启恢复、错误密码/受限/损坏文件、长文加载与搜索取消、画布释放、Markdown并排和缩放。本轮实际npm run check退出0：657项/79文件；Rust259通过/7忽略，格式与Clippy退出0，干净安装通过。45组Windows原生、14组指南浏览器、20项发布基础设施测试通过；NSIS4组安装/占用保护/卸载/清理通过，四份许可匹配，16个真实AppData文件只读摘要不变。见[机器证据](evidence/v419-editor-checks.json)。正式发布后追加回执。
+Windows WebView2本地Worker/Canvas/文字层平台实验通过，真实PDF图像和文字实际渲染，destroy后Worker释放。实际原生验收已验证中文CMap、嵌入字体、OpenJPEG本地WASM、文字鼠标选区和原生剪贴板、四向旋转、目录缩略图/搜索、多PDF、重启恢复、错误密码/受限/损坏文件、长文加载与搜索取消、画布释放、Markdown并排和缩放。本轮实际npm run check退出0：657项/79文件；Rust259通过/7忽略，格式与Clippy退出0，干净安装通过。45组Windows原生、14组指南浏览器、20项发布基础设施测试通过；NSIS4组安装/占用保护/卸载/清理通过，四份许可匹配，16个真实AppData文件只读摘要不变。见[机器证据](evidence/v419-editor-checks.json)。[正式回执](PUBLICATION-4.1.9.md)已追加。
 
 发现并修复：Tauri实验绝对中文路径被当成URL，改项目相对路径；Node22 Windows递归cp异常退出，改固定文件逐个复制；6.4权限为Set、旧isEvalSupported/文档destroy接口已移除，按实装类型修正；未渲染Canvas默认300×150占用，改初始0；原布局恢复重置选中标签，改稳定映射后的选中身份；前端仍拒schema15导致旧素材列表不可用，补契约并回归。指南测试1437端口被Windows排除，改可配置的27437并重跑，不改系统规则。保留失败记录，不以删除断言获得通过。
 
