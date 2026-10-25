@@ -31,3 +31,5 @@ describe('workspace UI session state', () => {
     expect(useUiStore.getState()).toMatchObject({ overlay: null, searchQuery: '' });
   });
 });
+
+it('targets a guide chapter explicitly and clears the target when opened from the sidebar',()=>{useUiStore.getState().openGuide(28);expect(useUiStore.getState()).toMatchObject({activeView:'guide',guideChapter:28});useUiStore.getState().openGuide();expect(useUiStore.getState().guideChapter).toBeNull();});

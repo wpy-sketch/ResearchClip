@@ -118,3 +118,44 @@ pub async fn pdf_zotero_sources(
     })
     .await
 }
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ZoteroSetupInfo {
+    executable_path: String,
+    api_url: String,
+    read_only: bool,
+    api_key_required: bool,
+}
+#[tauri::command]
+pub fn zotero_setup_info(window: WebviewWindow) -> Result<ZoteroSetupInfo, CommandError> {
+    check(&window)?;
+    let path =
+        std::env::current_exe().map_err(|_| fail("无法读取当前程序位置，请手动选择安装目录。"))?;
+    Ok(ZoteroSetupInfo {
+        executable_path: path.to_string_lossy().into_owned(),
+        api_url: crate::services::zotero_local::local_api_base(),
+        read_only: true,
+        api_key_required: false,
+    })
+}
+#[tauri::command]
+pub async fn check_zotero_connection(
+    window: WebviewWindow,
+    sessions: State<'_, Arc<ZoteroSessions>>,
+    lookup_id: String,
+) -> Result<crate::services::zotero_local::ZoteroHealth, CommandError> {
+    check(&window)?;
+    let cancel = sessions.begin(&lookup_id, "setup").map_err(fail)?;
+    let service = Arc::clone(sessions.inner());
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        ZoteroClient::new()
+            .map_err(fail)?
+            .health(&cancel, std::time::Instant::now())
+            .map_err(fail)
+    })
+    .await
+    .map_err(|_| fail("Zotero连接测试任务异常结束。"));
+    service.end(&lookup_id).map_err(fail)?;
+    result?
+}

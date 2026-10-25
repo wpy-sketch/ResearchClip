@@ -1,18 +1,18 @@
-# v4.2.0 下载、配套组件与历史附件
+# v4.2.1 下载、配套组件与历史附件
 
-桌面版本4.2.0，SQLite升级schema16，沿用迁移前校验/一致快照/事务；旧版不能写新库。使用顺序：安装当前桌面程序，按需要安装原版本伴侣组件；如需集中保存全部历史发布文件，再下载历史归档分卷。指南包含28章、187项练习和47幅本地图示。
+桌面版本4.2.1，SQLite保持schema16，沿用迁移前校验/一致快照/事务；旧版不能写新库。使用顺序：安装当前桌面程序，按需要安装原版本伴侣组件；如需集中保存全部历史发布文件，再下载历史归档分卷。指南包含28章、191项练习和51幅本地图示。
 
 | 任务 | 本Release附件 | 使用方法 |
 | --- | --- | --- |
-| 安装桌面应用 | ResearchClip_4.1.9_x64-setup.exe | 保存并退出旧实例再安装，需要Windows WebView2；未签名 |
-| 直接运行 | ResearchClip-v4.2.0-windows-x64.zip | 解压后运行researchclip.exe，保留licenses；仍使用本机资料目录 |
+| 安装桌面应用 | ResearchClip_4.2.1_x64-setup.exe | 保存并退出旧实例再安装，需要Windows WebView2；未签名 |
+| 直接运行 | ResearchClip-v4.2.1-windows-x64.zip | 解压后运行researchclip.exe，保留licenses；仍使用本机资料目录 |
 | Chrome/Edge网页剪藏 | ResearchClip-WebClipper-v1.0.2-windows-x64.zip | 扩展、Native Host、注册脚本及许可原样沿用；按包内README主动安装并在桌面启用连接 |
 | 可选公式识别 | ResearchClip-MathOCR-Setup-v1.0.4.zip | 原安装脚本/锁定依赖/worker/模型清单；Python与模型等外部依赖按原README安装，不冒充已安装 |
-| 离线指南 | ResearchClip-Guide-v4.2.0.zip | 打开docs/USER_GUIDE.md，保留images/examples；包含伴侣组件说明、模型清单和许可，源码链接指向精确Git标签 |
+| 离线指南 | ResearchClip-Guide-v4.2.1.zip | 打开docs/USER_GUIDE.md，保留images/examples；包含伴侣组件说明、模型清单和许可，源码链接指向精确Git标签 |
 | Qwen资源索引 | MODEL-RESOURCES.txt、OFFLINE-RESOURCE-INDEX.json、QWEN-MODEL-MANIFEST.json | 与此前附件字节一致；已有运行时可复用，或从本版历史归档v3.1.2目录获得原分卷 |
 | 离线图文语义检索 | 指南ZIP内semantic-search/README.md、models.json与许可 | 按固定模型清单主动下载/离线导入，与公式OCR复用现有Python运行时；不上传图片 |
 | 全部历史附件 | ResearchClip-History-through-v4.1.1.zip.001起的223卷 | 先按下面步骤重组；包含此前31个Release的全部226附件，按版本分目录 |
-| v4.1.2/v4.1.3/v4.1.4/v4.1.5/v4.1.6/v4.1.7/v4.1.8/v4.1.9 的全部附件 | 原便携包、安装包、指南与运输文件；SOURCE/SHA在对应版本的Release-Metadata.zip中 | 原名原字节保留；逐项定位见V420-HISTORY-INVENTORY.json和RELEASE-HISTORY-v4.2.0.txt |
+| v4.1.2/v4.1.3/v4.1.4/v4.1.5/v4.1.6/v4.1.7/v4.1.8/v4.1.9/v4.2.0 的全部附件 | 原便携包、安装包、指南与运输文件；SOURCE/SHA在对应版本的Release-Metadata.zip中 | 原名原字节保留；逐项定位见V421-HISTORY-INVENTORY.json和RELEASE-HISTORY-v4.2.1.txt |
 | 历史归档校验/重组 | HISTORY-CONTENTS.json、HISTORY-TRANSPORT.json、Assemble-Release-History.ps1、HISTORY-README.txt | 原附件URL/ID/大小/SHA均保留；只重组发布ZIP，不执行旧程序，不涉及应用资料恢复 |
 | 本版文件校验 | SHA256SUMS.txt、SOURCE.txt | 逐项校验本版发布文件及源码提交；校验文件自身不包含其自身摘要 |
 
@@ -33,10 +33,10 @@ WebClipper1.0.2、MathOCR Setup1.0.4及Qwen清单原样沿用，不改其版本/
 
 ## v4.2.0 如何完整继承附件
 
-本版实际273个附件，覆盖此前37版1739个原发布附件：通过v4.1.1的226个文件仍在相同223卷归档内；v4.1.2的237个、v4.1.3的243个、v4.1.4的249个、v4.1.5的255个、v4.1.6的261个和v4.1.7的267个附件全部收录。v4.1.7中265个无冲突附件直接附上，SOURCE.txt与SHA256SUMS.txt按原名原字节放入ResearchClip-v4.1.7-Release-Metadata.zip的v4.1.7目录；更早元数据ZIP继续原样提供。V420-HISTORY-INVENTORY.json逐项给出原版本、文件名、大小、摘要及当前定位。不以旧链接代替内容，也不把数GB归档再次嵌套打包。
+本版实际273个附件，覆盖此前37版1739个原发布附件：通过v4.1.1的226个文件仍在相同223卷归档内；v4.1.2的237个、v4.1.3的243个、v4.1.4的249个、v4.1.5的255个、v4.1.6的261个和v4.1.7的267个附件全部收录。v4.1.7中265个无冲突附件直接附上，SOURCE.txt与SHA256SUMS.txt按原名原字节放入ResearchClip-v4.1.7-Release-Metadata.zip的v4.1.7目录；更早元数据ZIP继续原样提供。V421-HISTORY-INVENTORY.json逐项给出原版本、文件名、大小、摘要及当前定位。不以旧链接代替内容，也不把数GB归档再次嵌套打包。
 
-旧HISTORY-TRANSPORT.json和Assemble脚本保留desktopVersion4.1.2，因为它们描述的始终是通过v4.1.1的同一归档，摘要和223卷完全相同。旧HISTORY-README也原样保留；本版补充说明以RELEASE-HISTORY-v4.2.0.txt为准。当前顶层SOURCE.txt和SHA256SUMS.txt属于v4.2.0。不要把旧版安装包当作当前应用安装。
+旧HISTORY-TRANSPORT.json和Assemble脚本保留desktopVersion4.1.2，因为它们描述的始终是通过v4.1.1的同一归档，摘要和223卷完全相同。旧HISTORY-README也原样保留；本版补充说明以RELEASE-HISTORY-v4.2.1.txt为准。当前顶层SOURCE.txt和SHA256SUMS.txt属于v4.2.1。不要把旧版安装包当作当前应用安装。
 
 ## 升级后核对
 
-检查版本4.2.0、旧截图/Markdown、工作区、插图与诊断。保存草稿后退出；布局不等于正文保存。真实资料、多显示器DPI及可选第三方运行时的人工验证仍须按[Step11验收](qa/ZOTERO_PDF_STEP11.md)及[引用与文献验收](qa/CITATIONS_STEP09.md)执行。没有Markdown导出PDF或独立资料备份/恢复产品。
+检查版本4.2.1、旧截图/Markdown、工作区、插图与诊断。保存草稿后退出；布局不等于正文保存。真实资料、多显示器DPI及可选第三方运行时的人工验证仍须按[Step11验收](qa/ZOTERO_PDF_STEP11.md)及[引用与文献验收](qa/CITATIONS_STEP09.md)执行。没有Markdown导出PDF或独立资料备份/恢复产品。

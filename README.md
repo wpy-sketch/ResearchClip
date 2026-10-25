@@ -1,3 +1,5 @@
+> **v4.2.1 · PDF清晰显示与Zotero配置**：按可见区域与实际显示密度重新绘制，完善阅读器/API配置助手、连接测试与自然缩放布局；原创论文页＋回形夹图标，指南28章191练习51图。[本版说明](docs/RELEASE-NOTES-4.2.1.md) · [实际验收](docs/qa/RELEASE-4.2.1.md)。
+
 > **v4.1.9 · 原生工作区PDF阅读器**：本地只读PDF标签、连续单双页、缩放旋转、目录缩略图、文字复制和全文搜索，保存阅读位置并与Markdown并排；SQLite15。见[本版说明](docs/RELEASE-NOTES-4.1.9.md)、[Step10验收](docs/qa/PDF_READER_STEP10.md)与[发布检查](docs/qa/RELEASE-4.1.9.md)。
 
 > **v4.1.8 · 本地科研引用**：@补全、稳定文献ID、公式/截图来源、BibTeX导入导出和显式参考列表；SQLite14。指南目录自然排序及原创多色科研图标。见[本版说明](docs/RELEASE-NOTES-4.1.8.md)、[实际验收](docs/qa/CITATIONS_STEP09.md)与[下载指南](docs/RELEASE-COMPONENTS.md)。
@@ -9,7 +11,7 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.2.0 Windows；发布与验收状态见本版记录**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.2.1 Windows；发布与验收状态见本版记录**。
 
 [v4.2.0正式回执](docs/qa/PUBLICATION-4.2.0.md) · [v4.2.0变更](docs/RELEASE-NOTES-4.2.0.md) · [Step11验收](docs/qa/ZOTERO_PDF_STEP11.md) · [GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.9正式回执](docs/qa/PUBLICATION-4.1.9.md) · [v4.1.8正式回执](docs/qa/PUBLICATION-4.1.8.md) · [v4.1.8发布检查](docs/qa/RELEASE-4.1.8.md) · [v4.1.7正式回执](docs/qa/PUBLICATION-4.1.7.md) · [v4.1.7发布检查](docs/qa/RELEASE-4.1.7.md) · [v4.1.7配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 

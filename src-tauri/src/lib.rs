@@ -258,6 +258,8 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::pdf::adopt_pdf_source,
             commands::pdf::pending_pdf_requests,
             commands::zotero::preview_pdf_zotero,
+            commands::zotero::zotero_setup_info,
+            commands::zotero::check_zotero_connection,
             commands::zotero::cancel_zotero_lookup,
             commands::zotero::confirm_pdf_zotero,
             commands::zotero::pdf_zotero_sources,

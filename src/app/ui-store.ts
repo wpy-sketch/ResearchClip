@@ -21,7 +21,8 @@ interface UiState {
   toggleTheme: () => void;
   setViewMode: (mode: ViewMode) => void;
   dismissWelcome: () => void;
-  openGuide: () => void;
+  guideChapter:number|null;
+  openGuide: (chapter?:number) => void;
   openSearch: () => void;
   openCapture: () => void;
   closeOverlay: () => void;
@@ -30,14 +31,14 @@ interface UiState {
 }
 
 export const useUiStore = create<UiState>((set) => ({
-  navigationSerial:0,activeView: 'screenshots', theme: 'dark', viewMode: 'grid', fontFamily: 'system', fontSize: 16, showWelcome: true,
+  guideChapter:null,navigationSerial:0,activeView: 'screenshots', theme: 'dark', viewMode: 'grid', fontFamily: 'system', fontSize: 16, showWelcome: true,
   overlay: null, searchQuery: '', windowThemeError: null,
   navigate: (activeView) => set(state=>({ activeView, overlay: null,navigationSerial:state.navigationSerial+1 })),
   setTheme: (theme) => set({ theme }),
   toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
   setViewMode: (viewMode) => set({ viewMode }),
   dismissWelcome: () => set({ showWelcome: false }),
-  openGuide: () => set(state=>({ activeView: 'guide', showWelcome: true, overlay: null,navigationSerial:state.navigationSerial+1 })),
+  openGuide: (chapter) => set(state=>({ guideChapter:chapter&&Number.isInteger(chapter)&&chapter>0?chapter:null,activeView: 'guide', showWelcome: true, overlay: null,navigationSerial:state.navigationSerial+1 })),
   openSearch: () => set({ overlay: 'search' }),
   openCapture: () => set({ overlay: 'capture' }),
   closeOverlay: () => set({ overlay: null }),

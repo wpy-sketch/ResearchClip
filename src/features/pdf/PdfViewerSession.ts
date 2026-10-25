@@ -20,6 +20,8 @@ export class PdfViewerSession {
   let timer:ReturnType<typeof setInterval>|undefined;let active=0;
   try{return await Promise.race([work,new Promise<never>((_,reject)=>{timer=setInterval(()=>{if(this.closed){reject(Error('PDF会话已关闭。'));return;}if(this.state.getState().phase!=='password')active++;if(active>=120)reject(Error('PDF解析超过120秒保护时限；请关闭后检查文件。'));},1000);})]);}finally{if(timer)clearInterval(timer);}
  }
+ private pageLeases=new Map<number,number>();
+ holdPage(index:number){this.pageLeases.set(index,(this.pageLeases.get(index)??0)+1);let released=false;return()=>{if(released)return;released=true;const count=(this.pageLeases.get(index)??1)-1;if(count>0){this.pageLeases.set(index,count);return;}this.pageLeases.delete(index);void this.render(async()=>{if(this.pageLeases.has(index)||!this.document)return;const page=await this.document.getPage(index+1);if(!this.pageLeases.has(index))page.cleanup();}).catch(e=>this.report(e));};}
  onDispose(dispose:()=>void){this.disposers.add(dispose);return()=>this.disposers.delete(dispose);}
  async render<T>(work:()=>Promise<T>):Promise<T|undefined>{let result:T|undefined;const next=this.renderQueue.then(async()=>{if(!this.closed)result=await work();});this.renderQueue=next.catch(()=>{});await next;return result;}
  async open(documentId?:string,requestId?:string){let progress:ReturnType<typeof setInterval>|null=null;

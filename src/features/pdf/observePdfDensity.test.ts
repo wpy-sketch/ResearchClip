@@ -1,0 +1,3 @@
+import {it,expect,vi} from 'vitest';
+import {observePdfDensity} from './observePdfDensity';
+it('detects eventless DPI changes once and stops all polling on cleanup',()=>{vi.useFakeTimers();let density=1;const changed=vi.fn(),stop=observePdfDensity(changed,()=>density);vi.advanceTimersByTime(500);expect(changed).not.toHaveBeenCalled();density=2;vi.advanceTimersByTime(250);expect(changed).toHaveBeenCalledOnce();vi.advanceTimersByTime(500);expect(changed).toHaveBeenCalledOnce();stop();density=3;vi.advanceTimersByTime(1000);expect(changed).toHaveBeenCalledOnce();expect(vi.getTimerCount()).toBe(0);vi.useRealTimers();});

@@ -31,7 +31,7 @@ def reconstruct(recipe,output,load):
    print('Reconstructed segment',target.tell(),'/',recipe['archive']['size'],flush=True)
  assert output.stat().st_size==recipe['archive']['size'] and sha(output)==recipe['archive']['sha256'],'Exact archive digest differs'
 def main():
- p=argparse.ArgumentParser();p.add_argument('mode',choices=['local-reconstruct','reconstruct412','inherit413','verify412','verify413','inherit414','verify414','inherit415','verify415','inherit416','verify416','inherit417','verify417','inherit418','verify418','inherit419','verify419','inherit420','verify420']);p.add_argument('--target-release',type=int);p.add_argument('--target-commit');p.add_argument('--run-id',default='ci');args=p.parse_args();assert re.fullmatch('[a-z0-9-]{1,60}',args.run_id)
+ p=argparse.ArgumentParser();p.add_argument('mode',choices=['local-reconstruct','reconstruct412','inherit413','verify412','verify413','inherit414','verify414','inherit415','verify415','inherit416','verify416','inherit417','verify417','inherit418','verify418','inherit419','verify419','inherit420','verify420','inherit421','verify421']);p.add_argument('--target-release',type=int);p.add_argument('--target-commit');p.add_argument('--run-id',default='ci');args=p.parse_args();assert re.fullmatch('[a-z0-9-]{1,60}',args.run_id)
  recipe=json.loads((ROOT/'docs/qa/evidence/v412-archive-recipe.json').read_text(encoding='utf-8'));out=ROOT/'artifacts'/('release-transport-'+args.run_id);out.mkdir(parents=True)
  if args.mode=='local-reconstruct':
   reconstruct(recipe,out/'history.zip',lambda item:ROOT/'artifacts/history-assets'/item['sha256']);print('PASS exact local archive');return
@@ -46,11 +46,11 @@ def main():
   try:
    with opener.open(req,timeout=300) as response:body=response.read();return json.loads(body) if body else None
   except urllib.error.HTTPError as error:raise RuntimeError('GitHub '+method+' HTTP '+str(error.code)) from None
- release=request(BASE+'/releases/'+str(args.target_release));tag='v'+{'412':'4.1.2','413':'4.1.3','414':'4.1.4','415':'4.1.5','416':'4.1.6','417':'4.1.7','418':'4.1.8','419':'4.1.9','420':'4.2.0'}[args.mode[-3:]]
+ release=request(BASE+'/releases/'+str(args.target_release));tag='v'+{'412':'4.1.2','413':'4.1.3','414':'4.1.4','415':'4.1.5','416':'4.1.6','417':'4.1.7','418':'4.1.8','419':'4.1.9','420':'4.2.0','421':'4.2.1'}[args.mode[-3:]]
  assert request(BASE+'/git/ref/tags/'+tag)['object']['sha']==args.target_commit
  assert not release['prerelease'] and release['tag_name']==tag and release['target_commitish']==args.target_commit
  if args.mode.startswith('verify'):
-  assert not release['draft'];assets=read_assets(request,BASE,release['id']);assert len(assets)=={'v4.1.2':237,'v4.1.3':243,'v4.1.4':249,'v4.1.5':255,'v4.1.6':261,'v4.1.7':267,'v4.1.8':273,'v4.1.9':279,'v4.2.0':285}[tag]
+  assert not release['draft'];assets=read_assets(request,BASE,release['id']);assert len(assets)=={'v4.1.2':237,'v4.1.3':243,'v4.1.4':249,'v4.1.5':255,'v4.1.6':261,'v4.1.7':267,'v4.1.8':273,'v4.1.9':279,'v4.2.0':285,'v4.2.1':291}[tag]
   def anonymous(item,keep=False):
    url=item['browser_download_url'];assert url.startswith('https://github.com/wpy-sketch/ResearchClip/releases/download/'+tag+'/') and item['state']=='uploaded'
    digest=hashlib.sha256();total=0;pieces=[]
@@ -98,7 +98,7 @@ def main():
    number=int(item['name'].rsplit('.',1)[1]);assert 1<=number<=223
    with archive.open('rb') as stream:stream.seek((number-1)*16777216);return stream.read(item['size'])
  else:
-  previous,previous_count,previous_release,snapshot={'inherit413':('v4.1.2',237,recipe['releaseId'],'413'),'inherit414':('v4.1.3',243,422602338,'414'),'inherit415':('v4.1.4',249,422719495,'415'),'inherit416':('v4.1.5',255,422763684,'416'),'inherit417':('v4.1.6',261,423096328,'417'),'inherit418':('v4.1.7',267,423176785,'418'),'inherit419':('v4.1.8',273,423204020,'419'),'inherit420':('v4.1.9',279,423381500,'420')}[args.mode]
+  previous,previous_count,previous_release,snapshot={'inherit413':('v4.1.2',237,recipe['releaseId'],'413'),'inherit414':('v4.1.3',243,422602338,'414'),'inherit415':('v4.1.4',249,422719495,'415'),'inherit416':('v4.1.5',255,422763684,'416'),'inherit417':('v4.1.6',261,423096328,'417'),'inherit418':('v4.1.7',267,423176785,'418'),'inherit419':('v4.1.8',273,423204020,'419'),'inherit420':('v4.1.9',279,423381500,'420'),'inherit421':('v4.2.0',285,423576298,'421')}[args.mode]
   source=request(BASE+'/releases/tags/'+previous);assert not source['draft'] and not source['prerelease'] and source['id']==previous_release
   frozen=json.loads((ROOT/('docs/qa/evidence/v'+snapshot+'-prior-releases.json')).read_text(encoding='utf-8'));old=next(x for x in frozen if x['tag']==previous);current=read_assets(request,BASE,source['id']);assert len(current)==len(old['assets'])==previous_count
   assert sorted((x['id'],x['name'],x['size'],x['digest']) for x in current)==sorted((x['id'],x['name'],x['size'],x['digest']) for x in old['assets'])

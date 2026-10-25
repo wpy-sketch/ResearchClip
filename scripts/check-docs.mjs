@@ -113,4 +113,4 @@ assert.equal(lock.packages['node_modules/pdfjs-dist'].version,'6.4.299');
 
 execFileSync('git',['diff','--exit-code','--','src-tauri/migrations/015_pdf_reading.sql'],{cwd:root,stdio:'pipe'});
 
-for(const command of ['pending_pdf_requests','dismiss_pdf_request','adopt_pdf_source','preview_pdf_zotero','cancel_zotero_lookup','confirm_pdf_zotero','pdf_zotero_sources']){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}
+for(const command of ['zotero_setup_info','check_zotero_connection','pending_pdf_requests','dismiss_pdf_request','adopt_pdf_source','preview_pdf_zotero','cancel_zotero_lookup','confirm_pdf_zotero','pdf_zotero_sources']){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}

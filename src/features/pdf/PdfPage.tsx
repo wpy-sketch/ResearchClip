@@ -1,0 +1,35 @@
+import {observePdfDensity} from './observePdfDensity';
+import {useEffect,useRef,useState} from 'react';
+import type {PdfViewerSession} from './PdfViewerSession';
+import {TextLayer,type RenderTask} from './engine';
+import {pdfCanvasCache} from './PdfCanvasCache';
+import {visiblePdfTiles,type PdfTile,type PdfClip} from './PdfRenderGeometry';
+function Tile({session,index,scale,rotation,density,tile,onError}:{session:PdfViewerSession;index:number;scale:number;rotation:number;density:number;tile:PdfTile;onError:(message:string)=>void}){
+ const canvas=useRef<HTMLCanvasElement>(null);
+ useEffect(()=>{const node=canvas.current;if(!node)return;let stopped=false,render:RenderTask|undefined;
+  const release=()=>{stopped=true;render?.cancel();node.dataset.rendered='false';node.width=0;node.height=0;pdfCanvasCache.release(node);};const unbind=session.onDispose(release);
+  void session.render(async()=>{if(stopped||!session.document)return;const page=await session.document.getPage(index+1);if(stopped)return;
+   const viewport=page.getViewport({scale,rotation:(page.rotate+rotation)%360});pdfCanvasCache.reserve(node,session.id,tile.width*tile.height);node.width=tile.width;node.height=tile.height;node.dataset.rendered='false';render=page.render({canvas:node,viewport,transform:[density,0,0,density,-tile.x,-tile.y],annotationMode:1});await render.promise;if(!stopped)node.dataset.rendered='true';
+  }).catch(e=>{if(!stopped){pdfCanvasCache.release(node);node.width=0;node.height=0;onError(e instanceof Error?e.message:'PDF图块绘制失败。');}});
+  return()=>{release();unbind();};
+ },[session,index,scale,rotation,density,tile.x,tile.y,tile.width,tile.height,onError]);
+ return <canvas ref={canvas} className="pdf-tile" width={0} height={0} data-tile-x={tile.x} data-tile-y={tile.y} data-density={density} style={{left:tile.x/density,top:tile.y/density,width:tile.width/density,height:tile.height/density}}/>;
+}
+export function Page({session,index,scale,active,thumbnail=false}:{session:PdfViewerSession;index:number;scale:number;active:boolean;thumbnail?:boolean}){
+ const state=session.state(),host=useRef<HTMLDivElement>(null),text=useRef<HTMLDivElement>(null),[error,setError]=useState<string|null>(null),[retry,setRetry]=useState(0),[intersects,setIntersects]=useState(false),[view,setView]=useState<{density:number;clip:PdfClip}>({density:1,clip:{left:0,top:0,right:0,bottom:0}});
+ const shape=state.pages[index],turned=state.location.rotation%180!==0,width=(turned?shape.height:shape.width)*scale,height=(turned?shape.width:shape.height)*scale;
+ useEffect(()=>{if(active&&intersects)return session.holdPage(index);},[session,index,active,intersects]);
+ useEffect(()=>{const node=host.current;if(!node)return;const root=node.closest('.pdf-scroll')??node.closest('.pdf-navigation');const observer=new IntersectionObserver(entries=>setIntersects(entries.some(e=>e.isIntersecting)),{root,rootMargin:'100px'});observer.observe(node);return()=>observer.disconnect();},[]);
+ useEffect(()=>{const node=host.current,root=node?.closest('.pdf-scroll')??node?.closest('.pdf-navigation');if(!node||!root||!active||!intersects)return;let frame=0,media:MediaQueryList|undefined;
+  const schedule=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(measure);};
+  const arm=()=>{media?.removeEventListener('change',schedule);media=window.matchMedia(`(resolution: ${window.devicePixelRatio||1}dppx)`);media.addEventListener('change',schedule);};
+  const measure=()=>{const rect=node.getBoundingClientRect(),clip=root.getBoundingClientRect(),factor=rect.width/width;if(!(factor>0))return;const dpr=window.devicePixelRatio||1,density=thumbnail?Math.min(dpr,Math.sqrt(20000/(width*height))):dpr*factor;const margin=thumbnail?30:32/Math.max(1,density);const next={density,clip:{left:Math.max(0,(clip.left-rect.left)/factor-margin),top:Math.max(0,(clip.top-rect.top)/factor-margin),right:Math.min(width,(clip.right-rect.left)/factor+margin),bottom:Math.min(height,(clip.bottom-rect.top)/factor+margin)}};setView(old=>JSON.stringify(old)===JSON.stringify(next)?old:next);arm();};
+  const stopDensity=observePdfDensity(schedule);const resize=new ResizeObserver(schedule);resize.observe(node);resize.observe(root);const mutation=new MutationObserver(schedule);mutation.observe(document.documentElement,{attributes:true,attributeFilter:['style']});root.addEventListener('scroll',schedule,{passive:true});window.addEventListener('resize',schedule);window.visualViewport?.addEventListener('resize',schedule);schedule();
+  return()=>{stopDensity();cancelAnimationFrame(frame);resize.disconnect();mutation.disconnect();media?.removeEventListener('change',schedule);root.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);window.visualViewport?.removeEventListener('resize',schedule);};
+ },[active,intersects,width,height,thumbnail]);
+ useEffect(()=>{const container=text.current;if(!container||!active||!intersects||thumbnail||!state.copyAllowed||!session.document)return;let stopped=false,layer:TextLayer|undefined;const release=()=>{stopped=true;layer?.cancel();container.replaceChildren();};const unbind=session.onDispose(release);
+  void session.render(async()=>{if(stopped||!session.document)return;const page=await session.document.getPage(index+1);const content=await page.getTextContent();if(stopped)return;let count=0;for(const item of content.items)if('str'in item)count+=item.str.length;if(count>1024*1024||content.items.length>20000)throw Error('本页文字层超过保护预算；页面图像仍可阅读。');const viewport=page.getViewport({scale,rotation:(page.rotate+state.location.rotation)%360});container.style.setProperty('--total-scale-factor',String(viewport.scale));layer=new TextLayer({textContentSource:content,container,viewport});await layer.render();}).catch(e=>{if(!stopped)setError(e instanceof Error?e.message:'PDF文字层绘制失败。');});return()=>{release();unbind();};
+ },[session,index,scale,active,intersects,thumbnail,state.copyAllowed,state.location.rotation,retry]);
+ let tiles:PdfTile[]=[];let geometryError='';if(active&&intersects)try{tiles=visiblePdfTiles(width,height,view.density,view.clip);}catch(e){geometryError=e instanceof Error?e.message:'PDF显示尺寸无效。';}
+ return <div ref={host} className={thumbnail?'pdf-thumbnail-page':'pdf-page'} data-pdf-page={thumbnail?undefined:index} style={{width,height}} aria-label={thumbnail?`第${index+1}页缩略图`:`PDF第${index+1}页`}>{tiles.map(tile=><Tile key={`${tile.key}:${retry}`} session={session} index={index} scale={scale} rotation={state.location.rotation} density={view.density} tile={tile} onError={setError}/>)}{!thumbnail&&<div ref={text} className="textLayer"/>}{(error||geometryError)&&<p className="pdf-page-error" role="alert" style={{top:Math.max(0,view.clip.top),left:Math.max(0,view.clip.left),maxWidth:Math.max(120,view.clip.right-view.clip.left)}}>{error||geometryError}<button onClick={()=>{setError(null);setRetry(n=>n+1);}}>重试页面渲染</button></p>}</div>;
+}

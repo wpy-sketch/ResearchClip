@@ -1,3 +1,4 @@
+import {ZoteroSetup} from '../pdf/ZoteroSetup';
 import {SyncSettings} from '../sync/SyncSettings';
 import {MathOcrSettings} from '../math-ocr/MathOcr';
 import {useEffect} from 'react';
@@ -18,8 +19,8 @@ export function SettingsView() {
   useEffect(()=>{void useSettingsStore.getState().refresh();},[]);
   return <div className="page-container settings-page">
     <div className="page-heading"><div><h2>设置</h2><p>个性化工作区，管理采集、文件与设备间同步。</p></div></div>
-    <nav className="settings-shortcuts" aria-label="设置分类">{[{id:'appearance-title',name:'外观与字体',description:'主题 · 阅读密度'},{id:'shortcut-title',name:'截图与文件',description:'快捷键 · 保存位置'},{id:'webdav-title',name:'跨设备同步',description:'项目范围 · 冲突处理'},{id:'clipper-title',name:'浏览器剪藏',description:'本地连接 · 安装指南'}].map(item=><button key={item.id} onClick={()=>{const node=document.getElementById(item.id);if(node){node.tabIndex=-1;node.scrollIntoView({block:'start'});node.focus({preventScroll:true});}}}><strong>{item.name}</strong><span>{item.description}</span></button>)}</nav>
-    <ClipperSettings/><SyncSettings/><MathOcrSettings/>
+    <nav className="settings-shortcuts" aria-label="设置分类">{[{id:'zotero-setup-title',name:'Zotero与PDF',description:'外部阅读器 · 本机API'},{id:'appearance-title',name:'外观与字体',description:'主题 · 阅读密度'},{id:'shortcut-title',name:'截图与文件',description:'快捷键 · 保存位置'},{id:'webdav-title',name:'跨设备同步',description:'项目范围 · 冲突处理'},{id:'clipper-title',name:'浏览器剪藏',description:'本地连接 · 安装指南'}].map(item=><button key={item.id} onClick={()=>{const node=document.getElementById(item.id);if(node){node.tabIndex=-1;node.scrollIntoView({block:'start'});node.focus({preventScroll:true});}}}><strong>{item.name}</strong><span>{item.description}</span></button>)}</nav>
+    <ZoteroSetup/><ClipperSettings/><SyncSettings/><MathOcrSettings/>
     <section className="settings-section"><h3>命令与工作流</h3><p>Ctrl+Shift+P打开命令面板。此组合保留给应用内命令，不注册为全局截图键。</p><button className="secondary-button" onClick={()=>useCommandUi.setState({open:true,tab:'workflows',error:null})}>管理自定义工作流</button></section>
     {(error || snapshot.storageError) && <p className="error-banner mb-5" role="alert">{error ?? snapshot.storageError}</p>}
     <section className="settings-section" aria-labelledby="appearance-title"><h3 id="appearance-title">外观</h3><p className="settings-description">选择舒适的主题与字体。</p><div className="theme-options" role="group" aria-label="主题选择">

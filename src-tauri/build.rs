@@ -32,6 +32,8 @@ fn main() {
             "adopt_pdf_source",
             "pending_pdf_requests",
             "preview_pdf_zotero",
+            "zotero_setup_info",
+            "check_zotero_connection",
             "cancel_zotero_lookup",
             "confirm_pdf_zotero",
             "pdf_zotero_sources",
