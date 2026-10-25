@@ -39,4 +39,4 @@ WebClipper1.0.2、MathOCR Setup1.0.4及Qwen清单原样沿用，不改其版本/
 
 ## 升级后核对
 
-检查版本4.1.9、旧截图/Markdown、工作区、插图与诊断。保存草稿后退出；布局不等于正文保存。真实资料、多显示器DPI及可选第三方运行时的人工验证仍须按[引用与文献验收](qa/CITATIONS_STEP09.md)执行。没有Markdown导出PDF或独立资料备份/恢复产品。
+检查版本4.2.0、旧截图/Markdown、工作区、插图与诊断。保存草稿后退出；布局不等于正文保存。真实资料、多显示器DPI及可选第三方运行时的人工验证仍须按[Step11验收](qa/ZOTERO_PDF_STEP11.md)及[引用与文献验收](qa/CITATIONS_STEP09.md)执行。没有Markdown导出PDF或独立资料备份/恢复产品。

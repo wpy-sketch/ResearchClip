@@ -392,16 +392,32 @@ mod tests {
     }
     #[test]
     fn source_adoption_requires_matching_live_document_and_is_revoked_on_close() {
-        let s=PdfDocumentService::default(); let a="a".repeat(32);let b="b".repeat(32);let c="c".repeat(32);
-        s.begin(&a).unwrap(); s.begin(&b).unwrap();s.begin(&c).unwrap();
-        s.finish(&a,tempfile::tempfile().unwrap(),dummy(),Some(PathBuf::from("authorized.pdf"))).unwrap();
-        s.finish(&b,tempfile::tempfile().unwrap(),dummy(),None).unwrap();
-        let mut other=dummy();other.document_id="d".repeat(32);
-        s.finish(&c,tempfile::tempfile().unwrap(),other,None).unwrap();
-        assert!(s.adopt_source(&a,&c).is_err());
-        s.adopt_source(&a,&b).unwrap();assert_eq!(s.source(&b).unwrap().0,PathBuf::from("authorized.pdf"));
-        s.cancel(&a).unwrap();assert!(s.adopt_source(&a,&b).is_err());
-        s.cancel(&b).unwrap();assert!(s.source(&b).is_err());
+        let s = PdfDocumentService::default();
+        let a = "a".repeat(32);
+        let b = "b".repeat(32);
+        let c = "c".repeat(32);
+        s.begin(&a).unwrap();
+        s.begin(&b).unwrap();
+        s.begin(&c).unwrap();
+        s.finish(
+            &a,
+            tempfile::tempfile().unwrap(),
+            dummy(),
+            Some(PathBuf::from("authorized.pdf")),
+        )
+        .unwrap();
+        s.finish(&b, tempfile::tempfile().unwrap(), dummy(), None)
+            .unwrap();
+        let mut other = dummy();
+        other.document_id = "d".repeat(32);
+        s.finish(&c, tempfile::tempfile().unwrap(), other, None)
+            .unwrap();
+        assert!(s.adopt_source(&a, &c).is_err());
+        s.adopt_source(&a, &b).unwrap();
+        assert_eq!(s.source(&b).unwrap().0, PathBuf::from("authorized.pdf"));
+        s.cancel(&a).unwrap();
+        assert!(s.adopt_source(&a, &b).is_err());
+        s.cancel(&b).unwrap();
+        assert!(s.source(&b).is_err());
     }
-
 }

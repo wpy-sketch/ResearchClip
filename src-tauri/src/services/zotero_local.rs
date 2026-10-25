@@ -700,22 +700,53 @@ mod tests {
     }
     #[test]
     fn read_only_http_rejects_redirect_disabled_api_missing_identity_and_oversized_body() {
-        use std::{io::{Read, Write}, net::TcpListener, thread};
+        use std::{
+            io::{Read, Write},
+            net::TcpListener,
+            thread,
+        };
         for (status, headers, expected) in [
             ("403 Forbidden", "", "拒绝"),
-            ("302 Found", "Location: http://127.0.0.1:1/other\r\n", "不支持"),
+            (
+                "302 Found",
+                "Location: http://127.0.0.1:1/other\r\n",
+                "不支持",
+            ),
             ("200 OK", "Zotero-API-Version: 3\r\n", "实例标识"),
-            ("200 OK", "Zotero-API-Version: 2\r\nZotero-Server-ID: FixtureServer1\r\n", "版本"),
-            ("200 OK", "Zotero-API-Version: 3\r\nZotero-Server-ID: FixtureServer1\r\nContent-Length: 3000000\r\n", "2MiB"),
+            (
+                "200 OK",
+                "Zotero-API-Version: 2\r\nZotero-Server-ID: FixtureServer1\r\n",
+                "版本",
+            ),
+            (
+                "200 OK",
+                "Zotero-API-Version: 3\r\nZotero-Server-ID: FixtureServer1\r\nContent-Length: 3000000\r\n",
+                "2MiB",
+            ),
         ] {
-            let listener=TcpListener::bind("127.0.0.1:0").unwrap();
-            let base=format!("http://{}/api/", listener.local_addr().unwrap());
-            let handle=thread::spawn(move || { let (mut stream,_) = listener.accept().unwrap(); stream.set_read_timeout(Some(Duration::from_secs(3))).unwrap(); let mut b=[0;4096]; let n=stream.read(&mut b).unwrap(); let request=String::from_utf8_lossy(&b[..n]); assert!(request.starts_with("GET /api/")); assert!(!request.contains("Authorization:")); let body=format!("HTTP/1.1 {status}\r\n{headers}Connection: close\r\n\r\n"); stream.write_all(body.as_bytes()).unwrap(); });
-            let error=ZoteroClient::at(&base).unwrap().health(&AtomicBool::new(false),Instant::now()).unwrap_err();
-            assert!(error.contains(expected), "{error}"); handle.join().unwrap();
+            let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+            let base = format!("http://{}/api/", listener.local_addr().unwrap());
+            let handle = thread::spawn(move || {
+                let (mut stream, _) = listener.accept().unwrap();
+                stream
+                    .set_read_timeout(Some(Duration::from_secs(3)))
+                    .unwrap();
+                let mut b = [0; 4096];
+                let n = stream.read(&mut b).unwrap();
+                let request = String::from_utf8_lossy(&b[..n]);
+                assert!(request.starts_with("GET /api/"));
+                assert!(!request.contains("Authorization:"));
+                let body = format!("HTTP/1.1 {status}\r\n{headers}Connection: close\r\n\r\n");
+                stream.write_all(body.as_bytes()).unwrap();
+            });
+            let error = ZoteroClient::at(&base)
+                .unwrap()
+                .health(&AtomicBool::new(false), Instant::now())
+                .unwrap_err();
+            assert!(error.contains(expected), "{error}");
+            handle.join().unwrap();
         }
         assert!(ZoteroClient::at("https://example.invalid/api/").is_err());
-        assert!(ZoteroClient::check(&AtomicBool::new(true),Instant::now()).is_err());
+        assert!(ZoteroClient::check(&AtomicBool::new(true), Instant::now()).is_err());
     }
-
 }

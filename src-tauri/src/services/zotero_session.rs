@@ -170,22 +170,52 @@ mod tests {
     }
     #[test]
     fn preview_is_owner_bound_expires_and_cannot_be_replayed() {
-        use crate::services::zotero_local::{metadata_candidate,instance_identity,ZoteroScope};
+        use crate::services::zotero_local::{ZoteroScope, instance_identity, metadata_candidate};
         use serde_json::json;
-        let h=ZoteroHealth{api_version:3,schema_version:Some(44),product_version:None,instance_id:instance_identity("FixtureServer420").unwrap(),server_id:"FixtureServer420".into()};
-        let scope=ZoteroScope{library_type:"user".into(),library_id:0};
-        let a=json!({"key":"ATTACH01","version":1,"library":{"type":"user","id":0},"data":{"key":"ATTACH01","itemType":"attachment","parentItem":"PARENT01"}});
-        let p=json!({"key":"PARENT01","version":1,"library":{"type":"user","id":0},"data":{"key":"PARENT01","itemType":"journalArticle","title":"Preview fixture"}});
-        let c=metadata_candidate(&h,&scope,&a,&p).unwrap();let s=ZoteroSessions::default();
-        let result=ZoteroLookup{health:h,candidates:vec![c.clone()],message:String::new()};
-        let response=s.store("owner","document","hash",result,&AtomicBool::new(false)).unwrap();let id=&response.candidates[0].id;
-        assert!(s.take(id,"other","document","hash").is_err());
-        assert!(s.take(id,"owner","wrong","hash").is_err());
-        assert!(s.take(id,"owner","document","wrong").is_err());
-        s.take(id,"owner","document","hash").unwrap();assert!(s.take(id,"owner","document","hash").is_err());
-        s.previews.lock().unwrap().insert("expired".into(),Preview{owner:"owner".into(),document_id:"document".into(),content_hash:"hash".into(),candidate:c,created:Instant::now()-Duration::from_secs(301)});
-        assert!(s.take("expired","owner","document","hash").unwrap_err().contains("过期"));
+        let h = ZoteroHealth {
+            api_version: 3,
+            schema_version: Some(44),
+            product_version: None,
+            instance_id: instance_identity("FixtureServer420").unwrap(),
+            server_id: "FixtureServer420".into(),
+        };
+        let scope = ZoteroScope {
+            library_type: "user".into(),
+            library_id: 0,
+        };
+        let a = json!({"key":"ATTACH01","version":1,"library":{"type":"user","id":0},"data":{"key":"ATTACH01","itemType":"attachment","parentItem":"PARENT01"}});
+        let p = json!({"key":"PARENT01","version":1,"library":{"type":"user","id":0},"data":{"key":"PARENT01","itemType":"journalArticle","title":"Preview fixture"}});
+        let c = metadata_candidate(&h, &scope, &a, &p).unwrap();
+        let s = ZoteroSessions::default();
+        let result = ZoteroLookup {
+            health: h,
+            candidates: vec![c.clone()],
+            message: String::new(),
+        };
+        let response = s
+            .store("owner", "document", "hash", result, &AtomicBool::new(false))
+            .unwrap();
+        let id = &response.candidates[0].id;
+        assert!(s.take(id, "other", "document", "hash").is_err());
+        assert!(s.take(id, "owner", "wrong", "hash").is_err());
+        assert!(s.take(id, "owner", "document", "wrong").is_err());
+        s.take(id, "owner", "document", "hash").unwrap();
+        assert!(s.take(id, "owner", "document", "hash").is_err());
+        s.previews.lock().unwrap().insert(
+            "expired".into(),
+            Preview {
+                owner: "owner".into(),
+                document_id: "document".into(),
+                content_hash: "hash".into(),
+                candidate: c,
+                created: Instant::now() - Duration::from_secs(301),
+            },
+        );
+        assert!(
+            s.take("expired", "owner", "document", "hash")
+                .unwrap_err()
+                .contains("过期")
+        );
         assert!(s.previews.lock().unwrap().is_empty());
     }
-
 }

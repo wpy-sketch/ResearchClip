@@ -12,18 +12,18 @@
 
 ## 实际测试
 
-实际Windows11 x64、Node22.22.2/WebView2环境。以下命令实际执行并退出0，详见[机器证据](evidence/v420-editor-checks.json)：
+实际Windows11 x64、Node22.22.2/WebView2环境。下列通过项实际执行并退出0；应用标签与测试格式后续修正分开记录，详见[机器证据](evidence/v420-editor-checks.json)：
 
 - npm ci --ignore-scripts：327包干净安装通过；锁文件仅应用版本变化，未增依赖。
 - npm run check：81文件、662项前端单元测试通过，类型/ESLint/前端生产构建通过。
-- npm run format:rust、npm run test:rust、npm run check:rust：272通过、7忽略，格式及Clippy通过；忽略项不是通过。
+- 应用标签的npm run test:rust、npm run check:rust：272通过、7忽略及Clippy通过；忽略项不是通过。标签新增测试的npm run format:rust原有格式差异，先前汇总误计为通过。后续只格式化四份cfg(test)区段，逐文件比较确认生产代码前缀字节不变；重新执行格式检查、272项Rust测试和Clippy通过，标签与安装包不重写。
 - node scripts/with-rust.mjs tauri build --debug --no-bundle：实际Windows内嵌生产资源调试程序。
 - 工作区7组、命令8组、资源6组、引用11组、PDF13组、Zotero外部打开与来源10组，合计55组Windows原生通过；全部使用隔离目录的最终重跑通过。
 - node scripts/guide-reader-smoke.mjs v420-final：14组浏览器通过；28章/187练习/47图，明暗主题、不同字体、480–1440宽度、CSS缩放75–200%，不能替代物理DPI。
 - 发布基础设施20项测试通过；既有001–015迁移未修改，新增16迁移成功保留旧键/阅读状态并有失败回滚测试。来源所有者、过期/重放、取消、跨库/实例、旧同DOI信息不覆盖均覆盖。
 - npm run desktop:bundle及pwsh -NoProfile -File scripts/installer-smoke.ps1 -RunId v420-distribution -TargetDir src-tauri/target/v413-distribution：实际NSIS构建与5组安装/忙碌保护/关联注册/卸载/清理通过，四份许可摘要一致，安装期间所有原有AppData摘要保持。这个安装期间结论不能抵消上文测试误启动事件。
 
-HTTP元数据为显式虚构练习内容，不能代表真实Zotero UI验收。首次原生脚本的隔离遗漏和后续退出时WebView先于IPC响应关闭的脚本竞争均已修复；完整最终重跑通过，旧失败日志保留在artifacts。
+HTTP元数据为显式虚构练习内容，不能代表真实Zotero UI验收。首次原生脚本的隔离遗漏和后续退出时WebView先于IPC响应关闭的脚本竞争均已修复；完整最终重跑通过，旧失败日志保留在artifacts。Rust格式首次汇总错误也已在机器证据中明确纠正；不能把后续格式通过归于原应用标签。
 
 ## 未验证与人工验收
 

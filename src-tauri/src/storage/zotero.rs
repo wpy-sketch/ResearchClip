@@ -267,8 +267,17 @@ mod tests {
         let d = tempfile::tempdir().unwrap();
         let mut s = Storage::open(d.path().into()).unwrap();
         let pdf = s.register_pdf("旧PDF", &"a".repeat(64), 12).unwrap();
-        let location = super::super::pdf::PdfReadingLocation { page_index: 3, rotation: 270, zoom: 1.5, zoom_mode: "width".into(), spread: true, offset_x: 0.2, offset_y: 0.6 };
-        s.save_pdf_reading(&pdf.document_id, &pdf.content_hash, 0, &location).unwrap();
+        let location = super::super::pdf::PdfReadingLocation {
+            page_index: 3,
+            rotation: 270,
+            zoom: 1.5,
+            zoom_mode: "width".into(),
+            spread: true,
+            offset_x: 0.2,
+            offset_y: 0.6,
+        };
+        s.save_pdf_reading(&pdf.document_id, &pdf.content_hash, 0, &location)
+            .unwrap();
         let c = candidate("user", 1, "FixtureServer1", "");
         let legacy = crate::domain::research::ZoteroKey {
             instance_id: c.instance_id.clone(),
@@ -319,17 +328,35 @@ mod tests {
     }
     #[test]
     fn failed_schema16_keeps_old_schema_and_user_records() {
-        let d=tempfile::tempdir().unwrap();
-        let mut s=Storage::open(d.path().into()).unwrap();
-        let pdf=s.register_pdf("保留旧资料", &"a".repeat(64), 12).unwrap();
+        let d = tempfile::tempdir().unwrap();
+        let mut s = Storage::open(d.path().into()).unwrap();
+        let pdf = s.register_pdf("保留旧资料", &"a".repeat(64), 12).unwrap();
         super::super::migrations::legacy_zotero_fixture(&s.connection);
-        s.connection.execute_batch("PRAGMA user_version=15; CREATE TABLE research_zotero_keys_v15(guard TEXT);").unwrap();
+        s.connection
+            .execute_batch(
+                "PRAGMA user_version=15; CREATE TABLE research_zotero_keys_v15(guard TEXT);",
+            )
+            .unwrap();
         drop(s);
         assert!(Storage::open(d.path().into()).is_err());
-        let c=Connection::open(d.path().join("researchclip.sqlite3")).unwrap();
-        assert_eq!(c.query_row("PRAGMA user_version",[],|r|r.get::<_,u32>(0)).unwrap(),15);
-        assert_eq!(c.query_row("SELECT count(*) FROM research_entities WHERE id=?1",[pdf.document_id],|r|r.get::<_,i64>(0)).unwrap(),1);
-        assert!(c.prepare("SELECT library_type FROM research_zotero_keys").is_err());
+        let c = Connection::open(d.path().join("researchclip.sqlite3")).unwrap();
+        assert_eq!(
+            c.query_row("PRAGMA user_version", [], |r| r.get::<_, u32>(0))
+                .unwrap(),
+            15
+        );
+        assert_eq!(
+            c.query_row(
+                "SELECT count(*) FROM research_entities WHERE id=?1",
+                [pdf.document_id],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            1
+        );
+        assert!(
+            c.prepare("SELECT library_type FROM research_zotero_keys")
+                .is_err()
+        );
     }
-
 }

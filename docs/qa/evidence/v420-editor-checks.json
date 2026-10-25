@@ -182,11 +182,14 @@
     "v420-clippy.log": "8e977970fdfaf0f33616bfced4f3d0ec6949e1921867dd8e9d87ebb79038799e",
     "v420-distribution-build.log": "479a913976765446176eb07903029621debe24a8c7ad6cc445ab8898612d0a19",
     "v420-docs.log": "e637b5c28d11693bf1e8cd966e72f2581db11b5dbbb8a3587f0cf025b768a8b0",
-    "v420-format.log": "27897e0ef350b2ff90c96beb6f191aa0219902cdcc50b47c7cc711ccd0a14f06",
+    "v420-format.log": "6d2b9a57e47a1379e4548832a8a7f38b67777aaef0f72a3738d7dc6dfc3681b9",
     "v420-installer.log": "61e5ad63b0d926778965aa3fdf8b47c3f793a872185ec3ac4710c36eb7cc8865",
     "v420-release-tests.log": "5b2d51d5edcb8a31116a089c10dce05599f484e96fe27a472cc72abda6c11a1e",
     "v420-rust-tests.log": "e9d769ba0f9c909b5f05791c31afaf7e6cfdd713b2099881589d1b21b7cf5703",
-    "v420-clean-install.log": "2193875be688c51017e96a13f92e091b6ab73365a5a90e0c7a1ed48e927ba8e5"
+    "v420-clean-install.log": "2193875be688c51017e96a13f92e091b6ab73365a5a90e0c7a1ed48e927ba8e5",
+    "v420-format-before-fix.log": "27897e0ef350b2ff90c96beb6f191aa0219902cdcc50b47c7cc711ccd0a14f06",
+    "v420-rust-tests-format-fix.log": "301fe8b7454c8df8f1a39720e269aa6a6a819f305b0168a912849620b7a43878",
+    "v420-clippy-format-fix.log": "e6fc30571dff6d6565cf8a2789b914e64c062dbedad5b89e4700e47c39151efa"
   },
   "limitations": [
     "7 Rust ignored tests are not passes",
@@ -201,5 +204,14 @@
     "exitCode": 0,
     "packages": 327,
     "applicationDependenciesAdded": 0
+  },
+  "applicationTagCommit": "ddfb6a33eb1b22a1e163a5fa4d8ec65265ca0046",
+  "formatCheck": {
+    "initialTagCheck": "FAIL: rustfmt differences in newly added tests",
+    "correctionScope": "Only cfg(test) sections in four Rust files; production-code prefix bytes compared equal to v4.2.0",
+    "followupCheck": "PASS",
+    "followupCommand": "npm run format:rust",
+    "followupExitCode": 0,
+    "tagAndFrozenInstallerUnchanged": true
   }
 }
