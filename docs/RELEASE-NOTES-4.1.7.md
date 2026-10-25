@@ -6,4 +6,4 @@
 
 SQLite升级schema13，沿用校验、升级前一致快照与事务回滚。旧版本不能写新库，不重置数据。新增历史/目录仅在本机，不宣称加入旧WebDAV同步。无新增依赖、Markdown导出PDF或独立备份恢复系统。
 
-实现、测试与Windows验收见[Step08记录](qa/DOCUMENT_STEP08.md)，语义见[架构契约](architecture/DOCUMENT_ORGANIZATION_STEP08.md)，使用见[指南](USER_GUIDE.md)。正式发布继承此前36版1471个附件，预计本版267附件；实际发布/下载校验完成后另记回执。
+实现、测试与Windows验收见[Step08记录](qa/DOCUMENT_STEP08.md)，语义见[架构契约](architecture/DOCUMENT_ORGANIZATION_STEP08.md)，使用见[指南](USER_GUIDE.md)。正式发布继承此前36版1471个附件，本版实际267附件均已匿名下载并核对摘要，旧版本附件前后审计通过。见[正式回执](qa/PUBLICATION-4.1.7.md)。
