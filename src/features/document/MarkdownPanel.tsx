@@ -1,3 +1,4 @@
+import {PaperTools} from './PaperTools';
 import {ContentTools} from './ContentTools';
 import {VisualEditor} from './VisualEditor';
 import {SlashMenu} from './SlashMenu';
@@ -57,6 +58,7 @@ export function MarkdownPanel(){
     <div className="md-mode-bar" role="group" aria-label="Markdown 编辑模式"><button type="button" aria-pressed={!preview&&!visual&&!live} onClick={()=>{setPreview(false);setVisual(false);setLive(false);}}>源码</button><button type="button" aria-pressed={!preview&&visual} onClick={()=>{setPreview(false);setVisual(true);setLive(false);}}>近所见即所得</button><button type="button" aria-pressed={!preview&&!visual&&live} onClick={()=>{setPreview(false);setVisual(false);setLive(true);}}>实时预览</button><button type="button" aria-pressed={preview} onClick={()=>setPreview(true)}>只读预览</button>{live&&!preview&&!visual&&<button type="button" aria-pressed={sync} onClick={()=>setSync(!sync)}>同步滚动</button>}</div>
     <FormattingToolbar key={`tools:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     <ContentTools key={`content:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
+    <PaperTools key={`paper:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     {s.error&&<p role="alert" className="error-banner m-2">{s.error}</p>}{s.notice&&<p role="status" title={s.notice} className="markdown-notice m-2 text-xs text-muted">{s.notice}</p>}
     <div className="markdown-preview-options">{source&&!visual&&!preview&&<button aria-pressed={live} className="text-xs" onClick={()=>setLive(!live)}>{live?'关闭实时预览':'开启实时预览'}</button>}<span>LaTeX · 离线排版</span><ExternalOpenButton/></div>
     <div className="markdown-reference-row"><DocumentProject/><ReferenceButton/><AnchorReferenceButton/></div>

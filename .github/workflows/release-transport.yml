@@ -4,7 +4,7 @@ on:
     inputs:
       mode:
         type: choice
-        options: [reconstruct412, inherit413, verify412, verify413, inherit414, verify414, inherit415, verify415]
+        options: [reconstruct412, inherit413, verify412, verify413, inherit414, verify414, inherit415, verify415, inherit416, verify416]
         required: true
       target_release:
         type: string
@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   transport:
-    if: inputs.mode == 'reconstruct412' || inputs.mode == 'inherit413' || inputs.mode == 'inherit414' || inputs.mode == 'inherit415'
+    if: inputs.mode == 'reconstruct412' || inputs.mode == 'inherit413' || inputs.mode == 'inherit414' || inputs.mode == 'inherit415' || inputs.mode == 'inherit416'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
@@ -43,7 +43,7 @@ jobs:
           TARGET_COMMIT: ${{ inputs.target_commit }}
         run: python3 scripts/github-release-transfer.py "$TRANSFER_MODE" --target-release "$TARGET_RELEASE" --target-commit "$TARGET_COMMIT" --run-id "ci-${{ github.run_id }}"
   public-verification:
-    if: inputs.mode == 'verify412' || inputs.mode == 'verify413' || inputs.mode == 'verify414' || inputs.mode == 'verify415'
+    if: inputs.mode == 'verify412' || inputs.mode == 'verify413' || inputs.mode == 'verify414' || inputs.mode == 'verify415' || inputs.mode == 'verify416'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:

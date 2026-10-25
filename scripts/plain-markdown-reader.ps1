@@ -1,4 +1,4 @@
-param([Parameter(Mandatory)][string]$FilePath,[Parameter(Mandatory)][ValidatePattern('^[a-z0-9-]{1,48}$')][string]$RunId,[switch]$OwnedWindowOnly)
+param([Parameter(Mandatory)][string]$FilePath,[Parameter(Mandatory)][ValidatePattern('^[a-z0-9-]{1,48}$')][string]$RunId,[switch]$OwnedWindowOnly,[switch]$Paper)
 $ErrorActionPreference='Stop'
 $repo=(Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $source=[IO.Path]::GetFullPath((Join-Path $repo $FilePath))
@@ -60,7 +60,7 @@ public static class ResearchClipNotepadWindow {
  if ($OwnedWindowOnly -and $ownerId -notin $allowedIds) { throw 'File window is not owned by the verified test launcher.' }
  $window=[Windows.Automation.AutomationElement]::FromHandle($handle)
  $conditions=[Windows.Automation.OrCondition]::new([Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ControlTypeProperty,[Windows.Automation.ControlType]::Document),[Windows.Automation.PropertyCondition]::new([Windows.Automation.AutomationElement]::ControlTypeProperty,[Windows.Automation.ControlType]::Edit))
- $matched=$false;$needles=@('混合科研练习','\newcommand','assets/researchclip-','fixture_text','| 参数 |')
+ $matched=$false;$needles=if($Paper){@('数学论文练习',':::theorem','rc-label: eq:matrix','rc-ref:eq:derivation','\newcommand','| 参数 |')}else{@('混合科研练习','\newcommand','assets/researchclip-','fixture_text','| 参数 |')}
  foreach ($text in [ResearchClipNotepadWindow]::Texts($handle)) { if (@($needles | Where-Object { !$text.Contains($_) }).Count -eq 0) { $matched=$true;$report.textProvider='actual owned Win32 RichEdit WM_GETTEXT';break } }
  while ((Get-Date) -lt $deadline -and !$matched) {
   foreach ($node in $window.FindAll([Windows.Automation.TreeScope]::Descendants,$conditions)) {

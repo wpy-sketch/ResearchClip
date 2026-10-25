@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-25",
+  "result": "PASS",
+  "existingLockedVersionsUnchanged": true,
+  "change": "Two already installed transitive GFM packages are now declared as exact direct dependencies; no version upgrade",
+  "katexInstalled": "0.19.0",
+  "directDeclarations": [
+    {
+      "name": "micromark-extension-gfm",
+      "version": "3.0.0",
+      "license": "MIT",
+      "dist.integrity": "sha512-vsKArQsicm7t0z2GugkCKtZehqUm31oeGBV/KVSorWSy8ZlNAv7ytjFhvaryUiCUJYqs+NoE6AFhpQvBTM6Q4w==",
+      "repository.url": "git+https://github.com/micromark/micromark-extension-gfm.git"
+    },
+    {
+      "name": "mdast-util-gfm",
+      "version": "3.1.0",
+      "license": "MIT",
+      "dist.integrity": "sha512-0ulfdQOM3ysHhCJ1p06l0b0VKlhU0wuQs3thxZQagjcjPrlFRqY215uZGHHJan9GEAXd9MbfPjFJz+qMkVR6zQ==",
+      "repository.url": "git+https://github.com/syntax-tree/mdast-util-gfm.git"
+    }
+  ],
+  "licenseNotice": "docs/licenses/remark-gfm-NOTICES.txt"
+}

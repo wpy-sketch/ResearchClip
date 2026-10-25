@@ -1,3 +1,4 @@
+import {paperAst,paperContainers,type AstNode} from './paper-model';
 import {fromMarkdown} from 'mdast-util-from-markdown';
 import {math} from 'micromark-extension-math';
 import {mathFromMarkdown} from 'mdast-util-math';
@@ -16,22 +17,29 @@ export function applyDomText(raw:string,next:string,start:number,end:number){
 export function projectMarkdown(raw:string):SourceProjection{
  const fallback=(reason:string)=>({blocks:[{from:0,to:raw.length,kind:'protected',image:false,fixed:true}],reason,references:''});
  if(raw.length>512*1024)return fallback('大稿使用整篇原文编辑，保留预览与保存；块拖动上限为512 Ki字符。');
- if(/^[ \t]*(?::{3,}|!!!\s)/m.test(raw))return fallback('检测到未注册扩展容器，保留完整原文；为避免拆散扩展，暂停块拖动。');
  let body=0;const blocks:SourceBlock[]=[];
  const front=/^\uFEFF?(---|\+\+\+)[ \t]*\r?\n/.exec(raw);
  if(front){const close=new RegExp('^'+front[1].replaceAll('+','\\+')+'[ \\t]*\\r?$','gm');close.lastIndex=front[0].length;const end=close.exec(raw);if(!end)return fallback('未闭合的前置元数据保持原文，暂停块拖动。');body=end.index+end[0].length;blocks.push({from:0,to:body,kind:'metadata',image:false,fixed:true});}
- const nodes=fromMarkdown(raw.slice(body),{extensions:[math()],mdastExtensions:[mathFromMarkdown()]}).children;
+ const tree=paperAst(raw.slice(body)),scan=paperContainers(raw.slice(body),tree),excluded:{from:number;to:number}[]=[];
+ const exclude=(n:AstNode)=>{if(['code','math','html'].includes(n.type))excluded.push({from:n.position?.start.offset??0,to:n.position?.end.offset??0});n.children?.forEach(exclude);};exclude(tree);
+ if(scan.containers.some(c=>!c.valid)||Array.from(raw.slice(body).matchAll(/^[ \t]*(?::{3,}|!!!\s)/gm)).some(m=>!scan.containers.some(c=>m.index>=c.from&&m.index<c.to)&&!excluded.some(c=>m.index>=c.from&&m.index<c.to)))return fallback('检测到未注册或未闭合扩展容器，保留完整原文并暂停块拖动。');
+ const nodes:({node:AstNode;from:number;to:number;theorem?:boolean})[]=[];let cursor=0;
+ const append=(from:number,to:number)=>{for(const node of paperAst(raw.slice(body+from,body+to)).children??[])nodes.push({node,from:body+from+(node.position?.start.offset??0),to:body+from+(node.position?.end.offset??0)});};
+ for(const c of scan.containers){append(cursor,c.from);nodes.push({node:{type:'theorem'},from:body+c.from,to:body+c.to,theorem:true});cursor=c.to;}append(cursor,raw.length-body);
  if(nodes.length>300)return fallback('超过300个可视块，保留整篇原文编辑，暂停块拖动。');
  const refs:string[]=[];
- const tableNode=(node:typeof nodes[number])=>{if(node.type!=='paragraph')return false;const rows=raw.slice(body+(node.position?.start.offset??0),body+(node.position?.end.offset??0)).split(/\r\n|\n|\r/);if(rows.length<2||!rows[0].includes('|'))return false;const cells=rows[1].trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(c=>c.trim());return cells.length>0&&cells.every(c=>/^:?-{3,}:?$/.test(c));};
  for(let index=0;index<nodes.length;index++){
-  const node=nodes[index],from=body+(node.position?.start.offset??0);let to=body+(node.position?.end.offset??0);
-  const image=node.type==='paragraph'&&node.children.some(c=>c.type==='image'||c.type==='imageReference')&&node.children.every(c=>c.type==='image'||c.type==='imageReference'||c.type==='text'&&!c.value.trim());
-  // Ordinary Markdown has no caption metadata: consecutive prose immediately below an
-  // image belongs to its visible group. Lists/headings/code/math/another image end it.
-  if(image){while(index+1<nodes.length){const next=nodes[index+1];if(next.type!=='paragraph'||tableNode(next)||next.children.some(c=>c.type==='image'||c.type==='imageReference'))break;to=body+(next.position?.end.offset??0);index++;}}
+  const entry=nodes[index],node=entry.node;let from=entry.from,to=entry.to;
+  const image=node.type==='paragraph'&&node.children?.some(c=>c.type==='image'||c.type==='imageReference')&&node.children.every(c=>c.type==='image'||c.type==='imageReference'||c.type==='text'&&!c.value?.trim());
+  if(image){while(index+1<nodes.length){const next=nodes[index+1];if(next.node.type!=='paragraph'||next.node.children?.some(c=>c.type==='image'||c.type==='imageReference'))break;to=next.to;index++;}}
   if(node.type==='definition')refs.push(raw.slice(from,to));
-  blocks.push({from,to,kind:image?'image':tableNode(node)?'table':node.type,image,fixed:false});
+  const text=raw.slice(from,to),label=node.type==='html'&&/^<!-- rc-label: [A-Za-z][A-Za-z0-9_.:-]{0,63} -->$/.test(text.trim());
+  if(label&&index+1<nodes.length&&/^\s*$/.test(raw.slice(to,nodes[index+1].from))&&['math','theorem','table','paragraph'].includes(nodes[index+1].node.type)){
+   // The next iteration keeps its type/grouping and includes this source label.
+   nodes[index+1].from=from;continue;
+  }
+  from=entry.from;
+  blocks.push({from,to,kind:image?'image':node.type,image:!!image,fixed:node.type==='html'&&/^<!-- rc-paper /.test(text.trim())});
  }
  if(!blocks.length)blocks.push({from:0,to:raw.length,kind:'paragraph',image:false,fixed:false});
  return {blocks,reason:null,references:refs.join('\n\n')};
