@@ -6,4 +6,4 @@ Step09完成独立CitationService，复用原本地文献库。@按标题、作�
 
 指南26章/167练习/41图，目录和路线自然排序；原创多色科研图标、短编辑区补全浮层、宽窄窗/缩放弹窗完善。无新增第三方包、Markdown导出PDF、独立备份恢复或新Zotero业务。
 
-设计见[引用契约](architecture/CITATIONS_STEP09.md)，实际测试与人工验收见[Step09报告](qa/CITATIONS_STEP09.md)，使用见[指南](USER_GUIDE.md)。本版计划273附件，完整继承此前37版1738个原附件；实际发布/匿名下载结果另记回执。
+设计见[引用契约](architecture/CITATIONS_STEP09.md)，实际测试与人工验收见[Step09报告](qa/CITATIONS_STEP09.md)，使用见[指南](USER_GUIDE.md)。本版实际273附件，完整继承此前37版1738个原附件；全部实际匿名下载摘要匹配，旧附件审计通过。见[正式回执](qa/PUBLICATION-4.1.8.md)。

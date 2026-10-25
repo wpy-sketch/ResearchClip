@@ -33,7 +33,7 @@ WebClipper1.0.2、MathOCR Setup1.0.4及Qwen清单原样沿用，不改其版本/
 
 ## v4.1.8 如何完整继承附件
 
-本版预计273个附件，覆盖此前37版1738个原发布附件：通过v4.1.1的226个文件仍在相同223卷归档内；v4.1.2的237个、v4.1.3的243个、v4.1.4的249个、v4.1.5的255个、v4.1.6的261个和v4.1.7的267个附件全部收录。v4.1.7中265个无冲突附件直接附上，SOURCE.txt与SHA256SUMS.txt按原名原字节放入ResearchClip-v4.1.7-Release-Metadata.zip的v4.1.7目录；更早元数据ZIP继续原样提供。V418-HISTORY-INVENTORY.json逐项给出原版本、文件名、大小、摘要及当前定位。不以旧链接代替内容，也不把数GB归档再次嵌套打包。
+本版实际273个附件，覆盖此前37版1738个原发布附件：通过v4.1.1的226个文件仍在相同223卷归档内；v4.1.2的237个、v4.1.3的243个、v4.1.4的249个、v4.1.5的255个、v4.1.6的261个和v4.1.7的267个附件全部收录。v4.1.7中265个无冲突附件直接附上，SOURCE.txt与SHA256SUMS.txt按原名原字节放入ResearchClip-v4.1.7-Release-Metadata.zip的v4.1.7目录；更早元数据ZIP继续原样提供。V418-HISTORY-INVENTORY.json逐项给出原版本、文件名、大小、摘要及当前定位。不以旧链接代替内容，也不把数GB归档再次嵌套打包。
 
 旧HISTORY-TRANSPORT.json和Assemble脚本保留desktopVersion4.1.2，因为它们描述的始终是通过v4.1.1的同一归档，摘要和223卷完全相同。旧HISTORY-README也原样保留；本版补充说明以RELEASE-HISTORY-v4.1.8.txt为准。当前顶层SOURCE.txt和SHA256SUMS.txt属于v4.1.8。不要把旧版安装包当作当前应用安装。
 
