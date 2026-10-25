@@ -412,14 +412,14 @@ impl Storage {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         get(&tx, key)?;
-        let prior:Option<(String,String)>=tx.query_row("SELECT resource_type,resource_id FROM research_zotero_keys WHERE instance_id=?1 AND library_id=?2 AND item_key=?3",params![external.instance_id,external.library_id,external.item_key],|r|Ok((r.get(0)?,r.get(1)?))).optional()?;
+        let prior:Option<(String,String)>=tx.query_row("SELECT resource_type,resource_id FROM research_zotero_keys WHERE instance_id=?1 AND library_id=?2 AND item_key=?3 AND library_type='legacy'",params![external.instance_id,external.library_id,external.item_key],|r|Ok((r.get(0)?,r.get(1)?))).optional()?;
         if let Some((kind, id)) = prior {
             if kind != key.kind.key() || id != key.id {
                 return Err(StorageError::Conflict);
             }
         } else {
             tx.execute(
-                "INSERT INTO research_zotero_keys VALUES(?1,?2,?3,?4,?5)",
+                "INSERT INTO research_zotero_keys(instance_id,library_id,item_key,resource_type,resource_id) VALUES(?1,?2,?3,?4,?5)",
                 params![
                     external.instance_id,
                     external.library_id,
@@ -434,7 +434,7 @@ impl Storage {
     }
     pub fn zotero_resource(&self, external: &ZoteroKey) -> Result<Option<ResourceKey>> {
         external.validate().map_err(StorageError::Invalid)?;
-        let value:Option<(String,String)>=self.connection.query_row("SELECT resource_type,resource_id FROM research_zotero_keys WHERE instance_id=?1 AND library_id=?2 AND item_key=?3",params![external.instance_id,external.library_id,external.item_key],|r|Ok((r.get(0)?,r.get(1)?))).optional()?;
+        let value:Option<(String,String)>=self.connection.query_row("SELECT resource_type,resource_id FROM research_zotero_keys WHERE instance_id=?1 AND library_id=?2 AND item_key=?3 AND library_type='legacy'",params![external.instance_id,external.library_id,external.item_key],|r|Ok((r.get(0)?,r.get(1)?))).optional()?;
         value
             .map(|(kind, id)| {
                 Ok(ResourceKey {

@@ -4,7 +4,7 @@ on:
     inputs:
       mode:
         type: choice
-        options: [reconstruct412, inherit413, verify412, verify413, inherit414, verify414, inherit415, verify415, inherit416, verify416, inherit417, verify417, inherit418, verify418, inherit419, verify419]
+        options: [reconstruct412, inherit413, verify412, verify413, inherit414, verify414, inherit415, verify415, inherit416, verify416, inherit417, verify417, inherit418, verify418, inherit419, verify419, inherit420, verify420]
         required: true
       target_release:
         type: string
@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   transport:
-    if: inputs.mode == 'reconstruct412' || inputs.mode == 'inherit413' || inputs.mode == 'inherit414' || inputs.mode == 'inherit415' || inputs.mode == 'inherit416' || inputs.mode == 'inherit417' || inputs.mode == 'inherit418' || inputs.mode == 'inherit419'
+    if: inputs.mode == 'reconstruct412' || inputs.mode == 'inherit413' || inputs.mode == 'inherit414' || inputs.mode == 'inherit415' || inputs.mode == 'inherit416' || inputs.mode == 'inherit417' || inputs.mode == 'inherit418' || inputs.mode == 'inherit419' || inputs.mode == 'inherit420'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
@@ -43,7 +43,7 @@ jobs:
           TARGET_COMMIT: ${{ inputs.target_commit }}
         run: python3 scripts/github-release-transfer.py "$TRANSFER_MODE" --target-release "$TARGET_RELEASE" --target-commit "$TARGET_COMMIT" --run-id "ci-${{ github.run_id }}"
   public-verification:
-    if: inputs.mode == 'verify412' || inputs.mode == 'verify413' || inputs.mode == 'verify414' || inputs.mode == 'verify415' || inputs.mode == 'verify416' || inputs.mode == 'verify417' || inputs.mode == 'verify418' || inputs.mode == 'verify419'
+    if: inputs.mode == 'verify412' || inputs.mode == 'verify413' || inputs.mode == 'verify414' || inputs.mode == 'verify415' || inputs.mode == 'verify416' || inputs.mode == 'verify417' || inputs.mode == 'verify418' || inputs.mode == 'verify419' || inputs.mode == 'verify420'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:

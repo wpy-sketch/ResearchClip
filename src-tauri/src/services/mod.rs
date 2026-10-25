@@ -28,3 +28,9 @@ pub mod similarity_index;
 pub mod sync;
 
 pub mod pdf;
+
+pub mod pdf_open;
+
+pub mod zotero_local;
+
+pub mod zotero_session;

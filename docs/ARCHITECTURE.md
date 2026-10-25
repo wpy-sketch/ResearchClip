@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v4.2.0 Step11：复用单实例和PDF会话，原生argv授权队列、只读Zotero来源预览/确认，SQLite16扩展既有范围映射；详见[Step11架构](architecture/ZOTERO_PDF_STEP11.md)与[实际验收](qa/ZOTERO_PDF_STEP11.md)。v4.1.9已提供[原生PDF阅读器](architecture/PDF_READER_STEP10.md)。下文保留各阶段原有记录。
+
 v4.1.5用户Step06：有界表格局部编辑、图片组与旧caption图题、代码HAST安全着色、视图行号/折叠及最近格式；复用原文、资源与文件/撤销服务。无迁移/权限扩张，见[设计](architecture/MARKDOWN_STEP06_DESIGN.md)与[验收](qa/MARKDOWN_STEP06.md)。
 
 v4.1.4 Step05：原文投影、局部差量写回、四视图、比例同步、六斜杠动作及原块拖动；未引入第二正文/撤销/文件服务或新运行依赖。SQLite12，比较与边界见[先行选型](architecture/EDITOR_STEP05_DECISION.md)，实际结果见[Step05验收](qa/MARKDOWN_STEP05.md)。

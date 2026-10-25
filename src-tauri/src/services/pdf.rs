@@ -6,7 +6,7 @@ use std::{
     collections::HashMap,
     fs::{File, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
-    path::Path,
+    path::{Path, PathBuf},
     sync::{
         Arc, Mutex,
         atomic::{AtomicBool, AtomicU64, Ordering},
@@ -17,13 +17,14 @@ pub const MAX_PDF_BYTES: u64 = 128 * 1024 * 1024;
 const MAX_TOTAL: u64 = 256 * 1024 * 1024;
 #[derive(Default)]
 pub struct PdfDocumentService {
+    pub requests: super::pdf_open::PdfOpenRequests,
     jobs: Mutex<HashMap<String, Arc<PdfJob>>>,
 }
 pub struct PdfJob {
     pub cancelled: AtomicBool,
     loaded: AtomicU64,
     total: AtomicU64,
-    file: Mutex<Option<(File, PdfRecord)>>,
+    file: Mutex<Option<(File, PdfRecord, Option<PathBuf>)>>,
 }
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -112,7 +113,13 @@ impl PdfDocumentService {
             total: j.total.load(Ordering::Relaxed),
         })
     }
-    pub fn finish(&self, id: &str, file: File, record: PdfRecord) -> Result<()> {
+    pub fn finish(
+        &self,
+        id: &str,
+        file: File,
+        record: PdfRecord,
+        source: Option<PathBuf>,
+    ) -> Result<()> {
         let jobs = self
             .jobs
             .lock()
@@ -124,7 +131,7 @@ impl PdfDocumentService {
         let mut total = record.byte_size;
         for (key, job) in jobs.iter() {
             if key != id
-                && let Some((_, r)) = job
+                && let Some((_, r, _)) = job
                     .file
                     .lock()
                     .map_err(|_| StorageError::Invalid("PDF授权锁异常。"))?
@@ -140,8 +147,65 @@ impl PdfDocumentService {
         }
         *j.file
             .lock()
-            .map_err(|_| StorageError::Invalid("PDF授权锁异常。"))? = Some((file, record));
+            .map_err(|_| StorageError::Invalid("PDF授权锁异常。"))? = Some((file, record, source));
         Ok(())
+    }
+    pub fn adopt_source(&self, from: &str, to: &str) -> Result<()> {
+        let (source, record) = self.source(from)?;
+        let job = self
+            .jobs
+            .lock()
+            .map_err(|_| StorageError::Invalid("PDF服务锁异常。"))?
+            .get(to)
+            .cloned()
+            .ok_or(StorageError::NotFound)?;
+        job.check()?;
+        let mut file = job
+            .file
+            .lock()
+            .map_err(|_| StorageError::Invalid("PDF授权锁异常。"))?;
+        let (_, target, path) = file.as_mut().ok_or(StorageError::NotFound)?;
+        if target.document_id != record.document_id
+            || target.content_hash != record.content_hash
+            || target.byte_size != record.byte_size
+        {
+            return Err(StorageError::Invalid("不能在不同PDF资源之间转交来源授权。"));
+        }
+        *path = Some(source);
+        Ok(())
+    }
+    pub fn verified_source(&self, id: &str) -> Result<(File, PathBuf, PdfRecord)> {
+        let (source, record) = self.source(id)?;
+        let job = self
+            .jobs
+            .lock()
+            .map_err(|_| StorageError::Invalid("PDF服务锁异常。"))?
+            .get(id)
+            .cloned()
+            .ok_or(StorageError::NotFound)?;
+        let file = verified_copy(&source, &record.content_hash, record.byte_size, &job)?;
+        Ok((file, source, record))
+    }
+    pub fn source(&self, id: &str) -> Result<(PathBuf, PdfRecord)> {
+        let job = self
+            .jobs
+            .lock()
+            .map_err(|_| StorageError::Invalid("PDF服务锁异常。"))?
+            .get(id)
+            .cloned()
+            .ok_or(StorageError::NotFound)?;
+        job.check()?;
+        let guard = job
+            .file
+            .lock()
+            .map_err(|_| StorageError::Invalid("PDF授权锁异常。"))?;
+        let (_, record, source) = guard.as_ref().ok_or(StorageError::NotFound)?;
+        Ok((
+            source.clone().ok_or(StorageError::Invalid(
+                "此会话没有原始来源路径；请从Zotero或打开PDF重新选择原件。",
+            ))?,
+            record.clone(),
+        ))
     }
     pub fn read(&self, id: &str, offset: u64, length: u32) -> Result<Vec<u8>> {
         if length == 0 || length > 1024 * 1024 {
@@ -160,7 +224,7 @@ impl PdfDocumentService {
             .file
             .lock()
             .map_err(|_| StorageError::Invalid("PDF授权锁异常。"))?;
-        let (file, record) = guard
+        let (file, record, _) = guard
             .as_mut()
             .ok_or(StorageError::Invalid("PDF尚未获得读取授权。"))?;
         if offset
@@ -272,7 +336,7 @@ mod tests {
         assert!(j.check().is_err());
         assert!(s.progress(&id).is_err());
         assert!(
-            s.finish(&id, tempfile::tempfile().unwrap(), dummy())
+            s.finish(&id, tempfile::tempfile().unwrap(), dummy(), None)
                 .is_err()
         );
         s.cancel(&id).unwrap();
@@ -303,7 +367,7 @@ mod tests {
         let f = verified_copy(&root.join(format!("{h}.pdf")), &h, n, &job).unwrap();
         let mut r = dummy();
         r.content_hash = h;
-        s.finish(&id, f, r).unwrap();
+        s.finish(&id, f, r, None).unwrap();
         assert_eq!(s.read(&id, 0, 5).unwrap(), b"%PDF-");
         assert!(s.read(&id, 11, 2).is_err());
         assert!(s.read(&id, u64::MAX, 1).is_err());
@@ -326,4 +390,18 @@ mod tests {
         s.cancel(&"a".repeat(32)).unwrap();
         assert!(import_copy(&source, &root, &j).is_err());
     }
+    #[test]
+    fn source_adoption_requires_matching_live_document_and_is_revoked_on_close() {
+        let s=PdfDocumentService::default(); let a="a".repeat(32);let b="b".repeat(32);let c="c".repeat(32);
+        s.begin(&a).unwrap(); s.begin(&b).unwrap();s.begin(&c).unwrap();
+        s.finish(&a,tempfile::tempfile().unwrap(),dummy(),Some(PathBuf::from("authorized.pdf"))).unwrap();
+        s.finish(&b,tempfile::tempfile().unwrap(),dummy(),None).unwrap();
+        let mut other=dummy();other.document_id="d".repeat(32);
+        s.finish(&c,tempfile::tempfile().unwrap(),other,None).unwrap();
+        assert!(s.adopt_source(&a,&c).is_err());
+        s.adopt_source(&a,&b).unwrap();assert_eq!(s.source(&b).unwrap().0,PathBuf::from("authorized.pdf"));
+        s.cancel(&a).unwrap();assert!(s.adopt_source(&a,&b).is_err());
+        s.cancel(&b).unwrap();assert!(s.source(&b).is_err());
+    }
+
 }

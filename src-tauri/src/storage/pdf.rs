@@ -284,6 +284,7 @@ mod tests {
                 |r| r.get(0),
             )
             .unwrap();
+        super::super::migrations::legacy_zotero_fixture(&s.connection);
         s.connection
             .execute_batch("DROP TABLE pdf_reading_positions; PRAGMA user_version=14;")
             .unwrap();
@@ -306,7 +307,7 @@ mod tests {
             s.connection
                 .query_row("PRAGMA user_version", [], |r| r.get::<_, u32>(0))
                 .unwrap(),
-            15
+            crate::storage::migrations::SCHEMA_VERSION
         );
         let backups = std::fs::read_dir(root.join("backups"))
             .unwrap()
@@ -344,6 +345,7 @@ mod tests {
         let root = dir.path().join("w");
         let mut s = Storage::open(root.clone()).unwrap();
         let p = s.register_pdf("旧目录", &"a".repeat(64), 12).unwrap();
+        super::super::migrations::legacy_zotero_fixture(&s.connection);
         s.connection
             .execute_batch("PRAGMA user_version=14;")
             .unwrap();

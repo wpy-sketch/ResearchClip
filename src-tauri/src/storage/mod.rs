@@ -257,3 +257,5 @@ mod tests {
         assert!(Storage::open(temporary.path().into()).is_ok());
     }
 }
+
+pub mod zotero;

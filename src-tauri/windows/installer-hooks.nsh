@@ -47,3 +47,38 @@
   Pop $1
   Pop $0
 !macroend
+
+; Register an Open With candidate only. Never write .pdf default or UserChoice.
+!macro NSIS_HOOK_POSTINSTALL
+  WriteRegStr HKCU "Software\Classes\ResearchClip.PDF" "" "ResearchClip PDF"
+  WriteRegStr HKCU "Software\Classes\ResearchClip.PDF\DefaultIcon" "" '$\"$INSTDIR\researchclip.exe$\",0'
+  WriteRegStr HKCU "Software\Classes\ResearchClip.PDF\shell\open\command" "" '$\"$INSTDIR\researchclip.exe$\" $\"%1$\"'
+  WriteRegStr HKCU "Software\Classes\.pdf\OpenWithProgids" "ResearchClip.PDF" ""
+  WriteRegStr HKCU "Software\Classes\Applications\researchclip.exe" "FriendlyAppName" "ResearchClip"
+  WriteRegStr HKCU "Software\Classes\Applications\researchclip.exe\SupportedTypes" ".pdf" ""
+  WriteRegStr HKCU "Software\Classes\Applications\researchclip.exe\shell\open\command" "" '$\"$INSTDIR\researchclip.exe$\" $\"%1$\"'
+  System::Call 'SHELL32::SHChangeNotify(i 0x08000000, i 0, p 0, p 0)'
+!macroend
+
+!macro NSIS_HOOK_POSTUNINSTALL
+  Push $0
+  ReadRegStr $0 HKCU "Software\Classes\ResearchClip.PDF\shell\open\command" ""
+  ${If} $0 == '$\"$INSTDIR\researchclip.exe$\" $\"%1$\"'
+    DeleteRegValue HKCU "Software\Classes\.pdf\OpenWithProgids" "ResearchClip.PDF"
+    DeleteRegKey /ifempty HKCU "Software\Classes\.pdf\OpenWithProgids"
+    DeleteRegKey HKCU "Software\Classes\ResearchClip.PDF"
+  ${EndIf}
+  ReadRegStr $0 HKCU "Software\Classes\Applications\researchclip.exe\shell\open\command" ""
+  ${If} $0 == '$\"$INSTDIR\researchclip.exe$\" $\"%1$\"'
+    DeleteRegValue HKCU "Software\Classes\Applications\researchclip.exe\SupportedTypes" ".pdf"
+    DeleteRegKey /ifempty HKCU "Software\Classes\Applications\researchclip.exe\SupportedTypes"
+    DeleteRegValue HKCU "Software\Classes\Applications\researchclip.exe\shell\open\command" ""
+    DeleteRegKey /ifempty HKCU "Software\Classes\Applications\researchclip.exe\shell\open\command"
+    DeleteRegKey /ifempty HKCU "Software\Classes\Applications\researchclip.exe\shell\open"
+    DeleteRegKey /ifempty HKCU "Software\Classes\Applications\researchclip.exe\shell"
+    DeleteRegValue HKCU "Software\Classes\Applications\researchclip.exe" "FriendlyAppName"
+    DeleteRegKey /ifempty HKCU "Software\Classes\Applications\researchclip.exe"
+  ${EndIf}
+  Pop $0
+  System::Call 'SHELL32::SHChangeNotify(i 0x08000000, i 0, p 0, p 0)'
+!macroend

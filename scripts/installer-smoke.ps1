@@ -50,6 +50,13 @@ function Data-Snapshot {
   }
   return ,$entries
 }
+function Pdf-Defaults {
+  $values=[ordered]@{}
+  foreach($regPath in @('HKCU:\Software\Classes\.pdf','HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\UserChoice')) {
+    if(Test-Path -LiteralPath $regPath){$item=Get-Item -LiteralPath $regPath;foreach($name in $item.GetValueNames()|Sort-Object){$values["$regPath/$name"]=$item.GetValue($name)}}
+  }
+  return ($values|ConvertTo-Json -Compress)
+}
 function Run-Setup([string]$path, [string]$arguments) {
   $report.commands.Add("$path $arguments")
   # Launch the exact image directly, without ShellExecute/hidden-shell relaunch.
@@ -83,6 +90,10 @@ try {
   $generated = Get-Content -Raw -LiteralPath (Join-Path $targetRoot 'release/nsis/x64/installer.nsi')
   Assert-Check ($generated.Contains('installer-hooks.nsh')) 'The generated installer is missing the running-app guard.'
   Assert-Check ((Get-Content -Raw -LiteralPath (Join-Path $projectRoot 'src-tauri/windows/installer-hooks.nsh')).Contains('!macroundef CheckIfAppIsRunning')) 'The safe running-app guard has changed; review before executing.'
+  $pdfDefaultsBefore = Pdf-Defaults
+  if ([Version]$version -ge [Version]'4.2.0') {
+    Assert-Check (!(Test-Path -LiteralPath 'HKCU:\Software\Classes\ResearchClip.PDF')) 'Existing PDF ProgID found; preserve it and use a clean test environment.'
+  }
   $before = Data-Snapshot
   $before | ConvertTo-Json -Depth 5 | Set-Content -Encoding utf8 -LiteralPath (Join-Path $runRoot 'data-before.json')
   $report.userDataFilesHashed = $before.Count - 2
@@ -132,6 +143,13 @@ try {
   $record = Get-ItemProperty -LiteralPath $uninstallKey
   Assert-Check ($record.DisplayVersion -eq $version -and $record.InstallLocation.Trim('"') -eq $installRoot) 'Uninstall registration points at a different install/version.'
   $report.checks.Add('Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.')
+  if ([Version]$version -ge [Version]'4.2.0') {
+    $pdfCommand=(Get-Item -LiteralPath 'HKCU:\Software\Classes\ResearchClip.PDF\shell\open\command').GetValue('')
+    Assert-Check ($pdfCommand -eq ('"'+$installedExe+'" "%1"')) 'PDF association command is not quoted exactly.'
+    Assert-Check ((Get-Item -LiteralPath 'HKCU:\Software\Classes\.pdf\OpenWithProgids').GetValueNames().Contains('ResearchClip.PDF')) 'OpenWith candidate missing.'
+    Assert-Check ((Get-Item -LiteralPath 'HKCU:\Software\Classes\Applications\researchclip.exe\SupportedTypes').GetValueNames().Contains('.pdf')) 'Supported PDF type missing.'
+    Assert-Check ((Pdf-Defaults) -eq $pdfDefaultsBefore) 'Installation changed the existing PDF default or UserChoice.'
+  }
   $sentinel = Join-Path $installRoot 'user-owned.keep'
   [IO.File]::WriteAllText($sentinel,'ResearchClip test-owned user file: must survive uninstall.')
   $sentinelHash = (Get-FileHash -LiteralPath $sentinel -Algorithm SHA256).Hash
@@ -168,6 +186,11 @@ try {
     Start-Sleep -Milliseconds 100
   }
   $installed = $false
+  if ([Version]$version -ge [Version]'4.2.0') {
+    Assert-Check (!(Test-Path -LiteralPath 'HKCU:\Software\Classes\ResearchClip.PDF')) 'Owned PDF ProgID survived uninstall.'
+    Assert-Check ((Pdf-Defaults) -eq $pdfDefaultsBefore) 'Uninstall changed PDF default/UserChoice.'
+    $report.checks.Add('Actual PDF OpenWith candidate, quoted Unicode executable command and SupportedTypes registered; existing default/UserChoice preserved before and after ownership-scoped uninstall.')
+  }
   Assert-Check ((Get-FileHash -LiteralPath $sentinel -Algorithm SHA256).Hash -eq $sentinelHash) 'Uninstall removed or changed an unrelated user file.'
   $after = Data-Snapshot
   $after | ConvertTo-Json -Depth 5 | Set-Content -Encoding utf8 -LiteralPath (Join-Path $runRoot 'data-after.json')

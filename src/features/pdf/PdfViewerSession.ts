@@ -11,6 +11,7 @@ interface Snapshot {phase:'loading'|'password'|'ready'|'error'|'closed';progress
 export const pdfSessions=new Map<string,PdfViewerSession>();
 const MAX_PAGES=2000,MAX_TEXT=8*1024*1024,MAX_RESULTS=200;
 export class PdfViewerSession {
+ readonly external:boolean;constructor(external=false){this.external=external;}
  readonly token=crypto.randomUUID().replaceAll('-','');readonly id='pdf:'+crypto.randomUUID().replaceAll('-','');
  readonly state=create<Snapshot>(()=>({phase:'loading',progress:0,message:'请选择PDF；将导入只读工作区副本。',error:null,record:null,pages:[],location:initialPdfLocation(),navigation:0,outline:[],copyAllowed:true,passwordWrong:false,searching:false,searchProgress:0,results:[],query:'',searchMessage:'',revision:0}));
  document:PDFDocumentProxy|null=null;private loading:PDFDocumentLoadingTask|null=null;private closed=false;private passwordReply:((password:string)=>void)|null=null;private searchGeneration=0;private saveTimer:ReturnType<typeof setTimeout>|null=null;private queue:Promise<void>=Promise.resolve();private renderQueue:Promise<void>=Promise.resolve();private disposers=new Set<()=>void>();
@@ -21,12 +22,12 @@ export class PdfViewerSession {
  }
  onDispose(dispose:()=>void){this.disposers.add(dispose);return()=>this.disposers.delete(dispose);}
  async render<T>(work:()=>Promise<T>):Promise<T|undefined>{let result:T|undefined;const next=this.renderQueue.then(async()=>{if(!this.closed)result=await work();});this.renderQueue=next.catch(()=>{});await next;return result;}
- async open(documentId?:string){let progress:ReturnType<typeof setInterval>|null=null;
+ async open(documentId?:string,requestId?:string){let progress:ReturnType<typeof setInterval>|null=null;
   try{
    progress=setInterval(()=>{void pdfDocuments.progress(this.token).then(p=>{if(!this.closed&&p.total)this.state.setState({progress:p.loaded/p.total*.3,message:'正在校验工作区PDF副本…'});}).catch(()=>{/* Picker has not allocated a native job yet, or it was cancelled. */});},200);
-   const record=await pdfDocuments.open(this.token,documentId);clearInterval(progress);progress=null;
+   const record=await pdfDocuments.open(this.token,documentId,requestId);clearInterval(progress);progress=null;
    if(this.closed){await pdfDocuments.close(this.token);return;}if(!record){await workspaceManager.close(this.id);return;}
-   const duplicate=[...pdfSessions.values()].find(s=>s!==this&&s.state.getState().record?.documentId===record.documentId);if(duplicate){await workspaceManager.close(this.id);workspaceManager.focus(duplicate.id);return;}
+   const duplicate=[...pdfSessions.values()].find(s=>s!==this&&s.state.getState().record?.documentId===record.documentId);if(duplicate){if(requestId){await pdfDocuments.adoptSource(this.token,duplicate.token);workspaceManager.state.setState({notice:'已聚焦相同PDF并更新本次来源授权，可在“Zotero来源”中查询文献。'});}await workspaceManager.close(this.id);workspaceManager.focus(duplicate.id);return;}
    if(record.reading&&!validPdfLocation(record.reading.location))throw Error('PDF阅读位置无效，已有记录未被覆盖。');
    this.version=record.reading?.revision??0;this.state.setState({record,location:record.reading?.location??initialPdfLocation(),message:'正在读取PDF…'});workspaceManager.updateEditor(this.id,{title:record.title.slice(0,160),resourceId:record.documentId});
    const data=new Uint8Array(record.byteSize);for(let offset=0;offset<data.length;offset+=1024*1024){if(this.closed)return;const chunk=await pdfDocuments.read(this.token,offset,Math.min(1024*1024,data.length-offset));if(this.closed)return;data.set(chunk,offset);this.state.setState({progress:.3+.3*(offset+chunk.length)/data.length});}
@@ -52,4 +53,4 @@ export class PdfViewerSession {
  }
  async dispose(){if(this.closed)return;this.closed=true;this.searchGeneration++;if(this.saveTimer)clearTimeout(this.saveTimer);for(const dispose of this.disposers)dispose();this.disposers.clear();this.passwordReply=null;this.state.setState({phase:'closed'});const results=await Promise.allSettled([this.loading?.destroy(),pdfDocuments.close(this.token)]);this.document=null;pdfSessions.delete(this.id);for(const result of results)if(result.status==='rejected')throw result.reason;}
 }
-export async function openPdf(documentId?:string){const existing=[...pdfSessions.values()].find(s=>documentId&&s.state.getState().record?.documentId===documentId);if(existing){workspaceManager.focus(existing.id);return;}if(pdfSessions.size>=3)throw Error('最多同时打开3份PDF。');const session=new PdfViewerSession();pdfSessions.set(session.id,session);try{workspaceManager.openEditor({id:session.id,kind:'pdf',title:'正在打开PDF…',resourceId:documentId??null,hidden:false},{dirty:()=>false,busy:()=>false,save:async()=>{await session.save();return true;},dispose:async()=>{await session.save();await session.dispose();}});}catch(e){pdfSessions.delete(session.id);throw e;}await session.open(documentId);}
+export async function openPdf(documentId?:string,requestId?:string){const existing=[...pdfSessions.values()].find(s=>documentId&&s.state.getState().record?.documentId===documentId);if(existing){workspaceManager.focus(existing.id);return;}if(pdfSessions.size>=3)throw Error('最多同时打开3份PDF。');const session=new PdfViewerSession(!!requestId);pdfSessions.set(session.id,session);try{workspaceManager.openEditor({id:session.id,kind:'pdf',title:'正在打开PDF…',resourceId:documentId??null,hidden:false},{dirty:()=>false,busy:()=>false,save:async()=>{await session.save();return true;},dispose:async()=>{await session.save();await session.dispose();}});}catch(e){pdfSessions.delete(session.id);throw e;}await session.open(documentId,requestId);}

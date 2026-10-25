@@ -67,6 +67,47 @@ pub(super) fn read(row: &rusqlite::Row<'_>) -> rusqlite::Result<Reference> {
         revision: row.get(12)?,
     })
 }
+pub(super) fn write_reference(
+    conn: &rusqlite::Connection,
+    mut item: ReferenceWrite,
+) -> Result<String> {
+    validate(&item.data).map_err(|_| {
+        StorageError::Invalid("文献字段无效；请检查标题、作者、年份、URL 与引用键。")
+    })?;
+    item.data.doi =
+        normalize_doi(&item.data.doi).map_err(|_| StorageError::Invalid("DOI 格式无效。"))?;
+    let id = if let Some(id) = item.id {
+        check_id(&id)?;
+        let (revision,key,source,metadata):(i64,String,String,String)=conn.query_row("SELECT revision,bibtex_key,verified_source,source_metadata FROM literature_references WHERE id=?1",[&id],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()?.ok_or(StorageError::NotFound)?;
+        if Some(revision) != item.expected_revision {
+            return Err(StorageError::Conflict);
+        }
+        if key != item.data.bibtex_key && !item.confirm_key_change {
+            return Err(StorageError::Invalid(
+                "修改引用键会影响旧[@key]引用；稳定ID引用不受影响，请明确确认后保存。",
+            ));
+        }
+        if source != "manual" {
+            item.data.verified_source = "edited".into();
+            item.data.source_metadata = serde_json::from_str(&metadata)
+                .map_err(|_| StorageError::Invalid("原文献来源记录损坏；原资料保留。"))?;
+        }
+        id
+    } else {
+        conn.query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))?
+    };
+    let duplicate:bool=conn.query_row("SELECT exists(SELECT 1 FROM literature_references WHERE id!=?1 AND (bibtex_key=?2 OR (?3!='' AND doi=?3)))",params![id,item.data.bibtex_key,item.data.doi],|r|r.get(0))?;
+    if duplicate {
+        return Err(StorageError::Invalid(
+            "DOI 或引用键已存在；请查找并关联已有文献，或手动选择不冲突的引用键。整批未保存。",
+        ));
+    }
+    let bib = bibtex(&item.data)
+        .map_err(|_| StorageError::Invalid("BibTeX 记录或字段无效，请检查导入语法。"))?;
+    let d = item.data;
+    conn.execute("INSERT INTO literature_references VALUES(?1,?2,?3,?4,?5,nullif(?6,''),?7,?8,?9,?10,?11,?12,1) ON CONFLICT(id) DO UPDATE SET title=excluded.title,authors_json=excluded.authors_json,year=excluded.year,venue=excluded.venue,doi=excluded.doi,url=excluded.url,bibtex_key=excluded.bibtex_key,bibtex_entry=excluded.bibtex_entry,verified_source=excluded.verified_source,source_metadata=excluded.source_metadata,updated_at=excluded.updated_at,revision=literature_references.revision+1",params![id,d.title,serde_json::to_string(&d.authors).map_err(|_|StorageError::Invalid("作者格式无效。"))?,d.year,d.journal_or_conference,d.doi,d.url,d.bibtex_key,bib,d.verified_source,d.source_metadata.to_string(),now()?])?;
+    Ok(id)
+}
 impl Storage {
     pub fn reference_doi(&self, id: &str) -> Result<String> {
         check_id(id)?;
@@ -137,43 +178,8 @@ impl Storage {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let mut ids = vec![];
-        for mut item in items {
-            validate(&item.data).map_err(|_| {
-                StorageError::Invalid("文献字段无效；请检查标题、作者、年份、URL 与引用键。")
-            })?;
-            item.data.doi = normalize_doi(&item.data.doi)
-                .map_err(|_| StorageError::Invalid("DOI 格式无效。"))?;
-            let id = if let Some(id) = item.id {
-                check_id(&id)?;
-                let (revision,key,source,metadata):(i64,String,String,String)=tx.query_row("SELECT revision,bibtex_key,verified_source,source_metadata FROM literature_references WHERE id=?1",[&id],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?))).optional()?.ok_or(StorageError::NotFound)?;
-                if Some(revision) != item.expected_revision {
-                    return Err(StorageError::Conflict);
-                }
-                if key != item.data.bibtex_key && !item.confirm_key_change {
-                    return Err(StorageError::Invalid(
-                        "修改引用键会影响旧[@key]引用；稳定ID引用不受影响，请明确确认后保存。",
-                    ));
-                }
-                if source != "manual" {
-                    item.data.verified_source = "edited".into();
-                    item.data.source_metadata = serde_json::from_str(&metadata)
-                        .map_err(|_| StorageError::Invalid("原文献来源记录损坏；原资料保留。"))?;
-                }
-                id
-            } else {
-                tx.query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))?
-            };
-            let duplicate:bool=tx.query_row("SELECT exists(SELECT 1 FROM literature_references WHERE id!=?1 AND (bibtex_key=?2 OR (?3!='' AND doi=?3)))",params![id,item.data.bibtex_key,item.data.doi],|r|r.get(0))?;
-            if duplicate {
-                return Err(StorageError::Invalid(
-                    "DOI 或引用键已存在；请查找并关联已有文献，或手动选择不冲突的引用键。整批未保存。",
-                ));
-            }
-            let bib = bibtex(&item.data)
-                .map_err(|_| StorageError::Invalid("BibTeX 记录或字段无效，请检查导入语法。"))?;
-            let d = item.data;
-            tx.execute("INSERT INTO literature_references VALUES(?1,?2,?3,?4,?5,nullif(?6,''),?7,?8,?9,?10,?11,?12,1) ON CONFLICT(id) DO UPDATE SET title=excluded.title,authors_json=excluded.authors_json,year=excluded.year,venue=excluded.venue,doi=excluded.doi,url=excluded.url,bibtex_key=excluded.bibtex_key,bibtex_entry=excluded.bibtex_entry,verified_source=excluded.verified_source,source_metadata=excluded.source_metadata,updated_at=excluded.updated_at,revision=literature_references.revision+1",params![id,d.title,serde_json::to_string(&d.authors).map_err(|_|StorageError::Invalid("作者格式无效。"))?,d.year,d.journal_or_conference,d.doi,d.url,d.bibtex_key,bib,d.verified_source,d.source_metadata.to_string(),now()?])?;
-            ids.push(id);
+        for item in items {
+            ids.push(write_reference(&tx, item)?);
         }
         tx.commit()?;
         ids.iter()

@@ -1,6 +1,8 @@
 # ResearchClip Research IDE：目标架构
 
-Step09本地引用见[CitationService契约](CITATIONS_STEP09.md)，SQLite14；Zotero连接器仍未接入。
+Step11已增量接入Windows外部PDF打开与Zotero只读来源，SQLite16，见[Step11架构](ZOTERO_PDF_STEP11.md)。Step10已提供工作区PDF阅读器，SQLite15。下文Step00提案和各阶段说明保留其历史时间点。
+
+Step09当时的本地引用见[CitationService契约](CITATIONS_STEP09.md)，SQLite14；Zotero连接器仍未接入。
 
 Step08实现见[文档组织与历史](DOCUMENT_ORGANIZATION_STEP08.md)，SQLite13；原Step00提案的schema与能力描述是当时状态。
 

@@ -23,7 +23,7 @@ try{
  const records=await page.evaluate(async()=>{
   const records=[],invoke=window.__TAURI_INTERNALS__.invoke;
   for(const [index,title]of ['收敛曲线 · 示例','对照曲线 · 示例','实验设置 · 示例','状态轨迹 · 示例','论文示意 · 示例','结果摘要 · 示例'].entries()){
-   const c=new OffscreenCanvas(960,600),x=c.getContext('2d');x.fillStyle='#f4f7fb';x.fillRect(0,0,960,600);x.fillStyle='#1d2b44';x.font='28px Segoe UI';x.fillText(title,56,55);x.font='17px Segoe UI';x.fillStyle='#56647b';x.fillText('Illustrative data / 示例曲线，非真实实验',56,89);
+   const c=new OffscreenCanvas(960,600),x=c.getContext('2d');x.fillStyle='#f4f7fb';x.fillRect(0,0,960,600);x.fillStyle='#1d2b47';x.font='28px Segoe UI';x.fillText(title,56,55);x.font='17px Segoe UI';x.fillStyle='#56647b';x.fillText('Illustrative data / 示例曲线，非真实实验',56,89);
    x.strokeStyle='#dce4ee';x.lineWidth=1;for(let i=0;i<8;i++){x.beginPath();x.moveTo(80+i*110,130);x.lineTo(80+i*110,510);x.stroke();}for(let i=0;i<5;i++){x.beginPath();x.moveTo(80,130+i*95);x.lineTo(880,130+i*95);x.stroke();}
    x.strokeStyle='#72819a';x.lineWidth=2;x.beginPath();x.moveTo(80,125);x.lineTo(80,510);x.lineTo(890,510);x.stroke();x.fillStyle='#56647b';x.font='20px Segoe UI';x.fillText('V(x)',20,145);x.fillText('Time (s)',790,552);
    for(const [k,color]of ['#2364c6','#12a88a'].entries()){x.strokeStyle=color;x.lineWidth=4;x.beginPath();for(let t=0;t<=800;t+=4){const py=500-320*Math.exp(-t/(180+index*12+k*80))*(1+(k?.08:0)*Math.sin(t/35));if(t===0)x.moveTo(80+t,py);else x.lineTo(80+t,py);}x.stroke();}

@@ -161,6 +161,13 @@
     "allow-close-pdf-document",
     "allow-read-pdf-chunk",
     "allow-recent-pdf-documents",
-    "allow-save-pdf-reading"
+    "allow-save-pdf-reading",
+    "allow-pending-pdf-requests",
+    "allow-dismiss-pdf-request",
+    "allow-preview-pdf-zotero",
+    "allow-cancel-zotero-lookup",
+    "allow-confirm-pdf-zotero",
+    "allow-pdf-zotero-sources",
+    "allow-adopt-pdf-source"
   ]
 }

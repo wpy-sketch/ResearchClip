@@ -6,3 +6,7 @@
 @media(max-width:680px){.pdf-toolbar{gap:3px;padding:5px;font-size:12px}.pdf-toolbar strong{max-width:120px}.pdf-navigation{width:145px}.pdf-status{max-height:44px;overflow:auto}.pdf-toolbar button{padding:4px 6px}}
 
 .workspace-layout-tools>select{max-width:160px;min-width:0;padding:5px;border:1px solid var(--rc-edge);border-radius:7px;background:var(--rc-surface);color:var(--rc-primary);font:inherit}.pdf-editor button:focus-visible,.pdf-editor input:focus-visible,.pdf-editor select:focus-visible{outline:2px solid var(--rc-accent);outline-offset:2px}
+
+.external-pdf-requests{flex-wrap:wrap}.external-pdf-requests button{max-width:220px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+.zotero-source{font-size:12px;line-height:1.7;overflow-wrap:anywhere}.zotero-source h3,.zotero-source h4{font-weight:650;margin:8px 0}.zotero-source p{margin:7px 0}.zotero-source form{display:flex;flex-direction:column;gap:8px}.zotero-source label{display:flex;flex-direction:column;gap:3px}.zotero-source select{background:var(--rc-surface);color:var(--rc-primary);padding:5px;border:1px solid var(--rc-edge);border-radius:5px}.zotero-candidate,.zotero-saved{border:1px solid var(--rc-edge);border-radius:8px;padding:8px;margin-block:10px;background:var(--rc-raised)}.zotero-source [role=alert]{color:var(--rc-danger,#c34d5c)}.pdf-navigation:has(.zotero-source){width:260px;max-width:42%}

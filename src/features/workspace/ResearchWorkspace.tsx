@@ -9,6 +9,7 @@ import {DocumentSessionContext,useDocumentApi,useDocumentStore} from '../documen
 import {useEditorStore} from '../editor/store';
 import {DocumentConfirmation} from '../document/DocumentConfirmation';
 import {TemplateDialog} from '../document/TemplateDialog';
+import {ExternalPdfOpen} from '../pdf/ExternalPdfOpen';
 import {PdfOpenButton} from '../pdf/PdfOpenButton';
 import {Modal} from '../../shared/ui/Modal';
 import {useProjectStore} from '../projects/store';
@@ -48,6 +49,6 @@ export function ResearchWorkspace({children}:{children:ReactNode}){
  {state.error&&<p role="alert" className="error-banner workspace-layout-message">{state.error}<button onClick={()=>manager.state.setState({error:null})}>关闭提示</button></p>}{state.notice&&<p role="status" className="workspace-layout-message">{state.notice}<button aria-label="关闭布局提示" onClick={()=>manager.state.setState({notice:null})}>×</button></p>}{!docOpen&&docError&&<p role="alert" className="error-banner">{docError}</p>}
  {pending.length>0&&<p className="workspace-layout-message">上次有 {pending.length} 个资源待重新打开。布局不会自动授予文件权限或生成空白 Markdown 面板。<button disabled={state.busy} onClick={()=>void manager.restore()}>重新打开上次资源</button></p>}
  <Content.Provider value={children}><div className="dock-layout" aria-label="科研工作区面板">{model?<Layout key={state.workspaceId} model={model} factory={factory} i18nTranslator={label=>dockLabels[label]??label} onContextMenu={(_,event)=>event.preventDefault()} onAction={action=>manager.onAction(action)} onModelChange={()=>manager.changed()}/>:<p role="status">正在恢复工作区布局…</p>}</div></Content.Provider>
- </div><DocumentConfirmation/>{template&&<DocumentSessionContext.Provider value={api}><TemplateDialog key={template} mode={template}/></DocumentSessionContext.Provider>}
+ </div><ExternalPdfOpen/><DocumentConfirmation/>{template&&<DocumentSessionContext.Provider value={api}><TemplateDialog key={template} mode={template}/></DocumentSessionContext.Provider>}
  {state.closingImage&&<Modal title="关闭未保存图片面板" onClose={()=>void manager.resolveImage('cancel')}><div className="p-5"><p>此图片有未保存标注。隐藏面板可以保留草稿；关闭前请选择保存、放弃或取消。</p>{state.error&&<p role="alert">{state.error}</p>}<div className="workspace-confirm-actions"><button disabled={state.busy} onClick={()=>void manager.resolveImage('cancel')}>取消</button><button disabled={state.busy} onClick={()=>void manager.resolveImage('discard')}>放弃标注并关闭</button><button disabled={state.busy} onClick={()=>void manager.resolveImage('save')}>保存到素材库后关闭</button></div></div></Modal>}</>;
 }

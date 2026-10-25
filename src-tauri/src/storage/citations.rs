@@ -224,6 +224,7 @@ mod tests {
         let root = t.path().join("w");
         let mut s = Storage::open(root.clone()).unwrap();
         let r = create(&mut s, "Legacy");
+        super::super::migrations::legacy_zotero_fixture(&s.connection);
         s.connection
             .execute_batch("DROP TABLE pdf_reading_positions; DROP TABLE citation_key_mappings; PRAGMA user_version=13;")
             .unwrap();

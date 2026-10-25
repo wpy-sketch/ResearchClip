@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 15;
+pub const SCHEMA_VERSION: u32 = 16;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -159,10 +159,20 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/015_pdf_reading.sql"),
         )?;
     }
+    if version < 16 {
+        apply_migration(
+            connection,
+            16,
+            include_str!("../../migrations/016_zotero_scope.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 16 {
+        connection.prepare("SELECT instance_id,library_type,library_id,item_key,metadata_json FROM research_zotero_keys LIMIT 0")?;
+    }
     if version >= 15 {
         connection.prepare("SELECT document_id,content_hash,format_version,revision,location_json,updated_at FROM pdf_reading_positions LIMIT 0")?;
     }
@@ -265,6 +275,20 @@ fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageE
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+pub(crate) fn legacy_zotero_fixture(connection: &Connection) {
+    // Historical unit fixtures only. Refuse to discard any non-legacy provenance.
+    assert_eq!(connection.query_row("SELECT count(*) FROM research_zotero_keys WHERE library_type!='legacy' OR metadata_json!='{}'",[],|r|r.get::<_,i64>(0)).unwrap(),0);
+    connection.execute_batch("DROP TRIGGER research_zotero_valid; ALTER TABLE research_zotero_keys RENAME TO research_zotero_fixture_v16;").unwrap();
+    let source = include_str!("../../migrations/012_research_resources.sql");
+    let from = source.find("CREATE TABLE research_zotero_keys (").unwrap();
+    let end = source
+        .find("CREATE TABLE research_document_fingerprints (")
+        .unwrap();
+    connection.execute_batch(&source[from..end]).unwrap();
+    connection.execute_batch("INSERT INTO research_zotero_keys SELECT instance_id,library_id,item_key,resource_type,resource_id FROM research_zotero_fixture_v16; DROP TABLE research_zotero_fixture_v16;").unwrap();
 }
 
 #[cfg(test)]

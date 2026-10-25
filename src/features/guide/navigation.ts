@@ -36,4 +36,4 @@ export function visibleGuideLocation(sections:GuideSection[],offset:number|null,
  for(const node of chain){if(node.heading.depth>depth)break;visible=node.heading.offset;if(collapsed.has(visible))break;}return visible;
 }
 
-export const guideTopicGroups=[{name:'开始与采集',sections:[1,2,3]},{name:'资料与项目',sections:[4,5,6]},{name:'图片工具',sections:[7,8,9]},{name:'Markdown与文献基础',sections:[10,11,12,13,14,15]},{name:'命令、设置与安全',sections:[16,17,18]},{name:'科研工作台',sections:[19,20]},{name:'Markdown进阶与引用',sections:[21,22,23,24,25,26]},{name:'PDF阅读',sections:[27]}];
+export const guideTopicGroups=[{name:'开始与采集',sections:[1,2,3]},{name:'资料与项目',sections:[4,5,6]},{name:'图片工具',sections:[7,8,9]},{name:'Markdown与文献基础',sections:[10,11,12,13,14,15]},{name:'命令、设置与安全',sections:[16,17,18]},{name:'科研工作台',sections:[19,20]},{name:'Markdown进阶与引用',sections:[21,22,23,24,25,26]},{name:'PDF与Zotero',sections:[27,28]}];

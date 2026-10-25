@@ -59,7 +59,8 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
         context
     };
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
+        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
+            commands::pdf::receive_external(app, &args, std::path::Path::new(&cwd));
             if let Err(error) = services::desktop::show_main(app) {
                 services::desktop::notice(app, &error.message);
             }
@@ -85,6 +86,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 })
                 .build(),
         )
+        .manage(Arc::new(services::zotero_session::ZoteroSessions::default()))
         .manage(Arc::new(services::pdf::PdfDocumentService::default()))
         .manage(services::desktop::DesktopService::default())
         .manage(Arc::new(commands::references::ReferenceNetwork::default()))
@@ -153,6 +155,13 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 app.path().resource_dir()?.join("similarity-ai"),
             )));
             app.manage(Arc::new(commands::library::LibraryService::new(data_root)));
+            if let Ok(cwd) = std::env::current_dir() {
+                commands::pdf::receive_external(
+                    app.handle(),
+                    &std::env::args().collect::<Vec<_>>(),
+                    &cwd,
+                );
+            }
             app.manage(Arc::clone(&settings));
             if let Err(error) = services::desktop::install_tray(app.handle()) {
                 services::desktop::notice(app.handle(), &error);
@@ -246,6 +255,13 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::citations::bind_citation_key,
             commands::citations::export_bibtex,
             commands::pdf::open_pdf_document,
+            commands::pdf::adopt_pdf_source,
+            commands::pdf::pending_pdf_requests,
+            commands::zotero::preview_pdf_zotero,
+            commands::zotero::cancel_zotero_lookup,
+            commands::zotero::confirm_pdf_zotero,
+            commands::zotero::pdf_zotero_sources,
+            commands::pdf::dismiss_pdf_request,
             commands::pdf::pdf_load_progress,
             commands::pdf::close_pdf_document,
             commands::pdf::read_pdf_chunk,

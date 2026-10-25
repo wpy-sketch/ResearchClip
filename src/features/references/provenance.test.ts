@@ -1,0 +1,2 @@
+import {expect,it} from 'vitest';import {referenceProvenance} from './provenance';
+it('labels Zotero provenance without turning imported fields into verified metadata',()=>{expect(referenceProvenance({verifiedSource:'manual',sourceMetadata:{provider:'zoteroLocal',status:'unverified'}})).toBe('Zotero Local API导入 · 待人工核对');expect(referenceProvenance({verifiedSource:'manual',sourceMetadata:{}})).toContain('手工录入');expect(referenceProvenance({verifiedSource:'edited',sourceMetadata:'zoteroLocal'})).toContain('人工修订');});
