@@ -85,6 +85,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
                 })
                 .build(),
         )
+        .manage(Arc::new(services::pdf::PdfDocumentService::default()))
         .manage(services::desktop::DesktopService::default())
         .manage(Arc::new(commands::references::ReferenceNetwork::default()))
         .manage(Arc::new(
@@ -244,6 +245,12 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::citations::resolve_citation_key,
             commands::citations::bind_citation_key,
             commands::citations::export_bibtex,
+            commands::pdf::open_pdf_document,
+            commands::pdf::pdf_load_progress,
+            commands::pdf::close_pdf_document,
+            commands::pdf::read_pdf_chunk,
+            commands::pdf::recent_pdf_documents,
+            commands::pdf::save_pdf_reading,
             commands::references::associate_reference,
             commands::references::import_bibtex,
             commands::references::open_reference_doi,

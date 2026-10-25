@@ -7,7 +7,7 @@ import {useUiStore} from '../../app/ui-store';
 import {openLibraryEditor,saveEditorToLibrary} from '../../app/library-actions';
 import {WorkspacePersistence} from './persistence';
 import {defaultDock,projectDock,validWorkspaceId,MAX_MARKDOWN,MAX_PANELS,type PanelRecord,type WorkspaceLayout,validateLayout} from './layout';
-import type {EditorSession} from './registry';
+import type {EditorSession,PanelLifecycle} from './registry';
 interface Snapshot {ready:boolean;revision:number;workspaceId:string;explorer:boolean;busy:boolean;error:string|null;notice:string|null;closingImage:string|null}
 interface DocumentBinding {store:DocumentStore;request:ReturnType<DocumentStore['getState']>['request'];resolve:ReturnType<DocumentStore['getState']>['resolvePending'];stop:()=>void}
 const basePanel=():PanelRecord=>({id:'workbench',kind:'workbench',title:'资料工作台',resourceId:null,hidden:false});
@@ -70,6 +70,9 @@ export class WorkspaceManager {
   const onlyWorkbench=model.getNodeById('workbench')&&this.records(session.workspaceId).filter(p=>!p.hidden&&model.getNodeById(p.id)).length===1;
   model.doAction(Actions.addTab({type:'tab',id,name:session.panel.title,component:'workspace'},target.getId(),session.panel.kind==='terminal'?DockLocation.BOTTOM:onlyWorkbench?direction==='bottom'?DockLocation.BOTTOM:DockLocation.RIGHT:DockLocation.CENTER,-1));this.notify();this.schedule(session.workspaceId);
  }
+ openEditor(panel:PanelRecord,lifecycle:PanelLifecycle){if(this.sessions.has(panel.id)||this.records().length>=MAX_PANELS)throw Error('面板已打开或工作区已达12个面板上限。');this.sessions.set(panel.id,{panel,workspaceId:this.workspaceId,lifecycle});this.add(panel.id,'right');this.focus(panel.id);this.notify();}
+ updateEditor(id:string,patch:Partial<Pick<PanelRecord,'title'|'resourceId'>>){const session=this.sessions.get(id);if(!session)return;session.panel={...session.panel,...patch};const model=this.models.get(session.workspaceId);if(patch.title&&model?.getNodeById(id))model.doAction(Actions.renameTab(id,patch.title));this.notify();this.schedule(session.workspaceId);}
+ async flushReadOnlyEditors(){for(const session of this.sessions.values())if(session.panel.kind==='pdf'&&!await session.lifecycle.save())throw Error('PDF阅读位置未保存，退出已取消。');}
  showImage(imageId:string){const image=useEditorStore.getState().sessions[imageId];if(!image)return;const id='image:'+imageId;
   if(this.sessions.has(id)){this.focus(id);return;}if(this.records().length>=MAX_PANELS){this.fail(Error('工作区面板已达12个上限，请先关闭面板。'));return;}
   const panel:PanelRecord={id,kind:'image',title:image.image.name.slice(0,160),resourceId:image.image.libraryId??null,hidden:false};
@@ -85,7 +88,7 @@ export class WorkspaceManager {
  split(vertical:boolean){const model=this.model,active=model.getActiveTabset()?.getSelectedNode();if(!active)return;const other=this.records().find(p=>p.id!==active.getId()&&!p.hidden&&model.getNodeById(p.id));if(!other){this.notify({notice:'请先打开另一个标签页，再进行拆分。'});return;}const target=model.getNodeById(other.id)!.getParent();if(!target)return;model.doAction(Actions.moveNode(active.getId(),target.getId(),vertical?DockLocation.BOTTOM:DockLocation.RIGHT,-1));this.notify();this.schedule(this.workspaceId);}
  async close(id:string){const s=this.sessions.get(id);if(!s)return;if(s.lifecycle.busy()){this.fail(Error('面板正在处理或绘制，请完成后关闭。'));return;}this.focus(id);
   if(s.panel.kind==='markdown'){await this.documents.get(id)!.store.getState().request('close');return;}
-  if(s.lifecycle.dirty()){this.notify({closingImage:id});return;}await s.lifecycle.dispose();this.remove(id);
+  if(s.lifecycle.dirty()){this.notify({closingImage:id});return;}try{await s.lifecycle.dispose();this.remove(id);}catch(e){this.fail(e);if(s.panel.kind==='pdf')(await import('../pdf/PdfViewerSession')).pdfSessions.get(id)?.report(e);}
  }
  async resolveImage(choice:'save'|'discard'|'cancel'){const id=this.state.getState().closingImage,s=id?this.sessions.get(id):null;if(!id||!s)return;if(choice==='cancel'){this.notify({closingImage:null});return;}this.notify({busy:true,error:null});try{if(choice==='save'&&!await s.lifecycle.save())return;await s.lifecycle.dispose();this.remove(id);this.notify({closingImage:null});}catch(e){this.fail(e);}finally{this.notify({busy:false});}}
  hide(id:string){const s=this.sessions.get(id);if(!s)return;if(s.lifecycle.busy()){this.fail(Error('面板正在处理，暂不能隐藏。'));return;}s.panel.hidden=true;const model=this.models.get(s.workspaceId);if(model?.getNodeById(id))model.doAction(Actions.deleteTab(id));this.notify({notice:'面板已隐藏，草稿与撤销历史仍保留。'});this.schedule(s.workspaceId);}
@@ -97,11 +100,11 @@ export class WorkspaceManager {
  private snapshot(id:string):WorkspaceLayout{return {version:1,workspaceId:id,explorer:this.explorers.get(id)??true,panels:this.records(id),dock:this.ensure(id).toJson()};}
  save(id=this.workspaceId,announce=true){if(!this.persistence||!announce&&this.pendingRestore(id).length)return;try{if(this.blocked.has(id))throw Error('此工作区原布局不可识别，已保留；本次不覆盖。可继续编辑，但暂不持久化新布局。');const snapshot=this.snapshot(id);this.persistence.save(snapshot);this.saved.set(id,validateLayout(snapshot));if(announce)this.notify({notice:'布局已保存；不包含正文、路径、文件授权或终端命令。',error:null});}catch(e){this.fail(e);}}
  private schedule(id:string){clearTimeout(this.timers.get(id));this.timers.set(id,setTimeout(()=>{this.timers.delete(id);this.save(id,false);},450));}
- pendingRestore(id=this.workspaceId){const saved=this.saved.get(id);return saved?.panels.filter(p=>['markdown','image'].includes(p.kind)&&p.resourceId&&!this.records(id).some(s=>s.kind===p.kind&&s.resourceId===p.resourceId))??[];}
+ pendingRestore(id=this.workspaceId){const saved=this.saved.get(id);return saved?.panels.filter(p=>['markdown','image','pdf'].includes(p.kind)&&p.resourceId&&!this.records(id).some(s=>s.kind===p.kind&&s.resourceId===p.resourceId))??[];}
  async restore(){const saved=this.saved.get(this.workspaceId);if(!saved){this.notify({notice:'尚无已保存布局。'});return;}const id=this.workspaceId;
   for(const p of saved.panels.filter(p=>!p.hidden&&p.resourceId)){
    if(this.records(id).some(s=>s.kind===p.kind&&s.resourceId===p.resourceId))continue;
-   if(p.kind==='markdown'){const store=allDocumentStores().find(s=>!s.getState().document)??createDocumentStore();this.bind(store);await store.getState().openProject(p.resourceId!);}else if(p.kind==='image'){try{await openLibraryEditor(p.resourceId!);}catch(e){this.fail(e);}}
+   if(p.kind==='markdown'){const store=allDocumentStores().find(s=>!s.getState().document)??createDocumentStore();this.bind(store);await store.getState().openProject(p.resourceId!);}else if(p.kind==='pdf'){try{await (await import('../pdf/PdfViewerSession')).openPdf(p.resourceId!);}catch(e){this.fail(e);}}else if(p.kind==='image'){try{await openLibraryEditor(p.resourceId!);}catch(e){this.fail(e);}}
    if(this.workspaceId!==id){this.notify({notice:'该资源已在另一工作区打开，已切换到其独立会话。'});return;}
   }
   const mapping=new Map<string,string>();for(const p of saved.panels){const current=this.records().find(s=>s.id===p.id||s.kind===p.kind&&s.resourceId&&s.resourceId===p.resourceId);if(current){mapping.set(p.id,current.id);const session=this.sessions.get(current.id);if(session)session.panel={...session.panel,hidden:p.hidden};}}

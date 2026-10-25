@@ -102,6 +102,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || mode == "dialog-save-bib"
         || mode == "dialog-save-md"
         || mode == "dialog-save-linked-md"
+        || mode == "dialog-open-pdf"
         || mode == "dialog-open-bib"
         || mode == "dialog-open-md"
         || mode == "dialog-model-folder"
@@ -173,6 +174,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         .encode_utf16()
                         .collect(),
                 ]
+            } else if mode == "dialog-open-pdf" {
+                vec!["打开PDF（导入只读工作区副本）".encode_utf16().collect()]
             } else if mode == "dialog-open-bib" {
                 vec!["导入 BibTeX 文献".encode_utf16().collect()]
             } else if mode == "dialog-open-md" {
@@ -230,6 +233,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             || mode == "dialog-save-bib"
             || mode == "dialog-save-md"
             || mode == "dialog-save-linked-md"
+            || mode == "dialog-open-pdf"
             || mode == "dialog-open-bib"
             || mode == "dialog-open-md"
             || mode == "dialog-model-folder"
@@ -281,7 +285,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .starts_with(root)
                 || !(mode == "dialog-model-folder" && path.is_dir()
                     || path.extension().is_some_and(|s| {
-                        if mode == "dialog-open-bib" || mode == "dialog-save-bib" {
+                        if mode == "dialog-open-pdf" {
+                            s == "pdf"
+                        } else if mode == "dialog-open-bib" || mode == "dialog-save-bib" {
                             s == "bib"
                         } else if mode == "dialog-save-md"
                             || mode == "dialog-open-md"

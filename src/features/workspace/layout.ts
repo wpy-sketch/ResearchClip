@@ -39,7 +39,9 @@ export function projectDock(saved:WorkspaceLayout,visible:PanelRecord[],mapping:
  const accepted=new Set(visible.filter(p=>!p.hidden).map(p=>p.id));const found=new Set<string>();
  const prune=(v:Record<string,unknown>):Record<string,unknown>|null=>{
   if(v.type==='tab'){const id=mapping.get(String(v.id))??String(v.id),p=visible.find(p=>p.id===id);if(!p||!accepted.has(id))return null;found.add(id);return {type:'tab',id,name:p.title,component:'workspace',enableClose:p.kind!=='workbench'};}
-  const children=(v.children as Record<string,unknown>[]??[]).map(prune).filter(v=>v!==null);return children.length?{...v,selected:0,children}:null;
+  const original=(v.children??[]) as Record<string,unknown>[],selectedId=String(original[typeof v.selected==='number'?v.selected:0]?.id??'');
+  const children=original.map(prune).filter(v=>v!==null),selected=children.findIndex(child=>child.id===(mapping.get(selectedId)??selectedId));
+  return children.length?{...v,...(v.type==='tabset'?{selected:Math.max(0,selected)}:{}),children}:null;
  };
  const layout=prune(saved.dock.layout as unknown as Record<string,unknown>)??{type:'row',id:'root',children:[]};const children=layout.children as Record<string,unknown>[];
  const missing=visible.filter(p=>!p.hidden&&!found.has(p.id));const nodeIds=new Set<string>();const collect=(n:Record<string,unknown>)=>{nodeIds.add(String(n.id));for(const child of (n.children??[]) as Record<string,unknown>[])collect(child);};collect(layout);let extra='added';while(nodeIds.has(extra))extra+='x';if(missing.length)children.push({type:'tabset',id:extra,children:missing.map(p=>({type:'tab',id:p.id,name:p.title,component:'workspace',enableClose:p.kind!=='workbench'}))});

@@ -203,7 +203,7 @@ fn describe(resource: ResourceSnapshot) -> Result<ResolvedResource, CommandError
         key: resource.key,
         format_version: RESOURCE_FORMAT_VERSION,
         editor,
-        module_available: matches!(editor, Some("markdown" | "image")),
+        module_available: matches!(editor, Some("markdown" | "image" | "pdf")),
     })
 }
 #[tauri::command]

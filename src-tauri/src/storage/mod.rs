@@ -10,6 +10,7 @@ pub mod links;
 pub mod markdown;
 mod migrations;
 pub mod ocr;
+pub mod pdf;
 pub mod projects;
 pub mod references;
 pub mod resources;

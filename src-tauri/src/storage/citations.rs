@@ -225,7 +225,7 @@ mod tests {
         let mut s = Storage::open(root.clone()).unwrap();
         let r = create(&mut s, "Legacy");
         s.connection
-            .execute_batch("DROP TABLE citation_key_mappings; PRAGMA user_version=13;")
+            .execute_batch("DROP TABLE pdf_reading_positions; DROP TABLE citation_key_mappings; PRAGMA user_version=13;")
             .unwrap();
         drop(s);
         let s = Storage::open(root.clone()).unwrap();

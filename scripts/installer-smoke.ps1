@@ -105,6 +105,12 @@ try {
   Assert-Check ((Get-FileHash -LiteralPath $installedExe -Algorithm SHA256).Hash -eq $expectedHash) 'Installed executable differs from bundled executable.'
   # Read PE resources in a short-lived process: icon/version APIs can retain image mappings.
   $report.licenseNotices = [ordered]@{}
+  if ([version]$version -ge [version]'4.1.9') {
+    $pdfNotice = Join-Path $installRoot 'licenses/pdfjs-NOTICES.txt'
+    Assert-Check ((Test-Path -LiteralPath $pdfNotice) -and ((Get-FileHash -LiteralPath $pdfNotice -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath (Join-Path $projectRoot 'docs/licenses/pdfjs-NOTICES.txt') -Algorithm SHA256).Hash)) 'Installed PDF.js notices missing or changed.'
+    $report.licenseNotices['pdfjs-NOTICES.txt'] = (Get-FileHash -LiteralPath $pdfNotice -Algorithm SHA256).Hash
+  }
+
   if ([Version]$version -ge [Version]'4.1.5') {
     $codeNotice = Join-Path $installRoot 'licenses/lowlight-NOTICES.txt'
     Assert-Check ((Test-Path -LiteralPath $codeNotice) -and ((Get-FileHash -LiteralPath $codeNotice -Algorithm SHA256).Hash -eq (Get-FileHash -LiteralPath (Join-Path $projectRoot 'docs/licenses/lowlight-NOTICES.txt') -Algorithm SHA256).Hash)) 'Installed code-highlighting notices missing or changed.'

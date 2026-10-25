@@ -17,7 +17,7 @@ export const useDesktopStore=create<State>((set,get)=>({discardedDocuments:[],sn
   action:async(action)=>{try{set({error:null});await desktopAction(action);}catch(error){set({error:errorMessage(error,'桌面操作失败，请重试。')});}},
   finishQuit:async(approved)=>{
     if(approved)set({phase:'closing'});
-    try{await completeDesktopExit(approved);if(!approved)set({phase:'idle',discardedDocuments:[]});}
+    try{if(approved)await workspaceManager.flushReadOnlyEditors();await completeDesktopExit(approved);if(!approved)set({phase:'idle',discardedDocuments:[]});}
     catch(error){set({phase:'idle',error:errorMessage(error,'退出失败，窗口已保留。')});}
   },
   documentQuit:async(choice)=>{if(get().phase!=='document')return;if(choice==='cancel'){await get().finishQuit(false);return;}const current=useDocumentStore.getState();if(choice==='save'&&!await current.save())return;if(choice==='discard')set({discardedDocuments:[...get().discardedDocuments,current.document?.id??'active']});set({phase:'idle'});await get().requestQuit(true);},

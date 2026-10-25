@@ -1,0 +1,204 @@
+{
+  "version": "4.1.9",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "node": "v22.22.2",
+  "frontend": {
+    "passed": 657,
+    "files": 79,
+    "command": "npm run check",
+    "exitCode": 0
+  },
+  "rust": {
+    "passed": 259,
+    "ignored": 7,
+    "commands": [
+      "npm run format:rust",
+      "npm run test:rust",
+      "npm run check:rust"
+    ],
+    "exitCode": 0
+  },
+  "cleanInstall": {
+    "command": "npm ci --ignore-scripts",
+    "exitCode": 0
+  },
+  "nativeGroups": 45,
+  "browserGroups": 14,
+  "reports": [
+    {
+      "folder": "pdf-native-v419-delivery",
+      "mode": "actual Windows WebView2; generated vector/text PDFs and isolated settings/database; no user PDF touched",
+      "result": "PASS",
+      "checks": [
+        "actual local picker imports a readonly managed copy, stable Document/PdfAttachment; native worker renders real vectors, system Helvetica, embedded Vera and Chinese CMap text, with canvas pixel budget",
+        "actual pointer drag selects PDF text and bounded native clipboard command copies exactly that selection",
+        "outline jump, mixed portrait/landscape pages, four view rotations, fit-page/custom zoom and double-page layout run in native workbench",
+        "lazy thumbnails and native PDF full-text search return all eight known pages and navigate to results",
+        "multiple independent PDF tabs open; PDF JavaScript and attached HTML do not execute or spawn windows",
+        "closing releases panels and native file grants; actual app restart and stable-ID recent reopen preserve reading page, zoom and normalized scroll metadata",
+        "encrypted PDF prompts, rejects an incorrect password, opens with the test password and closes without persisting passwords",
+        "restricted PDF omits selectable text; damaged PDF reports failure and remains closable without replacing the source",
+        "actual long-document load cancellation removes its tab and revokes native chunk reads",
+        "8MiB input reads actual native chunks; 160-page search is cancellable; distant high-resolution canvases release after jumps and single-PDF canvas cache stays within 3M pixels",
+        "actual JPEG2000 image decodes through trusted local OpenJPEG WASM under production CSP",
+        "actual restart restores saved PDF and Markdown docking layout using fresh native grants and stable resource IDs",
+        "actual Markdown and PDF split, stable-ID layout serialization, hide/reopen and 480/760/1180 widths plus CSS zoom .8/1.25/1.5 keep the native workspace contained"
+      ],
+      "reportSha256": "06de015f83728771da4fd2739687fe760795992e52b82256c8a884885ca34aae"
+    },
+    {
+      "folder": "workspace-native-v419-guide-fixed",
+      "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+      "result": "PASS",
+      "checks": [
+        "two real registered Markdown files open independently, split vertically and save exact distinct content through existing Rust service",
+        "dirty close cancellation and hide/reopen retain the same native-backed document and unsaved text",
+        "actual WebView pointer splitter drag, explorer/terminal visibility, 12/20px settings and narrow/wide resize retain accessible editors",
+        "actual owned Win32 maximize/minimize/restore returns positive editor host sizes; no added application window permissions",
+        "real process restart shows no empty Markdown split, explicit stable-ID restore reopens both persisted files in serialized layout",
+        "real docked Konva pane draws a rectangle, scoped Ctrl+Z/Ctrl+Y restores it and explicit save persists annotation without changing original PNG",
+        "bundled offline guide exposes 26 chapters and new workspace reading route in native WebView"
+      ],
+      "reportSha256": "19f3020ce4070fe513bb4cfd874f3ca389dde2feaceda593c9dd3620e1f2435a"
+    },
+    {
+      "folder": "commands-native-v419-guide-fixed",
+      "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+      "result": "PASS",
+      "checks": [
+        "real bounded Rust IPC resolves stable IDs without paths/body/token, rejects malformed/unknown/caller-privilege/future requests and missing IDs; all five future modules explicitly reject without execution",
+        "actual native quit request is denied while a controlled task is running, retaining the window and all document state",
+        "owned delay fault injection before real Rust lookup allows cooperative cancellation; no editor is opened and diagnostics accurately show cancelled",
+        "existing recent-document UI now routes through typed registry and native gate into the original Markdown service",
+        "document and screenshot deliberately share the same hex ID in this fixture; the typed command opens the correct image editor while preserving the distinct Markdown session",
+        "controlled image insertion remains bound to the registered document ID while focus changes to another draft; only target A changes, Ctrl+Z restores it and draft B stays independent",
+        "owned missing-PNG fault triggers a failed task and safe visible diagnostic, preserves Markdown exactly, restores the test file and releases resource locks",
+        "new explicit request succeeds after file restoration; diagnostic modal and controls remain accessible in narrow native viewport"
+      ],
+      "reportSha256": "429b7925d0890e0835d83be94ae7e94ebbdfc1e06f2f04d4abf21b77704c8efd"
+    },
+    {
+      "folder": "resources-native-v419-guide-fixed",
+      "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+      "result": "PASS",
+      "checks": [
+        "real app upgrades independent v11 fixture to current schema without resetting existing library",
+        "unchanged screenshot ID, annotation and exact original PNG bytes load through real IPC",
+        "old registered Markdown ID opens in existing right pane with exact UTF-8 text and relative PNG assets",
+        "unchanged researchclip screenshot URI navigates from old Markdown preview to the existing card and actual Konva editor while preserving right document",
+        "real process restart retains old document association, content and current schema library",
+        "read-only post-exit audit verifies v11 safety snapshot, current schema, note, fingerprint and unchanged original/Markdown hashes"
+      ],
+      "reportSha256": "b2b55d55c60242b7ffab2645e36e2b6ef1423c2d5768acc5d6503fc9ffaf660f"
+    },
+    {
+      "folder": "citations-native-v419-guide-fixed",
+      "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+      "result": "PASS",
+      "checks": [
+        "actual native manual entry retains unknown DOI/year and manual provenance; library reuses original stable literature ID rather than a second store",
+        "actual local BibTeX text preview rejects unsupported macros without writes, imports unknown fields and unverified provenance, and searches raw fields/author/DOI without a network lookup",
+        "duplicate citation key produces a visible native conflict, preserves draft and atomically leaves both existing literature records unchanged",
+        "native @ completion inserts stable-ID Markdown at only the active caret; focus, one-step undo/redo and actual Ctrl+S retain the untouched CRLF mixed-document prefix",
+        "native Escape keeps completion dismissed, code/math/email do not trigger, and clicking a stable citation resolves the current local details without executing source text",
+        "changing local title and citation key with confirmation preserves ID and original Markdown, and the old visible marker opens the newly renamed entry",
+        "formula attribution uses stable equation label with unchanged LaTeX; explicit bibliography preview/apply deduplicates stable IDs, displays unverified status and uses one undo/redo unit through actual file saving",
+        "actual owned Windows save/open pickers export UTF-8 .bib and reimport as preview with unknown fields intact; cancelling preview leaves database and exported bytes unchanged",
+        "actual local screenshot-source relation and BetterBibTeX interface share existing literature IDs, with identical external keys isolated by library and no Zotero connection",
+        "actual @ completion in near-WYS source fragment and legacy image caption preserves independent heading, document owner, image block ID and original screenshot association",
+        "actual application restart retains citations, bibliography, renamed metadata, screenshot provenance and external key mapping; no blank Markdown pane and original PNG hash unchanged"
+      ],
+      "reportSha256": "4cb27deee1c76c2a9f19663a13080ed635cc2f8e2704039eec5c711df21d567d"
+    },
+    {
+      "folder": "guide-reader-v419-delivery",
+      "mode": "local isolated headless Edge renderer; no native capture, user database, credential or clipboard claims",
+      "result": "PASS",
+      "checks": [
+        "27 chapters and nested subsections mount; absent Markdown document has no split",
+        "third-level step navigation scrolls and keyboard-focuses the actual matching H4, active location follows",
+        "collapse all removes children and active step falls back to visible parent",
+        "nested search retains ancestors, reports no results and clear restores navigation",
+        "177 examples across all 27 chapters, example-only search, actual heading jump and directory mode restoration",
+        "all 44 whitelisted offline guide images actually decode",
+        "whitelisted local guide image opens with Enter and closes with Escape",
+        "dark: guide and directory contained at seven widths 480–1440",
+        "light: guide and directory contained at seven widths 480–1440",
+        "guide navigation/unmount and remount preserves independent Markdown draft; cancel/discard closes split correctly",
+        "600px-high window keeps bottom help reachable and sidebar scroll reaches settings",
+        "both themes: selected base fonts 12/16/20 genuinely resize guide text; 480/760/1440 widths at 600px height retain contained directory/content",
+        "CSS content-scale simulation 75/100/125/150/200 percent remains contained at 1440px; this is not physical Windows DPI or OS magnifier verification",
+        "three dock panes remain inside viewport at CSS scales75–200%, pointer split drag works at125%, and independent Markdown undo survives scaling"
+      ],
+      "reportSha256": "183868048be71f21b8ead0bcf2fa0d5941fe621b0098b37791d7e59b34a6f6dc"
+    }
+  ],
+  "installer": {
+    "version": "4.1.9",
+    "mode": "actual NSIS, isolated install path, read-only user-data hashes, process fixture for busy guard",
+    "checks": [
+      "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+      "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+      "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+      "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+    ],
+    "commands": [
+      "D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\v413-distribution\\release\\bundle\\nsis\\ResearchClip_4.1.9_x64-setup.exe /S /NS /D=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v419-distribution\\安装验收 Test",
+      "D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v419-distribution\\安装验收 Test\\uninstall.exe /S _?=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v419-distribution\\安装验收 Test",
+      "D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\v413-distribution\\release\\bundle\\nsis\\ResearchClip_4.1.9_x64-setup.exe /S /NS /D=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v419-distribution\\安装验收 Test",
+      "D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v419-distribution\\安装验收 Test\\uninstall.exe /S"
+    ],
+    "result": "passed",
+    "userDataFilesHashed": 18,
+    "installerSha256": "4C4C8032F78755D86DEA95671F61E82B6F4FF6623EFB7E1BC44A4120D90C1E06",
+    "signatureStatus": "NotSigned",
+    "installedPayloadSha256": "BA4F01E552FC0EE17AED9A75EB99D3ADDA2863755C8918FE420135DB251A99EC",
+    "licenseNotices": {
+      "pdfjs-NOTICES.txt": "BD174C41828A86016E117D0BB0491F3D74C5BC02CDF5C6EC74C5B620A3903A5D",
+      "lowlight-NOTICES.txt": "0959049D93770BD1FE7C017FEEB57D7915AA87F6D8BDFDF54430BF51FB99F95F",
+      "remark-gfm-NOTICES.txt": "8D3C95637B0E43BEF4AC7D81BC707944681E4AB5D2B055AAEC407C94305C500B",
+      "flexlayout-react-MIT.txt": "59391BAAF80D3AF529E3F08ADFFC813FE54373E6365A2AE5BA3A991E9C25D16F"
+    },
+    "metadata": {
+      "version": "4.1.9",
+      "product": "ResearchClip",
+      "publisher": "ResearchClip",
+      "hasIcon": true
+    },
+    "busyUninstallExit": 2,
+    "busyInstallExit": 2,
+    "quiescence": {
+      "result": "PASS",
+      "codes": [
+        0
+      ],
+      "needed": 0
+    },
+    "installationStillPresent": false
+  },
+  "sourceFixtureIntegrity": {
+    "files": 7,
+    "result": "PASS"
+  },
+  "releaseInfrastructure": {
+    "passed": 20,
+    "exitCode": 0
+  },
+  "logs": {
+    "v419-clean-install.log": "e1563c3c6328d977f61762ce825a60678dd4d06fb922737fd47520e14beb8039",
+    "v419-check.log": "2eb3ab51948e289580ec9f5cac195e8cf5d6dad0352528049de58ea4e8efc2c0",
+    "v419-rust-tests.log": "9c424815ba22cd0ef0c0230397c6164069e0fa7540ad14004491d72e15ba9c7c",
+    "v419-clippy.log": "9ebfe9ac823550924b801aaa95accedfa1bdb6dbf55661e328dd18bb541e13d9",
+    "v419-docs.log": "f9224ae540fbf0dc7a240c2861031df2d5e43c53d338f9aa32905543522743b3",
+    "v419-production-build.log": "739356d0891d2be32c89226880dc8911131efd0b2a86280cd9dab708bfeeb893",
+    "v419-installer.log": "8c7eba60a88ce32a1fa590fe13d296f67a237b828b49927ddf66176e32009ae5",
+    "v419-format.log": "b1f11acc09b9aed518df632250709e87fc27b9fb78c2e72174b8f305e26eae44"
+  },
+  "limitations": [
+    "7 Rust ignored tests are not passes",
+    "CSS zoom is not physical DPI or Windows magnifier acceptance",
+    "current native WebView2 155 tested; older runtimes not verified",
+    "PDF parser/decoder heap is not a hard OS memory sandbox",
+    "real user database was not migrated for tests"
+  ]
+}

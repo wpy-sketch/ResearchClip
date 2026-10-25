@@ -19,13 +19,14 @@ export const applicationCommands=new CommandRegistry(permissions,new ResourceRes
 applicationCommands.register('document.open',async(context,args)=>{
  const resource=context.resources[0];if(!resource.moduleAvailable)throw new CommandFailure('MODULE_UNAVAILABLE');if(!workspaceManager.state.getState().ready)throw new CommandFailure('MODULE_UNAVAILABLE');
  context.signal.throwIfAborted();context.commit();
- const editorKind=resource.editor==='markdown'?'markdown':'image';
+ const editorKind=resource.editor==='pdf'?'pdf':resource.editor==='markdown'?'markdown':'image';
  const existing=[...workspaceManager.sessions.values()].find(s=>s.panel.resourceId===args.resource.id&&s.panel.kind===editorKind);
  if(existing)workspaceManager.focus(existing.panel.id);
  else if(resource.editor==='markdown'){
   await useDocumentStore.getState().openProject(args.resource.id);
   if(![...workspaceManager.sessions.values()].some(s=>s.panel.kind==='markdown'&&s.panel.resourceId===args.resource.id))throw new CommandFailure('OPERATION_FAILED');
- }else if(resource.editor==='image')await openLibraryEditor(args.resource.id);
+ }else if(resource.editor==='pdf')await(await import('../../pdf/PdfViewerSession')).openPdf(args.resource.id);
+ else if(resource.editor==='image')await openLibraryEditor(args.resource.id);
  else throw new CommandFailure('MODULE_UNAVAILABLE');
  const opened=[...workspaceManager.sessions.values()].find(s=>s.panel.resourceId===args.resource.id&&s.panel.kind===editorKind);
  if(!opened||opened.workspaceId!==workspaceManager.workspaceId||opened.panel.hidden||!workspaceManager.model.getNodeById(opened.panel.id))throw new CommandFailure('OPERATION_FAILED');

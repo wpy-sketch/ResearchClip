@@ -211,6 +211,34 @@ fn dependencies(conn: &Connection, key: &ResourceKey, data: &ResearchData) -> Re
     }
     Ok(())
 }
+pub(super) fn insert_resource(
+    conn: &Connection,
+    name: &str,
+    data: &ResearchData,
+) -> Result<ResourceKey> {
+    let name = title(name)?;
+    let stamp = now()?;
+    validate_dependencies(conn, data, None)?;
+    let id: String = conn.query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))?;
+    let key = ResourceKey {
+        kind: data.kind(),
+        id,
+    };
+    let json = serde_json::to_string(data).map_err(|_| StorageError::Invalid("资源无法编码。"))?;
+    conn.execute(
+        "INSERT INTO research_entities VALUES(?1,?2,?3,?4,1,?5,?6,?6)",
+        params![
+            key.kind.key(),
+            key.id,
+            name,
+            RESOURCE_FORMAT_VERSION,
+            json,
+            stamp
+        ],
+    )?;
+    dependencies(conn, &key, data)?;
+    Ok(key)
+}
 impl Storage {
     pub fn research_resource(&self, key: &ResourceKey) -> Result<ResourceSnapshot> {
         let value = get(&self.connection, key)?;
@@ -235,31 +263,10 @@ impl Storage {
         name: &str,
         data: &ResearchData,
     ) -> Result<ResourceSnapshot> {
-        let name = title(name)?;
-        let stamp = now()?;
         let tx = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
-        validate_dependencies(&tx, data, None)?;
-        let id: String = tx.query_row("SELECT lower(hex(randomblob(16)))", [], |r| r.get(0))?;
-        let key = ResourceKey {
-            kind: data.kind(),
-            id,
-        };
-        let json =
-            serde_json::to_string(data).map_err(|_| StorageError::Invalid("资源无法编码。"))?;
-        tx.execute(
-            "INSERT INTO research_entities VALUES(?1,?2,?3,?4,1,?5,?6,?6)",
-            params![
-                key.kind.key(),
-                key.id,
-                name,
-                RESOURCE_FORMAT_VERSION,
-                json,
-                stamp
-            ],
-        )?;
-        dependencies(&tx, &key, data)?;
+        let key = insert_resource(&tx, name, data)?;
         tx.commit()?;
         self.research_resource(&key)
     }
@@ -674,6 +681,14 @@ impl Storage {
 /// Only used to construct historical schemas in disposable unit-test databases.
 #[cfg(test)]
 pub(crate) fn discard_schema12_test_fixture(conn: &Connection) {
+    assert_eq!(
+        conn.query_row("SELECT count(*) FROM pdf_reading_positions", [], |r| r
+            .get::<_, i64>(0))
+            .unwrap(),
+        0
+    );
+    conn.execute_batch("DROP TABLE pdf_reading_positions;")
+        .unwrap();
     // Only constructs old schemas in isolated unit fixtures; never compiled into the app.
     assert_eq!(
         conn.query_row("SELECT count(*) FROM citation_key_mappings", [], |r| r

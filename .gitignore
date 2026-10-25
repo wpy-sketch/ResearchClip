@@ -41,3 +41,6 @@ math-ocr/__pycache__/
 
 __pycache__/
 *.pyc
+
+# Generated from the pinned PDF.js package; see prepare-pdf-assets.mjs.
+public/pdfjs/

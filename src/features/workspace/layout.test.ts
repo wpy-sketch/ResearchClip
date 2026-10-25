@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {Model,Actions,DockLocation} from 'flexlayout-react';
+import {Model,Actions,DockLocation,TabSetNode} from 'flexlayout-react';
 import {defaultDock,validateLayout,projectDock,type PanelRecord,type WorkspaceLayout} from './layout';
 import {WorkspacePersistence} from './persistence';
 import {EditorRegistry} from './registry';
@@ -8,6 +8,7 @@ const panels=[panel('workbench','workbench'),panel('doc-a'),panel('doc-b')];
 function fixture():WorkspaceLayout{return {version:1,workspaceId:'default',explorer:true,panels:panels.map(p=>({...p})),dock:defaultDock(panels)};}
 function memory(){const values=new Map<string,string>();return {values,getItem:(k:string)=>values.get(k)??null,setItem:(k:string,v:string)=>{values.set(k,v);}};}
 describe('bounded workspace layout contract',()=>{
+ it('restores the selected surviving tab by mapped identity after sibling pruning',()=>{const saved=fixture();const group=saved.dock.layout.children![0];if(group.type!=='tabset')throw Error('fixture');Object.assign(group,{selected:2});const current=[panels[0],panel('new-b')];const restored=Model.fromJson(projectDock(saved,current,new Map([['doc-b','new-b']])));expect((restored.getNodeById('new-b')?.getParent() as TabSetNode).getSelectedNode()?.getId()).toBe('new-b');const missing=Model.fromJson(projectDock(saved,[panels[0]]));expect((missing.getNodeById('workbench')?.getParent() as TabSetNode).getSelectedNode()?.getId()).toBe('workbench');});
  it('round trips actual library horizontal/vertical model, ratios and selected tabs',()=>{const model=Model.fromJson(fixture().dock);model.doAction(Actions.moveNode('doc-a','main',DockLocation.RIGHT,-1));model.doAction(Actions.moveNode('doc-b','main',DockLocation.BOTTOM,-1));const record=validateLayout({...fixture(),dock:model.toJson()});expect(Model.fromJson(record.dock).getNodeById('doc-a')).toBeDefined();expect(record.dock.layout.children?.length).toBeGreaterThan(1);expect(validateLayout(record)).toEqual(record);});
  it('rejects future versions, paths as IDs, duplicate panels, unknown resource types and control titles',()=>{for(const patch of [{version:2},{workspaceId:'D:/secret'},{panels:[...panels,panels[1]]},{panels:[panels[0],{...panels[1],kind:'shell'}]},{panels:[panels[0],{...panels[1],title:'bad'+String.fromCharCode(0)}]}])expect(()=>validateLayout({...fixture(),...patch})).toThrow();});
  it('rejects deep/cyclic structures, invalid weights, duplicate nodes and hidden visible tabs',()=>{const bad=fixture();bad.dock.layout.children=[bad.dock.layout];expect(()=>validateLayout(bad)).toThrow();for(const weight of [NaN,Infinity,-1,0,1e8])expect(()=>validateLayout({...fixture(),dock:{layout:{...fixture().dock.layout,weight}}})).toThrow();const hidden=fixture();hidden.panels[1].hidden=true;expect(()=>validateLayout(hidden)).toThrow();});

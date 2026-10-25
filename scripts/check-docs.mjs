@@ -76,7 +76,7 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_proj
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/004_ocr_index.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/005_annotation_revisions.sql'], { cwd: root, stdio: 'pipe' });
 const currentSchema = Number(read('src-tauri/src/storage/migrations.rs').match(/pub const SCHEMA_VERSION: u32 = (\d+);/)?.[1]);
-assert.equal(currentSchema, 14);
+assert.equal(currentSchema, 15);
 assert.ok(existsSync(join(root,'src-tauri/migrations/013_document_organization.sql')));
 assert.ok(existsSync(join(root, 'src-tauri/migrations/012_research_resources.sql')));
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/006_sync.sql'], { cwd: root, stdio: 'pipe' });
@@ -106,3 +106,7 @@ execFileSync('git',['diff','--exit-code','v3.1.9','--',...publishedMigrations],{
 
 for(const command of ['citation_references','preview_bibtex','resolve_citation_key','bind_citation_key','export_bibtex']){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));assert.ok(read('src-tauri/src/lib.rs').includes('commands::citations::'+command));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}
 execFileSync('git',['diff','--exit-code','--','src-tauri/migrations/013_document_organization.sql'],{cwd:root,stdio:'pipe'});
+
+for(const command of ['open_pdf_document','pdf_load_progress','close_pdf_document','read_pdf_chunk','recent_pdf_documents','save_pdf_reading']){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));assert.ok(read('src-tauri/src/lib.rs').includes('commands::pdf::'+command));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}
+execFileSync('git',['diff','--exit-code','--','src-tauri/migrations/014_citation_keys.sql'],{cwd:root,stdio:'pipe'});
+assert.equal(lock.packages['node_modules/pdfjs-dist'].version,'6.4.299');

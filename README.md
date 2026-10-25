@@ -1,3 +1,5 @@
+> **v4.1.9 · 原生工作区PDF阅读器（发布核验中）**：本地只读PDF标签、连续单双页、缩放旋转、目录缩略图、文字复制和全文搜索，保存阅读位置并与Markdown并排；SQLite15。见[本版说明](docs/RELEASE-NOTES-4.1.9.md)、[Step10验收](docs/qa/PDF_READER_STEP10.md)与[发布检查](docs/qa/RELEASE-4.1.9.md)。
+
 > **v4.1.8 · 本地科研引用**：@补全、稳定文献ID、公式/截图来源、BibTeX导入导出和显式参考列表；SQLite14。指南目录自然排序及原创多色科研图标。见[本版说明](docs/RELEASE-NOTES-4.1.8.md)、[实际验收](docs/qa/CITATIONS_STEP09.md)与[下载指南](docs/RELEASE-COMPONENTS.md)。
 
 <!-- Current delivery status -->
@@ -7,7 +9,7 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.8 Windows；发布与验收状态见本版记录**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.1.9 Windows；发布与验收状态见本版记录**。
 
 [GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.8正式回执](docs/qa/PUBLICATION-4.1.8.md) · [v4.1.8发布检查](docs/qa/RELEASE-4.1.8.md) · [v4.1.7正式回执](docs/qa/PUBLICATION-4.1.7.md) · [v4.1.7发布检查](docs/qa/RELEASE-4.1.7.md) · [v4.1.7配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 
@@ -33,7 +35,7 @@ v3.0.1 新增 **窗口截图**：鼠标高亮选择、Tab/Shift+Tab切换、Esc�
 - **编辑**：无损箭头/矩形/椭圆/文字/画笔/马赛克/模糊/编号，撤销重做、原分辨率PNG、贴图和离线OCR。
 - **整理**：SQLite素材库、网格/列表、科研知识卡片、笔记自动保存、跨项目标签、组合搜索、批量操作与双图对比。
 - **写作**：动态Markdown分栏、标注合成图插入、模板、大纲、离线LaTeX预览和系统其他应用打开。
-- **帮助**：18章任务式说明、114项功能示例、分层目录与正文搜索、31幅离线图示和原尺寸放大查看。
+- **帮助**：27章任务式说明、177项功能示例、分层目录与正文搜索、44幅离线图示和原尺寸放大查看。
 
 v1.0.5 新增非破坏性标注版本历史：显式保存去重、版本说明、只读预览/对比、恢复追加新版本；schema5升级前备份，原图不重复保存。[本轮验收](docs/qa/RELEASE-1.0.5.md) · [发布核验](docs/qa/PUBLICATION-1.0.5.md)。Release继续附带兼容的 v1.0.2 浏览器插件包，不删除既有发布。
 

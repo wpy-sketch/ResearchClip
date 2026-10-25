@@ -2,3 +2,6 @@
 *.png binary
 *.ico binary
 *.icns binary
+
+# Preserve verbatim upstream license whitespace.
+docs/licenses/pdfjs-NOTICES.txt -whitespace

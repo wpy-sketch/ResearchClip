@@ -10,7 +10,7 @@ vi.mock('../import/store',()=>({useImportStore:{getState:()=>({busy:false})}}));
 vi.mock('../export/store',()=>({useMarkdownExportStore:{getState:()=>({busy:false})}}));
 vi.mock('../settings/store',()=>({useSettingsStore:{getState:()=>({phase:'idle'})}}));
 vi.mock('../document/store',()=>({allDocumentStores:()=>mock.docs,useDocumentStore:{getState:()=>mock.docs[mock.active].getState()},documentDirty:(s:{dirty:boolean})=>s.dirty}));
-vi.mock('./manager',()=>({workspaceManager:{focusDocument:(s:unknown)=>{mock.active=mock.docs.indexOf(s as typeof mock.docs[number]);}}}));
+vi.mock('./manager',()=>({workspaceManager:{flushReadOnlyEditors:vi.fn(async()=>{}),focusDocument:(s:unknown)=>{mock.active=mock.docs.indexOf(s as typeof mock.docs[number]);}}}));
 beforeEach(()=>{vi.clearAllMocks();mock.tasks=[];mock.active=0;mock.flushAll.mockResolvedValue(true);mock.completeDesktopExit.mockResolvedValue(undefined);useDesktopStore.setState(useDesktopStore.getInitialState(),true);mock.docs=['first','hidden-other-workspace'].map(id=>{const s={document:{id},dirty:true,pending:null,phase:'idle',save:vi.fn(async()=>false)};return {getState:()=>s};});});
 describe('all-workspace exit guard',()=>{
  it('requires an explicit decision for every dirty document, including hidden or other workspaces',async()=>{await useDesktopStore.getState().requestQuit();expect(mock.active).toBe(0);await useDesktopStore.getState().documentQuit('discard');expect(mock.active).toBe(1);expect(useDesktopStore.getState().phase).toBe('document');expect(mock.completeDesktopExit).not.toHaveBeenCalled();await useDesktopStore.getState().documentQuit('discard');expect(mock.completeDesktopExit).toHaveBeenCalledExactlyOnceWith(true);expect(mock.docs[0].getState().dirty).toBe(true);});

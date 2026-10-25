@@ -155,6 +155,12 @@
     "allow-export-bibtex",
     "allow-associate-reference",
     "allow-import-bibtex",
-    "allow-open-reference-doi"
+    "allow-open-reference-doi",
+    "allow-open-pdf-document",
+    "allow-pdf-load-progress",
+    "allow-close-pdf-document",
+    "allow-read-pdf-chunk",
+    "allow-recent-pdf-documents",
+    "allow-save-pdf-reading"
   ]
 }

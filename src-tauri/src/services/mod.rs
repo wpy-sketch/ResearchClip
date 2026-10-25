@@ -26,3 +26,5 @@ pub mod similarity;
 pub mod similarity_ai;
 pub mod similarity_index;
 pub mod sync;
+
+pub mod pdf;
