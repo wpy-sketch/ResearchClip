@@ -4,7 +4,7 @@ import type {LibrarySort} from '../../shared/api/library';
 const api = vi.hoisted(() => ({readScreenshotPage:vi.fn(), libraryStatus:vi.fn()}));
 vi.mock('../../shared/api/library', () => api);
 vi.mock('@tauri-apps/api/core', () => ({isTauri:() => true}));
-const status = {schemaVersion:13, pendingWrites:0, pendingCleanup:0, warnings:[]};
+const status = {schemaVersion:14, pendingWrites:0, pendingCleanup:0, warnings:[]};
 const item = (n:number, isFavorite=false) => ({id:n.toString(16).padStart(32,'0'), title:`素材 ${n}`,
   originalImagePath:`originals/${n.toString(16).padStart(32,'0')}.png`, thumbnailPath:`thumbnails/${n.toString(16).padStart(32,'0')}.png`,
   widthPx:32, heightPx:24, createdAt:n, updatedAt:n, revision:1, isFavorite, imageAvailable:true, thumbnailAvailable:true});

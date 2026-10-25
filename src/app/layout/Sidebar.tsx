@@ -1,4 +1,5 @@
-import { Network, BookOpen, BookMarked, ScanSearch, Columns2, FlaskConical, HardDrive, Images, Plus, Settings2, Star, Tags } from 'lucide-react';
+import appIcon from '../../../assets/app-icon.svg';
+import { Network, BookOpen, BookMarked, ScanSearch, Columns2, HardDrive, Images, Plus, Settings2, Star, Tags } from 'lucide-react';
 import {useSimilarityStore} from '../../features/similarity/store';
 import {useReferenceStore} from '../../features/references/store';
 import { useUiStore } from '../ui-store';
@@ -26,7 +27,7 @@ export function Sidebar() {
 
   return (
     <aside className="app-sidebar">
-      <div className="sidebar-brand"><div className="brand-icon"><FlaskConical size={20} strokeWidth={1.7} /></div>
+      <div className="sidebar-brand"><div className="brand-icon"><img src={appIcon} alt="ResearchClip 科研工作台图标" width={40} height={40}/></div>
         <div className="sidebar-label min-w-0"><h1 className="brand-title">ResearchClip</h1><p className="mt-1 text-[10px] text-muted">截图与研究笔记</p></div>
       </div>
       <button className="sidebar-create" aria-label="新建截图" title="新建截图" onClick={openCapture}><Plus size={24} strokeWidth={1.8}/><span className="sidebar-label">新建截图</span></button>

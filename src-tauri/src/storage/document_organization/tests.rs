@@ -205,7 +205,10 @@ fn migration_12_preserves_files_and_metadata_and_takes_valid_snapshot() {
     drop(c);
     let before = std::fs::read(&p).unwrap();
     let s = Storage::open(root.clone()).unwrap();
-    assert_eq!(s.status().unwrap().schema_version, 13);
+    assert_eq!(
+        s.status().unwrap().schema_version,
+        super::super::migrations::SCHEMA_VERSION
+    );
     assert_eq!(std::fs::read(&p).unwrap(), before);
     assert_eq!(
         s.document_directory().unwrap().documents[0].id,

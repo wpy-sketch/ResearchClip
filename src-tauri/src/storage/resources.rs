@@ -676,6 +676,14 @@ impl Storage {
 pub(crate) fn discard_schema12_test_fixture(conn: &Connection) {
     // Only constructs old schemas in isolated unit fixtures; never compiled into the app.
     assert_eq!(
+        conn.query_row("SELECT count(*) FROM citation_key_mappings", [], |r| r
+            .get::<_, i64>(0))
+            .unwrap(),
+        0
+    );
+    conn.execute_batch("DROP TABLE citation_key_mappings;")
+        .unwrap();
+    assert_eq!(
         conn.query_row("SELECT count(*) FROM markdown_revisions", [], |r| r
             .get::<_, i64>(0))
             .unwrap(),

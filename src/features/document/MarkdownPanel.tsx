@@ -1,3 +1,5 @@
+import {CitationTools} from '../references/CitationTools';
+import {CitationCompletion} from '../references/CitationCompletion';
 import {ScopedLinkCompletion} from './ScopedLinkCompletion';
 import {DocumentNavigationTools} from './DocumentNavigationTools';
 import {PaperTools} from './PaperTools';
@@ -58,6 +60,7 @@ export function MarkdownPanel(){
     <FormattingToolbar key={`tools:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     <ContentTools key={`content:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     <DocumentNavigationTools onReveal={match=>{setPreview(false);setVisual(false);s.setCaret(match.start,match.end,match.key==='source'?undefined:match.key);documentApi.setState({focusRequest:s.focusRequest+1});if(match.key==='@title')requestAnimationFrame(()=>{const node=panel.current?.querySelector<HTMLInputElement>('[aria-label="Markdown 文档标题"]');node?.focus();node?.setSelectionRange(match.start,match.end);});}}/>
+    <CitationTools panel={panel} preview={preview}/>
     <PaperTools key={`paper:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     {s.error&&<p role="alert" className="error-banner m-2">{s.error}</p>}{s.notice&&<p role="status" title={s.notice} className="markdown-notice m-2 text-xs text-muted">{s.notice}</p>}
     <div className="markdown-preview-options">{source&&!visual&&!preview&&<button aria-pressed={live} className="text-xs" onClick={()=>setLive(!live)}>{live?'关闭实时预览':'开启实时预览'}</button>}<span>LaTeX · 离线排版</span><ExternalOpenButton/></div>
@@ -66,6 +69,7 @@ export function MarkdownPanel(){
     {preview?<div ref={previewBody} className="markdown-panel-body"><MarkdownPreview markdown={markdown} assets={s.assets} onInternalOpen={internalOpen}/></div>:source?visual?<VisualEditor onInternalOpen={internalOpen}/>:<textarea ref={input} data-markdown-target="source" aria-label="Markdown 源文" className="markdown-source" spellCheck={false} disabled={busy} placeholder="在这里输入 Markdown…" value={sourceText(document)} onChange={e=>{const edit=applyDomText(sourceText(document),e.target.value,e.target.selectionStart,e.target.selectionEnd);s.editSource(edit.text,edit.start,edit.end);}} onBlur={e=>s.setCaret(rawOffset(sourceText(document),e.currentTarget.selectionStart),rawOffset(sourceText(document),e.currentTarget.selectionEnd))} onSelect={e=>s.setCaret(rawOffset(sourceText(document),e.currentTarget.selectionStart),rawOffset(sourceText(document),e.currentTarget.selectionEnd))}/>:<div ref={structuredBody} className="markdown-panel-body"><Suspense fallback={<p role="status">正在加载图文编排…</p>}><DocumentView key={visual?'visual':'source'} visual={visual} inlinePreview={false}/></Suspense></div>}
     {!preview&&!visual&&live&&<div ref={liveBody} className="markdown-live-preview" aria-label="实时预览区域"><MarkdownPreview markdown={liveMarkdown} assets={s.assets} onInternalOpen={internalOpen}/></div>}
     </div></div>
+    <CitationCompletion panel={panel} preview={preview}/>
     <ScopedLinkCompletion panel={panel} preview={preview}/>
     <SlashMenu key={`slash:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     {currentId&&<LinkDetails key={currentId} kind="document" id={currentId} savedVersion={s.savedFingerprint}/>}

@@ -4,6 +4,7 @@ use std::sync::Arc;
 use tauri::{State, WebviewWindow};
 pub mod anchors;
 pub mod capture;
+pub mod citations;
 pub mod desktop;
 pub mod document;
 pub mod document_organization;

@@ -148,6 +148,11 @@
     "allow-lookup-reference-doi",
     "allow-reference-page",
     "allow-save-references",
+    "allow-citation-references",
+    "allow-preview-bibtex",
+    "allow-resolve-citation-key",
+    "allow-bind-citation-key",
+    "allow-export-bibtex",
     "allow-associate-reference",
     "allow-import-bibtex",
     "allow-open-reference-doi"

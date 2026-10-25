@@ -165,7 +165,10 @@ fn migration_v11_preserves_ids_bytes_notes_links_and_verified_backup() {
     let tmp = tempfile::tempdir().unwrap();
     let (id, doc_id, bytes, text) = legacy_v11(tmp.path());
     let s = Storage::open(tmp.path().into()).unwrap();
-    assert_eq!(s.status().unwrap().schema_version, 13);
+    assert_eq!(
+        s.status().unwrap().schema_version,
+        super::super::migrations::SCHEMA_VERSION
+    );
     assert_eq!(s.screenshot_image(&id, false).unwrap(), bytes);
     assert_eq!(s.get_screenshot(&id).unwrap().title, "旧图");
     assert_eq!(s.list_notes(&id).unwrap()[0].content, "原始笔记");

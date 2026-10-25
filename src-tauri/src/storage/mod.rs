@@ -1,4 +1,5 @@
 pub mod anchors;
+pub mod citations;
 pub mod clips;
 pub mod document_organization;
 pub mod embeddings;

@@ -99,6 +99,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         || mode == "dialog-confirm"
         || mode == "dialog-open-native"
         || mode == "dialog-open-compare"
+        || mode == "dialog-save-bib"
         || mode == "dialog-save-md"
         || mode == "dialog-save-linked-md"
         || mode == "dialog-open-bib"
@@ -155,6 +156,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 vec![
                     "选择语义模型八份文件所在目录".encode_utf16().collect(),
                     "选择完整离线包中的 similarity-ai 文件夹"
+                        .encode_utf16()
+                        .collect(),
+                ]
+            } else if mode == "dialog-save-bib" {
+                vec![
+                    "导出本地BibTeX（已有文件不会覆盖）"
                         .encode_utf16()
                         .collect(),
                 ]
@@ -220,6 +227,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             || mode == "dialog-confirm"
             || mode == "dialog-open-native"
             || mode == "dialog-open-compare"
+            || mode == "dialog-save-bib"
             || mode == "dialog-save-md"
             || mode == "dialog-save-linked-md"
             || mode == "dialog-open-bib"
@@ -273,7 +281,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .starts_with(root)
                 || !(mode == "dialog-model-folder" && path.is_dir()
                     || path.extension().is_some_and(|s| {
-                        if mode == "dialog-open-bib" {
+                        if mode == "dialog-open-bib" || mode == "dialog-save-bib" {
                             s == "bib"
                         } else if mode == "dialog-save-md"
                             || mode == "dialog-open-md"

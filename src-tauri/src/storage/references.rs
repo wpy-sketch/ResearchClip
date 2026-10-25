@@ -44,7 +44,7 @@ pub struct ReferencePage {
     pub items: Vec<Reference>,
     pub total: i64,
 }
-fn read(row: &rusqlite::Row<'_>) -> rusqlite::Result<Reference> {
+pub(super) fn read(row: &rusqlite::Row<'_>) -> rusqlite::Result<Reference> {
     let authors: String = row.get(2)?;
     let metadata: String = row.get(10)?;
     let json_error =
@@ -98,7 +98,7 @@ impl Storage {
         };
         // instr treats %, _, quotes and FTS metacharacters literally; never interpolates user text.
         let filter = format!(
-            "WHERE (instr(lower(title),lower(?1))>0 OR instr(lower(authors_json),lower(?1))>0 OR instr(lower(coalesce(doi,'')),lower(?1))>0 OR instr(lower(bibtex_key),lower(?1))>0){predicate}"
+            "WHERE (instr(lower(title),lower(?1))>0 OR instr(lower(authors_json),lower(?1))>0 OR instr(lower(coalesce(doi,'')),lower(?1))>0 OR instr(lower(bibtex_key),lower(?1))>0 OR instr(lower(bibtex_entry),lower(?1))>0){predicate}"
         );
         let target_id = target.map_or("", |t| t.id.as_str());
         let total = if target.is_some() {
@@ -151,7 +151,7 @@ impl Storage {
                 }
                 if key != item.data.bibtex_key && !item.confirm_key_change {
                     return Err(StorageError::Invalid(
-                        "修改引用键可能使已有 Markdown 引用失效，请明确确认后保存。",
+                        "修改引用键会影响旧[@key]引用；稳定ID引用不受影响，请明确确认后保存。",
                     ));
                 }
                 if source != "manual" {

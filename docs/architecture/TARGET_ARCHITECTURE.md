@@ -1,5 +1,7 @@
 # ResearchClip Research IDE：目标架构
 
+Step09本地引用见[CitationService契约](CITATIONS_STEP09.md)，SQLite14；Zotero连接器仍未接入。
+
 Step08实现见[文档组织与历史](DOCUMENT_ORGANIZATION_STEP08.md)，SQLite13；原Step00提案的schema与能力描述是当时状态。
 
 Step03受控命令实施见[COMMAND_SYSTEM](COMMAND_SYSTEM.md)，SQLite保持12，无新增依赖。
