@@ -6,6 +6,14 @@
     "main"
   ],
   "permissions": [
+    "allow-document-directory",
+    "allow-create-document-folder",
+    "allow-delete-document-folder",
+    "allow-organize-document",
+    "allow-markdown-history",
+    "allow-markdown-revision-text",
+    "allow-load-markdown-revision",
+    "allow-relink-markdown-document",
     "allow-semantic-status",
     "allow-semantic-start",
     "allow-semantic-cancel",

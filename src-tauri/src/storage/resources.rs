@@ -674,6 +674,16 @@ impl Storage {
 /// Only used to construct historical schemas in disposable unit-test databases.
 #[cfg(test)]
 pub(crate) fn discard_schema12_test_fixture(conn: &Connection) {
+    // Only constructs old schemas in isolated unit fixtures; never compiled into the app.
+    assert_eq!(
+        conn.query_row("SELECT count(*) FROM markdown_revisions", [], |r| r
+            .get::<_, i64>(0))
+            .unwrap(),
+        0,
+        "legacy fixture cannot discard document history"
+    );
+    conn.execute_batch("DROP TRIGGER markdown_revision_no_update; DROP TRIGGER markdown_revision_no_delete; DROP TABLE markdown_revisions; DROP TABLE document_organization; DROP TABLE document_folders;").unwrap();
+
     assert_eq!(
         conn.query_row("SELECT count(*) FROM research_entities", [], |r| r
             .get::<_, i64>(0))

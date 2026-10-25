@@ -1,0 +1,10 @@
+import {useEffect,useRef,useState,type RefObject} from 'react';
+import {useDocumentApi} from './store';
+import {textTarget} from './text-target';
+import {wikiTrigger,type WikiTrigger} from '../links/model';
+import {LinkPicker,type LinkScope} from '../links/LinkPicker';
+export function ScopedLinkCompletion({panel,preview}:{panel:RefObject<HTMLElement|null>;preview:boolean}){
+ const api=useDocumentApi(),[state,setState]=useState<{scope:LinkScope;trigger:WikiTrigger}|null>(null),input=useRef<HTMLTextAreaElement|null>(null),frame=useRef(0),composing=useRef(false);
+ useEffect(()=>{const host=panel.current;if(!host||preview)return;const update=(event:Event)=>{const node=event.target;if(!(node instanceof HTMLTextAreaElement)||!node.matches('[data-markdown-target]')){if(event.type==='focusin'&&!(node instanceof Element&&node.closest('.internal-link-picker')))setState(null);return;}cancelAnimationFrame(frame.current);frame.current=requestAnimationFrame(()=>{const s=api.getState(),scope=s.document&&node.isConnected&&s.phase==='idle'&&!composing.current?textTarget(s.document,node):null,trigger=scope&&scope.start===scope.end?wikiTrigger(scope.raw,scope.start):null;if(scope&&trigger&&s.document){input.current=node;setState({trigger,scope:{node,raw:scope.raw,from:scope.from,to:scope.to,documentId:s.document.id}});}else setState(null);});};const start=()=>{composing.current=true;setState(null);},end=(e:Event)=>{composing.current=false;update(e);};for(const name of ['focusin','input','select','keyup'])host.addEventListener(name,update);host.addEventListener('compositionstart',start);host.addEventListener('compositionend',end);return()=>{cancelAnimationFrame(frame.current);for(const name of ['focusin','input','select','keyup'])host.removeEventListener(name,update);host.removeEventListener('compositionstart',start);host.removeEventListener('compositionend',end);};},[api,panel,preview]);
+ return state&&!preview?<LinkPicker key={`${state.scope.documentId}:${state.scope.from}:${state.trigger.start}:${state.trigger.query}`} trigger={state.trigger} scope={state.scope} input={input}/>:null;
+}

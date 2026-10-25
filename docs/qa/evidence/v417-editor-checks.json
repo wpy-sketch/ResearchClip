@@ -1,0 +1,472 @@
+{
+  "date": "2026-10-25",
+  "environment": {
+    "os": "Windows-11-10.0.26300-SP0",
+    "frontend": "actual Edge and Windows WebView2, Node/npm",
+    "storage": "new isolated v11 fixture upgraded to13; isolated Rust12→13 migration and rollback fixtures"
+  },
+  "automated": {
+    "npmCi": {
+      "command": "npm ci --ignore-scripts",
+      "exitCode": 0,
+      "log": "artifacts/dock-evaluation/v417-clean-install.log"
+    },
+    "npmCheck": {
+      "command": "npm run check",
+      "exitCode": 0,
+      "tests": 629,
+      "files": 74,
+      "log": "artifacts/dock-evaluation/v417-check-zoom.log"
+    },
+    "rust": {
+      "formatExitCode": 0,
+      "testExitCode": 0,
+      "passed": 245,
+      "ignored": 7,
+      "clippyExitCode": 0,
+      "log": "artifacts/dock-evaluation/v417-rust-tests-third.log"
+    },
+    "releaseInfrastructure": {
+      "exitCode": 0,
+      "tests": 16
+    },
+    "nativeGroups": 65,
+    "browserGroups": 49,
+    "native": [
+      {
+        "evidence": "artifacts/markdown-organization-native-v417-verified/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "real schema13 upgrade retains legacy source; directory distinguishes same names by stable IDs, creates nested logical folders, favorites and opens without an empty Markdown split",
+          "actual opened time is recorded on open and unchanged by a save; recent metadata is not inferred from edit timestamps",
+          "actual Windows WebView history dialog stays inside nine CSS viewport/zoom combinations without modifying the draft; this is not physical OS DPI",
+          "native diff shows changed text; restoring first saves a dirty current version, appends a new child with restore origin, retains all old versions and exact CRLF/PNG; identical explicit restore also appends",
+          "whole-source literal replace is one undo unit and preserves untouched math/CRLF; existing automatic outline jumps to exact raw heading location",
+          "stable-ID A↔B links index real outgoing/backlink edges; clicking a cycle reuses two sessions without recursive opening",
+          "source and near-WYS [[name]] completion distinguish duplicate names by ID and replace only owned local selection while preserving the heading",
+          "actual Windows rename keeps document ID, history, folder/favorite and incoming stable-ID references; source and assets remain unchanged",
+          "legacy caption completion and cross-block/title replace preserve image-on-top association, private IDs and one-step undo/redo",
+          "actual native custom template saves image and stable links, all five research template options remain available, creating/editing/discarding a copy leaves original source unchanged",
+          "offline isolated relink uses actual Rust fingerprint service after all grants close; real restart reopens moved file under original ID with folder/favorite/history and exact source; OS picker UI remains manual",
+          "deleting only the test-owned moved .md reports unavailable target while preserving history/backlink ID and favorites; read-only history remains accessible and no screenshot original is touched"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-paper-native-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "Windows KaTeX nested matrix/aligned, eight environments, image/table and reference focus; four modes and clean Ctrl+S keep exact CRLF bytes",
+          "native formula realtime syntax error saves original LaTeX; no-op confirm and atomic undo/redo use existing Rust file service",
+          "native config dialog updates per-H2 equation/theorem numbering; undo restores original single config",
+          "existing image editor locates labeled figures and preserves label/caption grouping",
+          "unsaved close prompts, cancel retains formula draft, Ctrl+S saves original prefix; close/reopen recomputes three equations",
+          "legacy private version1 image/caption supports shared paper numbering while retaining screenshot link and stable block ID",
+          "native guide keyboard focus remains on actual heading across location updates; all 25 chapters and 38 offline images decode",
+          "real process restart preserves paper source/numbering and original isolated screenshot hash; no blank Markdown split without open document"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "finalSourceSha256": "728af1e9b873dcceb9d7c25db657eaae507a91a0177606ac7f6116faea93f896",
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-content-native-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "native table editor changes one cell/alignment and saves exact surrounding CRLF mixed document; undo/save restores original byte-for-byte",
+          "native Ctrl+Shift+T grid insertion, cell Tab and escaped pipe save as ordinary GFM with original document prefix unchanged",
+          "native image alt/title and whole-group copy/move/delete keep relative URL and both captions; scoped undo restores each operation",
+          "native language selection changes only fence info; real highlighted code, view-only line numbers/folding and actual system clipboard hash match source without executing HTML",
+          "controlled WebView File drop reaches actual Rust decode/SQLite/import/render/save and creates a persistent relative PNG plus editable annotation area; switching the active owned tab during import keeps the second document unchanged and releases the first; OS OLE drop is a separate locked-desktop blocker",
+          "legacy alt and visible title preserve private version1; copied image/caption has a unique managed name, same screenshot association, exact PNG bytes and existing undo/redo",
+          "actual process restart restores source/table/code and legacy image data; source PNG hashes and dynamic no-document layout remain intact"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "clipboard": {
+          "bytes": 182,
+          "crlf": 14,
+          "logicalSha256": "11f5e99f3bf53e84709c784508cb9d7dd5d18de26c2fbe698b6c5cea4756aaaa"
+        },
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-workspace-native-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "eight native mode switches and clean Ctrl+S preserve exact original CRLF complex file, math, table, title, relative asset and unknown syntax",
+          "titled managed image decodes; visual selected-text formatting and undo save through original Rust service while every other source byte is unchanged",
+          "all six slash commands run in native WebView; image cancel is unchanged, actual library insert creates relative asset and undoes as one action",
+          "native HTML5 pointer drag moves image and both caption paragraphs together; original undo restores all source",
+          "native source/preview bidirectional ratio scroll, dirty-close cancel and Ctrl+S use existing session lifecycle",
+          "legacy mode cycles preserve exact private-format bytes; actual whole-image/caption drag and undo retain block ID and screenshot association",
+          "actual process restart restores saved ordinary and legacy Markdown; original asset bytes remain unchanged"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-toolbar-native-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "actual native WebView selection-only floating bold, focus/caret restoration, active state and existing undo/redo pass",
+          "scoped native Ctrl+K avoids global search, original Rust file save writes exact ordinary UTF-8 .md",
+          "native multiline task formatting and literal replacement use one undo step each",
+          "oversized replace-all is rejected before constructing output, visibly reports the limit and preserves exact original text",
+          "synthetic composition in actual WebView suppresses editor shortcuts; physical Windows IME acceptance still manual",
+          "actual native safe GFM/highlight/math preview and source toggle preserve source and explicit save",
+          "original structured image caption formats/undoes/redoes/saves without conversion, retaining block IDs, screenshot link, image-before-caption and exact asset bytes",
+          "existing image picker inserts a managed image; deleting its edited caption block clears stale text history and preserves the first image and exact asset",
+          "native split editors and toolbar remain contained at 480/760/1440 widths; CSS browser scale matrix is recorded separately",
+          "real process restart reopens exact source/caption data; original PNG and configured global capture shortcuts remain unchanged"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/workspace-native-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "two real registered Markdown files open independently, split vertically and save exact distinct content through existing Rust service",
+          "dirty close cancellation and hide/reopen retain the same native-backed document and unsaved text",
+          "actual WebView pointer splitter drag, explorer/terminal visibility, 12/20px settings and narrow/wide resize retain accessible editors",
+          "actual owned Win32 maximize/minimize/restore returns positive editor host sizes; no added application window permissions",
+          "real process restart shows no empty Markdown split, explicit stable-ID restore reopens both persisted files in serialized layout",
+          "real docked Konva pane draws a rectangle, scoped Ctrl+Z/Ctrl+Y restores it and explicit save persists annotation without changing original PNG",
+          "bundled offline guide exposes 25 chapters and new workspace reading route in native WebView"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/commands-native-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "real bounded Rust IPC resolves stable IDs without paths/body/token, rejects malformed/unknown/caller-privilege/future requests and missing IDs; all five future modules explicitly reject without execution",
+          "actual native quit request is denied while a controlled task is running, retaining the window and all document state",
+          "owned delay fault injection before real Rust lookup allows cooperative cancellation; no editor is opened and diagnostics accurately show cancelled",
+          "existing recent-document UI now routes through typed registry and native gate into the original Markdown service",
+          "document and screenshot deliberately share the same hex ID in this fixture; the typed command opens the correct image editor while preserving the distinct Markdown session",
+          "controlled image insertion remains bound to the registered document ID while focus changes to another draft; only target A changes, Ctrl+Z restores it and draft B stays independent",
+          "owned missing-PNG fault triggers a failed task and safe visible diagnostic, preserves Markdown exactly, restores the test file and releases resource locks",
+          "new explicit request succeeds after file restoration; diagnostic modal and controls remain accessible in narrow native viewport"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/resources-native-v417-audit/report.json",
+        "exitCode": 0,
+        "mode": "actual Windows WebView2; new isolated v11 database; generated PNG, not physical screenshot; no Zotero/Agent access",
+        "checks": [
+          "real app upgrades independent v11 fixture to schema13 without resetting existing library",
+          "unchanged screenshot ID, annotation and exact original PNG bytes load through real IPC",
+          "old registered Markdown ID opens in existing right pane with exact UTF-8 text and relative PNG assets",
+          "unchanged researchclip screenshot URI navigates from old Markdown preview to the existing card and actual Konva editor while preserving right document",
+          "real process restart retains old document association, content and schema13 library",
+          "read-only post-exit audit verifies v11 safety snapshot, schema13, note, fingerprint and unchanged original/Markdown hashes"
+        ],
+        "errors": [],
+        "startup": {
+          "schemaVersion": 13,
+          "pendingWrites": 0,
+          "pendingCleanup": 0,
+          "warnings": []
+        },
+        "result": "PASS"
+      }
+    ],
+    "browser": [
+      {
+        "evidence": "artifacts/document-organization-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "headless Edge DOM and controlled mocked directory/history IPC; no native persistence or physical DPI claim",
+        "checks": [
+          "controlled directory metadata renders tree, selection and favorite filter without creating a Markdown panel",
+          "directory: two themes and 30 window/CSS-scale cases keep actual dialog inside viewport",
+          "history: two themes and 30 window/CSS-scale cases keep actual dialog inside viewport",
+          "read-only history compares actual source strings, escapes HTML and closes back to directory without blank editing sessions"
+        ],
+        "errors": [],
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-paper-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "headless Edge DOM; no physical IME or native claim",
+        "checks": [
+          "actual KaTeX matrix/aligned, theorem, stable reference focus, four modes and full-document fragment numbering preserve exact CRLF/history",
+          "formula editor realtime preview and syntax error retain original LaTeX; unchanged confirmation is no-op; edit is one undo/redo unit",
+          "formula templates and all-environment selector insert readable syntax with stable unique labels using original undo stack",
+          "config dialog persists readable versioned rules, section numbering updates display and cross-reference insertion preserves source/undo",
+          "DOM drag lifecycle moves full label/equation source atomically, recomputes display numbers and undo restores exact original",
+          "duplicate/missing labels and unclosed environment show diagnostics and original text with HTML disabled",
+          "paper toolbar contains within both themes and 24 window/CSS-scale combinations"
+        ],
+        "errors": [],
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-content-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "headless Edge DOM; no physical IME or native claim",
+        "checks": [
+          "actual grid insert, escaped pipe, column alignment, Tab/new row, add/delete row/column and atomic undo/redo retain untouched CRLF text",
+          "unchanged table confirmation writes nothing; concurrent document change rejects stale table submission with visible error",
+          "image alt/title, copy, move and delete operate on entire image/caption group, retain relative URL and undo exact original",
+          "language edit changes only info token; safe syntax tokens, view-only line numbers/folding preserve raw code; browser copy fails visibly because desktop IPC is absent",
+          "recent successful formats persist without text, quick image cancel preserves source, configured global capture and synthetic IME suppress insertion shortcuts",
+          "content toolbar remains contained across both themes and 30 width/CSS-scale cases"
+        ],
+        "errors": [],
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-workspace-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "headless Edge DOM; no physical IME or native claim",
+        "checks": [
+          "12 actual mode switches leave mixed CRLF formulas, tables, relative images, extensions, caret/history/dirty unchanged",
+          "visual raw block toolbar preserves untouched CRLF/formula and existing single-step undo/redo",
+          "actual HTML5 handle drag moves relative image plus both prose captions atomically; keyboard undo restores exact original",
+          "unknown containers stay intact with explicit protected-source fallback and disabled structure drag",
+          "six slash commands, keyboard navigation, cancellation, one-step undo, code and synthetic IME guards work on owned selection",
+          "source and rendered preview synchronize scroll proportion bidirectionally without feedback drift",
+          "both themes and 30 width/CSS-scale cases keep view controls contained; this is not physical DPI testing"
+        ],
+        "errors": [],
+        "dragHandle": {
+          "html": "<button type=\"button\" draggable=\"true\" aria-label=\"拖动 Markdown 块 2\" title=\"拖到目标块上方或文末\">⠿</button>",
+          "drag": "element"
+        },
+        "dragLog": [
+          {
+            "e": "dragstart",
+            "target": "<button type=\"button\" draggable=\"true\" aria-label=\"拖动 Markdown 块 2\" title=\"拖到目标块上方或文末\">⠿</button>",
+            "types": [],
+            "prevented": false
+          },
+          {
+            "e": "dragover",
+            "target": "<button type=\"button\" draggable=\"true\" aria-label=\"拖动 Markdown 块 2\" title=\"拖到目标块上方或文末\">⠿</button>",
+            "types": [
+              "application/x-researchclip-markdown"
+            ],
+            "prevented": false
+          },
+          {
+            "e": "dragover",
+            "target": "<button type=\"button\" draggable=\"true\" aria-label=\"拖动 Markdown 块 2\" title=\"拖到目标块上方或文末\">⠿</button>",
+            "types": [
+              "application/x-researchclip-markdown"
+            ],
+            "prevented": false
+          },
+          {
+            "e": "dragover",
+            "target": "<div class=\"md-block-controls\"><button type=\"button\" draggable=\"true\" aria-label=\"拖动 Markdown 块 3\" title=\"拖到目标块上方或文末\">⠿</button><span>内容块 3</span></di",
+            "types": [
+              "application/x-researchclip-markdown"
+            ],
+            "prevented": false
+          },
+          {
+            "e": "dragover",
+            "target": "<h2 data-heading-offset=\"80\">后文</h2>",
+            "types": [
+              "application/x-researchclip-markdown"
+            ],
+            "prevented": false
+          },
+          {
+            "e": "dragover",
+            "target": "<div class=\"md-drop-end\" data-drop-before=\"4\">拖到这里放在文末</div>",
+            "types": [
+              "application/x-researchclip-markdown"
+            ],
+            "prevented": false
+          },
+          {
+            "e": "drop",
+            "target": "<div class=\"md-drop-end\" data-drop-before=\"4\">拖到这里放在文末</div>",
+            "types": [
+              "application/x-researchclip-markdown"
+            ],
+            "prevented": false
+          },
+          {
+            "e": "dragend",
+            "target": "<button type=\"button\" draggable=\"true\" aria-label=\"拖动 Markdown 块 2\" title=\"拖到目标块上方或文末\">⠿</button>",
+            "types": [
+              "application/x-researchclip-markdown"
+            ],
+            "prevented": false
+          }
+        ],
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/markdown-toolbar-v417-regression/report.json",
+        "exitCode": 0,
+        "mode": "isolated headless Edge browser; actual DOM selection and keyboard; synthetic composition is not physical Chinese IME verification",
+        "checks": [
+          "floating toolbar bold affects only actual selected Chinese text, restores focus/selection and reports active formatting",
+          "existing store undo/redo and scoped Ctrl+I preserve surrounding content",
+          "Ctrl+K opens scoped link editor and applies original selection without global search",
+          "multiline list and H6 formatting exclude the next line and undo as a single transaction",
+          "strike/highlight/lists/quote/code/math/table controls produce ordinary Markdown at the current selection",
+          "scoped literal replace-all is one existing undo transaction",
+          "oversized replace-all is rejected before constructing output, visibly reports the limit and preserves exact original text",
+          "synthetic composition suppresses formatting until composition ends; physical IME remains manual",
+          "safe preview renders GFM/highlight/math and toggles back to unchanged source",
+          "both themes, 480/760/1440 widths and 75–200% CSS scale keep fixed toolbar within viewport with horizontal scrolling",
+          "existing structured text block supports toolbar and scoped undo without converting to source mode"
+        ],
+        "errors": [],
+        "result": "PASS"
+      },
+      {
+        "evidence": "artifacts/guide-reader-v417-images/report.json",
+        "exitCode": 0,
+        "mode": "local isolated headless Edge renderer; no native capture, user database, credential or clipboard claims",
+        "checks": [
+          "25 chapters and nested subsections mount; absent Markdown document has no split",
+          "third-level step navigation scrolls and keyboard-focuses the actual matching H4, active location follows",
+          "collapse all removes children and active step falls back to visible parent",
+          "nested search retains ancestors, reports no results and clear restores navigation",
+          "157 examples across all 25 chapters, example-only search, actual heading jump and directory mode restoration",
+          "all 38 whitelisted offline guide images actually decode",
+          "whitelisted local guide image opens with Enter and closes with Escape",
+          "dark: guide and directory contained at seven widths 480–1440",
+          "light: guide and directory contained at seven widths 480–1440",
+          "guide navigation/unmount and remount preserves independent Markdown draft; cancel/discard closes split correctly",
+          "600px-high window keeps bottom help reachable and sidebar scroll reaches settings",
+          "both themes: selected base fonts 12/16/20 genuinely resize guide text; 480/760/1440 widths at 600px height retain contained directory/content",
+          "CSS content-scale simulation 75/100/125/150/200 percent remains contained at 1440px; this is not physical Windows DPI or OS magnifier verification",
+          "three dock panes remain inside viewport at CSS scales75–200%, pointer split drag works at125%, and independent Markdown undo survives scaling"
+        ],
+        "errors": [],
+        "result": "PASS"
+      }
+    ],
+    "notepad": {
+      "mode": "actual Windows Notepad, isolated copy; no user editor is closed",
+      "result": "PASS",
+      "fileSha256": "824FC035AB5210F67AEDA84E254A75BDDEC9C5FC8755907EF0836DC3EC31D513",
+      "textProvider": "actual owned Win32 RichEdit WM_GETTEXT",
+      "checks": [
+        "Notepad UI exposes actual Chinese Markdown, LaTeX, table, relative image URL and code as readable text.",
+        "Read-only editor check preserves the exact UTF-8 fixture bytes."
+      ]
+    },
+    "installer": {
+      "version": "4.1.7",
+      "mode": "actual NSIS, isolated install path, read-only user-data hashes, process fixture for busy guard",
+      "checks": [
+        "Actual per-user silent installation at a Unicode/space path; full payload SHA-256 matches with only the verified Tauri UNK-to-NSS marker, plus version, publisher, icon and uninstall registration.",
+        "Actual installer and uninstaller refuse a running image at the installed executable path; process fixture remains alive and files/registration remain intact.",
+        "Actual default silent uninstall removes application files/registration, preserves an unrelated install-folder file and all pre-existing AppData file hashes. No production app was launched against user data.",
+        "Only newly created, verified test installer metadata was cleaned up; user data and evidence retained."
+      ],
+      "commands": [
+        "D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\v413-distribution\\release\\bundle\\nsis\\ResearchClip_4.1.7_x64-setup.exe /S /NS /D=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v417-distribution\\安装验收 Test",
+        "D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v417-distribution\\安装验收 Test\\uninstall.exe /S _?=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v417-distribution\\安装验收 Test",
+        "D:\\文档\\ChatGPT\\ResearchClip\\src-tauri\\target\\v413-distribution\\release\\bundle\\nsis\\ResearchClip_4.1.7_x64-setup.exe /S /NS /D=D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v417-distribution\\安装验收 Test",
+        "D:\\文档\\ChatGPT\\ResearchClip\\artifacts\\installer-v417-distribution\\安装验收 Test\\uninstall.exe /S"
+      ],
+      "result": "passed",
+      "userDataFilesHashed": 16,
+      "installerSha256": "430410BAA27D3A0CA016FB4ECC07739FF82112A04B8545DF040FEECE8E7B6ED6",
+      "signatureStatus": "NotSigned",
+      "installedPayloadSha256": "470B6942E5570308A0A9F18C87D1F7B27BEA10FC384E91F9D3711EFF0EC749FE",
+      "licenseNotices": {
+        "lowlight-NOTICES.txt": "0959049D93770BD1FE7C017FEEB57D7915AA87F6D8BDFDF54430BF51FB99F95F",
+        "remark-gfm-NOTICES.txt": "8D3C95637B0E43BEF4AC7D81BC707944681E4AB5D2B055AAEC407C94305C500B",
+        "flexlayout-react-MIT.txt": "59391BAAF80D3AF529E3F08ADFFC813FE54373E6365A2AE5BA3A991E9C25D16F"
+      },
+      "metadata": {
+        "publisher": "ResearchClip",
+        "hasIcon": true,
+        "product": "ResearchClip",
+        "version": "4.1.7"
+      },
+      "busyUninstallExit": 2,
+      "busyInstallExit": 2,
+      "quiescence": {
+        "result": "PASS",
+        "needed": 0,
+        "codes": [
+          0
+        ]
+      },
+      "installationStillPresent": false
+    }
+  },
+  "resolvedFailures": [
+    "Frontend library schema validator12→13; future-version rejection retained.",
+    "Old Rust fixture and native post-exit audit updated to schema13; all original-data assertions retained.",
+    "Actual WebView2 200% history modal overflow fixed by settling zoom layout across frames; nine native combinations pass.",
+    "Native custom template test follows existing three-document limit and ordinary-source format; source/preview image/links and independent edits checked."
+  ],
+  "manualRemaining": [
+    "Unlocked Windows relink file-picker UI; actual Rust fingerprint probe does not validate OS picker.",
+    "Physical Chinese IME, multiple-monitor DPI and OS magnifier.",
+    "Physical OS OLE drop remains blocked by prior locked desktop guard; controlled WebView drop checks actual Rust import only.",
+    "Real user-data upgrade not run; installer user-data checks are read-only."
+  ],
+  "limits": [
+    "Logical directories for registered documents; no disk scan or automatic user file moves/deletes.",
+    "History and directory metadata local only, outside prior WebDAV format.",
+    "Markdown2MiB; history128MiB/document and512MiB/library; bounded Diff2000lines; no automatic history deletion."
+  ],
+  "result": "PASS"
+}

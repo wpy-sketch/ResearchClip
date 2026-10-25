@@ -318,6 +318,15 @@ impl Storage {
         path: &Path,
         previous: Option<&Path>,
     ) -> Result<ProjectDocument, StorageError> {
+        self.index_document_revision(path, previous, None, false)
+    }
+    pub fn index_document_revision(
+        &mut self,
+        path: &Path,
+        previous: Option<&Path>,
+        restored_from: Option<&str>,
+        opened: bool,
+    ) -> Result<ProjectDocument, StorageError> {
         let (canonical, content_hash, byte_size) =
             crate::services::markdown_document::file_fingerprint(path).map_err(|_| {
                 StorageError::Invalid("Markdown身份读取失败；文件已保留，项目登记未提交。")
@@ -329,6 +338,14 @@ impl Storage {
             .file_name()
             .and_then(|s| s.to_str())
             .ok_or(StorageError::Invalid("文档名称无效。"))?;
+        let (markdown, assets) = crate::services::markdown_document::history_snapshot(&canonical)
+            .map_err(|_| {
+            StorageError::Invalid("正文/图片历史读取失败；文件保留，登记和历史未提交。")
+        })?;
+        use sha2::Digest;
+        if format!("{:x}", sha2::Sha256::digest(markdown.as_bytes())) != content_hash {
+            return Err(StorageError::Conflict);
+        }
         let tx = self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
@@ -359,6 +376,8 @@ impl Storage {
             |r| r.get(0),
         )?;
         tx.execute("INSERT INTO research_document_fingerprints VALUES(?1,?2,?3) ON CONFLICT(document_id) DO UPDATE SET content_hash=excluded.content_hash,byte_size=excluded.byte_size",params![id,content_hash,byte_size])?;
+        tx.execute("INSERT INTO document_organization(document_id,last_opened_at) VALUES(?1,?2) ON CONFLICT(document_id) DO UPDATE SET last_opened_at=CASE WHEN ?2>0 THEN ?2 ELSE last_opened_at END",params![id,if opened {now()?}else{0}])?;
+        super::document_organization::record(&tx, &id, &markdown, &assets, restored_from)?;
         tx.commit()?;
         Ok(self.connection.query_row(
             "SELECT id,name,project_id,updated_at FROM markdown_documents WHERE id=?1",

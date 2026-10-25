@@ -11,7 +11,7 @@ export function TemplateDialog({mode}:{mode:'choose'|'save'}){
   const close=()=>documentApi.getState().setTemplateDialog(null),item=custom.find(t=>t.id===selected);
   useEffect(()=>{let active=true;listTemplates().then(rows=>{if(active)setCustom(rows);}).catch(e=>{if(active)setError(errorMessage(e,'无法读取模板。'));}).finally(()=>{if(active)setBusy(false);});return()=>{active=false;};},[]);
   const task=async(action:()=>Promise<void>)=>{if(busy)return;setBusy(true);setError(null);try{await action();}catch(e){setError(errorMessage(e,'模板操作失败；当前文档未改动。'));}finally{setBusy(false);}};
-  return <Modal title={mode==='choose'?'新建模板文档':'保存为模板'} onClose={()=>{if(!busy)close();}}><form className="template-form p-5" onSubmit={event=>{
+  return <Modal fitViewport title={mode==='choose'?'新建模板文档':'保存为模板'} onClose={()=>{if(!busy)close();}}><form className="template-form p-5" onSubmit={event=>{
     event.preventDefault();void task(async()=>{
       const normalized=normalizeMarkdownName(name),display=normalized.slice(0,-3);if(!display.trim()||display.length>80)throw new Error('模板或文档名称最多80个字符。');
       if(mode==='save'){

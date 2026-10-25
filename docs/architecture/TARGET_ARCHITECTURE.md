@@ -1,5 +1,7 @@
 # ResearchClip Research IDE：目标架构
 
+Step08实现见[文档组织与历史](DOCUMENT_ORGANIZATION_STEP08.md)，SQLite13；原Step00提案的schema与能力描述是当时状态。
+
 Step03受控命令实施见[COMMAND_SYSTEM](COMMAND_SYSTEM.md)，SQLite保持12，无新增依赖。
 
 Step02实施说明：[科研工作区](WORKSPACE_SYSTEM.md)。前述Step00选型状态为历史时间点，当前增量仅新增固定版FlexLayout。

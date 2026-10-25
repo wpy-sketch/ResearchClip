@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 12;
+pub const SCHEMA_VERSION: u32 = 13;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -138,10 +138,22 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/012_research_resources.sql"),
         )?;
     }
+    if version < 13 {
+        apply_migration(
+            connection,
+            13,
+            include_str!("../../migrations/013_document_organization.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 13 {
+        connection.prepare("SELECT document_id,folder_id,is_favorite,last_opened_at FROM document_organization LIMIT 0")?;
+        connection.prepare("SELECT id,parent_id,name FROM document_folders LIMIT 0")?;
+        connection.prepare("SELECT revision_id,document_id,version_number,parent_revision_id,markdown,assets_json,restored_from,byte_size FROM markdown_revisions LIMIT 0")?;
+    }
     if version >= 12 {
         for sql in [
             "SELECT resource_type,id,title,format_version,revision,data_json FROM research_resource_catalog LIMIT 0",

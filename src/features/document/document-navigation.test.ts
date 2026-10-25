@@ -1,0 +1,22 @@
+import {describe,it,expect} from 'vitest';
+import {documentDiff,findDocumentText,replaceDocumentText} from './document-navigation';
+import {parseDirectory,parseMarkdownRevision} from './organization-api';
+import {parseMarkdown,serializeDocument,type MarkdownDocument} from './model';
+const id='a'.repeat(32),block='b'.repeat(32);
+describe('whole-document editing preserves legacy identity and image associations',()=>{
+ it('finds all source matches with exact CRLF offsets and no wrap duplicates',()=>{const doc=parseMarkdown('甲\r\nneedle 中文\r\nneedle');const matches=findDocumentText(doc,'needle',true);expect(matches.map(m=>m.start)).toEqual([3,14]);expect(findDocumentText(doc,'',false)).toEqual([]);expect(findDocumentText(doc,'absent',false)).toEqual([]);});
+ it('replaces across legacy title, text and image captions without touching metadata or assets',()=>{const doc:MarkdownDocument={id,title:'关键词标题',blocks:[{id:block,type:'text',markdown:'正文关键词 $x$'},{id:'c'.repeat(32),type:'image',assetName:'researchclip-'+'c'.repeat(32)+'.png',sourceScreenshotId:'d'.repeat(32),alt:'关键词图名',caption:'关键词注释\r\n原公式'}]};expect(findDocumentText(doc,'关键词',true)).toHaveLength(3);const result=replaceDocumentText(doc,'关键词','替代',true);expect(result.count).toBe(3);expect(result.document.blocks[1]).toMatchObject({id:'c'.repeat(32),assetName:'researchclip-'+'c'.repeat(32)+'.png',sourceScreenshotId:'d'.repeat(32),alt:'关键词图名',caption:'替代注释\r\n原公式'});expect(result.document.id).toBe(id);expect(doc.title).toBe('关键词标题');});
+ it('rejects invalid title and oversized whole-document replace atomically',()=>{const doc:MarkdownDocument={id,title:'a',blocks:[{id:block,type:'text',markdown:'a'}]};expect(()=>replaceDocumentText(doc,'a','\n',true)).toThrow();const raw='a'.repeat(1024*1024),source=parseMarkdown(raw);expect(()=>replaceDocumentText(source,'a','xxxxx',true)).toThrow();expect(serializeDocument(source)).toBe(raw);});
+ it('caps match listing without reducing replacement scope',()=>{const source=parseMarkdown('a '.repeat(6000));expect(findDocumentText(source,'a',true)).toHaveLength(5000);expect(replaceDocumentText(source,'a','b',true).count).toBe(6000);});
+});
+describe('bounded readable revision diff',()=>{
+ it('aligns insertion/deletion rather than shifting every following line',()=>{const r=documentDiff('a\nb\nc','a\nnew\nb\nc');expect(r.lines).toEqual([{kind:'same',text:'a'},{kind:'add',text:'new'},{kind:'same',text:'b'},{kind:'same',text:'c'}]);expect(r.truncated).toBe(false);});
+ it('preserves both sides of changed math and reports newline-only changes',()=>{expect(documentDiff('$$\na+b\n$$','$$\na-b\n$$').lines.filter(l=>l.kind!=='same')).toEqual([{kind:'remove',text:'a+b'},{kind:'add',text:'a-b'}]);expect(documentDiff('a\r\nb','a\nb').lineEndingsOnly).toBe(true);});
+ it('bounds huge changed and identical documents without recursive/spread overflow',()=>{for(const [a,b]of [['a\n'.repeat(100000),'b\n'.repeat(100000)],['x\n'.repeat(100000),'x\n'.repeat(100000)]]){const r=documentDiff(a,b);expect(r.lines.length).toBeLessThanOrEqual(2000);expect(r.truncated).toBe(true);}});
+});
+describe('directory and historical IPC validation',()=>{
+ const folder={id,parentId:null,name:'研究'},doc={id:block,name:'同名.md',folderId:id,favorite:true,lastOpenedAt:1,available:true};
+ it('accepts bounded directory identities and distinguishes same names by IDs',()=>{const r=parseDirectory({folders:[folder],documents:[doc,{...doc,id:'c'.repeat(32)}]});expect(r.documents).toHaveLength(2);});
+ it('rejects cyclic, missing, duplicate or malformed nodes',()=>{for(const folders of [[{...folder,parentId:id}],[{...folder,parentId:'d'.repeat(32)}],[folder,folder]])expect(()=>parseDirectory({folders,documents:[]})).toThrow();expect(()=>parseDirectory({folders:[],documents:[doc]})).toThrow();expect(()=>parseDirectory({folders:[folder],documents:[{...doc,favorite:1}]})).toThrow();});
+ it('validates revision ownership fields and preserves future schema for explicit unsupported UI',()=>{const r={revisionId:id,documentId:block,versionNumber:2,parentRevisionId:'c'.repeat(32),createdAt:1,description:'恢复',schemaVersion:1,contentHash:'d'.repeat(64),restoredFrom:'e'.repeat(32)};expect(parseMarkdownRevision(r)).toEqual(r);expect(parseMarkdownRevision({...r,schemaVersion:2}).schemaVersion).toBe(2);for(const bad of [{revisionId:'bad'},{restoredFrom:'bad'},{versionNumber:0},{contentHash:'bad'}])expect(()=>parseMarkdownRevision({...r,...bad})).toThrow();});
+});

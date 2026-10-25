@@ -15,7 +15,7 @@ export async function listProjects(){return parseProjects(await call('list_proje
 export async function saveProject(name:string,id:string|null=null){await call('save_project',{name,id});}
 export async function deleteEmptyProject(id:string){await call('delete_empty_project',{id});}
 export async function listProjectDocuments(projectId:string|null,unclassified:boolean){const v=await call('list_project_documents',{projectId,unclassified});if(!Array.isArray(v)||v.length>5000)throw new Error('项目文档列表无效。');return v.map(parseProjectDocument);}
-export async function syncProjectDocument(token:string){return parseProjectDocument(await call('sync_project_document',{token}));}
+export async function syncProjectDocument(token:string,opened=false,restoredFrom:string|null=null){return parseProjectDocument(await call('sync_project_document',{token,opened,restoredFrom}));}
 export async function assignProjectDocument(id:string,projectId:string|null){await call('assign_project_document',{id,projectId});}
 export async function selectLibraryScreenshots(favorites:boolean,sort:LibrarySort,filter:LibraryFilter){return parseSelection(await call('select_library_screenshots',{favorites,sort,filter}));}
 export async function batchLibraryScreenshots(items:SelectionItem[],action:BatchAction){const selection=parseSelection(items);if(!items.length)throw new Error('请先选择图片。');const v=await call('batch_library_screenshots',{items:selection,action});if(!object(v)||v.affected!==items.length||!count(v.pendingCleanup))throw new Error('批量结果无效，请刷新资料库确认。');return {affected:items.length,pendingCleanup:v.pendingCleanup};}

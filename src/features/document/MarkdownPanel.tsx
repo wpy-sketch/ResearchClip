@@ -1,3 +1,5 @@
+import {ScopedLinkCompletion} from './ScopedLinkCompletion';
+import {DocumentNavigationTools} from './DocumentNavigationTools';
 import {PaperTools} from './PaperTools';
 import {ContentTools} from './ContentTools';
 import {VisualEditor} from './VisualEditor';
@@ -8,9 +10,7 @@ import './visual-editor.css';
 import {FormattingToolbar} from './FormattingToolbar';
 import {useProjectStore} from '../projects/store';
 import {LinkDetails} from '../links/LinkDetails';
-import {LinkPicker} from '../links/LinkPicker';
 import {AnchorReferenceButton} from '../anchors/AnchorPicker';
-import {wikiTrigger} from '../links/model';
 import {openInternalTarget} from '../links/navigation';
 import {errorMessage} from '../../shared/api/errors';
 import {DocumentProject} from '../projects/ProjectBar';
@@ -40,7 +40,6 @@ export function MarkdownPanel(){
   },[s.focusRequest,source,visual,preview,busy,documentApi]);
   let markdown='';try{if(document)markdown=templateMarkdown(document);}catch{/* Save reports validation; edits remain available. */}
   const liveMarkdown=useDeferredValue(markdown);
-  const trigger=useMemo(()=>source&&!visual&&!preview?wikiTrigger(markdown,s.caret.start):null,[source,visual,preview,markdown,s.caret.start]);
   const internalOpen=useCallback((target:Parameters<typeof openInternalTarget>[0])=>{void openInternalTarget(target).catch(e=>documentApi.setState({error:errorMessage(e,'内部引用打开失败。')}));},[documentApi]);
   const headings=useMemo(()=>outline?documentOutline(markdown):[],[outline,markdown]);
   useEffect(()=>{if(preview&&previewTarget)previewBody.current?.querySelector<HTMLElement>(`[data-heading-offset="${previewTarget.offset}"]`)?.scrollIntoView({block:'start'});},[preview,previewTarget]);
@@ -48,7 +47,7 @@ export function MarkdownPanel(){
   useScrollSync(source?input:structuredBody,liveBody,live&&!visual&&!preview&&sync);
   if(!document)return null;
   const file=s.fileName??s.path?.split(/[\\/]/).at(-1)??'untitled.md';
-  return <section ref={panel} className={`markdown-panel image-drop-target ${drop.over?'is-drag-over':''}`} {...drop.handlers} data-image-drop-target="markdown" data-markdown-panel aria-label="Markdown 编辑面板" onKeyDown={event=>{
+  return <section ref={panel} className={`markdown-panel image-drop-target ${drop.over?'is-drag-over':''}`} {...drop.handlers} data-image-drop-target="markdown" data-markdown-panel data-document-resource-id={currentId??undefined} aria-label="Markdown 编辑面板" onKeyDown={event=>{
     if(!(event.ctrlKey||event.metaKey)||event.altKey||event.nativeEvent.isComposing)return;
     const key=event.key.toLowerCase();if(key==='s'){event.preventDefault();event.stopPropagation();void s.save(event.shiftKey);}
     if(!preview&&!(event.target instanceof Element&&event.target.closest('input,textarea,[contenteditable=true]'))&&(key==='z'||key==='y')){event.preventDefault();event.stopPropagation();if(key==='y'||event.shiftKey)s.redoText();else s.undoText();}
@@ -58,15 +57,16 @@ export function MarkdownPanel(){
     <div className="md-mode-bar" role="group" aria-label="Markdown 编辑模式"><button type="button" aria-pressed={!preview&&!visual&&!live} onClick={()=>{setPreview(false);setVisual(false);setLive(false);}}>源码</button><button type="button" aria-pressed={!preview&&visual} onClick={()=>{setPreview(false);setVisual(true);setLive(false);}}>近所见即所得</button><button type="button" aria-pressed={!preview&&!visual&&live} onClick={()=>{setPreview(false);setVisual(false);setLive(true);}}>实时预览</button><button type="button" aria-pressed={preview} onClick={()=>setPreview(true)}>只读预览</button>{live&&!preview&&!visual&&<button type="button" aria-pressed={sync} onClick={()=>setSync(!sync)}>同步滚动</button>}</div>
     <FormattingToolbar key={`tools:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     <ContentTools key={`content:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
+    <DocumentNavigationTools onReveal={match=>{setPreview(false);setVisual(false);s.setCaret(match.start,match.end,match.key==='source'?undefined:match.key);documentApi.setState({focusRequest:s.focusRequest+1});if(match.key==='@title')requestAnimationFrame(()=>{const node=panel.current?.querySelector<HTMLInputElement>('[aria-label="Markdown 文档标题"]');node?.focus();node?.setSelectionRange(match.start,match.end);});}}/>
     <PaperTools key={`paper:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     {s.error&&<p role="alert" className="error-banner m-2">{s.error}</p>}{s.notice&&<p role="status" title={s.notice} className="markdown-notice m-2 text-xs text-muted">{s.notice}</p>}
     <div className="markdown-preview-options">{source&&!visual&&!preview&&<button aria-pressed={live} className="text-xs" onClick={()=>setLive(!live)}>{live?'关闭实时预览':'开启实时预览'}</button>}<span>LaTeX · 离线排版</span><ExternalOpenButton/></div>
     <div className="markdown-reference-row"><DocumentProject/><ReferenceButton/><AnchorReferenceButton/></div>
     <div className="markdown-editing-workspace">{outline&&<nav className="markdown-outline" aria-label="文档大纲">{headings.length?headings.map(h=><button key={h.offset} type="button" title={`H${h.depth} · 第 ${h.line} 行 · ${h.text}`} disabled={busy} data-outline-offset={h.offset} className="outline-heading" style={{paddingLeft:8+(h.depth-1)*10}} onClick={()=>jump(h)}>{h.text}</button>):<p className="p-3 text-xs text-muted">暂无标题。使用 # 至 ###### 创建大纲。</p>}</nav>}<div className="markdown-editing-content">
     {preview?<div ref={previewBody} className="markdown-panel-body"><MarkdownPreview markdown={markdown} assets={s.assets} onInternalOpen={internalOpen}/></div>:source?visual?<VisualEditor onInternalOpen={internalOpen}/>:<textarea ref={input} data-markdown-target="source" aria-label="Markdown 源文" className="markdown-source" spellCheck={false} disabled={busy} placeholder="在这里输入 Markdown…" value={sourceText(document)} onChange={e=>{const edit=applyDomText(sourceText(document),e.target.value,e.target.selectionStart,e.target.selectionEnd);s.editSource(edit.text,edit.start,edit.end);}} onBlur={e=>s.setCaret(rawOffset(sourceText(document),e.currentTarget.selectionStart),rawOffset(sourceText(document),e.currentTarget.selectionEnd))} onSelect={e=>s.setCaret(rawOffset(sourceText(document),e.currentTarget.selectionStart),rawOffset(sourceText(document),e.currentTarget.selectionEnd))}/>:<div ref={structuredBody} className="markdown-panel-body"><Suspense fallback={<p role="status">正在加载图文编排…</p>}><DocumentView key={visual?'visual':'source'} visual={visual} inlinePreview={false}/></Suspense></div>}
-    {trigger&&!busy&&<LinkPicker key={`${trigger.start}:${trigger.query}`} trigger={trigger} input={input}/>}
     {!preview&&!visual&&live&&<div ref={liveBody} className="markdown-live-preview" aria-label="实时预览区域"><MarkdownPreview markdown={liveMarkdown} assets={s.assets} onInternalOpen={internalOpen}/></div>}
     </div></div>
+    <ScopedLinkCompletion panel={panel} preview={preview}/>
     <SlashMenu key={`slash:${visual}:${preview}:${source}`} panel={panel} preview={preview}/>
     {currentId&&<LinkDetails key={currentId} kind="document" id={currentId} savedVersion={s.savedFingerprint}/>}
     <footer className="markdown-panel-footer">{busy?'正在处理文件…':'Markdown · UTF-8 · Ctrl+S 保存'}{s.path&&<span title={s.path}>{s.path}</span>}</footer>

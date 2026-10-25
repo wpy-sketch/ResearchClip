@@ -76,7 +76,8 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_proj
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/004_ocr_index.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/005_annotation_revisions.sql'], { cwd: root, stdio: 'pipe' });
 const currentSchema = Number(read('src-tauri/src/storage/migrations.rs').match(/pub const SCHEMA_VERSION: u32 = (\d+);/)?.[1]);
-assert.equal(currentSchema, 12);
+assert.equal(currentSchema, 13);
+assert.ok(existsSync(join(root,'src-tauri/migrations/013_document_organization.sql')));
 assert.ok(existsSync(join(root, 'src-tauri/migrations/012_research_resources.sql')));
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/006_sync.sql'], { cwd: root, stdio: 'pipe' });
 const similarityCommands=['similarity_status','start_similarity_index','cancel_similarity_index','find_similar_images','duplicate_image_groups'];for(const command of similarityCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::similarity::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
@@ -86,7 +87,9 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/009_inte
 const anchorCommands=['annotation_anchors','resolve_annotation_anchor','save_annotation_anchor','delete_annotation_anchor'];for(const command of anchorCommands){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/src/lib.rs').includes('commands::anchors::'+command));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));}
 assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pending_file_deletions'));
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: `schema v${currentSchema}; published migrations001–011 unchanged` }, null, 2));
+for(const command of ['document_directory','create_document_folder','delete_document_folder','organize_document','markdown_history','markdown_revision_text','load_markdown_revision','relink_markdown_document']){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));assert.ok(read('src-tauri/src/lib.rs').includes('commands::document_organization::'+command));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}
+execFileSync('git',['diff','--exit-code','--','src-tauri/migrations/012_research_resources.sql'],{cwd:root,stdio:'pipe'});
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: `schema v${currentSchema}; published migrations001–012 unchanged` }, null, 2));
 
 for(const command of ["annotation_history","annotation_revision","save_annotation_revision","restore_annotation_revision"]){assert.ok(main.permissions.includes("allow-"+command.replaceAll("_","-")));assert.ok(read("src-tauri/src/lib.rs").includes("commands::revisions::"+command));assert.ok(read("src-tauri/build.rs").includes("\""+command+"\""));}
 

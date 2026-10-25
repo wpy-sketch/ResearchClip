@@ -6,6 +6,7 @@ pub mod anchors;
 pub mod capture;
 pub mod desktop;
 pub mod document;
+pub mod document_organization;
 pub mod editor;
 pub mod embeddings;
 pub mod import;

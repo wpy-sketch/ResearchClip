@@ -1,6 +1,14 @@
 fn main() {
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
         tauri_build::AppManifest::new().commands(&[
+            "document_directory",
+            "create_document_folder",
+            "delete_document_folder",
+            "organize_document",
+            "markdown_history",
+            "markdown_revision_text",
+            "load_markdown_revision",
+            "relink_markdown_document",
             "annotation_anchors",
             "resolve_annotation_anchor",
             "save_annotation_anchor",

@@ -1,3 +1,4 @@
+import {errorMessage} from '../../shared/api/errors';
 import {useProjectStore} from '../projects/store';
 import {invoke,isTauri} from '@tauri-apps/api/core';
 import {assetNameValid,MAX_ASSET_BYTES,MAX_IMAGES,MAX_TEXT_BYTES} from './model';
@@ -6,12 +7,12 @@ import {normalizeMarkdownName} from './file-name';
 export interface DiskDocument {token:string;path:string;markdown:string;assets:Record<string,Blob>}
 const desktop=()=>{if(!isTauri())throw new Error('Markdown 文件操作需要桌面应用。');};
 export async function releaseDocument(token:string|null){if(token&&isTauri())await invoke('release_markdown_document',{token});}
-export async function saveDocumentFile(markdown:string,assets:Record<string,Blob>,token:string|null,saveAs:boolean,fileName='untitled.md'):Promise<{token:string;path:string}|null>{
+export async function saveDocumentFile(markdown:string,assets:Record<string,Blob>,token:string|null,saveAs:boolean,fileName='untitled.md',restoredFrom:string|null=null):Promise<{token:string;path:string}|null>{
   desktop();const body=await packDocument(markdown,assets,token,saveAs,fileName);
   const result:unknown=await invoke('save_markdown_document',body.buffer);
   if(result===null)return null;
   if(!result||typeof result!=='object'||!('token'in result)||!('path'in result)||typeof result.token!=='string'||typeof result.path!=='string')throw new Error('Markdown 保存响应无效。');
-  await useProjectStore.getState().sync(result.token);
+  try{await useProjectStore.getState().sync(result.token,false,restoredFrom,true);}catch(e){throw new Error('Markdown 文件已保存，但登记/历史未完成；草稿保留，请重试保存。'+errorMessage(e,'历史提交失败。'));}
   return {token:result.token,path:result.path};
 }
 export async function packDocument(markdown:string,assets:Record<string,Blob>,token:string|null=null,saveAs=false,fileName='untitled.md'){
@@ -27,7 +28,7 @@ export async function renameDocumentFile(token:string,fileName:string):Promise<{
   desktop();const result:{token:string;path:string}=await invoke('rename_markdown_document',{token,fileName:normalizeMarkdownName(fileName)});await useProjectStore.getState().sync(result.token);return result;
 }
 export async function openDocumentFile(projectDocumentId?:string):Promise<DiskDocument|null>{
-  desktop();const disk=decodeDocument(await (projectDocumentId?invoke('open_project_document',{id:projectDocumentId}):invoke('open_markdown_document')));if(disk)await useProjectStore.getState().sync(disk.token);return disk;
+  desktop();const disk=decodeDocument(await (projectDocumentId?invoke('open_project_document',{id:projectDocumentId}):invoke('open_markdown_document')));if(disk)try{await useProjectStore.getState().sync(disk.token,true,null,true);}catch(e){await releaseDocument(disk.token);throw e;}return disk;
 }
 export function decodeDocument(buffer:unknown):DiskDocument|null{
   if(!(buffer instanceof ArrayBuffer))throw new Error('Markdown 文件响应无效。');if(!buffer.byteLength)return null;

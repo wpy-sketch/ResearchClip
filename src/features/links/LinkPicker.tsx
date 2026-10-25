@@ -1,13 +1,15 @@
+import {textTarget,restoreTextTarget} from '../document/text-target';
 import {useEffect,useState,type RefObject} from 'react';
 import {linkTargets} from './api';
 import {linkMarkdown,type GraphNode,type WikiTrigger} from './model';
 import {useDocumentApi} from '../document/store';
 import {errorMessage} from '../../shared/api/errors';
-export function LinkPicker({trigger,input}:{trigger:WikiTrigger;input:RefObject<HTMLTextAreaElement|null>}){
+export interface LinkScope{node:HTMLTextAreaElement;raw:string;from:number;to:number;documentId:string}
+export function LinkPicker({trigger,input,scope}:{trigger:WikiTrigger;input:RefObject<HTMLTextAreaElement|null>;scope?:LinkScope}){
   const documentApi=useDocumentApi();
  const [attempt,setAttempt]=useState(0),[page,setPage]=useState(0),[selected,setSelected]=useState(0),[dismissed,setDismissed]=useState(false),[result,setResult]=useState<{key:string;items:GraphNode[];more:boolean;error?:string}|null>(null);
  const query=trigger.query,key=`${query}:${page}:${attempt}`;
- const choose=(node:GraphNode)=>{if(!node.available)return;const s=documentApi.getState();s.setCaret(trigger.start,trigger.end);s.insertText(linkMarkdown(node,node.title));};
+ const choose=(node:GraphNode)=>{if(!node.available)return;const s=documentApi.getState(),text=linkMarkdown(node,node.title);if(!scope){s.setCaret(trigger.start,trigger.end);s.insertText(text);return;}const doc=s.document,current=doc&&scope.node.isConnected?textTarget(doc,scope.node):null;if(!current||doc!.id!==scope.documentId||current.raw!==scope.raw||current.from!==scope.from){documentApi.setState({error:'链接补全目标已变化，原文保留。'});setDismissed(true);return;}const raw=current.raw.slice(0,trigger.start)+text+current.raw.slice(trigger.end),caret=current.from+trigger.start+text.length;s.setCaret(current.from+trigger.start,current.from+trigger.end,current.key==='source'?undefined:current.key);if(current.key==='source')s.editSource(current.whole.slice(0,current.from)+raw+current.whole.slice(current.to),caret,caret);else s.editBlock(current.key,raw,trigger.start+text.length,trigger.start+text.length);setDismissed(true);requestAnimationFrame(()=>{const latest=documentApi.getState();if(!latest.document||!scope.node.isConnected)return;const range=restoreTextTarget(scope.node,latest.document,latest.caret);if(range){scope.node.focus({preventScroll:true});scope.node.setSelectionRange(range.start,range.end);}});};
  const current=result?.key===key?result:null;
  useEffect(()=>{let active=true;const timer=setTimeout(()=>{void linkTargets(query,page).then(r=>{if(active)setResult({key,...r});}).catch(e=>{if(active)setResult({key,items:[],more:false,error:errorMessage(e,'内部引用搜索失败。')});});},150);return()=>{active=false;clearTimeout(timer);};},[query,page,key]);
  useEffect(()=>{const node=input.current;if(!node||dismissed)return;const keydown=(e:KeyboardEvent)=>{if(e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;if(e.key==='Escape'){e.preventDefault();e.stopPropagation();setDismissed(true);}if(current?.items.length){if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();setSelected(i=>(i+(e.key==='ArrowDown'?1:-1)+current.items.length)%current.items.length);}if(e.key==='Enter'){e.preventDefault();choose(current.items[Math.min(selected,current.items.length-1)]);}}};node.addEventListener('keydown',keydown);return()=>node.removeEventListener('keydown',keydown);});

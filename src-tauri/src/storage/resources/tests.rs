@@ -165,7 +165,7 @@ fn migration_v11_preserves_ids_bytes_notes_links_and_verified_backup() {
     let tmp = tempfile::tempdir().unwrap();
     let (id, doc_id, bytes, text) = legacy_v11(tmp.path());
     let s = Storage::open(tmp.path().into()).unwrap();
-    assert_eq!(s.status().unwrap().schema_version, 12);
+    assert_eq!(s.status().unwrap().schema_version, 13);
     assert_eq!(s.screenshot_image(&id, false).unwrap(), bytes);
     assert_eq!(s.get_screenshot(&id).unwrap().title, "旧图");
     assert_eq!(s.list_notes(&id).unwrap()[0].content, "原始笔记");
@@ -263,21 +263,22 @@ fn migration_conflict_rolls_back_new_ddl_and_preserves_v11() {
 }
 #[test]
 fn future_database_is_refused_without_reset() {
+    let future = crate::storage::migrations::SCHEMA_VERSION + 1;
     let t = tempfile::tempdir().unwrap();
     let s = Storage::open(t.path().into()).unwrap();
     s.connection
-        .pragma_update(None, "user_version", 13)
+        .pragma_update(None, "user_version", future)
         .unwrap();
     drop(s);
     assert!(matches!(
         Storage::open(t.path().into()),
-        Err(StorageError::NewerSchema(13))
+        Err(StorageError::NewerSchema(v)) if v==future
     ));
     let c = Connection::open(t.path().join("researchclip.sqlite3")).unwrap();
     assert_eq!(
         c.pragma_query_value(None, "user_version", |r| r.get::<_, u32>(0))
             .unwrap(),
-        13
+        future
     );
 }
 #[test]

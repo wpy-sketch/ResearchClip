@@ -1,5 +1,6 @@
 pub mod anchors;
 pub mod clips;
+pub mod document_organization;
 pub mod embeddings;
 pub(crate) mod files;
 pub mod knowledge;
@@ -11,6 +12,7 @@ pub mod ocr;
 pub mod projects;
 pub mod references;
 pub mod resources;
+pub mod revision_meta;
 pub mod revisions;
 pub mod search;
 pub mod similarity;

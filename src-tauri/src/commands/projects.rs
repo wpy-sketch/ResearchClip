@@ -98,6 +98,8 @@ pub async fn sync_project_document(
     service: State<'_, Arc<LibraryService>>,
     files: State<'_, Arc<Mutex<DocumentFiles>>>,
     token: String,
+    opened: Option<bool>,
+    restored_from: Option<String>,
 ) -> Result<ProjectDocument, CommandError> {
     check(&window)?;
     let service = Arc::clone(service.inner());
@@ -111,7 +113,14 @@ pub async fn sync_project_document(
             code: "DOCUMENT_GRANT",
             message: e.message,
         })?;
-        let result = service.with(|s| s.index_document(&path, old.as_deref()))?;
+        let result = service.with(|s| {
+            s.index_document_revision(
+                &path,
+                old.as_deref(),
+                restored_from.as_deref(),
+                opened.unwrap_or(false),
+            )
+        })?;
         files.mark_indexed(&token, path);
         Ok(result)
     })

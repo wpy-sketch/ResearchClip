@@ -1,0 +1,15 @@
+import {useMemo,useState} from 'react';
+import {useDocumentApi,useDocumentStore} from './store';
+import {useProjectStore} from '../projects/store';
+import {findDocumentText,replaceDocumentText,type DocumentMatch} from './document-navigation';
+import {DocumentHistory} from './DocumentHistory';
+import {Modal} from '../../shared/ui/Modal';
+import './organization.css';
+function FindDocument({onClose,onReveal}:{onClose:()=>void;onReveal:(match:DocumentMatch)=>void}){
+ const s=useDocumentStore(),[query,setQuery]=useState(''),[replacement,setReplacement]=useState(''),[matchCase,setMatchCase]=useState(false),[error,setError]=useState<string|null>(null),[message,setMessage]=useState(''),matches=useMemo(()=>s.document?findDocumentText(s.document,query,matchCase):[],[s.document,query,matchCase]);
+ return <Modal fitViewport title="文档全文查找替换" onClose={onClose}><div className="document-find-body"><label>查找<input data-initial-focus aria-label="全文查找文本" value={query} maxLength={4096} onChange={e=>setQuery(e.target.value)}/></label><label>替换为<input aria-label="全文替换文本" value={replacement} maxLength={4096} onChange={e=>setReplacement(e.target.value)}/></label><label><input type="checkbox" checked={matchCase} onChange={e=>setMatchCase(e.target.checked)}/>区分大小写</label><p>{matches.length}{matches.length>=5000?'（已达列表上限）':''}处匹配；图文模式搜索标题、正文与注释，保留私有元数据；源码模式搜索完整原文（含链接与属性）。替换沿用一次撤销。</p><div className="document-find-results">{matches.slice(0,200).map((m,i)=><button key={i} onClick={()=>{onClose();onReveal(m);}} title="定位并返回编辑器"><span>{m.key==='source'?'源码':m.key==='@title'?'标题':'正文/注释'}</span><code>{m.snippet}</code></button>)}</div>{matches.length>200&&<p>定位列表显示前200处；全部替换仍作用于整篇的所有匹配。</p>}{error&&<p role="alert">{error}</p>}{message&&<p role="status">{message}</p>}<div className="md-dialog-actions"><button className="secondary-button" onClick={onClose}>取消查找</button><button className="capture-button" disabled={!query||!s.document||s.phase!=='idle'} onClick={()=>{try{const result=replaceDocumentText(s.document!,query,replacement,matchCase);if(!s.replaceDocument(result.document))throw Error('替换未完成，原文保留。');setError(null);setMessage(`整篇替换 ${result.count} 处，可一次撤销。`);}catch(e){setError(e instanceof Error?e.message:'替换失败。');}}}>整篇全部替换</button></div></div></Modal>;
+}
+export function DocumentNavigationTools({onReveal}:{onReveal:(match:DocumentMatch)=>void}){
+ const api=useDocumentApi(),s=useDocumentStore(),projects=useProjectStore(),[find,setFind]=useState(false),[history,setHistory]=useState(false),id=s.token?projects.byToken[s.token]?.id:undefined;
+ return <><div className="document-navigation-tools"><button className="secondary-button" disabled={s.phase!=='idle'} onClick={()=>setFind(true)}>全文查找替换</button><button className="secondary-button" disabled={!id||s.phase!=='idle'} title={id?'查看差异并恢复为新版本':'先保存文档以登记稳定ID'} onClick={()=>setHistory(true)}>文档编辑历史</button></div>{find&&<FindDocument onClose={()=>setFind(false)} onReveal={onReveal}/>} {history&&id&&<DocumentHistory id={id} owner={api} onClose={()=>setHistory(false)}/>}</>;
+}

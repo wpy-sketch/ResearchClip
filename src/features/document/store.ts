@@ -1,3 +1,4 @@
+import {loadMarkdownRevision} from './organization-api';
 import {withLegacyImageTitle} from './content-model';
 import {create} from 'zustand';
 import {createContext,useContext} from 'react';
@@ -27,7 +28,7 @@ export interface DocumentState {
   request:(action:DocumentAction)=>Promise<void>;resolvePending:(choice:'save'|'discard'|'cancel')=>Promise<void>;
   editTitle:(title:string)=>void;editBlock:(id:string,text:string,start?:number,end?:number)=>void;addText:(afterId?:string)=>void;move:(id:string,delta:-1|1)=>void;remove:(id:string)=>void;
   editImage:(id:string,alt:string,title:string)=>boolean;duplicateImage:(id:string)=>boolean;
-  addImages:(ids:string[])=>Promise<boolean>;insertImagesAt:(ids:string[],target:{documentId:string;blockId:string;from:number;to:number;expected:string})=>Promise<boolean>;reorderBlocks:(id:string,before:string|null,expected:string[])=>void;save:(saveAs?:boolean)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
+  addImages:(ids:string[])=>Promise<boolean>;insertImagesAt:(ids:string[],target:{documentId:string;blockId:string;from:number;to:number;expected:string})=>Promise<boolean>;reorderBlocks:(id:string,before:string|null,expected:string[])=>void;restoreHistory:(id:string,revisionId:string)=>Promise<boolean>;replaceDocument:(document:MarkdownDocument)=>boolean;save:(saveAs?:boolean,restoredFrom?:string)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
 }
 export const documentDirty=(s:Pick<DocumentState,'document'|'savedFingerprint'>)=>Boolean(s.document&&(s.savedFingerprint===null||JSON.stringify(s.document)!==s.savedFingerprint));
 const dispose=(assets:Record<string,DocumentAsset>)=>Object.values(assets).forEach(a=>URL.revokeObjectURL(a.url));
@@ -162,13 +163,23 @@ export function createDocumentStore(){
         }catch(error){set({error:errorMessage(error,'重命名失败，原名称和草稿已保留。')});return false;}
         finally{set({phase:'idle'});}
       },
-      save:async(saveAs=false)=>{
-        const s=get();if(!s.document||s.phase!=='idle')return false;if(!saveAs&&s.token&&!documentDirty(s)){set({notice:'内容未修改，本次未重写文件。',error:null});return true;}set({phase:'saving',error:null,notice:null});
+      replaceDocument:(document)=>{const s=get();if(!s.document||s.phase!=='idle'||s.document.id!==document.id)return false;try{serializeDocument(document);}catch(e){set({error:errorMessage(e,'文档修改失败。')});return false;}if(JSON.stringify(s.document)===JSON.stringify(document))return true;set({document,past:bounded([...s.past,{document:s.document,caret:s.caret}]),future:[],error:null,notice:null});return true;},
+      restoreHistory:async(id,revisionId)=>{
+        if(!get().document||get().phase!=='idle'||!get().token)return false;
+        if(!await get().save())return false;const before=get();if(!before.document||!before.token)return false;
+        const created:Record<string,DocumentAsset>={};let adopted=false;set({phase:'opening',error:null,notice:null});
+        try{const disk=await loadMarkdownRevision(before.token,id,revisionId);const parsed=parseMarkdown(disk.markdown,before.fileName??undefined),document={...parsed,id:before.document.id};for(const [name,blob]of Object.entries(disk.assets))if(!before.assets[name])created[name]={blob,url:URL.createObjectURL(blob)};
+          set({document,assets:{...before.assets,...created},past:bounded([...before.past,{document:before.document,caret:before.caret}]),future:[],caret:{start:0,end:0},focusRequest:get().focusRequest+1,phase:'idle'});adopted=true;
+          const ok=await get().save(false,revisionId);if(!ok)set({notice:'恢复尚未完成；恢复草稿保留，恢复前内容已保存到历史，可取消或重试。'});else set({notice:'已追加新的恢复版本，恢复前版本和旧版本均保留。'});return ok;
+        }catch(e){if(!adopted)dispose(created);set({error:errorMessage(e,'历史恢复失败；当前已保存版本保留。')});return false;}finally{set({phase:'idle'});}
+      },
+      save:async(saveAs=false,restoredFrom)=>{
+        const s=get();if(!s.document||s.phase!=='idle')return false;if(!saveAs&&!restoredFrom&&s.token&&!documentDirty(s)){set({notice:'内容未修改，本次未重写文件。',error:null});return true;}set({phase:'saving',error:null,notice:null});
         try{
           const markdown=serializeDocument(s.document),references=new Set([...markdown.matchAll(/\]\(assets\/(researchclip-[a-f0-9]{32}\.png)(?=[\s)])/g)].map(match=>match[1]));
           if([...references].some(name=>!s.assets[name]))throw new Error('Markdown 引用的本地图片缺失，请恢复图片或移除对应引用。');
           const assets=Object.fromEntries(Object.entries(s.assets).filter(([name])=>references.has(name)).map(([name,a])=>[name,a.blob]));
-          const result=await saveDocumentFile(markdown,assets,s.token,saveAs,s.fileName??'untitled.md');if(!result){set({notice:'已取消保存；文档未改动。'});return false;}
+          const result=restoredFrom?await saveDocumentFile(markdown,assets,s.token,saveAs,s.fileName??'untitled.md',restoredFrom):await saveDocumentFile(markdown,assets,s.token,saveAs,s.fileName??'untitled.md');if(!result){set({notice:'已取消保存；文档未改动。'});return false;}
           set({token:result.token,path:result.path,fileName:result.path.split(/[\\/]/).at(-1)??s.fileName,savedFingerprint:JSON.stringify(s.document),notice:'Markdown 与 assets 已保存。移动时请保留整个文件夹。'});if(s.token!==result.token)await release(s.token);return true;
         }catch(error){set({error:errorMessage(error,'保存失败，草稿及已有文件已保留。')});return false;}
         finally{set({phase:'idle'});}

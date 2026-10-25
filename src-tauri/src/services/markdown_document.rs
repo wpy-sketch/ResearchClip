@@ -232,6 +232,40 @@ fn target(path: &Path) -> Result<PathBuf, CaptureError> {
     Ok(parent.join(path.file_name().ok_or_else(io_error)?))
 }
 /// File identity for registration/relink. This reads only an explicitly selected/registered Markdown.
+pub fn history_snapshot(
+    path: &Path,
+) -> Result<
+    (
+        String,
+        std::collections::BTreeMap<String, crate::storage::document_organization::RevisionAsset>,
+    ),
+    CaptureError,
+> {
+    use sha2::Digest;
+    let bytes = read(path, MAX_TEXT)?;
+    let markdown = String::from_utf8(bytes).map_err(|_| failure("历史正文不是有效UTF-8。"))?;
+    let mut assets = std::collections::BTreeMap::new();
+    let mut total = 0;
+    for name in names(&markdown)? {
+        let png = read(
+            &asset_path(path.parent().ok_or_else(io_error)?, &name)?,
+            MAX_PNG_BYTES,
+        )?;
+        total += png.len();
+        if total > MAX_ASSETS {
+            return Err(failure("历史图片超过128MiB。"));
+        }
+        decode_png(&png)?;
+        assets.insert(
+            name,
+            crate::storage::document_organization::RevisionAsset {
+                size: png.len() as u64,
+                sha256: format!("{:x}", sha2::Sha256::digest(&png)),
+            },
+        );
+    }
+    Ok((markdown, assets))
+}
 pub fn file_fingerprint(path: &Path) -> Result<(PathBuf, String, u64), CaptureError> {
     use sha2::{Digest, Sha256};
     let path = target(path)?;
@@ -278,6 +312,68 @@ impl DocumentFiles {
         };
         self.grants.insert(token, Grant { path, bytes });
         result
+    }
+    pub fn path_is_open(&self, path: &Path) -> bool {
+        self.grants.values().any(|g| g.path == path)
+    }
+    pub fn revision_packet(
+        &self,
+        token: &str,
+        markdown: &str,
+        expected: &std::collections::BTreeMap<
+            String,
+            crate::storage::document_organization::RevisionAsset,
+        >,
+    ) -> Result<Vec<u8>, CaptureError> {
+        self.unchanged(token)?;
+        let path = &self.grants.get(token).ok_or_else(io_error)?.path;
+        let wanted = names(markdown)?;
+        if wanted.iter().ne(expected.keys()) {
+            return Err(failure("历史图片引用与清单不匹配。"));
+        }
+        let mut assets = Vec::new();
+        let mut pngs = Vec::new();
+        let mut total = 0;
+        for name in wanted {
+            let png = read(
+                &asset_path(path.parent().ok_or_else(io_error)?, &name)?,
+                MAX_PNG_BYTES,
+            )?;
+            total += png.len();
+            if total > MAX_ASSETS {
+                return Err(failure("历史图片超过128MiB。"));
+            }
+            decode_png(&png)?;
+            use sha2::Digest;
+            let expected = &expected[&name];
+            if expected.size != png.len() as u64
+                || expected.sha256 != format!("{:x}", sha2::Sha256::digest(&png))
+            {
+                return Err(failure("历史图片已变化，未恢复；请保留当前版本。"));
+            }
+            assets.push(AssetMeta {
+                name,
+                size: png.len(),
+            });
+            pngs.push(png);
+        }
+        let meta = serde_json::to_vec(&OpenInfo {
+            token: token.into(),
+            path: path.to_string_lossy().into(),
+            markdown: markdown.into(),
+            assets,
+        })
+        .map_err(|_| io_error())?;
+        if meta.len() > MAX_HEADER {
+            return Err(failure("历史封包超过限制。"));
+        }
+        let mut output = Vec::new();
+        output.extend_from_slice(&(meta.len() as u32).to_le_bytes());
+        output.extend(meta);
+        for png in pngs {
+            output.extend(png);
+        }
+        Ok(output)
     }
     pub fn release(&mut self, token: &str) {
         self.grants.remove(token);

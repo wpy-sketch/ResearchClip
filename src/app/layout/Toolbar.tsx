@@ -1,3 +1,4 @@
+import {DocumentDirectoryButton} from '../../features/document/DocumentDirectory';
 import { BookTemplate, ChevronRight, FilePlus2, FileText, FolderOpen, LayoutGrid, List, Moon, Sun } from 'lucide-react';
 import {ClipboardImportButton} from '../../features/import/ImportControls';
 import { RecoverPinsButton } from '../../features/pins/RecoverPinsButton';
@@ -29,6 +30,7 @@ export function Toolbar() {
         <div className="toolbar-breadcrumb"><span className="breadcrumb-parent">工作区</span><ChevronRight className="breadcrumb-parent text-faint" size={14}/><span>{titles[activeView]}</span></div>
         <div className="toolbar-actions">
         <button className="secondary-button" aria-label="新建 Markdown" title="新建图文 Markdown" onClick={()=>void useDocumentStore.getState().request('new')}><FileText size={15}/><span className="markdown-action-label">新建 Markdown</span></button>
+        <DocumentDirectoryButton/>
         <button className="secondary-button" aria-label="新建空白 Markdown" title="新建空白 Markdown" onClick={()=>void useDocumentStore.getState().request('blank')}><FilePlus2 size={15}/><span className="markdown-action-label">新建空白 Markdown</span></button>
         <button className="secondary-button" aria-label="打开 Markdown" title="打开 Markdown" onClick={()=>void useDocumentStore.getState().request('open')}><FolderOpen size={15}/><span className="markdown-action-label">打开 Markdown</span></button>
         <button className="secondary-button" aria-label="新建模板文档" title="从模板新建 Markdown" onClick={()=>useDocumentStore.getState().setTemplateDialog('choose')}><BookTemplate size={15}/><span className="markdown-action-label">模板</span></button>

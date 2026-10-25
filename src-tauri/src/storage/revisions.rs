@@ -56,11 +56,7 @@ pub(super) fn record(
     doc: &Value,
     description: &str,
 ) -> Result<bool, StorageError> {
-    if description.chars().count() > 500 || description.contains('\0') {
-        return Err(StorageError::Invalid(
-            "版本说明最多500字符，不能包含空字符。",
-        ));
-    }
+    super::revision_meta::validate_description(description)?;
     let latest=connection.query_row("SELECT revision_id,version_number,CASE WHEN length(CAST(annotation_json AS BLOB))<=4194304 THEN annotation_json ELSE '' END FROM annotation_revisions WHERE revision_id=(SELECT revision_id FROM annotation_heads WHERE screenshot_id=?1 AND needs_review=0)",[id],|r|Ok((r.get::<_,String>(0)?,r.get::<_,i64>(1)?,r.get::<_,String>(2)?))).optional()?;
     if latest.as_ref().is_some_and(|(_, _, json)| {
         serde_json::from_str::<Value>(json)

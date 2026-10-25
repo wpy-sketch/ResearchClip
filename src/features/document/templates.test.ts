@@ -27,3 +27,5 @@ describe('CommonMark outline source offsets',()=>{
   });
   it('handles empty content, empty headings, CRLF and container headings',()=>{expect(documentOutline('')).toEqual([]);const rows=documentOutline('#\r\n\r\n> ## 引用\r\n\r\n- ### 列表');expect(rows.map(h=>h.text)).toEqual(['（空标题）','引用','列表']);expect(rows.map(h=>h.line)).toEqual([1,3,5]);});
 });
+
+it('provides literature review and research log as ordinary independently editable templates',()=>{for(const name of ['文献综述','研究日志']){const seed=builtInTemplates.find(t=>t.name===name)!;expect(seed).toBeDefined();const doc=templateDocument(seed);expect(serializeDocument(doc)).toBe(seed.markdown);expect(documentOutline(seed.markdown).length).toBeGreaterThan(5);expect(doc.mode).toBe('source');}expect(builtInTemplates[2].markdown).toContain(':::theorem');expect(builtInTemplates[2].markdown).toContain(':::proof');});
