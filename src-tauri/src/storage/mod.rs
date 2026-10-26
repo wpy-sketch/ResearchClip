@@ -261,3 +261,5 @@ mod tests {
 }
 
 pub mod zotero;
+
+pub mod zotero_annotations;

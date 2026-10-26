@@ -63,6 +63,7 @@ mod tests {
         let (tmp, mut s, d, doc) = fixture();
         let raw = png();
         let old=s.create_screenshot("old",serde_json::json!({"schemaVersion":1,"image":{"widthPx":20,"heightPx":10},"objects":[]}),&raw).unwrap();
+        super::super::migrations::discard_annotation_cache_fixture(&s.connection);
         s.connection
             .execute_batch(
                 "DROP TABLE pdf_excerpts; DROP TABLE pending_pdf_excerpts; DROP TABLE pdf_note_links; PRAGMA user_version=16;",
@@ -70,7 +71,7 @@ mod tests {
             .unwrap();
         drop(s);
         let mut s = Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 18);
+        assert_eq!(s.status().unwrap().schema_version, 19);
         assert_eq!(s.screenshot_image(&old.id, false).unwrap(), raw);
         assert_eq!(
             s.pdf_record(&doc).unwrap().content_hash,
@@ -181,18 +182,18 @@ mod tests {
     fn future_database_version_refuses_writes_without_reset() {
         let (tmp, s, _, _) = fixture();
         s.connection
-            .pragma_update(None, "user_version", 19)
+            .pragma_update(None, "user_version", 20)
             .unwrap();
         drop(s);
         assert!(matches!(
             Storage::open(tmp.path().into()),
-            Err(StorageError::NewerSchema(19))
+            Err(StorageError::NewerSchema(20))
         ));
         let c = Connection::open(tmp.path().join("researchclip.sqlite3")).unwrap();
         assert_eq!(
             c.pragma_query_value(None, "user_version", |r| r.get::<_, u32>(0))
                 .unwrap(),
-            19
+            20
         );
     }
 }

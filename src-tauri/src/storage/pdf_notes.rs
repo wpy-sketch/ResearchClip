@@ -57,12 +57,13 @@ mod tests {
         let path = t.path().join("旧笔记.md");
         std::fs::write(&path, &raw).unwrap();
         let doc = s.index_document(&path, None).unwrap().id;
+        super::super::migrations::discard_annotation_cache_fixture(&s.connection);
         s.connection
             .execute_batch("DROP TABLE pdf_note_links; PRAGMA user_version=17;")
             .unwrap();
         drop(s);
         let mut s = Storage::open(t.path().join("data")).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 18);
+        assert_eq!(s.status().unwrap().schema_version, 19);
         assert_eq!(std::fs::read_to_string(&path).unwrap(), raw);
         let source = s.link_source(&doc).unwrap();
         s.replace_links(&doc, &source.stamp, &[edge]).unwrap();

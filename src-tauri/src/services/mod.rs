@@ -34,3 +34,5 @@ pub mod pdf_open;
 pub mod zotero_local;
 
 pub mod zotero_session;
+
+pub mod zotero_annotations;

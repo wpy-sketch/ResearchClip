@@ -1,0 +1,213 @@
+{
+  "version": "4.2.5",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "node": "v22.22.2",
+  "frontend": {
+    "command": "npm run check",
+    "passed": 724,
+    "files": 90,
+    "exitCode": 0
+  },
+  "cleanInstall": {
+    "command": "npm ci --ignore-scripts",
+    "packages": 327,
+    "exitCode": 0,
+    "dependenciesExactlyUnchanged": true
+  },
+  "rust": {
+    "passed": 291,
+    "ignored": 7,
+    "testThreads": 4,
+    "formatExitCode": 0,
+    "testExitCode": 0,
+    "clippyExitCode": 0
+  },
+  "nativeAndBrowser": {
+    "workspace-native": {
+      "result": "PASS",
+      "checks": 7,
+      "evidence": "artifacts/workspace-native-v425-final-b/report.json",
+      "sha256": "42c9050cb6e244e535df39cfe0c1be6dab466376bd392c8eea3abf4ff7d46ddd"
+    },
+    "commands-native": {
+      "result": "PASS",
+      "checks": 8,
+      "evidence": "artifacts/commands-native-v425-final-b/report.json",
+      "sha256": "b2aaf8036baa1d1e559665f6b6286c604cc203a3d61cb621c10ed74d11ab35f1"
+    },
+    "resources-native": {
+      "result": "PASS",
+      "checks": 6,
+      "evidence": "artifacts/resources-native-v425-final-b/report.json",
+      "sha256": "fc2770b25c23279ba022242653edc32c4f4987eab02331d1d5e6b6749038d5be"
+    },
+    "citations-native": {
+      "result": "PASS",
+      "checks": 11,
+      "evidence": "artifacts/citations-native-v425-final-b/report.json",
+      "sha256": "8c32d3dba1eeef023569ed14593e93236f314684b5e9670cb276d51b7e066aa1"
+    },
+    "pdf-native": {
+      "result": "PASS",
+      "checks": 13,
+      "evidence": "artifacts/pdf-native-v425-final-b/report.json",
+      "sha256": "874fed8690aced0d73a448ecda824b3200453404f93b397321c6d804cf363af1"
+    },
+    "pdf-quality": {
+      "result": "PASS",
+      "checks": 5,
+      "evidence": "artifacts/pdf-quality-v425-final-b/report.json",
+      "sha256": "129901708a7f1f4a49927c5a072eee58e987c99fd00575f064db0865fa7ca304"
+    },
+    "pdf-layout": {
+      "result": "PASS",
+      "checks": 5,
+      "evidence": "artifacts/pdf-layout-v425-final-b/report.json",
+      "sha256": "9700b63b4d1fe1e066ce2103992ab95dbff75ff95f03acbcf6c1bfbb7e2fa503"
+    },
+    "pdf-excerpts": {
+      "result": "PASS",
+      "checks": 25,
+      "evidence": "artifacts/pdf-excerpts-v425-final-b/report.json",
+      "sha256": "b174592115d7442c876df793aa98c86c270a071a0edabf1e5d3292aa1bd8e3c5"
+    },
+    "zotero-annotations": {
+      "result": "PASS",
+      "checks": 28,
+      "evidence": "artifacts/zotero-native-v425-final-b/report.json",
+      "sha256": "252144273a0f555ecce0d5ed40e309876b9a3a5f5907e5aac81809b025c9cf2b"
+    },
+    "guide-reader": {
+      "result": "PASS",
+      "checks": 14,
+      "evidence": "artifacts/guide-reader-v425-final-b/report.json",
+      "sha256": "3202aa1314f7b182be0acb92d95c18dba7c0f9bc23dabb68d06115233868ed21"
+    }
+  },
+  "nativeTotal": 108,
+  "isolatedAnnotationDatabase": {
+    "schema": 19,
+    "sourceCaches": 2,
+    "totalAnnotationIdentitiesAcrossCaches": 42,
+    "privateHandwritingEntities": 0,
+    "readOnlyInspection": true
+  },
+  "realZoteroProbe": {
+    "productVersion": "10.0.6",
+    "apiVersion": 3,
+    "schemaVersion": 44,
+    "samples": 20,
+    "observedTypes": [
+      "ink"
+    ],
+    "positionStorage": "JSON string",
+    "onlyGet": true,
+    "actualGuiAcceptance": false,
+    "largerSortedProbe": "TimeoutError retained"
+  },
+  "installer": {
+    "result": "passed",
+    "checks": 5,
+    "run": "v425-final-b",
+    "sha256": "3d94810a6313999b1c31f4f51f7e10c23b0ae53d524ec541052d7839dcc8741d",
+    "unsigned": true
+  },
+  "releaseInfrastructure": {
+    "passed": 23,
+    "exitCode": 0
+  },
+  "defaultUserDataAudit": {
+    "files": 27,
+    "result": "PASS",
+    "mode": "read-only default AppData hash comparison; WebView cache excluded; not a backup/restore feature",
+    "changed": 0
+  },
+  "guide": {
+    "chapters": 31,
+    "exercises": 229,
+    "images": 62
+  },
+  "boundaries": [
+    "Real Zotero GUI acceptance deferred by user",
+    "Physical mixed-DPI monitors, touch, old WebView2 and other OS unverified",
+    "7 ignored Rust tests are not passed",
+    "Earlier v424 audit FAIL retained with manual user launch confirmation; v422 two additions remain unattributed"
+  ],
+  "failedAttemptsRetained": [
+    "v425-rust-final.log: HTTP fixture timed out under full concurrency; chunked fixture read and final four-thread run passed",
+    "v425-guide-final.log: Windows denied port1437; explicit14377 run passed",
+    "v425-final-workspace.log: outdated30chapter assertion;31chapter/62image check rerun passed",
+    "v425-installer-final.log: intentionally refused while native test app running; sequential installer run passed"
+  ],
+  "changedFiles": [
+    ".github/workflows/release-transport.yml",
+    "README.md",
+    "assets/app-icon.svg",
+    "docs/ARCHITECTURE.md",
+    "docs/RELEASE-COMPONENTS.md",
+    "docs/RELEASE-NOTES-4.2.5.md",
+    "docs/USER_GUIDE.md",
+    "docs/architecture/ZOTERO_ANNOTATIONS_STEP14.md",
+    "docs/images/v425-zotero-annotation-crop.png",
+    "docs/images/v425-zotero-annotations-offline.png",
+    "docs/images/v425-zotero-annotations.png",
+    "docs/qa/RELEASE-4.2.5.md",
+    "docs/qa/evidence/v425-editor-checks.json",
+    "docs/qa/evidence/v425-prior-releases.json",
+    "package-lock.json",
+    "package.json",
+    "scripts/accept-ci-verification.py",
+    "scripts/check-docs.mjs",
+    "scripts/citations-native-smoke.mjs",
+    "scripts/github-release-transfer.py",
+    "scripts/guide-reader-smoke.mjs",
+    "scripts/inherit-release-assets.py",
+    "scripts/pdf-excerpts-native-smoke.mjs",
+    "scripts/pdf-native-smoke.mjs",
+    "scripts/publish-desktop-release.py",
+    "scripts/workspace-native-smoke.mjs",
+    "scripts/zotero-annotations-fixture.mjs",
+    "scripts/zotero-annotations-native-cases.mjs",
+    "scripts/zotero-annotations-native-smoke.mjs",
+    "scripts/zotero-native-smoke.mjs",
+    "src-tauri/Cargo.lock",
+    "src-tauri/Cargo.toml",
+    "src-tauri/build.rs",
+    "src-tauri/capabilities/main.json",
+    "src-tauri/icons/128x128.png",
+    "src-tauri/icons/128x128@2x.png",
+    "src-tauri/icons/32x32.png",
+    "src-tauri/icons/icon.icns",
+    "src-tauri/icons/icon.ico",
+    "src-tauri/migrations/019_zotero_annotation_cache.sql",
+    "src-tauri/src/commands/mod.rs",
+    "src-tauri/src/commands/zotero_annotations.rs",
+    "src-tauri/src/lib.rs",
+    "src-tauri/src/services/mod.rs",
+    "src-tauri/src/services/zotero_annotations.rs",
+    "src-tauri/src/services/zotero_annotations_http_tests.rs",
+    "src-tauri/src/services/zotero_local.rs",
+    "src-tauri/src/storage/migrations.rs",
+    "src-tauri/src/storage/mod.rs",
+    "src-tauri/src/storage/pdf_excerpts.rs",
+    "src-tauri/src/storage/pdf_notes.rs",
+    "src-tauri/src/storage/zotero_annotations.rs",
+    "src-tauri/tauri.conf.json",
+    "src/features/guide/GuideView.tsx",
+    "src/features/guide/navigation.test.ts",
+    "src/features/guide/navigation.ts",
+    "src/features/library/store.test.ts",
+    "src/features/pdf/PdfPage.tsx",
+    "src/features/pdf/PdfViewer.tsx",
+    "src/features/pdf/PdfViewerSession.ts",
+    "src/features/pdf/zotero-annotations/AnnotationCoordinateAdapter.ts",
+    "src/features/pdf/zotero-annotations/Repository.ts",
+    "src/features/pdf/zotero-annotations/ZoteroAnnotationOverlay.tsx",
+    "src/features/pdf/zotero-annotations/ZoteroAnnotationsPanel.tsx",
+    "src/features/pdf/zotero-annotations/annotations.css",
+    "src/features/pdf/zotero-annotations/annotations.test.tsx",
+    "src/features/pdf/zotero-annotations/model.ts",
+    "src/shared/api/library.test.ts",
+    "src/shared/api/library.ts"
+  ]
+}

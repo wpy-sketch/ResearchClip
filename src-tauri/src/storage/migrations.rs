@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 18;
+pub const SCHEMA_VERSION: u32 = 19;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -180,10 +180,20 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/018_pdf_note_links.sql"),
         )?;
     }
+    if version < 19 {
+        apply_migration(
+            connection,
+            19,
+            include_str!("../../migrations/019_zotero_annotation_cache.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 19 {
+        connection.prepare("SELECT document_id,instance_id,library_type,library_id,attachment_key,content_hash,format_version,fetched_at,snapshot_json FROM zotero_annotation_cache LIMIT 0")?;
+    }
     if version >= 18 {
         connection.prepare("SELECT source_id,target_id,source_location,source_end,source_line,label FROM pdf_note_links LIMIT 0")?;
     }
@@ -300,6 +310,7 @@ fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageE
 
 #[cfg(test)]
 pub(crate) fn discard_excerpt_fixture(connection: &Connection) {
+    discard_annotation_cache_fixture(connection);
     for table in ["pdf_excerpts", "pending_pdf_excerpts", "pdf_note_links"] {
         assert_eq!(
             connection
@@ -329,6 +340,19 @@ pub(crate) fn legacy_zotero_fixture(connection: &Connection) {
         .unwrap();
     connection.execute_batch(&source[from..end]).unwrap();
     connection.execute_batch("INSERT INTO research_zotero_keys SELECT instance_id,library_id,item_key,resource_type,resource_id FROM research_zotero_fixture_v16; DROP TABLE research_zotero_fixture_v16;").unwrap();
+}
+
+#[cfg(test)]
+pub(crate) fn discard_annotation_cache_fixture(c: &Connection) {
+    assert_eq!(
+        c.query_row("SELECT count(*) FROM zotero_annotation_cache", [], |r| r
+            .get::<_, i64>(0))
+            .unwrap(),
+        0,
+        "historical fixture cannot discard annotation cache"
+    );
+    c.execute_batch("DROP TABLE zotero_annotation_cache;")
+        .unwrap();
 }
 
 #[cfg(test)]

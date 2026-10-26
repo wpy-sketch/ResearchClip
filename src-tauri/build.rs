@@ -35,6 +35,8 @@ fn main() {
             "resolve_pdf_location",
             "create_pdf_text_location",
             "pdf_selection_notes",
+            "cached_zotero_annotations",
+            "refresh_zotero_annotations",
             "adopt_pdf_source",
             "pending_pdf_requests",
             "preview_pdf_zotero",

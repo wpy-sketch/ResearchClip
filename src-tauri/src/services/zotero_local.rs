@@ -230,6 +230,7 @@ impl ZoteroClient {
             instance_id: instance_identity(&server_id)?,
             product_version: headers
                 .get("Zotero-Version")
+                .or_else(|| headers.get("X-Zotero-Version"))
                 .and_then(|v| v.to_str().ok())
                 .filter(|v| v.len() <= 64)
                 .map(str::to_owned),
@@ -391,6 +392,150 @@ impl ZoteroClient {
             candidates,
             message,
         })
+    }
+
+    pub fn read_annotations(
+        &self,
+        source: &super::zotero_annotations::AnnotationSource,
+        original: &Path,
+        pdf_hash: &str,
+        cancel: &AtomicBool,
+    ) -> Result<super::zotero_annotations::AnnotationReadCache> {
+        use super::zotero_annotations::{AnnotationReadCache, SOURCE_MISMATCH, parse_annotation};
+        source.validate()?;
+        let start = Instant::now();
+        let health = self.health(cancel, start)?;
+        if health.instance_id != source.instance_id {
+            return Err(SOURCE_MISMATCH.into());
+        }
+        let scope = ZoteroScope {
+            library_type: source.library_type.clone(),
+            library_id: if source.library_type == "user" {
+                0
+            } else {
+                source.library_id
+            },
+        };
+        scope.validate_request()?;
+        let attachment = self
+            .item(&scope, &source.attachment_key, &health, cancel, start)?
+            .ok_or("已关联的Zotero附件不存在。")?;
+        let (kind, id) = validate_library(&attachment, &scope).map_err(|_| SOURCE_MISMATCH)?;
+        let data = &attachment["data"];
+        if kind != source.library_type
+            || id != source.library_id
+            || attachment["key"] != source.attachment_key
+            || data["itemType"] != "attachment"
+            || data["parentItem"] != source.item_key
+            || !self.file_matches(
+                &scope,
+                &source.attachment_key,
+                &health,
+                original,
+                cancel,
+                start,
+            )?
+        {
+            return Err(SOURCE_MISMATCH.into());
+        }
+        let mut annotations: std::collections::BTreeMap<
+            String,
+            super::zotero_annotations::ZoteroAnnotation,
+        > = std::collections::BTreeMap::new();
+        let mut library_version = None;
+        let mut truncated = false;
+        let mut bytes = 0;
+        for page in 0..50 {
+            Self::check(cancel, start)?;
+            let offset = (page * 20).to_string();
+            let path = format!(
+                "{}/items/{}/children",
+                scope.prefix(),
+                source.attachment_key
+            );
+            let (headers, body) = self
+                .get(
+                    &path,
+                    &[
+                        ("itemType", "annotation"),
+                        ("format", "json"),
+                        ("limit", "20"),
+                        ("start", &offset),
+                    ],
+                    Some(&health.server_id),
+                    cancel,
+                    start,
+                )?
+                .ok_or("Zotero未提供附件批注读取接口或附件已经删除。")?;
+            bytes += body.len();
+            if bytes > 8 * 1024 * 1024 {
+                return Err("批注读取超过8MiB预算，原缓存保留。".into());
+            }
+            let version = headers
+                .get("Last-Modified-Version")
+                .and_then(|v| v.to_str().ok())
+                .map(str::parse::<u64>)
+                .transpose()
+                .map_err(|_| "Zotero库版本头无效。")?;
+            if page == 0 {
+                library_version = version;
+            } else if library_version.is_none() || version != library_version {
+                return Err(
+                    "批注读取期间库版本改变或缺少分页版本校验，请重试；旧缓存保留。".into(),
+                );
+            }
+            let batch: Vec<Value> =
+                serde_json::from_slice(&body).map_err(|_| "Zotero批注列表JSON无效。")?;
+            let count = batch.len();
+            if count > 20 {
+                return Err("Zotero未遵守批注分页上限。".into());
+            }
+            for item in batch {
+                let a = parse_annotation(&item, source)?;
+                let key = a.identity.annotation_key.clone();
+                if let Some(old) = annotations.get(&key) {
+                    if old.version == a.version && old != &a {
+                        return Err("同一Zotero批注版本返回冲突数据，旧缓存保留。".into());
+                    }
+                    if old.version >= a.version {
+                        continue;
+                    }
+                }
+                annotations.insert(key, a);
+            }
+            if count < 20 {
+                break;
+            }
+            if page == 49 {
+                truncated = true;
+            }
+        }
+        Self::check(cancel, start)?;
+        let fetched_at = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|_| "系统时间无效。")?
+            .as_millis()
+            .try_into()
+            .map_err(|_| "系统时间超限。")?;
+        let mut items: Vec<_> = annotations.into_values().collect();
+        items.sort_by_key(|a| {
+            (
+                a.position.as_ref().map_or(u32::MAX, |p| p.page_index),
+                a.identity.annotation_key.clone(),
+            )
+        });
+        let result = AnnotationReadCache {
+            format_version: 1,
+            source: source.clone(),
+            pdf_content_hash: pdf_hash.into(),
+            fetched_at,
+            product_version: health.product_version,
+            library_version,
+            annotations: items,
+            truncated,
+        };
+        result.validate()?;
+        Ok(result)
     }
     pub fn revalidate(
         &self,
@@ -614,6 +759,10 @@ pub fn same_authorized_file_url(source: &Path, uri: &str) -> bool {
     };
     normalize(&from_api).eq_ignore_ascii_case(&normalize(&authorized))
 }
+#[cfg(test)]
+#[path = "zotero_annotations_http_tests.rs"]
+mod annotation_tests;
+
 #[cfg(test)]
 mod tests {
     use super::*;

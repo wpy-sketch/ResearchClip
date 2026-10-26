@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v4.2.5 Step14：只读ZoteroAnnotationIdentity/Repository/CoordinateAdapter/ReadCache，SQLite19派生缓存、GET-only及原件授权，来源冲突停止叠加。见[只读适配](architecture/ZOTERO_ANNOTATIONS_STEP14.md)及[实际验收](qa/RELEASE-4.2.5.md)。
+
 v4.2.4 Step13：截图回跳、PDF文字引用、区域反向笔记与受管副本逐次校验；SQLite18派生边与原链接共用CAS事务和源文校验。见[双向定位](architecture/PDF_BIDIRECTIONAL_STEP13.md)及[实际验收](qa/RELEASE-4.2.4.md)。
 
 v4.2.3 Step12：PDF.js按页选区与独立DPI渲染，SQLite17扩展既有截图写入意图和统一PdfLocation，复用标注、Markdown文件/撤销/相对图片管线。文档边界标记只用于已有块投影；不另建资源或正文服务。见[坐标、权限和迁移设计](architecture/PDF_EXCERPTS_STEP12.md)与[验收记录](qa/RELEASE-4.2.3.md)。

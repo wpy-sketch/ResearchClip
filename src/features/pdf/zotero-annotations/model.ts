@@ -1,0 +1,22 @@
+import type {Saved} from '../zoteroApi';
+export interface AnnotationSource {instanceId:string;libraryType:'user'|'group';libraryId:number;itemKey:string;attachmentKey:string}
+export interface ZoteroAnnotationIdentity {source:AnnotationSource;annotationKey:string}
+export interface AnnotationPosition {pageIndex:number;rects:number[][];nextPageRects:number[][]}
+export interface ZoteroAnnotation {identity:ZoteroAnnotationIdentity;version:number;annotationType:string;color:string;text:string;comment:string;pageLabel:string;position:AnnotationPosition|null;unsupportedReason:string|null}
+export interface AnnotationReadCache {formatVersion:1;source:AnnotationSource;pdfContentHash:string;fetchedAt:number;productVersion:string|null;libraryVersion:number|null;annotations:ZoteroAnnotation[];truncated:boolean}
+const id=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{32}$/.test(v),key=(v:unknown)=>typeof v==='string'&&/^[A-Z0-9]{8}$/.test(v),number=(v:unknown)=>Number.isSafeInteger(v)&&Number(v)>=0;
+export const supportedAnnotation=(kind:string)=>['highlight','underline','note','text','image'].includes(kind);
+export function annotationSource(source:AnnotationSource|Saved):AnnotationSource{if(!id(source.instanceId)||!['user','group'].includes(source.libraryType)||!number(source.libraryId)||source.libraryType==='group'&&source.libraryId===0||!key(source.itemKey)||!key(source.attachmentKey)||source.itemKey===source.attachmentKey)throw Error('Zotero批注来源身份无效。');return {instanceId:source.instanceId,libraryType:source.libraryType,libraryId:source.libraryId,itemKey:source.itemKey,attachmentKey:source.attachmentKey};}
+export const sourceKey=(source:AnnotationSource)=>JSON.stringify([source.instanceId,source.libraryType,source.libraryId,source.itemKey,source.attachmentKey]);
+export const annotationKey=(a:ZoteroAnnotation)=>sourceKey(a.identity.source)+':'+a.identity.annotationKey;
+const rectangles=(value:unknown):value is number[][]=>Array.isArray(value)&&value.length<=200&&value.every(r=>Array.isArray(r)&&r.length===4&&r.every(n=>typeof n==='number'&&Number.isFinite(n)&&Math.abs(n)<=1e6)&&r[0]<r[2]&&r[1]<r[3]);
+export function parseAnnotationCache(value:unknown,expected:AnnotationSource,hash:string):AnnotationReadCache{
+ const v=value as AnnotationReadCache|null;
+ if(!v||v.formatVersion!==1||sourceKey(annotationSource(v.source))!==sourceKey(expected)||v.pdfContentHash!==hash||!/^[a-f0-9]{64}$/.test(hash)||!number(v.fetchedAt)||v.fetchedAt<=0||v.fetchedAt>8.64e15||!(v.productVersion===null||typeof v.productVersion==='string'&&v.productVersion.length<=64)||!(v.libraryVersion===null||number(v.libraryVersion))||!Array.isArray(v.annotations)||v.annotations.length>1000||typeof v.truncated!=='boolean')throw Error('批注缓存版本、来源或PDF摘要不匹配。');
+ const keys=new Set<string>();for(const a of v.annotations){if(!a?.identity||sourceKey(annotationSource(a.identity.source))!==sourceKey(expected)||!key(a.identity.annotationKey)||keys.has(a.identity.annotationKey)||!number(a.version)||typeof a.annotationType!=='string'||a.annotationType.length<1||a.annotationType.length>32||!/^#[a-f0-9]{6}$/.test(a.color)||typeof a.text!=='string'||new TextEncoder().encode(a.text).length>65536||typeof a.comment!=='string'||new TextEncoder().encode(a.comment).length>65536||typeof a.pageLabel!=='string'||a.pageLabel.length>200||!(a.unsupportedReason===null||typeof a.unsupportedReason==='string'&&a.unsupportedReason.length<=500))throw Error('批注身份、颜色或文字响应无效。');if(a.position===null&&a.unsupportedReason===null)throw Error('批注位置缺失但未说明原因。');keys.add(a.identity.annotationKey);
+  if(a.position!==null){const p=a.position;if(!p||!supportedAnnotation(a.annotationType)||!number(p.pageIndex)||p.pageIndex>=2000||!rectangles(p.rects)||!p.rects.length||!rectangles(p.nextPageRects)||p.pageIndex>=1999&&p.nextPageRects.length)throw Error('批注坐标响应无效。');}
+ }
+ if(new TextEncoder().encode(JSON.stringify(v)).length>8*1024*1024)throw Error('批注缓存超过8MiB。');return v;
+}
+export function filterAnnotations(items:readonly ZoteroAnnotation[],query:string,color:string){const q=query.normalize('NFKC').toLocaleLowerCase();return items.filter(a=>(!color||a.color===color)&&(!q||[a.text,a.comment,a.pageLabel,a.annotationType,a.identity.annotationKey].some(text=>text.normalize('NFKC').toLocaleLowerCase().includes(q))));}
+export const annotationNames:Record<string,string>={highlight:'高亮',underline:'下划线',note:'文字便签',text:'文本批注',image:'区域批注',ink:'Zotero笔迹（暂不绘制）'};

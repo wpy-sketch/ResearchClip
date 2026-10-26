@@ -86,3 +86,5 @@ pub mod pdf;
 pub mod pdf_excerpts;
 
 pub mod zotero;
+
+pub mod zotero_annotations;

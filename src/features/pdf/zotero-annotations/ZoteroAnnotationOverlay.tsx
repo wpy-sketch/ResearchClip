@@ -1,0 +1,13 @@
+import {useEffect,useState} from 'react';
+import type {PdfViewerSession} from '../PdfViewerSession';
+import {AnnotationCoordinateAdapter,type AnnotationRegion,type AnnotationViewport} from './AnnotationCoordinateAdapter';
+import {annotationKey,filterAnnotations,type ZoteroAnnotation} from './model';
+export function ZoteroAnnotationOverlay({session,index,rotation}:{session:PdfViewerSession;index:number;rotation:number}){
+ const state=session.annotations.state(),[geometry,setGeometry]=useState<{index:number;rotation:number;viewport:AnnotationViewport|null;error:string}|null>(null);
+ useEffect(()=>{let active=true;void session.document?.getPage(index+1).then(page=>{if(active)setGeometry({index,rotation,viewport:page.getViewport({scale:1,rotation:(page.rotate+rotation)%360}),error:''});}).catch(()=>{if(active)setGeometry({index,rotation,viewport:null,error:'Zotero批注页面变换读取失败。'});});return()=>{active=false;};},[session,index,rotation]);
+ const current=geometry?.index===index&&geometry.rotation===rotation?geometry:null,viewport=current?.viewport,error=current?.error??'';
+ if(!state.visible||!state.cache)return null;
+ const shapes:{a:ZoteroAnnotation;region:AnnotationRegion;key:string}[]=[];let limited=false,geometryError=error;
+ if(viewport)try{for(const a of filterAnnotations(state.cache.annotations,state.query,state.color)){const regions=AnnotationCoordinateAdapter.regions(a,index,viewport);if(shapes.length+regions.length>2000){limited=true;break;}regions.forEach((region,i)=>shapes.push({a,region,key:annotationKey(a)+':'+i}));}}catch{geometryError='部分Zotero批注坐标无法显示，原始缓存保留。';}
+ return <div className="zotero-annotation-overlay" data-annotation-provider="zotero" aria-label="Zotero只读批注图层">{shapes.map(({a,region,key})=>region.line?<svg key={key} data-zotero-annotation-key={a.identity.annotationKey} className="zotero-annotation-line" viewBox="0 0 100 100" preserveAspectRatio="none"><line x1={region.line.x1*100} y1={region.line.y1*100} x2={region.line.x2*100} y2={region.line.y2*100} stroke={a.color} strokeWidth=".3" vectorEffect="non-scaling-stroke" style={{strokeWidth:2}}/></svg>:<div key={key} data-zotero-annotation-key={a.identity.annotationKey} data-zotero-type={a.annotationType} className={'zotero-annotation-region zotero-'+a.annotationType} style={{left:region.box.x*100+'%',top:region.box.y*100+'%',width:region.box.width*100+'%',height:region.box.height*100+'%',borderColor:a.color,backgroundColor:a.annotationType==='highlight'?a.color:'transparent'}}/>)}{(limited||geometryError)&&<span className="zotero-overlay-warning" role="status">{geometryError||'本页图层达到2000区域上限，请在批注列表定位。'}</span>}</div>;
+}

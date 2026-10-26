@@ -176,6 +176,8 @@
     "allow-get-pdf-excerpt",
     "allow-resolve-pdf-location",
     "allow-create-pdf-text-location",
-    "allow-pdf-selection-notes"
+    "allow-pdf-selection-notes",
+    "allow-cached-zotero-annotations",
+    "allow-refresh-zotero-annotations"
   ]
 }
