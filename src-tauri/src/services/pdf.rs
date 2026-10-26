@@ -66,6 +66,15 @@ fn readonly(path: &Path) -> Result<File> {
     Ok(options.open(path)?)
 }
 impl PdfDocumentService {
+    pub fn verify_managed(path: &Path, record: &PdfRecord) -> Result<()> {
+        let job = PdfJob {
+            cancelled: AtomicBool::new(false),
+            loaded: AtomicU64::new(0),
+            total: AtomicU64::new(0),
+            file: Mutex::new(None),
+        };
+        verified_copy(path, &record.content_hash, record.byte_size, &job).map(drop)
+    }
     pub fn begin(&self, id: &str) -> Result<Arc<PdfJob>> {
         if !valid_token(id) {
             return Err(StorageError::Invalid("PDF加载标识无效。"));

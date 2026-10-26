@@ -104,7 +104,51 @@ pub async fn resolve_pdf_location(
         if record.content_hash != location.content_hash {
             return Err(StorageError::Conflict);
         }
-        Ok(serde_json::json!({"documentId":attachment.document_id,"location":location}))
+        PdfDocumentService::verify_managed(&s.pdf_file_path(&record.document_id)?,&record)?;
+        Ok(serde_json::json!({"documentId":attachment.document_id,"title":record.title,"zotero":s.pdf_zotero_sources(&record.document_id)?,"location":location}))
+    })
+    .await
+}
+
+#[tauri::command]
+pub async fn create_pdf_text_location(
+    window: WebviewWindow,
+    service: State<'_, Arc<LibraryService>>,
+    pdf: State<'_, Arc<PdfDocumentService>>,
+    token: String,
+    location: crate::domain::research::PdfLocation,
+) -> Result<String, CommandError> {
+    let native = Arc::clone(pdf.inner());
+    run(window, Arc::clone(service.inner()), move |s| {
+        let record = native.record(&token)?;
+        if record.attachment_id != location.attachment_id
+            || record.content_hash != location.content_hash
+        {
+            return Err(StorageError::Conflict);
+        }
+        PdfDocumentService::verify_managed(&s.pdf_file_path(&record.document_id)?, &record)?;
+        s.create_pdf_text_location(&location)
+    })
+    .await
+}
+
+#[tauri::command]
+pub async fn pdf_selection_notes(
+    window: WebviewWindow,
+    service: State<'_, Arc<LibraryService>>,
+    pdf: State<'_, Arc<PdfDocumentService>>,
+    token: String,
+    location: crate::domain::research::PdfLocation,
+) -> Result<crate::storage::pdf_notes::PdfNoteResults, CommandError> {
+    let native = Arc::clone(pdf.inner());
+    run(window, Arc::clone(service.inner()), move |s| {
+        let record = native.record(&token)?;
+        if record.attachment_id != location.attachment_id
+            || record.content_hash != location.content_hash
+        {
+            return Err(StorageError::Conflict);
+        }
+        s.pdf_note_results(&location)
     })
     .await
 }

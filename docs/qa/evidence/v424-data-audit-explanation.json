@@ -1,0 +1,17 @@
+{
+  "originalAudit": "FAIL",
+  "originalFiles": 26,
+  "originalChangedOrMissing": 0,
+  "addedFiles": [
+    {
+      "relative": "ApplicationData/backups\\schema-16-b8a8c6c32e69f13dce661d2a041bbc7e.sqlite3",
+      "sha256": "EC7E3B976BAD56F8F0B8C676E0D342492A48C2E7B3495EB28B5783408302F1C3",
+      "createdAtLocal": "2026-10-26T15:13:29+08:00"
+    }
+  ],
+  "lastNativeFinishedLocal": "2026-10-26T15:11:20+08:00",
+  "installerFinishedLocal": "2026-10-26T15:12:59+08:00",
+  "humanConfirmation": "User explicitly confirmed manually starting ResearchClip at that time in this chat. The added pre-upgrade snapshot is consistent with that startup; no original file was overwritten.",
+  "handling": "Original FAIL and snapshot retained. No deletion, restore or reset. Do not claim unchanged throughout the full interval.",
+  "priorV422Unresolved": "Earlier two added files still unattributed; this confirmation applies only to the v424 snapshot."
+}

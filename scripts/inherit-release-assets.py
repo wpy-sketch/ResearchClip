@@ -17,7 +17,7 @@ def records(old,previous,previous_version="4.1.2"):
  assert len({(x['tag'],x['name']) for x in result})==len(result)
  return result
 def main():
- p=argparse.ArgumentParser();p.add_argument('version',nargs='?',default='4.1.3',choices=['4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3']);args=p.parse_args();version=args.version;short=version.replace('.','');previous,count,old_count,release_count={'4.1.3':('4.1.2',237,226,32),'4.1.4':('4.1.3',243,463,33),'4.1.5':('4.1.4',249,706,34),'4.1.6':('4.1.5',255,955,35),'4.1.7':('4.1.6',261,1210,36),'4.1.8':('4.1.7',267,1471,37),'4.1.9':('4.1.8',273,1738,38),'4.2.0':('4.1.9',279,2011,39),'4.2.1':('4.2.0',285,2290,40),'4.2.2':('4.2.1',291,2575,41),'4.2.3':('4.2.2',297,2866,42)}[version];prev=previous.replace('.','')
+ p=argparse.ArgumentParser();p.add_argument('version',nargs='?',default='4.1.3',choices=['4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4']);args=p.parse_args();version=args.version;short=version.replace('.','');previous,count,old_count,release_count={'4.1.3':('4.1.2',237,226,32),'4.1.4':('4.1.3',243,463,33),'4.1.5':('4.1.4',249,706,34),'4.1.6':('4.1.5',255,955,35),'4.1.7':('4.1.6',261,1210,36),'4.1.8':('4.1.7',267,1471,37),'4.1.9':('4.1.8',273,1738,38),'4.2.0':('4.1.9',279,2011,39),'4.2.1':('4.2.0',285,2290,40),'4.2.2':('4.2.1',291,2575,41),'4.2.3':('4.2.2',297,2866,42),'4.2.4':('4.2.3',303,3163,43)}[version];prev=previous.replace('.','')
  prior=ROOT/f'artifacts/publish-v{prev}';publication=json.loads((prior/'publication.json').read_text(encoding='utf-8'));manifest=json.loads((prior/'manifest.json').read_text(encoding='utf-8'))
  assert publication.get('published') and len(publication.get('anonymousVerified',[]))==len(manifest['assets'])==count and publication.get('historyAfter',{}).get('result')=='PASS','Finish previous publication first'
  credential=subprocess.run(['git','-c','credential.interactive=false','credential','fill'],input='protocol=https\nhost=github.com\n\n',text=True,capture_output=True,check=True).stdout
@@ -50,7 +50,7 @@ def main():
  with zipfile.ZipFile(metadata) as archive:
   assert archive.testzip() is None
   for name in ('SOURCE.txt','SHA256SUMS.txt'):assert hashlib.sha256(archive.read('v'+previous+'/'+name)).hexdigest()==expected[name]['sha256']
- older=json.loads((prior/('V'+prev+'-HISTORY-INVENTORY.json' if version in ('4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3') else 'HISTORY-CONTENTS.json')).read_text(encoding='utf-8'))['assets'];assert len(older)==old_count
+ older=json.loads((prior/('V'+prev+'-HISTORY-INVENTORY.json' if version in ('4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4') else 'HISTORY-CONTENTS.json')).read_text(encoding='utf-8'))['assets'];assert len(older)==old_count
  coverage=records(older,manifest['assets'],previous);assert len(coverage)==old_count+count
  for item in coverage:
   r=item['representation']

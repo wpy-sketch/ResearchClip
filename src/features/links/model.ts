@@ -4,7 +4,7 @@ import {math} from 'micromark-extension-math';
 import {mathFromMarkdown} from 'mdast-util-math';
 export type LinkKind='document'|'screenshot';
 export interface Target {id:string;kind:LinkKind;anchorId?:string}
-export interface IndexedLink {targetId:string;linkType:LinkKind;start:number;end:number;label:string;anchorId?:string}
+export interface IndexedLink {targetId:string;linkType:LinkKind|'pdf-location';start:number;end:number;label:string;anchorId?:string}
 export function internalTarget(url:string):Target|null {const m=/^researchclip:\/\/(document|screenshot)\/([a-f0-9]{32})(?:\/anchor\/([a-f0-9]{32}))?$/.exec(url);return m&&(!m[3]||m[1]==='screenshot')?{kind:m[1] as LinkKind,id:m[2],...(m[3]?{anchorId:m[3]}:{})}:null;}
 export const targetUrl=(t:Target)=>`researchclip://${t.kind}/${t.id}${t.anchorId!==undefined&&t.anchorId!==null?`/anchor/${t.anchorId}`:''}`;
 export const targetKey=(t:Target)=>`${t.kind}:${t.id}`;
@@ -13,8 +13,8 @@ const parse=(text:string)=>fromMarkdown(text,{extensions:[math()],mdastExtension
 export function parseLinks(markdown:string):IndexedLink[]{
  const links:IndexedLink[]=[],stack:ReturnType<typeof parse>['children']= [...parse(markdown).children];
  while(stack.length){const node=stack.pop()!;
-  if(node.type==='link'&&node.position){const t=internalTarget(node.url),start=node.position.start.offset,end=node.position.end.offset;
-   if(t&&start!==undefined&&end!==undefined&&markdown.slice(start,end).endsWith(`](${targetUrl(t)})`))links.push({targetId:t.id,linkType:t.kind,...(t.anchorId?{anchorId:t.anchorId}:{}),start,end,label:Array.from(toString(node).replace(/\p{Cc}/gu,' ')).slice(0,200).join('')});
+  if(node.type==='link'&&node.position){const pdf=/^researchclip:\/\/pdf-location\/([a-f0-9]{32})$/.exec(node.url),t=internalTarget(node.url)??(pdf?{kind:'pdf-location' as const,id:pdf[1],anchorId:undefined}:null),start=node.position.start.offset,end=node.position.end.offset;
+   if(t&&start!==undefined&&end!==undefined&&markdown.slice(start,end).endsWith(`](researchclip://${t.kind}/${t.id}${t.anchorId?`/anchor/${t.anchorId}`:''})`))links.push({targetId:t.id,linkType:t.kind,...(t.anchorId?{anchorId:t.anchorId}:{}),start,end,label:Array.from(toString(node).replace(/\p{Cc}/gu,' ')).slice(0,200).join('')});
    if(links.length>5000)throw Error('每篇文档最多索引5000条内部引用，已有索引保留。');
   }
   if('children'in node)stack.push(...node.children as ReturnType<typeof parse>['children']);

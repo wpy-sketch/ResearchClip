@@ -1,6 +1,7 @@
 import {describe,it,expect,vi} from 'vitest';
 import {commandNames,commandResources,parseCommand,parseResolved,type ApplicationCommand,type CommandRequest,type ResourceKey} from './contracts';
 import {CommandFailure,ErrorReporter} from './errors';
+it('preserves a typed PDF source mismatch message without recording raw exception paths',()=>{const reporter=new ErrorReporter();reporter.report(new CommandFailure('PDF_SOURCE_MISMATCH'));expect(reporter.getSnapshot()[0]).toMatchObject({code:'PDF_SOURCE_MISMATCH',message:'PDF来源文件不可用或版本不一致，未跳转；请保留笔记并核对原件。'});});
 import {PermissionService} from './permissions';
 import {ResourceResolver,type NativeCall} from './resolver';
 import {TaskManager} from './tasks';

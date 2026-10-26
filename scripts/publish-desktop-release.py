@@ -8,13 +8,13 @@ buildroot=(root/a.target_dir).resolve();assert buildroot.is_relative_to((root/'s
 if a.installer_run_id:
     import re
     assert re.fullmatch('v'+a.version.replace('.','')+'-[a-z0-9-]{1,48}',a.installer_run_id),'Unsafe installer evidence ID'
-assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3')
-if a.version in ('4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):
-    previous=json.loads((root/('artifacts/publish-v'+{'4.1.3':'412','4.1.4':'413','4.1.5':'414','4.1.6':'415','4.1.7':'416','4.1.8':'417','4.1.9':'418','4.2.0':'419','4.2.1':'420','4.2.2':'421','4.2.3':'422'}[a.version]+'/publication.json')).read_text(encoding='utf-8'))
-    assert previous.get('published') and len(previous.get('anonymousVerified',[]))=={'4.1.3':237,'4.1.4':243,'4.1.5':249,'4.1.6':255,'4.1.7':261,'4.1.8':267,'4.1.9':273,'4.2.0':279,'4.2.1':285,'4.2.2':291,'4.2.3':297}[a.version] and previous.get('historyAfter',{}).get('result')=='PASS','Complete the previous verified publication first'
+assert a.version in ('3.1.4','3.1.5','3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4')
+if a.version in ('4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):
+    previous=json.loads((root/('artifacts/publish-v'+{'4.1.3':'412','4.1.4':'413','4.1.5':'414','4.1.6':'415','4.1.7':'416','4.1.8':'417','4.1.9':'418','4.2.0':'419','4.2.1':'420','4.2.2':'421','4.2.3':'422','4.2.4':'423'}[a.version]+'/publication.json')).read_text(encoding='utf-8'))
+    assert previous.get('published') and len(previous.get('anonymousVerified',[]))=={'4.1.3':237,'4.1.4':243,'4.1.5':249,'4.1.6':255,'4.1.7':261,'4.1.8':267,'4.1.9':273,'4.2.0':279,'4.2.1':285,'4.2.2':291,'4.2.3':297,'4.2.4':303}[a.version] and previous.get('historyAfter',{}).get('result')=='PASS','Complete the previous verified publication first'
 out=root/'artifacts'/('publish-v'+a.version.replace('.',''));out.mkdir(exist_ok=True)
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
-assert not a.defer_inherited or a.version in ('4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3')
+assert not a.defer_inherited or a.version in ('4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4')
 workers=int(os.environ.get('RESEARCHCLIP_RELEASE_WORKERS','4'));assert 1<=workers<=8
 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
 if a.prepare:
@@ -34,21 +34,21 @@ if a.prepare:
             assert Path(x['name']).name==x['name'] and not (out/x['name']).exists()
             f=folder/x['name'];assert f.stat().st_size==x['size'] and digest(f)==x['sha256']
             companions.append((f,x['name']))
-    if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):
+    if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):
         folder=root/('artifacts/companions-v'+a.version.replace('.',''));cm=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
-        assert cm['version']==a.version and cm['history']['sourceAssets']=={'4.1.2':226,'4.1.3':463,'4.1.4':706,'4.1.5':955,'4.1.6':1210,'4.1.7':1471,'4.1.8':1738,'4.1.9':2011,'4.2.0':2290,'4.2.1':2575,'4.2.2':2866,'4.2.3':3163}[a.version] and cm['history']['releases']=={'4.1.2':31,'4.1.3':32,'4.1.4':33,'4.1.5':34,'4.1.6':35,'4.1.7':36,'4.1.8':37,'4.1.9':38,'4.2.0':39,'4.2.1':40,'4.2.2':41,'4.2.3':42}[a.version]
+        assert cm['version']==a.version and cm['history']['sourceAssets']=={'4.1.2':226,'4.1.3':463,'4.1.4':706,'4.1.5':955,'4.1.6':1210,'4.1.7':1471,'4.1.8':1738,'4.1.9':2011,'4.2.0':2290,'4.2.1':2575,'4.2.2':2866,'4.2.3':3163,'4.2.4':3466}[a.version] and cm['history']['releases']=={'4.1.2':31,'4.1.3':32,'4.1.4':33,'4.1.5':34,'4.1.6':35,'4.1.7':36,'4.1.8':37,'4.1.9':38,'4.2.0':39,'4.2.1':40,'4.2.2':41,'4.2.3':42,'4.2.4':43}[a.version]
         for x in cm['assets']:
             assert Path(x['name']).name==x['name'];source=folder/x['name']
             assert source.stat().st_size==x['size'] and digest(source)==x['sha256']
             companions.append((source,x['name']))
-    if a.version in ('4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):
+    if a.version in ('4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):
         qa_id=a.installer_run_id or ('v'+a.version.replace('.','')+'-final')
         qa=json.loads((root/f'artifacts/installer-{qa_id}/report.json').read_text(encoding='utf-8-sig'))
         assert qa['result']=='passed' and qa['version']==a.version and not qa['installationStillPresent']
         assert digest(buildroot/f'release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe')==qa['installerSha256'].lower(),'Installer differs from tested payload'
         import zipfile
         guide=out/f'ResearchClip-Guide-v{a.version}.zip'
-        if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):
+        if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):
             from release_asset_io import write_guide
             write_guide(root,guide,a.version)
         else:
@@ -60,21 +60,21 @@ if a.prepare:
                 assert archive.testzip() is None
         assert (root/f'docs/qa/RELEASE-{a.version}.md').is_file()
     for src,name in [(buildroot/'release/researchclip.exe',f'ResearchClip-v{a.version}-windows-x64.exe'),(buildroot/f'release/bundle/nsis/ResearchClip_{a.version}_x64-setup.exe',f'ResearchClip_{a.version}_x64-setup.exe'),*companions]:
-        if a.version in ('4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3') and name==f'ResearchClip-v{a.version}-windows-x64.exe':
+        if a.version in ('4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4') and name==f'ResearchClip-v{a.version}-windows-x64.exe':
             import zipfile
             with zipfile.ZipFile(out/name.replace('.exe','.zip'),'x',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as archive:
                 archive.write(src,'researchclip.exe')
-                if a.version in ('4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):archive.write(root/'docs/licenses/flexlayout-react-MIT.txt','licenses/flexlayout-react-MIT.txt')
-                if a.version in ('4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):archive.write(root/'docs/licenses/remark-gfm-NOTICES.txt','licenses/remark-gfm-NOTICES.txt')
-                if a.version in ('4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):archive.write(root/'docs/licenses/lowlight-NOTICES.txt','licenses/lowlight-NOTICES.txt')
-                if a.version in ('4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):archive.write(root/'docs/licenses/pdfjs-NOTICES.txt','licenses/pdfjs-NOTICES.txt')
+                if a.version in ('4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):archive.write(root/'docs/licenses/flexlayout-react-MIT.txt','licenses/flexlayout-react-MIT.txt')
+                if a.version in ('4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):archive.write(root/'docs/licenses/remark-gfm-NOTICES.txt','licenses/remark-gfm-NOTICES.txt')
+                if a.version in ('4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):archive.write(root/'docs/licenses/lowlight-NOTICES.txt','licenses/lowlight-NOTICES.txt')
+                if a.version in ('4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):archive.write(root/'docs/licenses/pdfjs-NOTICES.txt','licenses/pdfjs-NOTICES.txt')
             continue
         dest=out/name
         assert not dest.exists(),'Refusing existing release artifact'
-        if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3') and src.parent.name=='companions-v'+a.version.replace('.',''):os.link(src,dest)
+        if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4') and src.parent.name=='companions-v'+a.version.replace('.',''):os.link(src,dest)
         else:shutil.copyfile(src,dest)
     assets=[{'name':f.name,'size':f.stat().st_size,'sha256':digest(f)} for f in sorted(out.iterdir()) if f.is_file()]
-    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n'+('All 3163 attachments from 42 prior releases through v4.2.2 are included byte-for-byte; see RELEASE-HISTORY-v4.2.3.txt and V423-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.3' else 'All 2866 attachments from 41 prior releases through v4.2.1 are included byte-for-byte; see RELEASE-HISTORY-v4.2.2.txt and V422-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.2' else 'All 2575 attachments from 40 prior releases through v4.2.0 are included byte-for-byte; see RELEASE-HISTORY-v4.2.1.txt and V421-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.1' else 'All 2290 attachments from 39 prior releases through v4.1.9 are included byte-for-byte; see RELEASE-HISTORY-v4.2.0.txt and V420-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.0' else 'All 2011 attachments from 38 prior releases through v4.1.8 are included byte-for-byte; see RELEASE-HISTORY-v4.1.9.txt and V419-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.9' else 'All 1738 attachments from 37 prior releases through v4.1.7 are included byte-for-byte; see RELEASE-HISTORY-v4.1.8.txt and V418-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.8' else 'All 1471 attachments from 36 prior releases through v4.1.6 are included byte-for-byte; see RELEASE-HISTORY-v4.1.7.txt and V417-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.7' else 'All 1210 attachments from 35 prior releases through v4.1.5 are included byte-for-byte; see RELEASE-HISTORY-v4.1.6.txt and V416-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.6' else 'All 955 attachments from 34 prior releases through v4.1.4 are included byte-for-byte; see RELEASE-HISTORY-v4.1.5.txt and V415-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.5' else 'All 706 attachments from 33 prior releases through v4.1.3 are included byte-for-byte; see RELEASE-HISTORY-v4.1.4.txt and V414-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.4' else 'All 463 attachments from 32 prior releases through v4.1.2 are included byte-for-byte; see RELEASE-HISTORY-v4.1.3.txt and V413-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.3' else 'All 226 attachments from 31 previous releases through v4.1.1 are included in verified history volumes; see HISTORY-README.txt and HISTORY-TRANSPORT.json. Optional companion installers are also attached directly. No user data or credentials included.\n' if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3') else 'Companions: exact WebClipper v1.0.2, MathOCR Setup v1.0.4 and Qwen manifest from v3.1.3; offline model volumes remain on v3.1.2. See MODEL-RESOURCES.txt and OFFLINE-RESOURCE-INDEX.json.\nGuide includes fictional feature exercises and local offline images; see the versioned user guide. No user data or credentials included.\n' if companions else ''),encoding='utf-8')
+    (out/'SOURCE.txt').write_text(f'ResearchClip v{a.version}\nRepository: https://github.com/wpy-sketch/ResearchClip\nCommit: {commit}\n'+('All 3466 attachments from 43 prior releases through v4.2.3 are included byte-for-byte; see RELEASE-HISTORY-v4.2.4.txt and V424-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.4' else 'All 3163 attachments from 42 prior releases through v4.2.2 are included byte-for-byte; see RELEASE-HISTORY-v4.2.3.txt and V423-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.3' else 'All 2866 attachments from 41 prior releases through v4.2.1 are included byte-for-byte; see RELEASE-HISTORY-v4.2.2.txt and V422-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.2' else 'All 2575 attachments from 40 prior releases through v4.2.0 are included byte-for-byte; see RELEASE-HISTORY-v4.2.1.txt and V421-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.1' else 'All 2290 attachments from 39 prior releases through v4.1.9 are included byte-for-byte; see RELEASE-HISTORY-v4.2.0.txt and V420-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.2.0' else 'All 2011 attachments from 38 prior releases through v4.1.8 are included byte-for-byte; see RELEASE-HISTORY-v4.1.9.txt and V419-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.9' else 'All 1738 attachments from 37 prior releases through v4.1.7 are included byte-for-byte; see RELEASE-HISTORY-v4.1.8.txt and V418-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.8' else 'All 1471 attachments from 36 prior releases through v4.1.6 are included byte-for-byte; see RELEASE-HISTORY-v4.1.7.txt and V417-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.7' else 'All 1210 attachments from 35 prior releases through v4.1.5 are included byte-for-byte; see RELEASE-HISTORY-v4.1.6.txt and V416-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.6' else 'All 955 attachments from 34 prior releases through v4.1.4 are included byte-for-byte; see RELEASE-HISTORY-v4.1.5.txt and V415-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.5' else 'All 706 attachments from 33 prior releases through v4.1.3 are included byte-for-byte; see RELEASE-HISTORY-v4.1.4.txt and V414-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.4' else 'All 463 attachments from 32 prior releases through v4.1.2 are included byte-for-byte; see RELEASE-HISTORY-v4.1.3.txt and V413-HISTORY-INVENTORY.json. No user data or credentials included.\n' if a.version=='4.1.3' else 'All 226 attachments from 31 previous releases through v4.1.1 are included in verified history volumes; see HISTORY-README.txt and HISTORY-TRANSPORT.json. Optional companion installers are also attached directly. No user data or credentials included.\n' if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4') else 'Companions: exact WebClipper v1.0.2, MathOCR Setup v1.0.4 and Qwen manifest from v3.1.3; offline model volumes remain on v3.1.2. See MODEL-RESOURCES.txt and OFFLINE-RESOURCE-INDEX.json.\nGuide includes fictional feature exercises and local offline images; see the versioned user guide. No user data or credentials included.\n' if companions else ''),encoding='utf-8')
     f=out/'SOURCE.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
     (out/'SHA256SUMS.txt').write_text(''.join(x['sha256']+'  '+x['name']+'\n' for x in assets),encoding='utf-8')
     f=out/'SHA256SUMS.txt';assets.append({'name':f.name,'size':f.stat().st_size,'sha256':digest(f)})
@@ -105,9 +105,9 @@ assert req('https://api.github.com/user')['login']=='wpy-sketch'
 assert req(base+'/git/ref/tags/v'+a.version)['object']['sha']==commit
 releases=req(base+'/releases?per_page=100');existing=next((r for r in releases if r['tag_name']=='v'+a.version),None)
 def check_history(releases):
-    if a.version not in ('3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):return None
+    if a.version not in ('3.1.6','3.1.7','3.1.8','3.1.9','4.0.0','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):return None
     before=json.loads((root/f'docs/qa/evidence/v{a.version.replace(".","")}-prior-releases.json').read_text(encoding='utf-8'))
-    if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):assert {x['id'] for x in releases if x['tag_name']!='v'+a.version}=={x['id'] for x in before},'New historical release appeared; refresh the archive before publication'
+    if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):assert {x['id'] for x in releases if x['tag_name']!='v'+a.version}=={x['id'] for x in before},'New historical release appeared; refresh the archive before publication'
     for old in before:
         current=next((x for x in releases if x['id']==old['id']),None)
         assert current and current['tag_name']==old['tag'] and current['draft']==old['draft'] and current['prerelease']==old['prerelease'] and current['target_commitish']==old['commit'],'Historical release changed'
@@ -120,7 +120,7 @@ if prior:existing=req(base+'/releases/'+str(prior['id']));assert existing['tag_n
 if existing:assert prior and prior['id']==existing['id'] and prior['commit']==commit,'Unrecognized existing release; refusing overwrite'
 body=(root/f'docs/RELEASE-NOTES-{a.version}.md').read_text(encoding='utf-8').replace('(qa/','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/qa/').replace('(USER_GUIDE.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/USER_GUIDE.md)').replace('(INTERNAL-LINKS.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/INTERNAL-LINKS.md)')
 body=body.replace('(SEMANTIC-SEARCH.md)','(https://github.com/wpy-sketch/ResearchClip/blob/v'+a.version+'/docs/SEMANTIC-SEARCH.md)')
-if a.version in ('4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):
+if a.version in ('4.1.0','4.1.1','4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):
     import re,posixpath
     def absolute_doc_link(match):
         target=match.group(1)
@@ -133,7 +133,7 @@ state=prior or {'version':a.version,'commit':commit,'id':r['id'],'url':r['html_u
 if history:state['historyBefore']=history
 def save():(out/'publication.json').write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding='utf-8')
 save()
-if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):
+if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):
     from release_asset_io import read_assets,transfers,verified,interrupted_upload
     current_assets=read_assets(req,base,r['id'])
     for asset in current_assets:
@@ -148,9 +148,9 @@ if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9'
         return req(r['upload_url'].split('{')[0]+'?'+urllib.parse.urlencode({'name':x['name']}),'POST',binary=f.read_bytes())
     transfer_expected=m['assets']
     if a.defer_inherited:
-        previous_manifest=json.loads((root/('artifacts/publish-v'+{'4.1.3':'412','4.1.4':'413','4.1.5':'414','4.1.6':'415','4.1.7':'416','4.1.8':'417','4.1.9':'418','4.2.0':'419','4.2.1':'420','4.2.2':'421','4.2.3':'422'}[a.version]+'/manifest.json')).read_text(encoding='utf-8'))
+        previous_manifest=json.loads((root/('artifacts/publish-v'+{'4.1.3':'412','4.1.4':'413','4.1.5':'414','4.1.6':'415','4.1.7':'416','4.1.8':'417','4.1.9':'418','4.2.0':'419','4.2.1':'420','4.2.2':'421','4.2.3':'422','4.2.4':'423'}[a.version]+'/manifest.json')).read_text(encoding='utf-8'))
         inherited={x['name'] for x in previous_manifest['assets'] if x['name'] not in ('SOURCE.txt','SHA256SUMS.txt')}
-        assert len(inherited)=={'4.1.3':235,'4.1.4':241,'4.1.5':247,'4.1.6':253,'4.1.7':259,'4.1.8':265,'4.1.9':271,'4.2.0':277,'4.2.1':283,'4.2.2':289,'4.2.3':295}[a.version]
+        assert len(inherited)=={'4.1.3':235,'4.1.4':241,'4.1.5':247,'4.1.6':253,'4.1.7':259,'4.1.8':265,'4.1.9':271,'4.2.0':277,'4.2.1':283,'4.2.2':289,'4.2.3':295,'4.2.4':301}[a.version]
         for asset in current_assets:verified(next(x for x in m['assets'] if x['name']==asset['name']),asset)
         transfer_expected=[x for x in m['assets'] if x['name'] not in inherited];assert len(transfer_expected)==8
         current_assets=[x for x in current_assets if x['name'] not in inherited]
@@ -184,13 +184,13 @@ state.pop('deferredRaw',None);state.pop('awaitingInheritance',None)
 if r['draft']:r=req(base+'/releases/'+str(r['id']),'PATCH',{'tag_name':'v'+a.version,'target_commitish':commit,'draft':False,'prerelease':False,'make_latest':'true'})
 assert not r['draft'] and not r['prerelease'];state['published']=True;state['url']=r['html_url'];assert r['tag_name']=='v'+a.version;save()
 release=req(base+'/releases/'+str(r['id']))
-if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):release['assets']=read_assets(req,base,r['id'])
+if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):release['assets']=read_assets(req,base,r['id'])
 assert len(release['assets'])==len(m['assets'])
 state['assets']=[{'name':asset['name'],'size':asset['size'],'digest':asset['digest'],'url':asset['browser_download_url']} for asset in release['assets']];save()
 if a.defer_anonymous:
     print('Published; actual anonymous CI verification and final history audit still required',flush=True);raise SystemExit(0)
 public=urllib.request.build_opener(urllib.request.ProxyHandler({'https':os.environ['RESEARCHCLIP_RELEASE_PROXY']} if os.environ.get('RESEARCHCLIP_RELEASE_PROXY') else {}),urllib.request.HTTPSHandler(context=ssl.create_default_context()))
-if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3'):
+if a.version in ('4.1.2','4.1.3','4.1.4','4.1.5','4.1.6','4.1.7','4.1.8','4.1.9','4.2.0','4.2.1','4.2.2','4.2.3','4.2.4'):
     from concurrent.futures import ThreadPoolExecutor,as_completed
     verified_names=set(state.get('anonymousVerified',[]));assert verified_names<={x['name'] for x in m['assets']}
     def anonymous(x):

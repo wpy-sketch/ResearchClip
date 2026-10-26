@@ -105,7 +105,7 @@ pub fn check_target(kind: &str, id: &str) -> Result<(), StorageError> {
     }
     Ok(())
 }
-fn read_source(path: &Path) -> Result<LinkSource, StorageError> {
+pub(super) fn read_source(path: &Path) -> Result<LinkSource, StorageError> {
     super::files::ordinary(path)?;
     let mut bytes = Vec::new();
     std::fs::File::open(path)?
@@ -156,7 +156,11 @@ fn checked_span<'a>(
     start: usize,
     end: usize,
 ) -> Result<&'a str, StorageError> {
-    check_target(&link.link_type, &link.target_id)?;
+    if link.link_type == "pdf-location" {
+        check_id(&link.target_id)?;
+    } else {
+        check_target(&link.link_type, &link.target_id)?;
+    }
     if link.label.chars().count() > 200
         || link.label.chars().any(char::is_control)
         || link.start >= link.end
@@ -239,9 +243,14 @@ impl Storage {
             .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let time = now()?;
         tx.execute("DELETE FROM link_index WHERE source_id=?1", [id])?;
+        tx.execute("DELETE FROM pdf_note_links WHERE source_id=?1", [id])?;
         for (l, line) in rows {
             tx.execute(
-                "INSERT INTO link_index VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9)",
+                if l.link_type == "pdf-location" {
+                    "INSERT INTO pdf_note_links VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9)"
+                } else {
+                    "INSERT INTO link_index VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9)"
+                },
                 params![
                     id,
                     l.target_id,

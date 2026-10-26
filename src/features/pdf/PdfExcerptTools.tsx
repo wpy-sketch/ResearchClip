@@ -1,3 +1,4 @@
+import {currentMarkdownTarget as markdownTarget} from './markdown-target';
 import {useEffect,useRef,useState} from 'react';
 import type {PdfViewerSession} from './PdfViewerSession';
 import {captureExcerpt,readExcerpts,type PdfExcerpt} from './excerpts';
@@ -9,10 +10,6 @@ import {CitationChooser} from '../references/CitationChooser';
 import type {Reference} from '../references/api';
 import {runUserCommand} from '../commands/platform/runtime';
 import {errorMessage} from '../../shared/api/errors';
-function markdownTarget(){
- const active=getActiveDocumentStore(),visible=[...workspaceManager.documents].filter(([id])=>{const row=workspaceManager.sessions.get(id);return row?.workspaceId===workspaceManager.workspaceId&&!row.panel.hidden;});
- return visible.find(([,b])=>b.store===active)?.[1].store??visible[0]?.[1].store??null;
-}
 export function PdfExcerptTools({session}:{session:PdfViewerSession}){
  const s=session.state(),[dpi,setDpi]=useState(216),[phase,setPhase]=useState<'idle'|'rendering'|'saving'|'inserting'>('idle'),[items,setItems]=useState<PdfExcerpt[]>([]),[selected,setSelected]=useState<PdfExcerpt|null>(null),[reference,setReference]=useState<Reference|null>(null),[choose,setChoose]=useState(false),[createFor,setCreateFor]=useState<PdfExcerpt|null>(null),[error,setError]=useState<string|null>(null),[notice,setNotice]=useState('');
  const controller=useRef<AbortController|null>(null),busy=useRef(false),committing=useRef(false),alive=useRef(false);

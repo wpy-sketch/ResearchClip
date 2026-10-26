@@ -76,7 +76,7 @@ execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/003_proj
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/004_ocr_index.sql'], { cwd: root, stdio: 'pipe' });
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/005_annotation_revisions.sql'], { cwd: root, stdio: 'pipe' });
 const currentSchema = Number(read('src-tauri/src/storage/migrations.rs').match(/pub const SCHEMA_VERSION: u32 = (\d+);/)?.[1]);
-assert.equal(currentSchema, 17);
+assert.equal(currentSchema, 18);
 assert.ok(existsSync(join(root,'src-tauri/migrations/013_document_organization.sql')));
 assert.ok(existsSync(join(root, 'src-tauri/migrations/012_research_resources.sql')));
 execFileSync('git', ['diff', '--exit-code', '--', 'src-tauri/migrations/006_sync.sql'], { cwd: root, stdio: 'pipe' });
@@ -89,7 +89,7 @@ assert.ok(read('src-tauri/migrations/002_library.sql').includes('CREATE TABLE pe
 execFileSync('git', ['diff', '--check'], { cwd: root, stdio: 'pipe' });
 for(const command of ['document_directory','create_document_folder','delete_document_folder','organize_document','markdown_history','markdown_revision_text','load_markdown_revision','relink_markdown_document']){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));assert.ok(read('src-tauri/src/lib.rs').includes('commands::document_organization::'+command));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}
 execFileSync('git',['diff','--exit-code','--','src-tauri/migrations/012_research_resources.sql'],{cwd:root,stdio:'pipe'});
-console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: `schema v${currentSchema}; published migrations001–016 unchanged` }, null, 2));
+console.log(JSON.stringify({ result: 'passed', documents: docs.length, localLinks: links, commandPermissions: 'consistent; no fs or window-create grants', storageAndMigrations: `schema v${currentSchema}; published migrations001–017 unchanged` }, null, 2));
 
 for(const command of ["annotation_history","annotation_revision","save_annotation_revision","restore_annotation_revision"]){assert.ok(main.permissions.includes("allow-"+command.replaceAll("_","-")));assert.ok(read("src-tauri/src/lib.rs").includes("commands::revisions::"+command));assert.ok(read("src-tauri/build.rs").includes("\""+command+"\""));}
 
@@ -115,5 +115,5 @@ execFileSync('git',['diff','--exit-code','--','src-tauri/migrations/015_pdf_read
 
 for(const command of ['zotero_setup_info','check_zotero_connection','pending_pdf_requests','dismiss_pdf_request','adopt_pdf_source','preview_pdf_zotero','cancel_zotero_lookup','confirm_pdf_zotero','pdf_zotero_sources']){assert.ok(main.permissions.includes('allow-'+command.replaceAll('_','-')));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));for(const other of [pins,overlay])assert.ok(!other.permissions.includes('allow-'+command.replaceAll('_','-')));}
 
-for(const migration of ['014_citation_keys.sql','015_pdf_reading.sql','016_zotero_scope.sql']){const name=join(root,'src-tauri/migrations',migration);assert.ok(existsSync(name));execFileSync('git',['diff','--exit-code','--',name],{cwd:root,stdio:'pipe'});}
-for(const command of ['save_pdf_excerpt','pdf_excerpts','get_pdf_excerpt','resolve_pdf_location']){assert.ok(main.permissions.includes(permission(command)));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));for(const other of [pins,overlay])assert.ok(!other.permissions.includes(permission(command)));}
+for(const migration of ['014_citation_keys.sql','015_pdf_reading.sql','016_zotero_scope.sql','017_pdf_excerpts.sql']){const name=join(root,'src-tauri/migrations',migration);assert.ok(existsSync(name));execFileSync('git',['diff','--exit-code','--',name],{cwd:root,stdio:'pipe'});}
+for(const command of ['save_pdf_excerpt','pdf_excerpts','get_pdf_excerpt','resolve_pdf_location','create_pdf_text_location','pdf_selection_notes']){assert.ok(main.permissions.includes(permission(command)));assert.ok(read('src-tauri/build.rs').includes('"'+command+'"'));for(const other of [pins,overlay])assert.ok(!other.permissions.includes(permission(command)));}

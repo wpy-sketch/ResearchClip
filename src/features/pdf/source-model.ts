@@ -1,0 +1,10 @@
+import {parseLinks} from '../links/model';
+import {projectMarkdown} from '../document/projection';
+import {displayRectangle,type PageRectangle} from './excerpt-geometry';
+export function imageSources(markdown:string){const projection=projectMarkdown(markdown);if(projection.reason)return [];return projection.blocks.filter(b=>b.image).flatMap(b=>{const ids=[...new Set(parseLinks(markdown.slice(b.from,b.to)).filter(l=>l.linkType==='pdf-location').map(l=>l.targetId))];return ids.length===1?[{from:b.from,to:b.to,locationId:ids[0]}]:[];});}
+export function sourceOffset(rect:PageRectangle,width:number,height:number,rotation:number){const shown=displayRectangle(rect,width,height,rotation);return {offsetY:Math.max(0,shown.y-.04),offsetX:Math.max(0,shown.x-.04)};}
+export function revealDelta(box:{left:number;right:number;top:number;bottom:number},viewport:{left:number;right:number;top:number;bottom:number}){return {x:box.left<viewport.left?box.left-viewport.left:box.right>viewport.right?Math.min(box.left-viewport.left,box.right-viewport.right):0,y:box.top<viewport.top?box.top-viewport.top:box.bottom>viewport.bottom?Math.min(box.top-viewport.top,box.bottom-viewport.bottom):0};}
+export function quoteMarkdown(text:string,title:string,page:number,id:string){if(!/^[a-f0-9]{32}$/.test(id)||!Number.isInteger(page)||page<0||!text.trim()||text.length>8192)throw Error('文字引用无效。');const safe=(v:string)=>v.replace(/[\\`*_{}[\]()#+.!|<>~$]/g,'\\$&');return '> '+text.replace(/\r\n?/g,'\n').split('\n').map(safe).join('\n> ')+'\n\n['+safe(title.replace(/[\r\n]/g,' '))+' · 第'+(page+1)+'页](researchclip://pdf-location/'+id+')\n\n';}
+export function matchingPdfLinks(markdown:string,ids:readonly string[]){const wanted=new Set(ids);return parseLinks(markdown).filter(l=>l.linkType==='pdf-location'&&wanted.has(l.targetId));}
+
+export function singlePdfLocation(markdown:string){const ids=[...new Set(parseLinks(markdown).filter(l=>l.linkType==='pdf-location').map(l=>l.targetId))];return ids.length===1?ids[0]:undefined;}

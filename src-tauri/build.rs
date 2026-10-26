@@ -33,6 +33,8 @@ fn main() {
             "pdf_excerpts",
             "get_pdf_excerpt",
             "resolve_pdf_location",
+            "create_pdf_text_location",
+            "pdf_selection_notes",
             "adopt_pdf_source",
             "pending_pdf_requests",
             "preview_pdf_zotero",

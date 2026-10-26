@@ -12,6 +12,7 @@ mod migrations;
 pub mod ocr;
 pub mod pdf;
 pub mod pdf_excerpts;
+pub mod pdf_notes;
 pub mod projects;
 pub mod references;
 pub mod resources;

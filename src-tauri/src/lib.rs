@@ -259,6 +259,8 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::pdf_excerpts::pdf_excerpts,
             commands::pdf_excerpts::get_pdf_excerpt,
             commands::pdf_excerpts::resolve_pdf_location,
+            commands::pdf_excerpts::create_pdf_text_location,
+            commands::pdf_excerpts::pdf_selection_notes,
             commands::pdf::adopt_pdf_source,
             commands::pdf::pending_pdf_requests,
             commands::zotero::preview_pdf_zotero,

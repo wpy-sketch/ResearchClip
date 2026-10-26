@@ -1,0 +1,4 @@
+import {getActiveDocumentStore} from '../document/store';
+import {workspaceManager} from '../workspace/manager';
+export function currentMarkdownTarget(){const active=getActiveDocumentStore(),visible=[...workspaceManager.documents].filter(([id])=>{const row=workspaceManager.sessions.get(id);return row?.workspaceId===workspaceManager.workspaceId&&!row.panel.hidden;});return visible.find(([,b])=>b.store===active)?.[1].store??visible[0]?.[1].store??null;}
+export async function insertPdfText(text:string,create=false){let target=currentMarkdownTarget();if(!target?.getState().document){if(!create)return false;await getActiveDocumentStore().getState().request('blank');target=currentMarkdownTarget();}if(!target||!target.getState().insertText('\n\n'+text,{atCaret:true}))throw Error(target?.getState().error??'文档尚未准备好，引用已保留。');workspaceManager.focusDocument(target);return true;}

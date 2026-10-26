@@ -1,0 +1,21 @@
+import {useEffect,useRef,useState} from 'react';
+import {invoke} from '@tauri-apps/api/core';
+import type {PdfViewerSession} from './PdfViewerSession';
+import {selectedTextLocation} from './text-selection';
+import {querySourceNotes,openDraftNotes,focusDraftNote,openSavedNote,type SourceNotes} from './source-notes';
+import {quoteMarkdown} from './source-model';
+import {insertPdfText} from './markdown-target';
+import {indexDocumentLinks} from '../links/indexing';
+import {documentDirectory} from '../document/organization-api';
+import {errorMessage} from '../../shared/api/errors';
+export function PdfLinksTools({session}:{session:PdfViewerSession}){
+ const [result,setResult]=useState<SourceNotes|null>(null),[quote,setQuote]=useState(''),[create,setCreate]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');const owner=useRef<AbortController|null>(null);
+ useEffect(()=>()=>owner.current?.abort(),[]);
+ const run=async(work:(signal:AbortSignal)=>Promise<void>)=>{if(owner.current)return;const job=new AbortController();owner.current=job;setBusy(true);setError('');try{await work(job.signal);}catch(e){if(!job.signal.aborted)setError(errorMessage(e,'来源操作未完成，笔记保留。'));}finally{if(owner.current===job){owner.current=null;setBusy(false);}}};
+ const find=()=>run(async signal=>{const next=await querySourceNotes(session);signal.throwIfAborted();setResult(next);setNotice('已列出与当前区域相交的已索引来源。新旧笔记可用“更新笔记索引”刷新；未保存草稿单列。');});
+ const make=()=>run(async signal=>{const location=await selectedTextLocation(session,window.getSelection());signal.throwIfAborted();const id=await invoke<string>('create_pdf_text_location',{token:session.token,location});if(!/^[a-f0-9]{32}$/.test(id))throw Error('文字引用位置ID无效。');const text=quoteMarkdown(location.textAnchor.exact,session.state.getState().record!.title,location.pageIndex,id);signal.throwIfAborted();setQuote(text);setNotice('文字来源已记录。点击插入当前Markdown，或保留后继续阅读。');});
+ const insert=(confirm=false)=>run(async signal=>{signal.throwIfAborted();if(!await insertPdfText(quote,confirm)){setCreate(true);return;}setCreate(false);setNotice('文字引用已在Markdown光标处插入；请保存文档。');});
+ const refresh=()=>run(async signal=>{const directory=await documentDirectory();for(const [i,doc] of directory.documents.entries()){signal.throwIfAborted();if(doc.available)await indexDocumentLinks(doc.id,signal);if(!signal.aborted)setNotice(`更新笔记索引 ${i+1}/${directory.documents.length}`);}signal.throwIfAborted();setNotice('已登记的可用笔记索引更新完成；未保存草稿不写入磁盘索引。');setResult(null);});
+ const drafts=result?openDraftNotes(result.locationIds):[];
+ return <details className="pdf-links-tools"><summary onPointerDown={e=>e.preventDefault()}>笔记与来源</summary><div><p>按稳定来源和PDF页面区域查找笔记。文字引用请先在一页内选择文字；截图引用请先框选页面。</p><button disabled={busy} onPointerDown={e=>e.preventDefault()} onClick={()=>void find()}>查看选区引用笔记</button><button disabled={busy||!session.state.getState().copyAllowed} onPointerDown={e=>e.preventDefault()} onClick={()=>void make()}>从文字选区创建引用</button><button disabled={busy} onClick={()=>void refresh()}>更新笔记索引</button>{busy&&<><progress aria-label="来源查询进度"/><button onClick={()=>{owner.current?.abort();setNotice('操作已取消；已完成的索引或位置保留。');}}>取消来源操作</button></>}{quote&&<><pre className="pdf-quote-preview">{quote}</pre><button disabled={busy} onClick={()=>void insert()}>插入文字引用到Markdown</button></>}{create&&<><p>当前工作区没有Markdown，是否新建？</p><button disabled={busy} onClick={()=>void insert(true)}>新建Markdown并插入文字引用</button><button onClick={()=>setCreate(false)}>暂不新建</button></>}{result&&<div className="pdf-source-note-results"><h4>已打开笔记（含未保存草稿）</h4>{drafts.map(d=><button key={d.panel} onClick={()=>{try{focusDraftNote(d.panel,result.locationIds);}catch(e){setError(errorMessage(e,'无法定位草稿。'));}}}>{d.title} · 当前草稿 · {d.matches.length}处</button>)}<h4>磁盘索引</h4>{result.notes.map((n,i)=><button key={n.sourceId+':'+n.start+':'+i} disabled={!n.available||n.stale} onClick={()=>{void openSavedNote(n.sourceId,n.locationId).catch(e=>setError(errorMessage(e,'笔记打开失败，草稿保留。')));}}>{n.title} · 第{n.line}行{!n.available?' · 文件不可用':n.stale?' · 索引过期，请更新':''}</button>)}{!result.notes.length&&<p>当前索引没有匹配。新文档、外部修改及旧版笔记请更新索引；这不表示全文档必然没有引用。</p>}{result.truncated&&<p>达到1000个位置或100条笔记上限，结果不完整，请缩小区域。</p>}</div>}{notice&&<p role="status">{notice}</p>}{error&&<p role="alert">{error}</p>}</div></details>;
+}

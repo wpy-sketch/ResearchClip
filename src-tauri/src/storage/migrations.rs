@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 17;
+pub const SCHEMA_VERSION: u32 = 18;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -173,10 +173,20 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/017_pdf_excerpts.sql"),
         )?;
     }
+    if version < 18 {
+        apply_migration(
+            connection,
+            18,
+            include_str!("../../migrations/018_pdf_note_links.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 18 {
+        connection.prepare("SELECT source_id,target_id,source_location,source_end,source_line,label FROM pdf_note_links LIMIT 0")?;
+    }
     if version >= 17 {
         connection.prepare("SELECT screenshot_id,draft_json FROM pending_pdf_excerpts LIMIT 0")?;
         connection.prepare("SELECT screenshot_id,location_type,location_id,literature_id,dpi,rotation FROM pdf_excerpts LIMIT 0")?;
@@ -290,7 +300,7 @@ fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageE
 
 #[cfg(test)]
 pub(crate) fn discard_excerpt_fixture(connection: &Connection) {
-    for table in ["pdf_excerpts", "pending_pdf_excerpts"] {
+    for table in ["pdf_excerpts", "pending_pdf_excerpts", "pdf_note_links"] {
         assert_eq!(
             connection
                 .query_row(&format!("SELECT count(*) FROM {table}"), [], |r| r
@@ -301,7 +311,9 @@ pub(crate) fn discard_excerpt_fixture(connection: &Connection) {
         );
     }
     connection
-        .execute_batch("DROP TABLE pdf_excerpts; DROP TABLE pending_pdf_excerpts;")
+        .execute_batch(
+            "DROP TABLE pdf_excerpts; DROP TABLE pending_pdf_excerpts; DROP TABLE pdf_note_links;",
+        )
         .unwrap();
 }
 #[cfg(test)]

@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v4.2.4 Step13：截图回跳、PDF文字引用、区域反向笔记与受管副本逐次校验；SQLite18派生边与原链接共用CAS事务和源文校验。见[双向定位](architecture/PDF_BIDIRECTIONAL_STEP13.md)及[实际验收](qa/RELEASE-4.2.4.md)。
+
 v4.2.3 Step12：PDF.js按页选区与独立DPI渲染，SQLite17扩展既有截图写入意图和统一PdfLocation，复用标注、Markdown文件/撤销/相对图片管线。文档边界标记只用于已有块投影；不另建资源或正文服务。见[坐标、权限和迁移设计](architecture/PDF_EXCERPTS_STEP12.md)与[验收记录](qa/RELEASE-4.2.3.md)。
 
 v4.2.0 Step11：复用单实例和PDF会话，原生argv授权队列、只读Zotero来源预览/确认，SQLite16扩展既有范围映射；详见[Step11架构](architecture/ZOTERO_PDF_STEP11.md)与[实际验收](qa/ZOTERO_PDF_STEP11.md)。v4.1.9已提供[原生PDF阅读器](architecture/PDF_READER_STEP10.md)。下文保留各阶段原有记录。

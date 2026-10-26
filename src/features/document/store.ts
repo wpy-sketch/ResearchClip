@@ -17,7 +17,7 @@ interface TextEdit {document:MarkdownDocument;caret:DocumentCaret}
 const bounded=(items:TextEdit[])=>{let bytes=0;return items.slice(-100).reverse().filter(item=>{bytes+=JSON.stringify(item.document).length*2;return bytes<=8*1024*1024;}).reverse();};
 export interface DocumentState {
   projectOpenId:string|null;projectOpenOffset:number;projectLinkNavigation:boolean;openProject:(id:string,offset?:number)=>Promise<void>;
-  insertText:(text:string)=>boolean;
+  insertText:(text:string,options?:{atCaret?:boolean})=>boolean;
   templateDialog:'choose'|'save'|null; setTemplateDialog:(dialog:'choose'|'save'|null)=>void;
   templateSeed:TemplateSeed|null; createFromTemplate:(seed:TemplateSeed)=>Promise<void>;
   jumpToSource:(offset:number)=>void;
@@ -88,17 +88,18 @@ export function createDocumentStore(){
       templateSeed:null,
       createFromTemplate:async(seed)=>{if(get().phase!=='idle'||get().pending)return;try{templateDocument(seed);normalizeMarkdownName(seed.name);set({templateSeed:seed});await get().request('template');}catch(error){set({error:errorMessage(error,'模板无效。')});}},
       jumpToSource:(offset)=>{const s=get();if(!s.document||s.phase!=='idle')return;const document=asSource(s.document),at=Math.max(0,Math.min(offset,sourceText(document).length));set({document,caret:{start:at,end:at},focusRequest:s.focusRequest+1,...(s.document.mode==='source'?{}:{past:[],future:[]})});},
-      insertText:(text)=>{
+      insertText:(text,options)=>{
         const s=get();if(!s.document||s.phase!=='idle'||!text.trim())return false;
         try{
           if(s.document.mode==='source'){
             const current=sourceText(s.document),start=Math.min(s.caret.start,current.length),end=Math.min(s.caret.end,current.length),next=current.slice(0,start)+text+current.slice(end);
             serializeDocument({...s.document,blocks:[{...s.document.blocks[0],type:'text',markdown:next}]});
             updateSource(next,start+text.length,start+text.length);set({focusRequest:s.focusRequest+1});
-          }else{
-            if(s.document.blocks.length>=MAX_BLOCKS)throw new Error('每份文档最多100个内容块。');
-            const document={...s.document,blocks:[...s.document.blocks,{id:newId(),type:'text' as const,markdown:text}]};serializeDocument(document);set({document,notice:null,error:null,past:[],future:[]});
-          }
+          }else if(options?.atCaret){
+            const target=s.document.blocks.find(b=>b.id===s.caret.blockId)??s.document.blocks.find(b=>b.type==='text');
+            if(target){const raw=target.type==='image'?target.caption:target.markdown,start=Math.min(s.caret.start,raw.length),end=Math.min(s.caret.end,raw.length);const next=raw.slice(0,start)+text+raw.slice(end);serializeDocument({...s.document,blocks:s.document.blocks.map(b=>b.id===target.id?(b.type==='image'?{...b,caption:next}:{...b,markdown:next}):b)});get().editBlock(target.id,next,start+text.length,start+text.length);set({focusRequest:s.focusRequest+1});}
+            else{if(s.document.blocks.length>=MAX_BLOCKS)throw new Error('每份文档最多100个内容块。');const block={id:newId(),type:'text' as const,markdown:text},document={...s.document,blocks:[...s.document.blocks,block]};serializeDocument(document);set({document,caret:{start:text.length,end:text.length,blockId:block.id},focusRequest:s.focusRequest+1,notice:null,error:null,past:bounded([...s.past,{document:s.document,caret:s.caret}]),future:[]});}
+          }else{if(s.document.blocks.length>=MAX_BLOCKS)throw new Error('每份文档最多100个内容块。');const document={...s.document,blocks:[...s.document.blocks,{id:newId(),type:'text' as const,markdown:text}]};serializeDocument(document);set({document,notice:null,error:null,past:[],future:[]});}
           return true;
         }catch(error){set({error:errorMessage(error,'插入文字失败，原文档未改动。')});return false;}
       },

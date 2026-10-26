@@ -1,3 +1,5 @@
+import {CommandFailure} from '../commands/platform/errors';
+import {sourceOffset} from './source-model';
 import {invoke} from '@tauri-apps/api/core';
 import {openPdf,pdfSessions} from './PdfViewerSession';
 import type {PageRectangle} from './excerpt-geometry';
@@ -9,14 +11,15 @@ export function parseLocationTarget(value:unknown):PdfLocationTarget {
  return t;
 }
 export async function navigateExcerpt(locationId:string,select=false){
- const target=parseLocationTarget(await invoke('resolve_pdf_location',{locationId})),l=target.location;
+ let value:unknown;try{value=await invoke('resolve_pdf_location',{locationId});}catch{throw new CommandFailure('PDF_SOURCE_MISMATCH');}const target=parseLocationTarget(value),l=target.location;
  await openPdf(target.documentId);
  const session=[...pdfSessions.values()].find(s=>s.state.getState().record?.documentId===target.documentId),s=session?.state.getState(),shape=s?.pages[l.pageIndex];
  if(!session||s?.phase!=='ready'||!shape)throw Error('PDF尚未准备好，请在阅读器确认后重试。');
- if(s.record?.contentHash!==l.contentHash||s.record?.attachmentId!==l.attachmentId)throw Error('PDF内容与摘录摘要不符，未跳转。');
+ if(s.record?.contentHash!==l.contentHash||s.record?.attachmentId!==l.attachmentId)throw new CommandFailure('PDF_SOURCE_MISMATCH');
  const width=shape.rotation%180?shape.height:shape.width,height=shape.rotation%180?shape.width:shape.height;
- if(Math.abs(width-l.pageWidth)>.01||Math.abs(height-l.pageHeight)>.01)throw Error('页面几何与摘录不符，请核对源文件。');
+ if(Math.abs(width-l.pageWidth)>.01||Math.abs(height-l.pageHeight)>.01)throw new CommandFailure('PDF_SOURCE_MISMATCH');
  if(select&&!s.copyAllowed)throw Error('此PDF权限限制内容摘录。');
- session.setExcerptMode(select);session.state.setState({sourceHighlight:{pageIndex:l.pageIndex,rectangle:l.rectangles[0]},excerptSelection:select?{pageIndex:l.pageIndex,rectangle:l.rectangles[0]}:null});
- session.update({pageIndex:l.pageIndex,zoomMode:'page',rotation:0,offsetX:0,offsetY:0},true);workspaceManager.focus(session.id);
+ session.setExcerptMode(select);session.state.setState({excerptSelection:select?{pageIndex:l.pageIndex,rectangle:l.rectangles[0]}:null});
+ const data=value as {title?:unknown;zotero?:unknown[]},zotero=Array.isArray(data.zotero)?data.zotero.flatMap(v=>{if(!v||typeof v!=='object')return [];const z=v as Record<string,unknown>;return typeof z.itemKey==='string'&&typeof z.attachmentKey==='string'&&Number.isSafeInteger(z.libraryId)?[`${z.libraryType==='group'?'群组':'个人'}库 ${z.libraryId} · item ${z.itemKey} · 附件 ${z.attachmentKey}`]:[];}):[];session.highlightSource({pageIndex:l.pageIndex,rectangle:l.rectangles[0]},{title:typeof data.title==='string'?data.title:'PDF来源',pageIndex:l.pageIndex,zotero});
+ const offset=sourceOffset(l.rectangles[0],width,height,(shape.rotation+s.location.rotation)%360);session.update({pageIndex:l.pageIndex,...offset},true);workspaceManager.focus(session.id);
 }

@@ -1,0 +1,128 @@
+{
+  "version": "4.2.4",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "node": "v22.22.2",
+  "frontend": {
+    "command": "npm run check",
+    "passed": 710,
+    "files": 89,
+    "exitCode": 0
+  },
+  "cleanInstall": {
+    "packages": 327,
+    "exitCode": 0,
+    "dependenciesExactlyUnchanged": true
+  },
+  "rust": {
+    "passed": 280,
+    "ignored": 7,
+    "formatExitCode": 0,
+    "testExitCode": 0,
+    "clippyExitCode": 0
+  },
+  "nativeAndBrowser": {
+    "workspace-native": {
+      "result": "PASS",
+      "checks": 7,
+      "evidence": "artifacts/workspace-native-v424-final-b/report.json",
+      "sha256": "e3c1270b44b87ecd66199faffcc11e7e7b4f38cda8ae37bbc70e9562d01a1894"
+    },
+    "commands-native": {
+      "result": "PASS",
+      "checks": 8,
+      "evidence": "artifacts/commands-native-v424-final-b/report.json",
+      "sha256": "e52baf3efa3450df8d5f24e75faa897b951e0a7208dd9da30980e49969cccca8"
+    },
+    "resources-native": {
+      "result": "PASS",
+      "checks": 6,
+      "evidence": "artifacts/resources-native-v424-final-b/report.json",
+      "sha256": "c1cae756f474af252e35f0990e5ff5dd40ccf01ddc9a68d1f1257a1545da9cd6"
+    },
+    "citations-native": {
+      "result": "PASS",
+      "checks": 11,
+      "evidence": "artifacts/citations-native-v424-final-b/report.json",
+      "sha256": "8589ac870ecada70690c680a0a2463e5751930c561f049b4c257dba175fc41f0"
+    },
+    "pdf-native": {
+      "result": "PASS",
+      "checks": 13,
+      "evidence": "artifacts/pdf-native-v424-final-b/report.json",
+      "sha256": "4f1a47eac539ea84734878d26eb59b99a2e7fd56da028bd08352c4897575d5de"
+    },
+    "pdf-quality": {
+      "result": "PASS",
+      "checks": 5,
+      "evidence": "artifacts/pdf-quality-v424-final-b/report.json",
+      "sha256": "129901708a7f1f4a49927c5a072eee58e987c99fd00575f064db0865fa7ca304"
+    },
+    "pdf-layout": {
+      "result": "PASS",
+      "checks": 5,
+      "evidence": "artifacts/pdf-layout-v424-final-b/report.json",
+      "sha256": "9700b63b4d1fe1e066ce2103992ab95dbff75ff95f03acbcf6c1bfbb7e2fa503"
+    },
+    "zotero-native": {
+      "result": "PASS",
+      "checks": 13,
+      "evidence": "artifacts/zotero-native-v424-final-b/report.json",
+      "sha256": "e6f685696576cdd8ec5866983ada0545f0228ece924ceaf97b541582efc6dc70"
+    },
+    "pdf-excerpts": {
+      "result": "PASS",
+      "checks": 25,
+      "evidence": "artifacts/pdf-excerpts-v424-final-b/report.json",
+      "sha256": "df322c08d82621e3cec9503cb96df6f8ea231d60c8f73e4724d45385758884fe"
+    },
+    "guide-reader": {
+      "result": "PASS",
+      "checks": 14,
+      "evidence": "artifacts/guide-reader-v424-final/report.json",
+      "sha256": "9cfefc3a6c4ffa9ae5c0130ce9e8a887dd56845d959aef0ec0018186db250f18"
+    }
+  },
+  "installer": {
+    "checks": 5,
+    "result": "passed",
+    "sha256": "ca5f719536a427296e78a2296fed377bb814bf9db9898ed1a9b6ee7fb7c38f0c",
+    "signature": "NotSigned",
+    "licenses": 4
+  },
+  "userData": {
+    "result": "FAIL",
+    "files": 26,
+    "changed": 1,
+    "mode": "read-only default AppData hash comparison; WebView cache excluded; not a backup/restore feature"
+  },
+  "dataAuditExplanation": {
+    "originalAudit": "FAIL",
+    "originalFiles": 26,
+    "originalChangedOrMissing": 0,
+    "addedFiles": [
+      {
+        "relative": "ApplicationData/backups\\schema-16-b8a8c6c32e69f13dce661d2a041bbc7e.sqlite3",
+        "sha256": "EC7E3B976BAD56F8F0B8C676E0D342492A48C2E7B3495EB28B5783408302F1C3",
+        "createdAtLocal": "2026-10-26T15:13:29+08:00"
+      }
+    ],
+    "lastNativeFinishedLocal": "2026-10-26T15:11:20+08:00",
+    "installerFinishedLocal": "2026-10-26T15:12:59+08:00",
+    "humanConfirmation": "User explicitly confirmed manually starting ResearchClip at that time in this chat. The added pre-upgrade snapshot is consistent with that startup; no original file was overwritten.",
+    "handling": "Original FAIL and snapshot retained. No deletion, restore or reset. Do not claim unchanged throughout the full interval.",
+    "priorV422Unresolved": "Earlier two added files still unattributed; this confirmation applies only to the v424 snapshot."
+  },
+  "infrastructureTests": 20,
+  "guide": {
+    "chapters": 30,
+    "exercises": 217,
+    "images": 59
+  },
+  "manual": [
+    "Physical multi-display DPI",
+    "Real Zotero reader UI deferred by user",
+    "Other OS",
+    "Long running large files"
+  ],
+  "priorUnresolved": "v4.2.2 two added user files remain unattributed; original FAIL retained"
+}
