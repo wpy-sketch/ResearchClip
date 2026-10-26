@@ -2,6 +2,10 @@ use super::{
     pdf_open::ephemeral,
     zotero_local::{ZoteroCandidate, ZoteroHealth, ZoteroLookup},
 };
+use super::{
+    zotero_annotations::AnnotationSource,
+    zotero_local::{LocalWriteGrant, WriteIntent},
+};
 use serde::Serialize;
 use std::{
     collections::HashMap,
@@ -11,6 +15,12 @@ use std::{
     },
     time::{Duration, Instant},
 };
+struct WriteState {
+    source: AnnotationSource,
+    hash: String,
+    grant: Option<LocalWriteGrant>,
+    pending: Option<WriteIntent>,
+}
 type Result<T> = std::result::Result<T, String>;
 struct Job {
     owner: String,
@@ -27,6 +37,7 @@ struct Preview {
 pub struct ZoteroSessions {
     jobs: Mutex<HashMap<String, Job>>,
     previews: Mutex<HashMap<String, Preview>>,
+    writes: Mutex<HashMap<String, WriteState>>,
 }
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -42,6 +53,136 @@ pub struct PreviewResponse {
     pub message: String,
 }
 impl ZoteroSessions {
+    pub fn write_authorized(
+        &self,
+        owner: &str,
+        source: &AnnotationSource,
+        hash: &str,
+    ) -> Result<(bool, bool, bool)> {
+        let writes = self.writes.lock().map_err(|_| "批注授权锁异常。")?;
+        let Some(state) = writes
+            .get(owner)
+            .filter(|s| &s.source == source && s.hash == hash)
+        else {
+            return Ok((false, false, false));
+        };
+        Ok((
+            state.grant.is_some(),
+            state
+                .grant
+                .as_ref()
+                .is_some_and(LocalWriteGrant::remembered),
+            state.pending.is_some(),
+        ))
+    }
+    pub fn save_write_grant(
+        &self,
+        owner: &str,
+        source: &AnnotationSource,
+        hash: &str,
+        grant: LocalWriteGrant,
+        cancel: &AtomicBool,
+    ) -> Result<()> {
+        let mut writes = self.writes.lock().map_err(|_| "批注授权锁异常。")?;
+        if cancel.load(Ordering::Relaxed) {
+            return Err("授权已取消，未保留密钥。".into());
+        }
+        if !grant.matches(source) {
+            return Err("授权来源不匹配。".into());
+        }
+        if !writes.contains_key(owner) && writes.len() >= 3 {
+            return Err("批注写入会话达到上限。".into());
+        }
+        match writes.get_mut(owner) {
+            Some(state) if &state.source == source && state.hash == hash => {
+                state.grant = Some(grant)
+            }
+            Some(state) if state.pending.is_some() => {
+                return Err("另一个来源仍有待核实写入，请先核实或关闭PDF。".into());
+            }
+            _ => {
+                writes.insert(
+                    owner.into(),
+                    WriteState {
+                        source: source.clone(),
+                        hash: hash.into(),
+                        grant: Some(grant),
+                        pending: None,
+                    },
+                );
+            }
+        }
+        Ok(())
+    }
+    pub fn forget_write_grant(&self, owner: &str) -> Result<()> {
+        if let Some(state) = self
+            .writes
+            .lock()
+            .map_err(|_| "批注授权锁异常。")?
+            .get_mut(owner)
+        {
+            state.grant = None;
+        }
+        Ok(())
+    }
+    pub fn start_write(
+        &self,
+        owner: &str,
+        hash: &str,
+        intent: WriteIntent,
+        cancel: &AtomicBool,
+    ) -> Result<LocalWriteGrant> {
+        let mut writes = self.writes.lock().map_err(|_| "批注授权锁异常。")?;
+        if cancel.load(Ordering::Relaxed) {
+            return Err("写入发送前已取消。".into());
+        }
+        let state = writes
+            .get_mut(owner)
+            .filter(|s| &s.source == intent.source() && s.hash == hash)
+            .ok_or("请先为当前完整来源授权。")?;
+        if state.pending.is_some() {
+            return Err("已有待核实写入，禁止重复发送；请先复核。".into());
+        }
+        let grant = state
+            .grant
+            .as_ref()
+            .ok_or("请先主动请求Zotero写入授权。")?
+            .clone();
+        if !grant.remembered() {
+            state.grant = None;
+        }
+        state.pending = Some(intent);
+        Ok(grant)
+    }
+    pub fn pending_write(
+        &self,
+        owner: &str,
+        source: &AnnotationSource,
+        hash: &str,
+    ) -> Result<WriteIntent> {
+        self.writes
+            .lock()
+            .map_err(|_| "批注授权锁异常。")?
+            .get(owner)
+            .filter(|s| &s.source == source && s.hash == hash)
+            .and_then(|s| s.pending.clone())
+            .ok_or("当前来源没有待核实写入。".into())
+    }
+    pub fn finish_write(&self, owner: &str, key: &str) -> Result<()> {
+        if let Some(state) = self
+            .writes
+            .lock()
+            .map_err(|_| "批注授权锁异常。")?
+            .get_mut(owner)
+            && state
+                .pending
+                .as_ref()
+                .is_some_and(|intent| intent.annotation_key() == key)
+        {
+            state.pending = None;
+        }
+        Ok(())
+    }
     pub fn begin(&self, id: &str, owner: &str) -> Result<Arc<AtomicBool>> {
         if id.len() != 32
             || !id
@@ -83,6 +224,10 @@ impl ZoteroSessions {
                 job.cancel.store(true, Ordering::Relaxed);
             }
         }
+        self.writes
+            .lock()
+            .map_err(|_| "批注授权锁异常。")?
+            .remove(owner);
         self.previews
             .lock()
             .map_err(|_| "来源预览锁异常。")?

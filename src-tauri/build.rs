@@ -37,6 +37,7 @@ fn main() {
             "pdf_selection_notes",
             "cached_zotero_annotations",
             "refresh_zotero_annotations",
+            "zotero_annotation_write",
             "adopt_pdf_source",
             "pending_pdf_requests",
             "preview_pdf_zotero",

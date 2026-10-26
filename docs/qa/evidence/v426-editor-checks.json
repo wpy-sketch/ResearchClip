@@ -1,0 +1,134 @@
+{
+  "version": "4.2.6",
+  "environment": "actual Windows / Tauri2 WebView2; native API fixtures explicitly distinguished from independent real Zotero",
+  "frontend": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "tests": 730,
+    "files": 91
+  },
+  "rust": {
+    "command": "npm run format:rust; npm run test:rust; npm run check:rust",
+    "exitCodes": [
+      0,
+      0,
+      0
+    ],
+    "passed": 301,
+    "ignored": 8,
+    "testThreads": 4
+  },
+  "realZotero": {
+    "version": "10.0.6",
+    "apiVersion": 3,
+    "schemaVersion": 44,
+    "pythonChecks": 5,
+    "pythonRequests": 30,
+    "rustLiveTests": 1,
+    "result": "PASS",
+    "sourcePdfUnchanged": true,
+    "authorization": "test key seeded ONLY in new owned test profile; real authorization dialog NOT verified",
+    "groupReadonly": "real group/other creator permission acceptance pending; native HTTP403 boundary tested"
+  },
+  "native": [
+    {
+      "module": "workspace",
+      "checks": 7,
+      "result": "PASS",
+      "report": "workspace-native-v426-final-b/report.json"
+    },
+    {
+      "module": "commands",
+      "checks": 8,
+      "result": "PASS",
+      "report": "commands-native-v426-final-b/report.json"
+    },
+    {
+      "module": "resources",
+      "checks": 6,
+      "result": "PASS",
+      "report": "resources-native-v426-final-b/report.json"
+    },
+    {
+      "module": "citations",
+      "checks": 11,
+      "result": "PASS",
+      "report": "citations-native-v426-final-b/report.json"
+    },
+    {
+      "module": "pdf",
+      "checks": 13,
+      "result": "PASS",
+      "report": "pdf-native-v426-final-b/report.json"
+    },
+    {
+      "module": "pdf-quality",
+      "checks": 5,
+      "result": "PASS",
+      "report": "pdf-quality-v426-final-b/report.json"
+    },
+    {
+      "module": "pdf-layout",
+      "checks": 5,
+      "result": "PASS",
+      "report": "pdf-layout-v426-final-b/report.json"
+    },
+    {
+      "module": "pdf-links",
+      "checks": 25,
+      "result": "PASS",
+      "report": "pdf-excerpts-v426-final-b/report.json"
+    },
+    {
+      "module": "annotations",
+      "checks": 28,
+      "result": "PASS",
+      "report": "zotero-native-v426-final-b/report.json"
+    },
+    {
+      "module": "writer",
+      "checks": 25,
+      "result": "PASS",
+      "report": "zotero-native-v426-write-final-a/report.json"
+    }
+  ],
+  "nativeTotal": 133,
+  "nativeZoteroBoundary": "mock HTTP with fictional data, not real Zotero GUI acceptance",
+  "guide": {
+    "checks": 14,
+    "chapters": 32,
+    "examples": 241,
+    "localImages": 65,
+    "exitCode": 0,
+    "mode": "isolated headless Edge; actual native guide also covered by workspace suite"
+  },
+  "installer": {
+    "result": "passed",
+    "checks": 5,
+    "sha256": "91896DA7A44D0B6E23DA40E8A0745FCF8F20D5FD938287DB4064BA156466E70C",
+    "signatureStatus": "NotSigned",
+    "files": 27
+  },
+  "cleanInstall": {
+    "packages": 327,
+    "exitCode": 0,
+    "mode": "independent npm ci directory; root lock version only"
+  },
+  "releaseInfrastructure": {
+    "tests": 23,
+    "exitCode": 0
+  },
+  "userData": {
+    "result": "PASS",
+    "mode": "read-only default AppData hash comparison; WebView cache excluded; not a backup/restore feature",
+    "files": 27,
+    "changed": 0
+  },
+  "knownManual": [
+    "real Zotero authorization UI",
+    "real readonly group and non-author annotation permissions",
+    "physical mixed-monitor DPI",
+    "unsigned installer"
+  ],
+  "status": "local checks complete; publication verification recorded separately"
+}

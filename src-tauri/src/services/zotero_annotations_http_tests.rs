@@ -52,6 +52,9 @@ fn fixture(changed_version: bool, wrong_library: bool) -> Fixture {
         while !running.load(Ordering::SeqCst) {
             match listener.accept() {
                 Ok((mut socket, _)) => {
+                    // Windows accept inherits the listener's nonblocking mode.
+                    // A WouldBlock before request bytes is not an empty HTTP request.
+                    socket.set_nonblocking(false).unwrap();
                     socket
                         .set_read_timeout(Some(Duration::from_secs(1)))
                         .unwrap();

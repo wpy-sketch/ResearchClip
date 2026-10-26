@@ -1,3 +1,5 @@
+v4.2.6 Step15：复用Zotero只读适配和schema19，增加官方Local API受控授权与写入、条件版本和复读确认；详见[写入决策](architecture/ZOTERO_ANNOTATION_WRITES_STEP15.md)与[实际验收](qa/RELEASE-4.2.6.md)。
+
 # ResearchClip 架构设计
 
 v4.2.5 Step14：只读ZoteroAnnotationIdentity/Repository/CoordinateAdapter/ReadCache，SQLite19派生缓存、GET-only及原件授权，来源冲突停止叠加。见[只读适配](architecture/ZOTERO_ANNOTATIONS_STEP14.md)及[实际验收](qa/RELEASE-4.2.5.md)。

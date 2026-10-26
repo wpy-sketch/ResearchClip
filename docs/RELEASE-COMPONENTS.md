@@ -1,18 +1,18 @@
-# v4.2.5 下载、配套组件与历史附件
+# v4.2.6 下载、配套组件与历史附件
 
-桌面版本4.2.5，SQLite迁移到schema19，沿用迁移前校验/一致快照/事务；旧版不能写新库。使用顺序：安装当前桌面程序，按需要安装原版本伴侣组件；如需集中保存全部历史发布文件，再下载历史归档分卷。指南包含31章、229项练习和62幅本地图示。
+桌面版本4.2.6，SQLite迁移到schema19，沿用迁移前校验/一致快照/事务；旧版不能写新库。使用顺序：安装当前桌面程序，按需要安装原版本伴侣组件；如需集中保存全部历史发布文件，再下载历史归档分卷。指南包含32章、241项练习和65幅本地图示。
 
 | 任务 | 本Release附件 | 使用方法 |
 | --- | --- | --- |
-| 安装桌面应用 | ResearchClip_4.2.5_x64-setup.exe | 保存并退出旧实例再安装，需要Windows WebView2；未签名 |
-| 直接运行 | ResearchClip-v4.2.5-windows-x64.zip | 解压后运行researchclip.exe，保留licenses；仍使用本机资料目录 |
+| 安装桌面应用 | ResearchClip_4.2.6_x64-setup.exe | 保存并退出旧实例再安装，需要Windows WebView2；未签名 |
+| 直接运行 | ResearchClip-v4.2.6-windows-x64.zip | 解压后运行researchclip.exe，保留licenses；仍使用本机资料目录 |
 | Chrome/Edge网页剪藏 | ResearchClip-WebClipper-v1.0.2-windows-x64.zip | 扩展、Native Host、注册脚本及许可原样沿用；按包内README主动安装并在桌面启用连接 |
 | 可选公式识别 | ResearchClip-MathOCR-Setup-v1.0.4.zip | 原安装脚本/锁定依赖/worker/模型清单；Python与模型等外部依赖按原README安装，不冒充已安装 |
-| 离线指南 | ResearchClip-Guide-v4.2.5.zip | 打开docs/USER_GUIDE.md，保留images/examples；包含伴侣组件说明、模型清单和许可，源码链接指向精确Git标签 |
+| 离线指南 | ResearchClip-Guide-v4.2.6.zip | 打开docs/USER_GUIDE.md，保留images/examples；包含伴侣组件说明、模型清单和许可，源码链接指向精确Git标签 |
 | Qwen资源索引 | MODEL-RESOURCES.txt、OFFLINE-RESOURCE-INDEX.json、QWEN-MODEL-MANIFEST.json | 与此前附件字节一致；已有运行时可复用，或从本版历史归档v3.1.2目录获得原分卷 |
 | 离线图文语义检索 | 指南ZIP内semantic-search/README.md、models.json与许可 | 按固定模型清单主动下载/离线导入，与公式OCR复用现有Python运行时；不上传图片 |
 | 全部历史附件 | ResearchClip-History-through-v4.1.1.zip.001起的223卷 | 先按下面步骤重组；包含此前31个Release的全部226附件，按版本分目录 |
-| v4.1.2/v4.1.3/v4.1.4/v4.1.5/v4.1.6/v4.1.7/v4.1.8/v4.1.9/v4.2.0/v4.2.1/v4.2.2/v4.2.3/v4.2.4 的全部附件 | 原便携包、安装包、指南与运输文件；SOURCE/SHA在对应版本的Release-Metadata.zip中 | 原名原字节保留；逐项定位见V425-HISTORY-INVENTORY.json和RELEASE-HISTORY-v4.2.5.txt |
+| v4.1.2/v4.1.3/v4.1.4/v4.1.5/v4.1.6/v4.1.7/v4.1.8/v4.1.9/v4.2.0/v4.2.1/v4.2.2/v4.2.3/v4.2.4 的全部附件 | 原便携包、安装包、指南与运输文件；SOURCE/SHA在对应版本的Release-Metadata.zip中 | 原名原字节保留；逐项定位见V426-HISTORY-INVENTORY.json和RELEASE-HISTORY-v4.2.6.txt |
 | 历史归档校验/重组 | HISTORY-CONTENTS.json、HISTORY-TRANSPORT.json、Assemble-Release-History.ps1、HISTORY-README.txt | 原附件URL/ID/大小/SHA均保留；只重组发布ZIP，不执行旧程序，不涉及应用资料恢复 |
 | 本版文件校验 | SHA256SUMS.txt、SOURCE.txt | 逐项校验本版发布文件及源码提交；校验文件自身不包含其自身摘要 |
 
@@ -27,16 +27,16 @@ WebClipper1.0.2、MathOCR Setup1.0.4及Qwen清单原样沿用，不改其版本/
 1. 在一个新的下载目录中放入全部223个ResearchClip-History-through-v4.1.1.zip.NNN分卷、HISTORY-TRANSPORT.json与Assemble-Release-History.ps1。先依据SHA256SUMS.txt核对下载；不能跳过缺卷或损坏分卷。
 2. 在该目录执行PowerShell -NoProfile -File .\Assemble-Release-History.ps1。脚本逐卷核验，再CreateNew写入唯一临时文件；整包SHA匹配后提交为ZIP。已有不同内容目标会拒绝覆盖，已有相同ZIP只校验，不执行任何归档内容。
 3. 自行把ZIP解压到新的空目录。每个旧版本各有目录，SOURCE.txt、SHA256SUMS.txt等重名附件保留原名和原字节；HISTORY-CONTENTS.json逐项对应原发布记录。
-4. v3.1.2目录保留原25卷与必要运输片、原重组脚本和清单；按其中README先还原运输卷，再组装旧离线包。旧包的桌面EXE仍为v3.1.2；日常应用使用本Release的4.2.5。
+4. v3.1.2目录保留原25卷与必要运输片、原重组脚本和清单；按其中README先还原运输卷，再组装旧离线包。旧包的桌面EXE仍为v3.1.2；日常应用使用本Release的4.2.6。
 
 历史附件原始合计4117989169字节；当前ZIP为3728704762字节，分223个不超过16MiB的运输卷。每个归档成员已按GitHub SHA-256校验，不以清单链接代替附件内容。原31个Release、原附件和标签保持原样。
 
-## v4.2.5 如何完整继承附件
+## v4.2.6 如何完整继承附件
 
-本版最终315附件覆盖此前44个Release的3775项原附件。通过v4.1.1的226文件保留在同一223卷归档；v4.1.2至v4.2.4的发布文件均保留原字节。上一版309附件中307项无冲突附件直接继承，SOURCE.txt与SHA256SUMS.txt按原名原字节放入ResearchClip-v4.2.4-Release-Metadata.zip的v4.2.4目录；更早元数据ZIP继续原样提供。V425-HISTORY-INVENTORY.json给出每项原版本、名称、大小、摘要及当前定位，不以链接代替内容。
+本版预计321附件覆盖此前45个Release的4090项原附件。通过v4.1.1的226文件仍在同一223卷归档；v4.1.2至v4.2.5发布文件保持原字节。上一版315附件中313项无冲突附件直接继承，SOURCE.txt和SHA256SUMS.txt按原名原字节放在ResearchClip-v4.2.5-Release-Metadata.zip的v4.2.5目录；更早元数据ZIP原样提供。V426-HISTORY-INVENTORY.json逐项给出原版本、名称、大小、摘要与当前定位，不以链接代替附件内容。
 
-旧HISTORY-TRANSPORT.json和重组脚本保留原desktopVersion4.1.2，因为仍描述通过v4.1.1的同一归档；摘要与223卷不变。本版补充以RELEASE-HISTORY-v4.2.5.txt为准。顶层SOURCE.txt与SHA256SUMS.txt属于v4.2.5，旧版安装器不是当前程序。正式发布和完整匿名下载结果以本版发布回执为准。
+旧HISTORY-TRANSPORT.json和重组脚本保留原desktopVersion4.1.2，仍描述通过v4.1.1的同一归档，摘要与223卷不变。本版以RELEASE-HISTORY-v4.2.6.txt为准。顶层SOURCE.txt与SHA256SUMS.txt属于v4.2.6，旧安装器不是当前程序。正式发布及匿名下载结果见本版发布回执。
 
 ## 升级后核对
 
-检查版本4.2.5、旧截图/Markdown、工作区、插图与诊断。保存草稿后退出；布局不等于正文保存。真实资料、多显示器DPI及可选第三方运行时的人工验证仍须按[Step11验收](qa/ZOTERO_PDF_STEP11.md)及[引用与文献验收](qa/CITATIONS_STEP09.md)执行。没有Markdown导出PDF或独立资料备份/恢复产品。
+检查版本4.2.6、旧截图/Markdown、工作区、插图与诊断。保存草稿后退出；布局不等于正文保存。真实资料、多显示器DPI及可选第三方运行时的人工验证仍须按[Step11验收](qa/ZOTERO_PDF_STEP11.md)及[引用与文献验收](qa/CITATIONS_STEP09.md)执行。没有Markdown导出PDF或独立资料备份/恢复产品。

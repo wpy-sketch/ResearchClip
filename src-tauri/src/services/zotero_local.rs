@@ -12,6 +12,9 @@ use std::{
 };
 pub type Result<T> = std::result::Result<T, String>;
 const BODY_LIMIT: usize = 2 * 1024 * 1024;
+#[path = "zotero_write_transport.rs"]
+mod write_transport;
+pub use write_transport::{LocalWriteGrant, WriteIntent, ZoteroWriteError, ZoteroWriteOutcome};
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct ZoteroScope {
@@ -121,6 +124,7 @@ impl ZoteroClient {
         let client = Client::builder()
             .no_proxy()
             .redirect(Policy::none())
+            .retry(reqwest::retry::never())
             .connect_timeout(Duration::from_millis(500))
             .timeout(Duration::from_secs(2))
             .build()
@@ -394,16 +398,15 @@ impl ZoteroClient {
         })
     }
 
-    pub fn read_annotations(
+    fn annotation_context(
         &self,
         source: &super::zotero_annotations::AnnotationSource,
         original: &Path,
-        pdf_hash: &str,
         cancel: &AtomicBool,
-    ) -> Result<super::zotero_annotations::AnnotationReadCache> {
-        use super::zotero_annotations::{AnnotationReadCache, SOURCE_MISMATCH, parse_annotation};
+        start: Instant,
+    ) -> Result<(ZoteroHealth, ZoteroScope)> {
+        use super::zotero_annotations::SOURCE_MISMATCH;
         source.validate()?;
-        let start = Instant::now();
         let health = self.health(cancel, start)?;
         if health.instance_id != source.instance_id {
             return Err(SOURCE_MISMATCH.into());
@@ -438,6 +441,18 @@ impl ZoteroClient {
         {
             return Err(SOURCE_MISMATCH.into());
         }
+        Ok((health, scope))
+    }
+    pub fn read_annotations(
+        &self,
+        source: &super::zotero_annotations::AnnotationSource,
+        original: &Path,
+        pdf_hash: &str,
+        cancel: &AtomicBool,
+    ) -> Result<super::zotero_annotations::AnnotationReadCache> {
+        use super::zotero_annotations::{AnnotationReadCache, parse_annotation};
+        let start = Instant::now();
+        let (health, scope) = self.annotation_context(source, original, cancel, start)?;
         let mut annotations: std::collections::BTreeMap<
             String,
             super::zotero_annotations::ZoteroAnnotation,
