@@ -50,7 +50,7 @@ def main():
  assert request(BASE+'/git/ref/tags/'+tag)['object']['sha']==args.target_commit
  assert not release['prerelease'] and release['tag_name']==tag and release['target_commitish']==args.target_commit
  if args.mode.startswith('verify'):
-  assert not release['draft'];assets=read_assets(request,BASE,release['id']);assert len(assets)=={'v4.1.2':237,'v4.1.3':243,'v4.1.4':249,'v4.1.5':255,'v4.1.6':261,'v4.1.7':267,'v4.1.8':273,'v4.1.9':279,'v4.2.0':285,'v4.2.1':291,'v4.2.2':297,'v4.2.3':303}[tag]
+  assert not release['draft'];assets=read_assets(request,BASE,release['id']);assert len(assets)=={'v4.1.2':237,'v4.1.3':243,'v4.1.4':249,'v4.1.5':255,'v4.1.6':261,'v4.1.7':267,'v4.1.8':273,'v4.1.9':279,'v4.2.0':285,'v4.2.1':291,'v4.2.2':297,'v4.2.3':303,'v4.2.4':309}[tag]
   def anonymous(item,keep=False):
    url=item['browser_download_url'];assert url.startswith('https://github.com/wpy-sketch/ResearchClip/releases/download/'+tag+'/') and item['state']=='uploaded'
    digest=hashlib.sha256();total=0;pieces=[]
