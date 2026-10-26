@@ -1,4 +1,6 @@
 import {create} from 'zustand';
+import {normalizeSelection,type ExcerptSelection} from './excerpts';
+import type {PageRectangle} from './excerpt-geometry';
 import {errorMessage} from '../../shared/api/errors';
 import {workspaceManager} from '../workspace/manager';
 import {pdfDocuments,type PdfRecord} from './PdfDocumentService';
@@ -7,14 +9,17 @@ import {getDocument,pdfEngineOptions,PasswordResponses,type PDFDocumentProxy,typ
 export interface PdfPageShape {width:number;height:number;rotation:number}
 export interface PdfOutlineItem {title:string;dest:string|unknown[]|null;depth:number}
 export interface PdfSearchResult {pageIndex:number;excerpt:string}
-interface Snapshot {phase:'loading'|'password'|'ready'|'error'|'closed';progress:number;message:string;error:string|null;record:PdfRecord|null;pages:PdfPageShape[];location:PdfPageLocation;navigation:number;outline:PdfOutlineItem[];copyAllowed:boolean;passwordWrong:boolean;searching:boolean;searchProgress:number;results:PdfSearchResult[];query:string;searchMessage:string;revision:number}
+interface Snapshot {excerptBusy:boolean;excerptMode:boolean;excerptSelection:ExcerptSelection|null;sourceHighlight:ExcerptSelection|null;phase:'loading'|'password'|'ready'|'error'|'closed';progress:number;message:string;error:string|null;record:PdfRecord|null;pages:PdfPageShape[];location:PdfPageLocation;navigation:number;outline:PdfOutlineItem[];copyAllowed:boolean;passwordWrong:boolean;searching:boolean;searchProgress:number;results:PdfSearchResult[];query:string;searchMessage:string;revision:number}
 export const pdfSessions=new Map<string,PdfViewerSession>();
 const MAX_PAGES=2000,MAX_TEXT=8*1024*1024,MAX_RESULTS=200;
 export class PdfViewerSession {
  readonly external:boolean;constructor(external=false){this.external=external;}
  readonly token=crypto.randomUUID().replaceAll('-','');readonly id='pdf:'+crypto.randomUUID().replaceAll('-','');
- readonly state=create<Snapshot>(()=>({phase:'loading',progress:0,message:'请选择PDF；将导入只读工作区副本。',error:null,record:null,pages:[],location:initialPdfLocation(),navigation:0,outline:[],copyAllowed:true,passwordWrong:false,searching:false,searchProgress:0,results:[],query:'',searchMessage:'',revision:0}));
+ readonly state=create<Snapshot>(()=>({excerptBusy:false,excerptMode:false,excerptSelection:null,sourceHighlight:null,phase:'loading',progress:0,message:'请选择PDF；将导入只读工作区副本。',error:null,record:null,pages:[],location:initialPdfLocation(),navigation:0,outline:[],copyAllowed:true,passwordWrong:false,searching:false,searchProgress:0,results:[],query:'',searchMessage:'',revision:0}));
  document:PDFDocumentProxy|null=null;private loading:PDFDocumentLoadingTask|null=null;private closed=false;private passwordReply:((password:string)=>void)|null=null;private searchGeneration=0;private saveTimer:ReturnType<typeof setTimeout>|null=null;private queue:Promise<void>=Promise.resolve();private renderQueue:Promise<void>=Promise.resolve();private disposers=new Set<()=>void>();
+ private selectionGeneration=0;
+ setExcerptMode(value:boolean){this.selectionGeneration++;this.state.setState({excerptMode:value,excerptSelection:null});}
+ selectExcerpt(pageIndex:number,r:PageRectangle|null){const generation=++this.selectionGeneration,rotation=this.state.getState().location.rotation;this.state.setState({excerptSelection:null});if(r)void normalizeSelection(this,pageIndex,r).then(value=>{const current=this.state.getState();if(generation===this.selectionGeneration&&current.excerptMode&&current.phase==='ready'&&current.location.rotation===rotation)this.state.setState({excerptSelection:value});}).catch(e=>{if(generation===this.selectionGeneration)this.report(e);});}
  private savedLocation='';private version=0;
  private async bounded<T>(work:Promise<T>):Promise<T>{
   let timer:ReturnType<typeof setInterval>|undefined;let active=0;

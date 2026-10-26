@@ -170,6 +170,10 @@
     "allow-pdf-zotero-sources",
     "allow-adopt-pdf-source",
     "allow-zotero-setup-info",
-    "allow-check-zotero-connection"
+    "allow-check-zotero-connection",
+    "allow-save-pdf-excerpt",
+    "allow-pdf-excerpts",
+    "allow-get-pdf-excerpt",
+    "allow-resolve-pdf-location"
   ]
 }

@@ -681,6 +681,7 @@ impl Storage {
 /// Only used to construct historical schemas in disposable unit-test databases.
 #[cfg(test)]
 pub(crate) fn discard_schema12_test_fixture(conn: &Connection) {
+    super::migrations::discard_excerpt_fixture(conn);
     assert_eq!(
         conn.query_row("SELECT count(*) FROM pdf_reading_positions", [], |r| r
             .get::<_, i64>(0))

@@ -1,4 +1,7 @@
 import {describe,it,expect} from 'vitest';
+import {currentPageDraft,pdfPageNumber,canTrackPdfScroll} from './PdfPageLocation';
+it('drops queued passive scroll from before navigation or while a hidden tab awaits restoration',()=>{expect(canTrackPdfScroll(1,2,false,600,800)).toBe(false);expect(canTrackPdfScroll(2,2,true,600,800)).toBe(false);expect(canTrackPdfScroll(2,2,false,0,800)).toBe(false);expect(canTrackPdfScroll(2,2,false,600,0)).toBe(false);expect(canTrackPdfScroll(2,2,false,600,800)).toBe(true);});
+it('never reuses a stale page input draft after explicit navigation returns to the same page',()=>{const draft={pageIndex:0,navigation:1,value:'2',editing:true};expect(pdfPageNumber(draft,0,1)).toBe('2');expect(pdfPageNumber(draft,1,2)).toBe('2');expect(pdfPageNumber(draft,0,3)).toBe('1');expect(currentPageDraft(draft,0,3)).toBe(false);expect(currentPageDraft(draft,1,1)).toBe(false);expect(pdfPageNumber({...draft,editing:false},0,1)).toBe('1');});
 import {initialPdfLocation,validPdfLocation,pdfScale,normalizedOffset,pdfZoomLabel,visiblePdfPage} from './PdfPageLocation';
 describe('PDF location and zoom policy',()=>{
  it('validates persisted positions without silently accepting future shape/NaN/invalid pages',()=>{const v=initialPdfLocation();expect(validPdfLocation(v)).toBe(true);for(const patch of [{pageIndex:-1},{pageIndex:1.5},{pageIndex:10000},{rotation:45},{zoom:NaN},{zoom:0},{offsetY:1.01},{zoomMode:'future'},{spread:1}])expect(validPdfLocation({...v,...patch})).toBe(false);});

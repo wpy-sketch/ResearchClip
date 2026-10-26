@@ -207,6 +207,25 @@ impl PdfDocumentService {
             record.clone(),
         ))
     }
+    pub fn record(&self, id: &str) -> Result<PdfRecord> {
+        let job = self
+            .jobs
+            .lock()
+            .map_err(|_| StorageError::Invalid("PDF服务锁异常。"))?
+            .get(id)
+            .cloned()
+            .ok_or(StorageError::NotFound)?;
+        job.check()?;
+        let file = job
+            .file
+            .lock()
+            .map_err(|_| StorageError::Invalid("PDF授权锁异常。"))?;
+        Ok(file
+            .as_ref()
+            .ok_or(StorageError::Invalid("PDF尚未获得读取授权。"))?
+            .1
+            .clone())
+    }
     pub fn read(&self, id: &str, offset: u64, length: u32) -> Result<Vec<u8>> {
         if length == 0 || length > 1024 * 1024 {
             return Err(StorageError::Invalid("PDF读取块超过1MiB。"));

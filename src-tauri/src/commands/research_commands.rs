@@ -143,7 +143,10 @@ impl ApplicationCommand {
         if valid { Ok(()) } else { Err(invalid()) }
     }
     fn available(&self) -> Result<(), CommandError> {
-        if matches!(self, Self::Open(_) | Self::Insert(_)) {
+        if matches!(
+            self,
+            Self::Open(_) | Self::Insert(_) | Self::Navigate(_) | Self::Capture(_)
+        ) {
             Ok(())
         } else {
             Err(problem(
@@ -195,7 +198,7 @@ fn describe(resource: ResourceSnapshot) -> Result<ResolvedResource, CommandError
                 DocumentType::Pdf => "pdf",
                 DocumentType::Code => "code",
             }),
-            ResearchData::PdfAttachment(_) => Some("pdf"),
+            ResearchData::PdfAttachment(_) | ResearchData::PdfLocation(_) => Some("pdf"),
             _ => None,
         }
     };
@@ -262,6 +265,9 @@ pub async fn prepare_research_command(
                         resources[0].editor == Some("markdown")
                             && resources[1].editor == Some("image")
                     }
+                    ApplicationCommand::Navigate(_) | ApplicationCommand::Capture(_) => {
+                        resources[0].editor == Some("pdf")
+                    }
                     _ => false,
                 };
                 if valid {
@@ -290,7 +296,7 @@ mod tests {
         json!({"version":1,"requestId":"b".repeat(32),"command":{"name":name,"args":args}})
     }
     #[test]
-    fn seven_examples_validate_and_only_two_are_available() {
+    fn seven_examples_validate_and_four_implemented_commands_are_available() {
         for (name, args, available) in [
             ("document.open", json!({"resource":key("document")}), true),
             (
@@ -301,12 +307,12 @@ mod tests {
             (
                 "pdf.navigateTo",
                 json!({"location":key("pdfLocation")}),
-                false,
+                true,
             ),
             (
                 "screenshot.capturePdfSelection",
                 json!({"location":key("pdfLocation")}),
-                false,
+                true,
             ),
             (
                 "annotation.create",

@@ -83,5 +83,6 @@ pub mod math_ocr;
 pub mod revisions;
 
 pub mod pdf;
+pub mod pdf_excerpts;
 
 pub mod zotero;

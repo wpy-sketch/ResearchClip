@@ -28,7 +28,7 @@ export interface DocumentState {
   request:(action:DocumentAction)=>Promise<void>;resolvePending:(choice:'save'|'discard'|'cancel')=>Promise<void>;
   editTitle:(title:string)=>void;editBlock:(id:string,text:string,start?:number,end?:number)=>void;addText:(afterId?:string)=>void;move:(id:string,delta:-1|1)=>void;remove:(id:string)=>void;
   editImage:(id:string,alt:string,title:string)=>boolean;duplicateImage:(id:string)=>boolean;
-  addImages:(ids:string[])=>Promise<boolean>;insertImagesAt:(ids:string[],target:{documentId:string;blockId:string;from:number;to:number;expected:string})=>Promise<boolean>;reorderBlocks:(id:string,before:string|null,expected:string[])=>void;restoreHistory:(id:string,revisionId:string)=>Promise<boolean>;replaceDocument:(document:MarkdownDocument)=>boolean;save:(saveAs?:boolean,restoredFrom?:string)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
+  addImages:(ids:string[],options?:{separateParagraphs?:boolean;pdfLocationId?:string})=>Promise<boolean>;insertImagesAt:(ids:string[],target:{documentId:string;blockId:string;from:number;to:number;expected:string})=>Promise<boolean>;reorderBlocks:(id:string,before:string|null,expected:string[])=>void;restoreHistory:(id:string,revisionId:string)=>Promise<boolean>;replaceDocument:(document:MarkdownDocument)=>boolean;save:(saveAs?:boolean,restoredFrom?:string)=>Promise<boolean>;rename:(name:string)=>Promise<boolean>;
 }
 export const documentDirty=(s:Pick<DocumentState,'document'|'savedFingerprint'>)=>Boolean(s.document&&(s.savedFingerprint===null||JSON.stringify(s.document)!==s.savedFingerprint));
 const dispose=(assets:Record<string,DocumentAsset>)=>Object.values(assets).forEach(a=>URL.revokeObjectURL(a.url));
@@ -65,15 +65,23 @@ export function createDocumentStore(){
       if(text===sourceText(s.document)){set({caret:{start,end}});return;}
       set({document,caret:{start,end},past:bounded([...s.past,{document:s.document,caret:s.caret}]),future:[],notice:null,error:null});
     };
-    const append=(document:MarkdownDocument,blocks:ImageBlock[],caret:DocumentCaret)=>{
-      if(document.mode!=='source')return {...document,blocks:[...document.blocks,...blocks]};
+    const append=(document:MarkdownDocument,blocks:ImageBlock[],caret:DocumentCaret,separateParagraphs=false,pdfLocationId?:string)=>{
+      if(document.mode!=='source'){
+        const at=caret.blockId?document.blocks.findIndex(b=>b.id===caret.blockId):-1,existing=document.blocks[at];
+        if(at<0)return {...document,blocks:[...document.blocks,...blocks]};
+        if(existing.type==='image')return {...document,blocks:[...document.blocks.slice(0,at+1),...blocks,...document.blocks.slice(at+1)]};
+        const start=Math.min(caret.start,existing.markdown.length),end=Math.min(caret.end,existing.markdown.length),tail=existing.markdown.slice(end);
+        return {...document,blocks:[...document.blocks.slice(0,at),{...existing,markdown:existing.markdown.slice(0,start)},...blocks,...(tail?[{id:newId(),type:'text' as const,markdown:tail}]:[]),...document.blocks.slice(at+1)]};
+      }
       const text=sourceText(document),start=Math.min(caret.start,text.length),end=Math.min(caret.end,text.length);
-      const inserted=blocks.map(b=>`![${escapeInline(b.alt)}](assets/${b.assetName})\n\n${b.caption}`).join('\n\n')+'\n\n';
+      const eol=text.match(/\r\n|\n|\r/)?.[0]??'\n',prefix=text.slice(0,start),gap=separateParagraphs&&prefix&&!/\n[ \t]*\n$/.test(prefix.replace(/\r\n|\r/g,'\n'))?(prefix.endsWith('\n')||prefix.endsWith('\r')?eol:eol+eol):'';
+      if(pdfLocationId&&(!/^[a-f0-9]{32}$/.test(pdfLocationId)||blocks.length!==1))throw Error('摘录分组必须使用一个有效的PDF位置ID。');
+      const inserted=gap+(blocks.map(b=>`${pdfLocationId?`<!-- rc-pdf-excerpt:v1 ${pdfLocationId} -->\n\n`:''}![${escapeInline(b.alt)}](assets/${b.assetName})\n\n${b.caption}${pdfLocationId?'\n\n<!-- /rc-pdf-excerpt -->':''}`).join('\n\n')+'\n\n').replaceAll('\n',separateParagraphs?eol:'\n');
       const next={...document,blocks:[{id:document.blocks[0].id,type:'text' as const,markdown:text.slice(0,start)+inserted+text.slice(end)}]};
       serializeDocument(next);
       return next;
     };
-    const appendedHistory=(before:DocumentState,after:MarkdownDocument)=>{if(before.document?.mode!=='source')return {past:[],future:[]};const at=Math.min(before.caret.end,sourceText(before.document).length)+sourceText(after).length-sourceText(before.document).length;return {caret:{start:at,end:at},past:bounded([...before.past,{document:before.document,caret:before.caret}]),future:[],focusRequest:before.focusRequest+1};};
+    const appendedHistory=(before:DocumentState,after:MarkdownDocument)=>{if(before.document?.mode!=='source'){const last=after.blocks.filter(b=>!before.document?.blocks.some(old=>old.id===b.id)&&b.type==='image').at(-1);return {past:bounded([...before.past,{document:before.document!,caret:before.caret}]),future:[],...(last?.type==='image'?{caret:{start:last.caption.length,end:last.caption.length,blockId:last.id},focusRequest:before.focusRequest+1}:{})};}const at=Math.min(before.caret.end,sourceText(before.document).length)+sourceText(after).length-sourceText(before.document).length;return {caret:{start:at,end:at},past:bounded([...before.past,{document:before.document,caret:before.caret}]),future:[],focusRequest:before.focusRequest+1};};
     return {
       projectOpenId:null,projectOpenOffset:0,projectLinkNavigation:false,openProject:async(id,offset)=>{if(get().phase!=='idle'||get().pending)return;if(offset!==undefined&&(!Number.isSafeInteger(offset)||offset<0))return;set({projectOpenId:id,projectOpenOffset:offset??0,projectLinkNavigation:offset!==undefined});await get().request('project');},
       templateDialog:null,setTemplateDialog:(templateDialog)=>set({templateDialog}),
@@ -122,7 +130,7 @@ export function createDocumentStore(){
       remove:(id)=>change(doc=>{const block=doc.blocks.find(b=>b.id===id);if(block?.type==='image'){const assets={...get().assets};if(assets[block.assetName])URL.revokeObjectURL(assets[block.assetName].url);delete assets[block.assetName];set({assets});}return {...doc,blocks:doc.blocks.filter(b=>b.id!==id)};}),
       editImage:(id,alt,title)=>{const s=get(),doc=s.document,block=doc?.blocks.find(b=>b.id===id);if(!doc||doc.mode==='source'||s.phase!=='idle'||block?.type!=='image')return false;try{if(alt.length>200||/[\r\n\0]/.test(alt))throw new Error('图片替代文本限200字且不能换行。');const caption=withLegacyImageTitle(block.caption,title),document={...doc,blocks:doc.blocks.map(b=>b.id===id?{...block,alt,caption}:b)};serializeDocument(document);if(alt===block.alt&&caption===block.caption)return true;set({document,past:bounded([...s.past,{document:doc,caret:s.caret}]),future:[],error:null,notice:'图片属性已修改，可撤销；图题保存在可读注释中。'});return true;}catch(e){set({error:errorMessage(e,'图片属性修改失败，原内容保留。')});return false;}},
       duplicateImage:(id)=>{const s=get(),doc=s.document,block=doc?.blocks.find(b=>b.id===id);if(!doc||doc.mode==='source'||s.phase!=='idle'||block?.type!=='image')return false;let url:string|undefined;try{const asset=s.assets[block.assetName];if(!asset)throw new Error('图片资源缺失，不能复制。');if(doc.blocks.length>=MAX_BLOCKS||Object.keys(s.assets).length>=MAX_IMAGES||Object.values(s.assets).reduce((n,a)=>n+a.blob.size,asset.blob.size)>MAX_ASSET_BYTES)throw new Error('复制超过文档资源预算，原内容保留。');const nextId=newId(),name=`researchclip-${nextId}.png`,copy={...block,id:nextId,assetName:name},blocks=[...doc.blocks];blocks.splice(blocks.findIndex(b=>b.id===id)+1,0,copy);const document={...doc,blocks};serializeDocument(document);url=URL.createObjectURL(asset.blob);set({document,assets:{...s.assets,[name]:{blob:asset.blob,url}},past:bounded([...s.past,{document:doc,caret:s.caret}]),future:[],error:null,notice:'已复制图片和整段注释，原图未改动，可撤销。'});return true;}catch(e){if(url)URL.revokeObjectURL(url);set({error:errorMessage(e,'复制图片失败，原内容保留。')});return false;}},
-      addImages:async(ids)=>{
+      addImages:async(ids,options)=>{
         const s=get();if(!s.document||s.phase!=='idle')return false;
         if(!ids.length||new Set(ids).size!==ids.length||ids.some(id=>!/^[a-f0-9]{32}$/.test(id))||s.document.blocks.length+ids.length>MAX_BLOCKS||Object.keys(s.assets).length+ids.length>MAX_IMAGES){set({error:'图片选择无效或超过32张图片/100块上限。'});return false;}
         set({phase:'adding',error:null});const assets:Record<string,DocumentAsset>={},blocks:ImageBlock[]=[];let size=Object.values(s.assets).reduce((n,a)=>n+a.blob.size,0);
@@ -138,7 +146,7 @@ export function createDocumentStore(){
             const blockId=newId(),name=`researchclip-${blockId}.png`,caption=useCardStore.getState().sessions[id]?.draft?.content??card.note?.content??'';
             assets[name]={blob,url:URL.createObjectURL(blob)};blocks.push({id:blockId,type:'image',assetName:name,sourceScreenshotId:id,alt:image.title,caption:caption.trim()?caption.replaceAll('\r\n','\n'):'注释：'});
           }
-          const document=append(s.document,blocks,s.caret);serializeDocument(document);
+          const document=append(s.document,blocks,s.caret,options?.separateParagraphs,options?.pdfLocationId);serializeDocument(document);
           set({document,...appendedHistory(s,document),assets:{...s.assets,...assets},notice:`已添加 ${blocks.length} 张含标注的图片；注释为添加时的笔记快照。`});return true;
         }catch(error){dispose(assets);set({error:errorMessage(error,'添加失败，已有内容未改动。'),notice:null});return false;}
         finally{set({phase:'idle'});}

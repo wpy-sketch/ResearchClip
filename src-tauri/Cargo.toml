@@ -1,6 +1,6 @@
 [package]
 name = "researchclip"
-version = "4.2.2"
+version = "4.2.3"
 description = "Local research screenshot and knowledge card workspace"
 edition = "2024"
 rust-version = "1.99"

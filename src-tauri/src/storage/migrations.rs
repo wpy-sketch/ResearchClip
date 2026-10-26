@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 16;
+pub const SCHEMA_VERSION: u32 = 17;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -166,10 +166,21 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/016_zotero_scope.sql"),
         )?;
     }
+    if version < 17 {
+        apply_migration(
+            connection,
+            17,
+            include_str!("../../migrations/017_pdf_excerpts.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 17 {
+        connection.prepare("SELECT screenshot_id,draft_json FROM pending_pdf_excerpts LIMIT 0")?;
+        connection.prepare("SELECT screenshot_id,location_type,location_id,literature_id,dpi,rotation FROM pdf_excerpts LIMIT 0")?;
+    }
     if version >= 16 {
         connection.prepare("SELECT instance_id,library_type,library_id,item_key,metadata_json FROM research_zotero_keys LIMIT 0")?;
     }
@@ -278,7 +289,24 @@ fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageE
 }
 
 #[cfg(test)]
+pub(crate) fn discard_excerpt_fixture(connection: &Connection) {
+    for table in ["pdf_excerpts", "pending_pdf_excerpts"] {
+        assert_eq!(
+            connection
+                .query_row(&format!("SELECT count(*) FROM {table}"), [], |r| r
+                    .get::<_, i64>(0))
+                .unwrap(),
+            0,
+            "historical fixture cannot discard PDF provenance"
+        );
+    }
+    connection
+        .execute_batch("DROP TABLE pdf_excerpts; DROP TABLE pending_pdf_excerpts;")
+        .unwrap();
+}
+#[cfg(test)]
 pub(crate) fn legacy_zotero_fixture(connection: &Connection) {
+    discard_excerpt_fixture(connection);
     // Historical unit fixtures only. Refuse to discard any non-legacy provenance.
     assert_eq!(connection.query_row("SELECT count(*) FROM research_zotero_keys WHERE library_type!='legacy' OR metadata_json!='{}'",[],|r|r.get::<_,i64>(0)).unwrap(),0);
     connection.execute_batch("DROP TRIGGER research_zotero_valid; ALTER TABLE research_zotero_keys RENAME TO research_zotero_fixture_v16;").unwrap();

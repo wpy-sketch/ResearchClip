@@ -1,5 +1,9 @@
 export interface PdfPageLocation {pageIndex:number;rotation:number;zoom:number;zoomMode:'custom'|'width'|'page';spread:boolean;offsetX:number;offsetY:number}
 export const initialPdfLocation=():PdfPageLocation=>({pageIndex:0,rotation:0,zoom:1,zoomMode:'width',spread:false,offsetX:0,offsetY:0});
+export interface PdfPageDraft {pageIndex:number;navigation:number;value:string;editing:boolean}
+export function currentPageDraft(draft:PdfPageDraft,pageIndex:number,navigation:number){return draft.editing&&draft.pageIndex===pageIndex&&draft.navigation===navigation;}
+export function pdfPageNumber(draft:PdfPageDraft,pageIndex:number,navigation:number){return currentPageDraft(draft,pageIndex,navigation)?draft.value:String(pageIndex+1);}
+export function canTrackPdfScroll(eventNavigation:number,currentNavigation:number,restoring:boolean,width:number,height:number){return eventNavigation===currentNavigation&&!restoring&&width>0&&height>0;}
 export function validPdfLocation(value:unknown):value is PdfPageLocation{
  if(!value||typeof value!=='object')return false;const v=value as PdfPageLocation;
  return Number.isInteger(v.pageIndex)&&v.pageIndex>=0&&v.pageIndex<10_000&&[0,90,180,270].includes(v.rotation)&&Number.isFinite(v.zoom)&&v.zoom>=.25&&v.zoom<=4&&['custom','width','page'].includes(v.zoomMode)&&typeof v.spread==='boolean'&&[v.offsetX,v.offsetY].every(n=>Number.isFinite(n)&&n>=0&&n<=1);

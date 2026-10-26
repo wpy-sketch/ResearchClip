@@ -28,7 +28,20 @@ export function projectMarkdown(raw:string):SourceProjection{
  for(const c of scan.containers){append(cursor,c.from);nodes.push({node:{type:'theorem'},from:body+c.from,to:body+c.to,theorem:true});cursor=c.to;}append(cursor,raw.length-body);
  if(nodes.length>300)return fallback('超过300个可视块，保留整篇原文编辑，暂停块拖动。');
  const refs:string[]=[];
+ const excerptEnds=new Map<number,number>();
+ for(let i=0;i<nodes.length;i++){
+  if(nodes[i].node.type!=='html')continue;
+  const marker=raw.slice(nodes[i].from,nodes[i].to).trim();
+  if(!/^<!--\s*\/?rc-pdf-excerpt\b/.test(marker))continue;
+  if(!/^<!-- rc-pdf-excerpt:v1 [a-f0-9]{32} -->$/.test(marker))return fallback('摘录分组标记无效或版本不支持，保留原文并暂停块拖动。');
+  let end=i+1;
+  while(end<nodes.length&&!(nodes[end].node.type==='html'&&/^<!--\s*\/?rc-pdf-excerpt\b/.test(raw.slice(nodes[end].from,nodes[end].to).trim())))end++;
+  if(end>=nodes.length||raw.slice(nodes[end].from,nodes[end].to).trim()!=='<!-- /rc-pdf-excerpt -->'||nodes[i+1]?.node.type!=='paragraph'||!nodes[i+1].node.children?.some(n=>n.type==='image'||n.type==='imageReference'))return fallback('摘录分组未闭合或缺少图片，保留原文并暂停块拖动。');
+  excerptEnds.set(i,end);i=end;
+ }
  for(let index=0;index<nodes.length;index++){
+  const excerptEnd=excerptEnds.get(index);
+  if(excerptEnd!==undefined){blocks.push({from:nodes[index].from,to:nodes[excerptEnd].to,kind:'image',image:true,fixed:false});index=excerptEnd;continue;}
   const entry=nodes[index],node=entry.node;let from=entry.from,to=entry.to;
   const image=node.type==='paragraph'&&node.children?.some(c=>c.type==='image'||c.type==='imageReference')&&node.children.every(c=>c.type==='image'||c.type==='imageReference'||c.type==='text'&&!c.value?.trim());
   if(image){while(index+1<nodes.length){const next=nodes[index+1];if(next.node.type!=='paragraph'||next.node.children?.some(c=>c.type==='image'||c.type==='imageReference'))break;to=next.to;index++;}}

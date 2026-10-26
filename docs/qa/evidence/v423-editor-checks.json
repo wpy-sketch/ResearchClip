@@ -1,0 +1,112 @@
+{
+  "version": "4.2.3",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "node": "v22.22.2",
+  "frontend": {
+    "command": "npm run check",
+    "files": 88,
+    "passed": 698,
+    "exitCode": 0
+  },
+  "cleanInstall": {
+    "command": "npm ci --ignore-scripts",
+    "packages": 327,
+    "exitCode": 0,
+    "dependenciesExactlyUnchanged": true
+  },
+  "rust": {
+    "passed": 276,
+    "ignored": 7,
+    "formatExitCode": 0,
+    "testExitCode": 0,
+    "clippyExitCode": 0
+  },
+  "nativeAndBrowser": {
+    "workspace-native": {
+      "result": "PASS",
+      "checks": 7,
+      "evidence": "artifacts/workspace-native-v423-final/report.json",
+      "sha256": "fd903d67a7b1c90a0a4d7235e1007094f6323857329c887699697156717b3019"
+    },
+    "commands-native": {
+      "result": "PASS",
+      "checks": 8,
+      "evidence": "artifacts/commands-native-v423-final/report.json",
+      "sha256": "ab78819821cf58b7c4bfc54380cf192329490bdd11c1e73a9c5a2bd9120d53c6"
+    },
+    "resources-native": {
+      "result": "PASS",
+      "checks": 6,
+      "evidence": "artifacts/resources-native-v423-final/report.json",
+      "sha256": "ecbc80323860128f2b93b2480c5137f894d47951f9bfb4fc4c2832ac01d36883"
+    },
+    "citations-native": {
+      "result": "PASS",
+      "checks": 11,
+      "evidence": "artifacts/citations-native-v423-final/report.json",
+      "sha256": "c3d2db405946bf01b0e721e3ed796d8748f32fdc5cde7fdc0c0f3fb9e6f6a5cf"
+    },
+    "pdf-native": {
+      "result": "PASS",
+      "checks": 13,
+      "evidence": "artifacts/pdf-native-v423-final/report.json",
+      "sha256": "2d959f1495edebbf26da13a3e0a6e6e3cd9410b692fa0203fa79f5ceab37ac66"
+    },
+    "pdf-quality": {
+      "result": "PASS",
+      "checks": 5,
+      "evidence": "artifacts/pdf-quality-v423-final/report.json",
+      "sha256": "129901708a7f1f4a49927c5a072eee58e987c99fd00575f064db0865fa7ca304"
+    },
+    "pdf-layout": {
+      "result": "PASS",
+      "checks": 5,
+      "evidence": "artifacts/pdf-layout-v423-final/report.json",
+      "sha256": "9700b63b4d1fe1e066ce2103992ab95dbff75ff95f03acbcf6c1bfbb7e2fa503"
+    },
+    "zotero-native": {
+      "result": "PASS",
+      "checks": 13,
+      "evidence": "artifacts/zotero-native-v423-final/report.json",
+      "sha256": "e6f685696576cdd8ec5866983ada0545f0228ece924ceaf97b541582efc6dc70"
+    },
+    "pdf-excerpts": {
+      "result": "PASS",
+      "checks": 15,
+      "evidence": "artifacts/pdf-excerpts-v423-final/report.json",
+      "sha256": "3bbdb59f5e06ff68980e78f7ae31b8a94153a106965c96e30fb83db23fafad10"
+    },
+    "guide-reader": {
+      "result": "PASS",
+      "checks": 14,
+      "evidence": "artifacts/guide-reader-v423-final/report.json",
+      "sha256": "b81e1b9a3b1b636a032afbfd70375819c1bf991ba47cc72a580b4d79f5be3b3f"
+    }
+  },
+  "installer": {
+    "checks": 5,
+    "result": "passed",
+    "sha256": "5b1e234b53e0b17e30a3f07cda887d3350169c3d8a6de3ee3abd132f69917004",
+    "signature": "NotSigned",
+    "licenses": 4
+  },
+  "userData": {
+    "changed": 0,
+    "result": "PASS",
+    "mode": "read-only default AppData hash comparison; WebView cache excluded; not a backup/restore feature",
+    "files": 26
+  },
+  "infrastructureTests": 20,
+  "guide": {
+    "chapters": 29,
+    "exercises": 205,
+    "images": 57
+  },
+  "manual": [
+    "Physical DPI and multiple monitors",
+    "Real Zotero external-reader UI deferred by user",
+    "Other operating systems",
+    "Long running large-document heap observations"
+  ],
+  "priorUnresolved": "v4.2.2 long-interval two added files retained with original FAIL; attribution unresolved"
+}

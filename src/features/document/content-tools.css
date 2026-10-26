@@ -3,3 +3,5 @@
 @container(max-width:520px){.md-content-bar{flex-wrap:nowrap;overflow-x:auto}.md-content-bar>*{flex-shrink:0}.md-code-actions{gap:5px}.md-content-dialog{padding:12px}}
 
 :root[data-theme="light"] .hljs-string,:root[data-theme="light"] .hljs-attr,:root[data-theme="light"] .hljs-regexp{color:#246f46}:root[data-theme="light"] .hljs-number,:root[data-theme="light"] .hljs-literal,:root[data-theme="light"] .hljs-title{color:#8a5a10}
+
+.md-block-controls button[draggable]{touch-action:none;cursor:grab}.md-block-controls button[draggable]:active{cursor:grabbing}.md-source-block[data-pointer-before=true]{box-shadow:0 -3px 0 var(--rc-accent)}

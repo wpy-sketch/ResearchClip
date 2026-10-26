@@ -19,3 +19,13 @@
 
 /* Fit modes size each page independently; a later poster cannot widen the entire viewer. */
 .pdf-pages[data-fit=true]{width:100%;min-width:0;grid-template-columns:minmax(0,1fr);justify-items:center}.pdf-pages[data-fit=true][data-spread=true]{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+
+.pdf-selection-surface{position:absolute;inset:0;z-index:4;cursor:crosshair;touch-action:none;user-select:none;background:color-mix(in srgb,var(--rc-accent) 5%,transparent)}
+.pdf-selection-rectangle,.pdf-source-highlight{position:absolute;pointer-events:none;border:2px solid var(--rc-accent);border-radius:3px;background:color-mix(in srgb,var(--rc-accent) 16%,transparent);box-shadow:0 0 0 1px #fff9;box-sizing:border-box}
+.pdf-source-highlight{z-index:3;border-style:dashed;background:#fbbc0522}
+.pdf-excerpt-tools{flex:1 0 100%;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;padding:.6rem;border:1px solid var(--rc-edge);border-radius:.8rem;background:var(--rc-surface);max-height:13rem;overflow:auto}
+.pdf-excerpt-tools p{flex-basis:100%;margin:0;font-size:.76rem;line-height:1.5;overflow-wrap:anywhere}.pdf-excerpt-tools label{display:flex;align-items:center;flex-wrap:wrap;gap:.4rem}.pdf-excerpt-tools button{white-space:normal;max-width:100%;overflow-wrap:anywhere}.pdf-excerpt-result{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;max-width:100%}.pdf-excerpt-result strong{font-size:.75rem}.pdf-excerpts-list{position:relative;font-size:.75rem;max-width:100%}.pdf-excerpts-list summary{cursor:pointer;border:1px solid var(--rc-edge);border-radius:.65rem;padding:.4rem .55rem}.pdf-excerpts-list[open]{flex-basis:100%;max-height:7rem;overflow:auto}.pdf-excerpts-list button{margin:.25rem}.pdf-source-link{text-align:start}
+@container pdf-pane (max-width:23rem){.pdf-excerpt-tools{padding:.4rem;max-height:10rem;gap:.3rem}.pdf-excerpt-tools label,.pdf-excerpt-result strong{flex-basis:100%}.pdf-excerpt-result{gap:.3rem}}
+
+/* Reading-position restoration owns scroll during resize/navigation; avoid a second browser anchor. */
+.pdf-scroll{overflow-anchor:none}

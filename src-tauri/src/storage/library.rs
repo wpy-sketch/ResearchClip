@@ -808,6 +808,16 @@ impl Storage {
         doc: Value,
         png: &[u8],
     ) -> Result<Screenshot, StorageError> {
+        self.create_with_extra(id, name, doc, png, None)
+    }
+    pub(super) fn create_with_extra(
+        &mut self,
+        id: &str,
+        name: &str,
+        doc: Value,
+        png: &[u8],
+        excerpt: Option<&super::pdf_excerpts::ExcerptDraft>,
+    ) -> Result<Screenshot, StorageError> {
         check_id(id)?;
         let name = title(name)?;
         if self.library_status()?.pending_writes >= 100 {
@@ -830,10 +840,23 @@ impl Storage {
             ));
         }
         let stamp = now()?;
-        self.connection.execute(
+        let tx = self
+            .connection
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
+        tx.execute(
             "INSERT INTO pending_screenshots VALUES (?1,?2,?3,?4,?5,?6)",
             params![id, name, json, frame.width_px, frame.height_px, stamp],
         )?;
+        if let Some(excerpt) = excerpt {
+            excerpt.validate()?;
+            let json = serde_json::to_string(excerpt)
+                .map_err(|_| StorageError::Invalid("PDF摘录元数据无法编码。"))?;
+            tx.execute(
+                "INSERT INTO pending_pdf_excerpts VALUES(?1,?2)",
+                params![id, json],
+            )?;
+        }
+        tx.commit()?;
         if let Err(error) = files::write(&self.data_dir, &original, png) {
             self.clear_empty_pending(id)?;
             return Err(error);
@@ -850,6 +873,7 @@ impl Storage {
         if inserted != 1 {
             return Err(StorageError::NotFound);
         }
+        super::pdf_excerpts::commit_extra(&tx, id)?;
         tx.execute("DELETE FROM pending_screenshots WHERE id=?1", [id])?;
         tx.commit()?;
         Ok(())

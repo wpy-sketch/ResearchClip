@@ -39,7 +39,8 @@ applicationCommands.register('markdown.insertImage',async(context,args)=>{
  if(!await binding.store.getState().addImages([args.image.id]))throw new CommandFailure('OPERATION_FAILED');
  applicationEvents.publish(publisher,'markdown.imageInserted',{requestId:context.request.requestId,document:args.document,image:args.image},context.cause);
 });
-for(const name of ['pdf.navigateTo','screenshot.capturePdfSelection','annotation.create','codeWorkspace.open','agent.requestEdit'] as const)applicationCommands.register(name,async()=>{throw new CommandFailure('MODULE_UNAVAILABLE');});
+for(const name of ['pdf.navigateTo','screenshot.capturePdfSelection'] as const)applicationCommands.register(name,async(context,args)=>{context.signal.throwIfAborted();context.commit();await(await import('../../pdf/navigateExcerpt')).navigateExcerpt(args.location.id,name==='screenshot.capturePdfSelection');});
+for(const name of ['annotation.create','codeWorkspace.open','agent.requestEdit'] as const)applicationCommands.register(name,async()=>{throw new CommandFailure('MODULE_UNAVAILABLE');});
 /** Only trusted, explicit UI actions call this entry. External/Agent transports have no handle or IPC bridge. */
 export function executeUserCommand<N extends CommandName>(name:N,args:CommandArgs[N]){return applicationCommands.execute(user,name,args);}
 export function runUserCommand<N extends CommandName>(name:N,args:CommandArgs[N]){void executeUserCommand(name,args).catch(()=>{/* CommandRegistry has already reported a safe, visible diagnostic. */});}

@@ -1,5 +1,7 @@
 # ResearchClip 架构设计
 
+v4.2.3 Step12：PDF.js按页选区与独立DPI渲染，SQLite17扩展既有截图写入意图和统一PdfLocation，复用标注、Markdown文件/撤销/相对图片管线。文档边界标记只用于已有块投影；不另建资源或正文服务。见[坐标、权限和迁移设计](architecture/PDF_EXCERPTS_STEP12.md)与[验收记录](qa/RELEASE-4.2.3.md)。
+
 v4.2.0 Step11：复用单实例和PDF会话，原生argv授权队列、只读Zotero来源预览/确认，SQLite16扩展既有范围映射；详见[Step11架构](architecture/ZOTERO_PDF_STEP11.md)与[实际验收](qa/ZOTERO_PDF_STEP11.md)。v4.1.9已提供[原生PDF阅读器](architecture/PDF_READER_STEP10.md)。下文保留各阶段原有记录。
 
 v4.1.5用户Step06：有界表格局部编辑、图片组与旧caption图题、代码HAST安全着色、视图行号/折叠及最近格式；复用原文、资源与文件/撤销服务。无迁移/权限扩张，见[设计](architecture/MARKDOWN_STEP06_DESIGN.md)与[验收](qa/MARKDOWN_STEP06.md)。
