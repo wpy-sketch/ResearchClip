@@ -40,4 +40,4 @@ pwsh -NoProfile -File scripts/installer-smoke.ps1 -RunId v422-delivery -TargetDi
 
 ## 发布
 
-目标297附件，冻结此前41版2866项原附件；最终发布、匿名下载与历史审计结果完成后写入回执。本轮完成后停止；后续功能需要新的阶段请求。
+297附件已正式发布并全部实际匿名下载核对通过，此前41版2866项原附件前后审计PASS；见[正式发布回执](PUBLICATION-4.2.2.md)。本轮完成后停止；后续功能需要新的阶段请求。

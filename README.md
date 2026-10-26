@@ -1,4 +1,4 @@
-> **v4.2.2 · PDF布局与查询取消修复**：混合尺寸页面逐页适应，双页页码与窄屏缩放稳定；取消后忽略晚到的Zotero响应。指南28章193练习53图。[本版说明](docs/RELEASE-NOTES-4.2.2.md) · [实际验收](docs/qa/RELEASE-4.2.2.md)。
+> **v4.2.2 · PDF布局与查询取消修复**：混合尺寸页面逐页适应，双页页码与窄屏缩放稳定；取消后忽略晚到的Zotero响应。指南28章193练习53图。[本版说明](docs/RELEASE-NOTES-4.2.2.md) · [实际验收](docs/qa/RELEASE-4.2.2.md)。 [正式发布回执](docs/qa/PUBLICATION-4.2.2.md)。
 
 > **v4.1.9 · 原生工作区PDF阅读器**：本地只读PDF标签、连续单双页、缩放旋转、目录缩略图、文字复制和全文搜索，保存阅读位置并与Markdown并排；SQLite15。见[本版说明](docs/RELEASE-NOTES-4.1.9.md)、[Step10验收](docs/qa/PDF_READER_STEP10.md)与[发布检查](docs/qa/RELEASE-4.1.9.md)。
 
