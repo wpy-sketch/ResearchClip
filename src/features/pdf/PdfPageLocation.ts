@@ -7,6 +7,13 @@ export function validPdfLocation(value:unknown):value is PdfPageLocation{
 export function normalizedOffset(offset:number,size:number){return size>0?Math.max(0,Math.min(1,offset/size)):0;}
 export function pdfScale(location:PdfPageLocation,width:number,height:number,pageWidth:number,pageHeight:number){
  if(location.zoomMode==='custom')return location.zoom;
- const fitWidth=Math.max(80,width-40)/(pageWidth*(location.spread?2:1)+ (location.spread?16:0));
- return Math.max(.1,Math.min(4,location.zoomMode==='page'?Math.min(fitWidth,Math.max(80,height-32)/pageHeight):fitWidth));
+ const columnWidth=Math.max(1,(width-40-(location.spread?16:0))/(location.spread?2:1));
+ const fitWidth=columnWidth/pageWidth;
+ return Math.max(.000001,Math.min(4,location.zoomMode==='page'?Math.min(fitWidth,Math.max(1,height-32)/pageHeight):fitWidth));
+}
+export function pdfZoomLabel(scale:number){return scale*100<1?'<1%':`${Math.round(scale*100)}%`;}
+export function visiblePdfPage(pages:{index:number;top:number}[],scrollTop:number,currentIndex:number):number|null{
+ let rowTop=-Infinity;let row:{index:number;top:number}[]=[];
+ for(const page of pages){if(page.top>scrollTop+32)break;if(page.top>rowTop){rowTop=page.top;row=[page];}else if(page.top===rowTop)row.push(page);}
+ return row.find(p=>p.index===currentIndex)?.index??row[0]?.index??pages[0]?.index??null;
 }
