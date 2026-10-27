@@ -33,9 +33,9 @@ WebClipper1.0.2、MathOCR Setup1.0.4及Qwen清单原样沿用，不改其版本/
 
 ## v4.2.7 如何完整继承附件
 
-本版预计327附件覆盖此前46个Release的4411项原附件。通过v4.1.1的226文件仍在同一223卷归档；v4.1.2至v4.2.6发布文件保持原字节。上一版321附件中319项无冲突附件直接继承，SOURCE.txt和SHA256SUMS.txt按原名原字节放在ResearchClip-v4.2.6-Release-Metadata.zip的v4.2.6目录；更早元数据ZIP原样提供。V427-HISTORY-INVENTORY.json逐项给出原版本、名称、大小、摘要与当前定位，不以链接代替附件内容。
+本版327附件覆盖此前46个Release的4411项原附件。通过v4.1.1的226文件仍在同一223卷归档；v4.1.2至v4.2.6发布文件保持原字节。上一版321附件中319项无冲突附件直接继承，SOURCE.txt和SHA256SUMS.txt按原名原字节放在ResearchClip-v4.2.6-Release-Metadata.zip的v4.2.6目录；更早元数据ZIP原样提供。V427-HISTORY-INVENTORY.json逐项给出原版本、名称、大小、摘要与当前定位，不以链接代替附件内容。
 
-旧HISTORY-TRANSPORT.json和重组脚本保留原desktopVersion4.1.2，仍描述通过v4.1.1的同一归档，摘要与223卷不变。本版以RELEASE-HISTORY-v4.2.7.txt为准。顶层SOURCE.txt与SHA256SUMS.txt属于v4.2.7，旧安装器不是当前程序。正式发布及匿名下载结果见后续本版发布回执。
+旧HISTORY-TRANSPORT.json和重组脚本保留原desktopVersion4.1.2，仍描述通过v4.1.1的同一归档，摘要与223卷不变。本版以RELEASE-HISTORY-v4.2.7.txt为准。顶层SOURCE.txt与SHA256SUMS.txt属于v4.2.7，旧安装器不是当前程序。327附件实际匿名下载校验及旧Release不变结果见[正式发布回执](qa/PUBLICATION-4.2.7.md)。
 
 ## 升级后核对
 
