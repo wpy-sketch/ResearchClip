@@ -4,7 +4,7 @@ on:
     inputs:
       mode:
         type: choice
-        options: [reconstruct412, inherit413, verify412, verify413, inherit414, verify414, inherit415, verify415, inherit416, verify416, inherit417, verify417, inherit418, verify418, inherit419, verify419, inherit420, verify420, inherit421, verify421, inherit422, verify422, inherit423, verify423, inherit424, verify424, inherit425, verify425, inherit426, verify426]
+        options: [reconstruct412, inherit413, verify412, verify413, inherit414, verify414, inherit415, verify415, inherit416, verify416, inherit417, verify417, inherit418, verify418, inherit419, verify419, inherit420, verify420, inherit421, verify421, inherit422, verify422, inherit423, verify423, inherit424, verify424, inherit425, verify425, inherit426, verify426, inherit427, verify427]
         required: true
       target_release:
         type: string
@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   transport:
-    if: inputs.mode == 'reconstruct412' || inputs.mode == 'inherit413' || inputs.mode == 'inherit414' || inputs.mode == 'inherit415' || inputs.mode == 'inherit416' || inputs.mode == 'inherit417' || inputs.mode == 'inherit418' || inputs.mode == 'inherit419' || inputs.mode == 'inherit420' || inputs.mode == 'inherit421' || inputs.mode == 'inherit422' || inputs.mode == 'inherit423' || inputs.mode == 'inherit424' || inputs.mode == 'inherit425' || inputs.mode == 'inherit426'
+    if: inputs.mode == 'reconstruct412' || inputs.mode == 'inherit413' || inputs.mode == 'inherit414' || inputs.mode == 'inherit415' || inputs.mode == 'inherit416' || inputs.mode == 'inherit417' || inputs.mode == 'inherit418' || inputs.mode == 'inherit419' || inputs.mode == 'inherit420' || inputs.mode == 'inherit421' || inputs.mode == 'inherit422' || inputs.mode == 'inherit423' || inputs.mode == 'inherit424' || inputs.mode == 'inherit425' || inputs.mode == 'inherit426' || inputs.mode == 'inherit427'
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     permissions:
@@ -43,7 +43,7 @@ jobs:
           TARGET_COMMIT: ${{ inputs.target_commit }}
         run: python3 scripts/github-release-transfer.py "$TRANSFER_MODE" --target-release "$TARGET_RELEASE" --target-commit "$TARGET_COMMIT" --run-id "ci-${{ github.run_id }}"
   public-verification:
-    if: inputs.mode == 'verify412' || inputs.mode == 'verify413' || inputs.mode == 'verify414' || inputs.mode == 'verify415' || inputs.mode == 'verify416' || inputs.mode == 'verify417' || inputs.mode == 'verify418' || inputs.mode == 'verify419' || inputs.mode == 'verify420' || inputs.mode == 'verify421' || inputs.mode == 'verify422' || inputs.mode == 'verify423' || inputs.mode == 'verify424' || inputs.mode == 'verify425' || inputs.mode == 'verify426'
+    if: inputs.mode == 'verify412' || inputs.mode == 'verify413' || inputs.mode == 'verify414' || inputs.mode == 'verify415' || inputs.mode == 'verify416' || inputs.mode == 'verify417' || inputs.mode == 'verify418' || inputs.mode == 'verify419' || inputs.mode == 'verify420' || inputs.mode == 'verify421' || inputs.mode == 'verify422' || inputs.mode == 'verify423' || inputs.mode == 'verify424' || inputs.mode == 'verify425' || inputs.mode == 'verify426' || inputs.mode == 'verify427'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     permissions:

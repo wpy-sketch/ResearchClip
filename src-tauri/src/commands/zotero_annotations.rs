@@ -69,7 +69,11 @@ pub async fn refresh_zotero_annotations(
             return Err(fail("批注读取已取消，旧缓存保留。"));
         }
         pdf.source(&token).map_err(super::library::error)?;
-        library.with(|s| s.save_annotation_cache(&record.document_id, &cache))?;
+        library.with(|s| {
+            s.save_annotation_cache(&record.document_id, &cache)?;
+            s.observe_annotation_sync(&record.document_id, &cache)?;
+            Ok(())
+        })?;
         Ok::<_, CommandError>(cache)
     })
     .await

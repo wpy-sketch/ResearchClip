@@ -1,4 +1,4 @@
-> **v4.2.6 · 受控Zotero标准批注写入**：高亮、下划线与文字便签，主动授权、对象版本条件与保存后复读核实。指南32章。[本版说明](docs/RELEASE-NOTES-4.2.6.md) · [实际验收](docs/qa/RELEASE-4.2.6.md)。
+> **v4.2.7 · Zotero标准批注双向同步**：本地持久待处理、六种同步状态、条件写入、三方冲突比较与独立处理历史。自动刷新只读且默认关闭。指南33章。[本版说明](docs/RELEASE-NOTES-4.2.7.md) · [实际验收](docs/qa/RELEASE-4.2.7.md)。
 
 > **v4.1.9 · 原生工作区PDF阅读器**：本地只读PDF标签、连续单双页、缩放旋转、目录缩略图、文字复制和全文搜索，保存阅读位置并与Markdown并排；SQLite15。见[本版说明](docs/RELEASE-NOTES-4.1.9.md)、[Step10验收](docs/qa/PDF_READER_STEP10.md)与[发布检查](docs/qa/RELEASE-4.1.9.md)。
 
@@ -11,7 +11,7 @@
 
 # 使用Codex进行构建
 
-面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.2.6 Windows；发布与验收状态见本版记录**。
+面向科研人员的本地桌面截图、图片标注与 Markdown 知识管理工具。**当前构建：v4.2.7 Windows；发布与验收状态见本版记录**。
 
 [v4.2.0正式回执](docs/qa/PUBLICATION-4.2.0.md) · [v4.2.0变更](docs/RELEASE-NOTES-4.2.0.md) · [Step11验收](docs/qa/ZOTERO_PDF_STEP11.md) · [GitHub发布版本](https://github.com/wpy-sketch/ResearchClip/releases/latest) · [v4.1.9正式回执](docs/qa/PUBLICATION-4.1.9.md) · [v4.1.8正式回执](docs/qa/PUBLICATION-4.1.8.md) · [v4.1.8发布检查](docs/qa/RELEASE-4.1.8.md) · [v4.1.7正式回执](docs/qa/PUBLICATION-4.1.7.md) · [v4.1.7发布检查](docs/qa/RELEASE-4.1.7.md) · [v4.1.7配套与历史附件](docs/RELEASE-COMPONENTS.md) · [v3.1.2发布传输状态](docs/qa/DELIVERY-3.1.2.md) · [完整图文使用指南](docs/USER_GUIDE.md) · [网页剪藏安装](browser-extension/README.md) · [v1.0.2实际验收](docs/qa/RELEASE-1.0.2.md) · [v1.0.2发布回执](docs/qa/PUBLICATION-1.0.2.md)
 

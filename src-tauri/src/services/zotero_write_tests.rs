@@ -189,6 +189,175 @@ fn real_marked_zotero_official_http_roundtrip_and_permissions() {
                 .verified
         );
     }
+    // Two independent native clients race from the SAME base. All data belongs to this marked fixture.
+    let client_b = ZoteroClient::at("http://127.0.0.1:32122/api/").unwrap();
+    let fixed_key = crate::services::zotero_write_model::new_foreign_annotation_key().unwrap();
+    let create = AnnotationWriteInput::Create {
+        annotation_type: "highlight".into(),
+        color: "#ffd400".into(),
+        text: "两个客户端的虚构选文".into(),
+        comment: "固定key的幂等创建".into(),
+        geometry: WriteGeometry {
+            page_index: 0,
+            view: [0., 0., 600., 800.],
+            user_unit: 1.,
+            rectangles: vec![[10., 20., 100., 20.]],
+        },
+    };
+    let a = client
+        .prepare_annotation_write_reserved(&source, &original, &create, Some(&fixed_key), &cancel)
+        .unwrap();
+    let initial = client
+        .perform_annotation_write(&a, &grant, &original, &cancel)
+        .unwrap()
+        .annotation
+        .unwrap();
+    assert_eq!(initial.identity.annotation_key, fixed_key);
+    // Restart/retry must READ the same key, rather than create a fresh one.
+    assert!(
+        client_b
+            .verify_annotation_write(&a, &original, &cancel)
+            .unwrap()
+            .verified
+    );
+    assert_eq!(
+        client_b
+            .prepare_annotation_write_reserved(
+                &source,
+                &original,
+                &create,
+                Some(&fixed_key),
+                &cancel
+            )
+            .err()
+            .unwrap()
+            .code,
+        "ZOTERO_WRITE_CONFLICT"
+    );
+    let edit = |version, comment: &str| AnnotationWriteInput::Update {
+        annotation_key: fixed_key.clone(),
+        expected_version: version,
+        annotation_type: "highlight".into(),
+        color: "#34a853".into(),
+        text: "两个客户端的虚构选文".into(),
+        comment: comment.into(),
+    };
+    let a_edit = client
+        .prepare_annotation_write(
+            &source,
+            &original,
+            &edit(initial.version, "客户端A"),
+            &cancel,
+        )
+        .unwrap();
+    let b_edit = client_b
+        .prepare_annotation_write(
+            &source,
+            &original,
+            &edit(initial.version, "客户端B待处理"),
+            &cancel,
+        )
+        .unwrap();
+    let after_a = client
+        .perform_annotation_write(&a_edit, &grant, &original, &cancel)
+        .unwrap()
+        .annotation
+        .unwrap();
+    assert_eq!(
+        client_b
+            .perform_annotation_write(&b_edit, &grant, &original, &cancel)
+            .err()
+            .unwrap()
+            .code,
+        "ZOTERO_WRITE_CONFLICT"
+    );
+    assert_eq!(
+        client_b
+            .read_annotation_for_sync(&source, &original, &fixed_key, &cancel)
+            .unwrap()
+            .unwrap()
+            .comment,
+        "客户端A"
+    );
+    // Delete-versus-update race: update wins, stale deletion must not erase it.
+    let stale_delete = client_b
+        .prepare_annotation_write(
+            &source,
+            &original,
+            &AnnotationWriteInput::Delete {
+                annotation_key: fixed_key.clone(),
+                expected_version: after_a.version,
+            },
+            &cancel,
+        )
+        .unwrap();
+    let newer = client
+        .prepare_annotation_write(
+            &source,
+            &original,
+            &edit(after_a.version, "保留最新修改"),
+            &cancel,
+        )
+        .unwrap();
+    let after_new = client
+        .perform_annotation_write(&newer, &grant, &original, &cancel)
+        .unwrap()
+        .annotation
+        .unwrap();
+    assert_eq!(
+        client_b
+            .perform_annotation_write(&stale_delete, &grant, &original, &cancel)
+            .err()
+            .unwrap()
+            .code,
+        "ZOTERO_WRITE_CONFLICT"
+    );
+    // Deletion wins the next race; stale update must not resurrect a deleted annotation.
+    let stale_update = client_b
+        .prepare_annotation_write(
+            &source,
+            &original,
+            &edit(after_new.version, "删除后的过期修改"),
+            &cancel,
+        )
+        .unwrap();
+    let cleanup = client
+        .prepare_annotation_write(
+            &source,
+            &original,
+            &AnnotationWriteInput::Delete {
+                annotation_key: fixed_key.clone(),
+                expected_version: after_new.version,
+            },
+            &cancel,
+        )
+        .unwrap();
+    assert!(
+        client
+            .perform_annotation_write(&cleanup, &grant, &original, &cancel)
+            .unwrap()
+            .verified
+    );
+    assert_eq!(
+        client_b
+            .perform_annotation_write(&stale_update, &grant, &original, &cancel)
+            .err()
+            .unwrap()
+            .code,
+        "ZOTERO_WRITE_NOT_FOUND"
+    );
+    assert!(
+        client_b
+            .read_annotation_for_sync(&source, &original, &fixed_key, &cancel)
+            .unwrap()
+            .is_none()
+    );
+    assert!(
+        client_b
+            .verify_annotation_write(&cleanup, &original, &cancel)
+            .unwrap()
+            .verified
+    );
     assert_eq!(Sha256::digest(std::fs::read(original).unwrap()), before);
 }
 

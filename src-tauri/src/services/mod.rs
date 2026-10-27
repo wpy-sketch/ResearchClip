@@ -37,3 +37,5 @@ pub mod zotero_session;
 
 pub mod zotero_annotations;
 pub mod zotero_write_model;
+
+pub mod zotero_sync_model;

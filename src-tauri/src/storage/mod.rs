@@ -263,3 +263,5 @@ mod tests {
 pub mod zotero;
 
 pub mod zotero_annotations;
+
+pub mod zotero_sync;

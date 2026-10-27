@@ -63,7 +63,10 @@ mod tests {
             .unwrap();
         drop(s);
         let mut s = Storage::open(t.path().join("data")).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 19);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            super::super::migrations::SCHEMA_VERSION
+        );
         assert_eq!(std::fs::read_to_string(&path).unwrap(), raw);
         let source = s.link_source(&doc).unwrap();
         s.replace_links(&doc, &source.stamp, &[edge]).unwrap();

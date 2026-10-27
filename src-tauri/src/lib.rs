@@ -264,6 +264,7 @@ fn run_inner(fixture: Option<capture::RawFrame>) {
             commands::zotero_annotations::cached_zotero_annotations,
             commands::zotero_annotations::refresh_zotero_annotations,
             commands::zotero_write::zotero_annotation_write,
+            commands::zotero_sync::zotero_annotation_sync,
             commands::pdf::adopt_pdf_source,
             commands::pdf::pending_pdf_requests,
             commands::zotero::preview_pdf_zotero,

@@ -8,6 +8,9 @@
  <rect x="190" y="288" width="157" height="73" rx="14" fill="#e8f0fe"/>
  <path d="M216 282h-36v34m154-34h36v34m-190 26v31h36m154-31v31h-36" fill="none" stroke="#4285f4" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
  <path d="M220 326h100" stroke="#ea4335" stroke-width="17" stroke-linecap="round"/>
- <path d="m309 414 39-39c13-13 33-13 46 0s13 33 0 46l-27 27" fill="none" stroke="#34a853" stroke-width="22" stroke-linecap="round"/>
- <path d="m340 394-27 27c-13 13-13 33 0 46s33 13 46 0l40-40" fill="none" stroke="#4285f4" stroke-width="22" stroke-linecap="round"/>
+ <circle cx="365" cy="409" r="66" fill="#fff"/>
+ <path d="M318 402a49 49 0 0 1 81-32" fill="none" stroke="#4285f4" stroke-width="20" stroke-linecap="round"/>
+ <path d="m382 349 22 25-33 4" fill="none" stroke="#4285f4" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+ <path d="M412 417a49 49 0 0 1-81 32" fill="none" stroke="#34a853" stroke-width="20" stroke-linecap="round"/>
+ <path d="m348 470-22-25 33-4" fill="none" stroke="#34a853" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

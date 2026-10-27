@@ -54,6 +54,8 @@ pub struct ZoteroAnnotation {
     pub text: String,
     pub comment: String,
     pub page_label: String,
+    #[serde(default)]
+    pub modified_at: Option<String>,
     pub position: Option<AnnotationPosition>,
     pub unsupported_reason: Option<String>,
 }
@@ -206,6 +208,10 @@ pub fn parse_annotation(
         text: safe_text(data, "annotationText", 65536)?,
         comment: safe_text(data, "annotationComment", 65536)?,
         page_label: safe_text(data, "annotationPageLabel", 200)?,
+        modified_at: match safe_text(data, "dateModified", 64)? {
+            v if v.is_empty() => None,
+            v => Some(v),
+        },
         position,
         unsupported_reason,
     })
@@ -241,6 +247,9 @@ impl AnnotationReadCache {
                 || a.text.len() > 65536
                 || a.comment.len() > 65536
                 || a.page_label.len() > 200
+                || a.modified_at
+                    .as_ref()
+                    .is_some_and(|v| v.len() > 64 || v.chars().any(char::is_control))
                 || a.unsupported_reason.as_ref().is_some_and(|r| r.len() > 500)
                 || a.position.is_none() && a.unsupported_reason.is_none()
             {

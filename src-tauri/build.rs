@@ -38,6 +38,7 @@ fn main() {
             "cached_zotero_annotations",
             "refresh_zotero_annotations",
             "zotero_annotation_write",
+            "zotero_annotation_sync",
             "adopt_pdf_source",
             "pending_pdf_requests",
             "preview_pdf_zotero",

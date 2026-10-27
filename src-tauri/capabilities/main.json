@@ -179,6 +179,7 @@
     "allow-pdf-selection-notes",
     "allow-cached-zotero-annotations",
     "allow-refresh-zotero-annotations",
-    "allow-zotero-annotation-write"
+    "allow-zotero-annotation-write",
+    "allow-zotero-annotation-sync"
   ]
 }

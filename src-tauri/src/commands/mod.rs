@@ -90,3 +90,5 @@ pub mod zotero;
 pub mod zotero_annotations;
 
 pub mod zotero_write;
+
+pub mod zotero_sync;

@@ -2,7 +2,7 @@ use super::StorageError;
 use rusqlite::{Connection, OpenFlags, TransactionBehavior};
 use std::path::Path;
 
-pub const SCHEMA_VERSION: u32 = 19;
+pub const SCHEMA_VERSION: u32 = 20;
 
 fn apply_migration(
     connection: &mut Connection,
@@ -187,10 +187,22 @@ pub fn migrate(connection: &mut Connection, root: Option<&Path>) -> Result<(), S
             include_str!("../../migrations/019_zotero_annotation_cache.sql"),
         )?;
     }
+    if version < 20 {
+        apply_migration(
+            connection,
+            20,
+            include_str!("../../migrations/020_zotero_annotation_sync.sql"),
+        )?;
+    }
     validate_schema(connection, SCHEMA_VERSION)?;
     Ok(())
 }
 fn validate_schema(connection: &Connection, version: u32) -> Result<(), StorageError> {
+    if version >= 20 {
+        connection.prepare("SELECT id,document_id,instance_id,library_type,library_id,item_key,attachment_key,content_hash,annotation_key,revision,status,entry_json FROM zotero_annotation_sync LIMIT 0")?;
+        connection.prepare("SELECT revision_id,change_id,version_number,parent_revision_id,created_at,description,snapshot_json FROM zotero_annotation_sync_revisions LIMIT 0")?;
+        connection.prepare("SELECT document_id,instance_id,library_type,library_id,item_key,attachment_key,content_hash,scope_json FROM zotero_annotation_sync_scopes LIMIT 0")?;
+    }
     if version >= 19 {
         connection.prepare("SELECT document_id,instance_id,library_type,library_id,attachment_key,content_hash,format_version,fetched_at,snapshot_json FROM zotero_annotation_cache LIMIT 0")?;
     }
@@ -344,6 +356,7 @@ pub(crate) fn legacy_zotero_fixture(connection: &Connection) {
 
 #[cfg(test)]
 pub(crate) fn discard_annotation_cache_fixture(c: &Connection) {
+    discard_annotation_sync_fixture(c);
     assert_eq!(
         c.query_row("SELECT count(*) FROM zotero_annotation_cache", [], |r| r
             .get::<_, i64>(0))
@@ -353,6 +366,24 @@ pub(crate) fn discard_annotation_cache_fixture(c: &Connection) {
     );
     c.execute_batch("DROP TABLE zotero_annotation_cache;")
         .unwrap();
+}
+
+#[cfg(test)]
+pub(crate) fn discard_annotation_sync_fixture(c: &Connection) {
+    for table in [
+        "zotero_annotation_sync_revisions",
+        "zotero_annotation_sync",
+        "zotero_annotation_sync_scopes",
+    ] {
+        assert_eq!(
+            c.query_row(&format!("SELECT count(*) FROM {table}"), [], |r| r
+                .get::<_, i64>(0))
+                .unwrap(),
+            0,
+            "historical fixture cannot discard pending annotation changes"
+        );
+        c.execute_batch(&format!("DROP TABLE {table};")).unwrap();
+    }
 }
 
 #[cfg(test)]

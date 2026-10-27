@@ -1,0 +1,122 @@
+{
+  "version": "4.2.7",
+  "date": "2026-10-27",
+  "environment": "Windows x64 / Tauri2 / WebView2; dedicated Zotero10.0.6 API3 fixture",
+  "frontend": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "tests": 741,
+    "files": 92
+  },
+  "rust": {
+    "command": "npm run test:rust",
+    "exitCode": 0,
+    "passed": 308,
+    "defaultIgnored": 8,
+    "realZoteroExplicitlyExecuted": 1,
+    "formatExitCode": 0,
+    "clippyExitCode": 0
+  },
+  "native": [
+    {
+      "module": "workspace",
+      "checks": 7,
+      "result": "PASS",
+      "report": "workspace-native-v427-final-a/report.json"
+    },
+    {
+      "module": "commands",
+      "checks": 8,
+      "result": "PASS",
+      "report": "commands-native-v427-final-a/report.json"
+    },
+    {
+      "module": "resources",
+      "checks": 6,
+      "result": "PASS",
+      "report": "resources-native-v427-final-a/report.json"
+    },
+    {
+      "module": "citations",
+      "checks": 11,
+      "result": "PASS",
+      "report": "citations-native-v427-final-a/report.json"
+    },
+    {
+      "module": "pdf",
+      "checks": 13,
+      "result": "PASS",
+      "report": "pdf-native-v427-final-a/report.json"
+    },
+    {
+      "module": "pdf-quality",
+      "checks": 5,
+      "result": "PASS",
+      "report": "pdf-quality-v427-final-a/report.json"
+    },
+    {
+      "module": "pdf-layout",
+      "checks": 5,
+      "result": "PASS",
+      "report": "pdf-layout-v427-final-a/report.json"
+    },
+    {
+      "module": "pdf-links",
+      "checks": 25,
+      "result": "PASS",
+      "report": "pdf-excerpts-v427-links-final-a/report.json"
+    },
+    {
+      "module": "annotations",
+      "checks": 28,
+      "result": "PASS",
+      "report": "zotero-native-v427-final-a/report.json"
+    },
+    {
+      "module": "writer",
+      "checks": 25,
+      "result": "PASS",
+      "report": "zotero-native-v427-write-final-c/report.json"
+    },
+    {
+      "module": "sync",
+      "checks": 22,
+      "result": "PASS",
+      "report": "zotero-native-v427-sync-final-a/report.json"
+    }
+  ],
+  "nativeTotal": 155,
+  "counting": "sum of executed script assertions; common source scenarios repeat",
+  "guide": {
+    "result": "PASS",
+    "checks": 14,
+    "chapters": 33,
+    "examples": 253,
+    "images": 68
+  },
+  "installer": {
+    "result": "passed",
+    "checks": 5,
+    "sha256": "d744816498b3395be5a8bd4755fc632ebd888794efc500de273787add5b15f08",
+    "size": 17626209,
+    "signature": "NotSigned"
+  },
+  "defaultData": {
+    "result": "PASS",
+    "files": 27,
+    "changed": 0
+  },
+  "cleanInstall": {
+    "exitCode": 0,
+    "packages": 327,
+    "dependencyVersionsChanged": false
+  },
+  "releaseInfrastructureTests": 23,
+  "releaseAssetsPendingPublicVerification": 327,
+  "manualNotVerified": [
+    "real Zotero authorization GUI",
+    "real read-only group/noncreator policies",
+    "physical multi-display DPI",
+    "non-Windows platforms"
+  ]
+}

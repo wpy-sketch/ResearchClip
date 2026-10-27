@@ -71,7 +71,10 @@ mod tests {
             .unwrap();
         drop(s);
         let mut s = Storage::open(tmp.path().into()).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 19);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            super::super::migrations::SCHEMA_VERSION
+        );
         assert_eq!(s.screenshot_image(&old.id, false).unwrap(), raw);
         assert_eq!(
             s.pdf_record(&doc).unwrap().content_hash,
@@ -182,18 +185,18 @@ mod tests {
     fn future_database_version_refuses_writes_without_reset() {
         let (tmp, s, _, _) = fixture();
         s.connection
-            .pragma_update(None, "user_version", 20)
+            .pragma_update(None, "user_version", 21)
             .unwrap();
         drop(s);
         assert!(matches!(
             Storage::open(tmp.path().into()),
-            Err(StorageError::NewerSchema(20))
+            Err(StorageError::NewerSchema(21))
         ));
         let c = Connection::open(tmp.path().join("researchclip.sqlite3")).unwrap();
         assert_eq!(
             c.pragma_query_value(None, "user_version", |r| r.get::<_, u32>(0))
                 .unwrap(),
-            20
+            21
         );
     }
 }

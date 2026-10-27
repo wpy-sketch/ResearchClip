@@ -1,6 +1,6 @@
 import type {ComponentType} from 'react';
 import type {EditorKind,PanelRecord} from './layout';
-export interface PanelLifecycle {dirty:()=>boolean;busy:()=>boolean;save:()=>Promise<boolean>;dispose:()=>Promise<void>;resize?:(width:number,height:number)=>void}
+export interface PanelLifecycle {dirty:()=>boolean;busy:()=>boolean;save:()=>Promise<boolean>;dispose:()=>Promise<void>;discard?:()=>void;resize?:(width:number,height:number)=>void}
 export interface EditorSession {panel:PanelRecord;workspaceId:string;lifecycle:PanelLifecycle}
 export interface EditorPanelProps {session:EditorSession}
 export interface EditorDefinition {kind:EditorKind;label:string;available:boolean;component:ComponentType<EditorPanelProps>}

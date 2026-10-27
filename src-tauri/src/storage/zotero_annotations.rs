@@ -88,14 +88,14 @@ impl Storage {
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use crate::services::{
         zotero_annotations::{AnnotationReadCache, parse_annotation},
         zotero_local::{ZoteroHealth, ZoteroScope, instance_identity, metadata_candidate},
     };
     use serde_json::json;
-    fn bind(
+    pub(crate) fn bind(
         s: &mut Storage,
         document_id: &str,
         hash: &str,
@@ -125,7 +125,7 @@ mod tests {
             attachment_key: "ATTACH01".into(),
         }
     }
-    fn cache(source: &AnnotationSource, hash: &str) -> AnnotationReadCache {
+    pub(crate) fn cache(source: &AnnotationSource, hash: &str) -> AnnotationReadCache {
         let raw = json!({"key":"ANN00001","version":1,"library":{"type":source.library_type,"id":source.library_id},"data":{"parentItem":"ATTACH01","itemType":"annotation","annotationType":"highlight","annotationColor":"#ffd400","annotationText":"虚构批注","annotationComment":"","annotationPosition":"{\"pageIndex\":0,\"rects\":[[10,20,110,40]]}"}});
         AnnotationReadCache {
             format_version: 1,
@@ -167,7 +167,10 @@ mod tests {
             .unwrap();
         drop(s);
         let mut s = Storage::open(t.path().join("data")).unwrap();
-        assert_eq!(s.status().unwrap().schema_version, 19);
+        assert_eq!(
+            s.status().unwrap().schema_version,
+            super::super::migrations::SCHEMA_VERSION
+        );
         assert_eq!(s.screenshot_image(&shot.id, false).unwrap(), png);
         assert_eq!(
             std::fs::read_to_string(&markdown).unwrap(),

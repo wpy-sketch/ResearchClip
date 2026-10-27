@@ -280,6 +280,12 @@ impl ZoteroClient {
                     "Zotero授权请求过于频繁，请等待至少一分钟后主动重试。",
                 ));
             }
+            404 if !authorization && path.contains("/items/") => {
+                return Err(fail(
+                    "ZOTERO_WRITE_NOT_FOUND",
+                    "目标批注已删除或不可用，请先读取并解决冲突。",
+                ));
+            }
             404 | 405 | 501 => {
                 return Err(fail(
                     "ZOTERO_WRITE_UNSUPPORTED",
@@ -336,6 +342,35 @@ impl ZoteroClient {
         input: &AnnotationWriteInput,
         cancel: &AtomicBool,
     ) -> WriteResult<WriteIntent> {
+        self.prepare_annotation_write_reserved(source, original, input, None, cancel)
+    }
+    pub(crate) fn read_annotation_for_sync(
+        &self,
+        source: &AnnotationSource,
+        original: &Path,
+        key: &str,
+        cancel: &AtomicBool,
+    ) -> WriteResult<Option<ZoteroAnnotation>> {
+        if !valid_item_key(key) {
+            return Err(fail("ZOTERO_WRITE_INVALID", "批注原始键无效。"));
+        }
+        let start = Instant::now();
+        let (health, scope) = self
+            .annotation_context(source, original, cancel, start)
+            .map_err(read_failure)?;
+        self.item(&scope, key, &health, cancel, start)
+            .map_err(read_failure)?
+            .map(|v| parse_annotation(&v, source).map_err(read_failure))
+            .transpose()
+    }
+    pub(crate) fn prepare_annotation_write_reserved(
+        &self,
+        source: &AnnotationSource,
+        original: &Path,
+        input: &AnnotationWriteInput,
+        reserved: Option<&str>,
+        cancel: &AtomicBool,
+    ) -> WriteResult<WriteIntent> {
         input
             .validate()
             .map_err(|message| fail("ZOTERO_WRITE_INVALID", message))?;
@@ -355,23 +390,34 @@ impl ZoteroClient {
                 geometry,
             } => {
                 let mut key = String::new();
-                const ALPHABET: &[u8] = b"23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
-                for _ in 0..3 {
-                    let nonce = researchclip_clipper_protocol::random_token()
-                        .map_err(|_| fail("ZOTERO_WRITE_INVALID", "无法生成批注局部键。"))?;
-                    let hash = Sha256::digest(nonce.as_bytes());
-                    key = hash[..8]
-                        .iter()
-                        .map(|v| ALPHABET[*v as usize % ALPHABET.len()] as char)
-                        .collect();
-                    if self
-                        .item(&scope, &key, &health, cancel, start)
-                        .map_err(read_failure)?
-                        .is_none()
-                    {
-                        break;
+                if let Some(reserved) = reserved {
+                    if !valid_item_key(reserved) {
+                        return Err(fail("ZOTERO_WRITE_INVALID", "固定批注局部键无效。"));
                     }
-                    key.clear();
+                    if self
+                        .item(&scope, reserved, &health, cancel, start)
+                        .map_err(read_failure)?
+                        .is_some()
+                    {
+                        return Err(fail(
+                            "ZOTERO_WRITE_CONFLICT",
+                            "固定批注键已存在，请复核，未自动生成新键或覆盖。",
+                        ));
+                    }
+                    key = reserved.into();
+                } else {
+                    for _ in 0..3 {
+                        key = crate::services::zotero_write_model::new_foreign_annotation_key()
+                            .map_err(|m| fail("ZOTERO_WRITE_INVALID", m))?;
+                        if self
+                            .item(&scope, &key, &health, cancel, start)
+                            .map_err(read_failure)?
+                            .is_none()
+                        {
+                            break;
+                        }
+                        key.clear();
+                    }
                 }
                 if key.is_empty() {
                     return Err(fail("ZOTERO_WRITE_CONFLICT", "新批注键冲突，请重新创建。"));
@@ -566,6 +612,25 @@ impl ZoteroClient {
                 } else if status != 204 {
                     return Ok(unknown(&intent.key));
                 }
+            }
+            Err(error) if error.code == "ZOTERO_WRITE_INVALID" && intent.method != "POST" => {
+                // Zotero10 may answer400 (not404) when an item was deleted after preparation.
+                // Only a separate scoped GET404 proves absence; other invalid inputs stay invalid.
+                if self
+                    .read_annotation_for_sync(
+                        &intent.source,
+                        original,
+                        &intent.key,
+                        &AtomicBool::new(false),
+                    )
+                    .is_ok_and(|v| v.is_none())
+                {
+                    return Err(fail(
+                        "ZOTERO_WRITE_NOT_FOUND",
+                        "写入竞争期间目标已删除，已逐项复读确认；本地修改保留。",
+                    ));
+                }
+                return Err(error);
             }
             Err(error) if error.code == "ZOTERO_WRITE_UNKNOWN" => {}
             Err(error) => return Err(error),

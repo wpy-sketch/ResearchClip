@@ -10,17 +10,34 @@ use crate::services::{
     zotero_session::ZoteroSessions,
     zotero_write_model::{AnnotationWriteCapabilities, AnnotationWriteInput},
 };
+use crate::storage::StorageError;
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, atomic::Ordering};
 use tauri::{State, WebviewWindow};
 #[derive(Deserialize)]
-#[serde(tag = "operation", rename_all = "camelCase", deny_unknown_fields)]
+#[serde(
+    tag = "operation",
+    rename_all = "camelCase",
+    rename_all_fields = "camelCase",
+    deny_unknown_fields
+)]
 pub enum WriteRequest {
     Capabilities,
     Authorize,
     Forget,
-    Submit { input: AnnotationWriteInput },
-    Verify,
+    Submit {
+        input: AnnotationWriteInput,
+        #[serde(default)]
+        change_id: Option<String>,
+        #[serde(default)]
+        revision: Option<i64>,
+    },
+    Verify {
+        #[serde(default)]
+        change_id: Option<String>,
+        #[serde(default)]
+        revision: Option<i64>,
+    },
 }
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -28,6 +45,7 @@ pub struct WriteResponse {
     capabilities: Option<AnnotationWriteCapabilities>,
     outcome: Option<ZoteroWriteOutcome>,
     pending: bool,
+    sync: Option<crate::services::zotero_sync_model::AnnotationSyncSnapshot>,
 }
 fn write_error(e: ZoteroWriteError) -> CommandError {
     CommandError {
@@ -62,6 +80,7 @@ pub async fn zotero_annotation_write(
             capabilities: None,
             outcome: None,
             pending: false,
+            sync: None,
         };
         match request {
             WriteRequest::Capabilities => {
@@ -74,7 +93,7 @@ pub async fn zotero_annotation_write(
                 caps.authorized = authorized;
                 caps.remembered = remembered;
                 response.capabilities = Some(caps);
-                response.pending = pending;
+                response.pending = response.pending || pending;
             }
             WriteRequest::Authorize => {
                 let grant = client
@@ -93,67 +112,57 @@ pub async fn zotero_annotation_write(
             WriteRequest::Forget => {
                 service.forget_write_grant(&token).map_err(fail)?;
             }
-            WriteRequest::Submit { input } => {
-                input.validate().map_err(fail)?;
-                let intent = client
-                    .prepare_annotation_write(&source, &original, &input, &cancel)
-                    .map_err(write_error)?;
-                let grant = service
-                    .start_write(&token, &record.content_hash, intent.clone(), &cancel)
-                    .map_err(fail)?;
-                match client.perform_annotation_write(&intent, &grant, &original, &cancel) {
-                    Ok(outcome) => {
-                        if outcome.verified {
-                            service
-                                .finish_write(&token, intent.annotation_key())
-                                .map_err(fail)?;
-                        }
-                        response.pending = !outcome.verified;
-                        response.outcome = Some(outcome);
-                    }
-                    Err(e) => {
-                        // These failures prove no mutation was accepted. All ambiguous transport
-                        // failures preserve the intent for read-only verification, never resend.
-                        if matches!(
-                            e.code,
-                            "ZOTERO_WRITE_AUTH_REQUIRED"
-                                | "ZOTERO_WRITE_FORBIDDEN"
-                                | "ZOTERO_WRITE_CONFLICT"
-                                | "ZOTERO_WRITE_PRECONDITION"
-                                | "ZOTERO_WRITE_RATE_LIMIT"
-                                | "ZOTERO_WRITE_INVALID"
-                                | "ZOTERO_WRITE_CANCELLED"
-                                | "ZOTERO_WRITE_UNSUPPORTED"
-                                | "ZOTERO_WRITE_UNAVAILABLE"
-                        ) {
-                            service
-                                .finish_write(&token, intent.annotation_key())
-                                .map_err(fail)?;
-                        }
-                        if matches!(
-                            e.code,
-                            "ZOTERO_WRITE_AUTH_REQUIRED" | "ZOTERO_WRITE_SOURCE_MISMATCH"
-                        ) {
-                            service.forget_write_grant(&token).map_err(fail)?;
-                        }
-                        return Err(write_error(e));
-                    }
+            WriteRequest::Submit {
+                input,
+                change_id,
+                revision,
+            } => {
+                let id = change_id
+                    .ok_or_else(|| fail("写入必须先保存为稳定待处理记录，请重新打开同步面板。"))?;
+                let revision =
+                    revision.ok_or_else(|| fail("缺少本地待处理修订号，未执行写入。"))?;
+                let entry =
+                    library.with(|s| s.annotation_sync_entry(&record.document_id, &source, &id))?;
+                if entry.local.as_ref() != Some(&input) {
+                    return Err(super::library::error(StorageError::Conflict));
+                }
+                let (outcome, diagnostic) = super::zotero_sync::attempt_change(
+                    &library, &pdf, &service, &client, &token, &source, &id, revision, &cancel,
+                    false,
+                )?;
+                let snapshot =
+                    library.with(|s| s.annotation_sync_snapshot(&record.document_id, &source))?;
+                response.pending = snapshot.entries.iter().any(|e| e.needs_verification);
+                response.outcome = outcome;
+                response.sync = Some(snapshot);
+                if let Some(d) = diagnostic {
+                    return Err(CommandError {
+                        code: d.code,
+                        message: d.message.into(),
+                    });
                 }
             }
-            WriteRequest::Verify => {
-                let intent = service
-                    .pending_write(&token, &source, &record.content_hash)
-                    .map_err(fail)?;
-                let outcome = client
-                    .verify_annotation_write(&intent, &original, &cancel)
-                    .map_err(write_error)?;
-                if outcome.verified {
-                    service
-                        .finish_write(&token, intent.annotation_key())
-                        .map_err(fail)?;
+            WriteRequest::Verify {
+                change_id,
+                revision,
+            } => {
+                let id = change_id.ok_or_else(|| fail("复核必须指定已持久化的批注记录。"))?;
+                let revision = revision.ok_or_else(|| fail("缺少本地待处理修订号。"))?;
+                let (outcome, diagnostic) = super::zotero_sync::attempt_change(
+                    &library, &pdf, &service, &client, &token, &source, &id, revision, &cancel,
+                    true,
+                )?;
+                let snapshot =
+                    library.with(|s| s.annotation_sync_snapshot(&record.document_id, &source))?;
+                response.pending = snapshot.entries.iter().any(|e| e.needs_verification);
+                response.outcome = outcome;
+                response.sync = Some(snapshot);
+                if let Some(d) = diagnostic {
+                    return Err(CommandError {
+                        code: d.code,
+                        message: d.message.into(),
+                    });
                 }
-                response.pending = !outcome.verified;
-                response.outcome = Some(outcome);
             }
         }
         if !cancel.load(Ordering::Relaxed) && response.capabilities.is_none() {
@@ -168,7 +177,7 @@ pub async fn zotero_annotation_write(
                 caps.remembered = remembered;
             }
             response.capabilities = caps;
-            response.pending = pending;
+            response.pending = response.pending || pending;
         }
         Ok::<_, CommandError>(response)
     })

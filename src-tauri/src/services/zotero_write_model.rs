@@ -2,7 +2,7 @@
 use super::zotero_local::valid_item_key;
 use serde::{Deserialize, Serialize};
 pub const WRITE_TYPES: [&str; 3] = ["highlight", "underline", "note"];
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]
 pub struct WriteGeometry {
     pub page_index: u32,
@@ -54,7 +54,7 @@ impl WriteGeometry {
             .collect()
     }
 }
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(
     tag = "action",
     rename_all = "camelCase",
@@ -90,6 +90,12 @@ fn validate_text(value: &str) -> bool {
 }
 impl AnnotationWriteInput {
     pub fn validate(&self) -> Result<(), &'static str> {
+        self.validate_inner(true)
+    }
+    pub fn validate_draft(&self) -> Result<(), &'static str> {
+        self.validate_inner(false)
+    }
+    fn validate_inner(&self, complete: bool) -> Result<(), &'static str> {
         match self {
             Self::Create {
                 annotation_type,
@@ -98,7 +104,7 @@ impl AnnotationWriteInput {
                 comment,
                 geometry,
             } => {
-                validate_content(annotation_type, color, text, comment)?;
+                validate_content(annotation_type, color, text, comment, complete)?;
                 geometry.raw_rectangles()?;
                 if annotation_type == "note" && geometry.rectangles.len() != 1 {
                     return Err("普通文字便签只绑定一个页面区域。");
@@ -113,7 +119,7 @@ impl AnnotationWriteInput {
                 comment,
             } => {
                 validate_identity(annotation_key, *expected_version)?;
-                validate_content(annotation_type, color, text, comment)?;
+                validate_content(annotation_type, color, text, comment, complete)?;
             }
             Self::Delete {
                 annotation_key,
@@ -134,6 +140,7 @@ fn validate_content(
     color: &str,
     text: &str,
     comment: &str,
+    complete: bool,
 ) -> Result<(), &'static str> {
     if !WRITE_TYPES.contains(&kind) {
         return Err("此批注类型尚未验证写入，本版禁用。");
@@ -141,8 +148,8 @@ fn validate_content(
     if !super::zotero_annotations::color_valid(color)
         || !validate_text(text)
         || !validate_text(comment)
-        || kind == "note" && (!text.is_empty() || comment.trim().is_empty())
-        || kind != "note" && text.trim().is_empty()
+        || kind == "note" && (!text.is_empty() || complete && comment.trim().is_empty())
+        || complete && kind != "note" && text.trim().is_empty()
     {
         return Err("批注文字、颜色或便签内容无效。");
     }
@@ -161,6 +168,19 @@ pub fn tested_write_version(version: Option<&str>) -> bool {
     // Enable only the exact installed version exercised against a separate real library.
     version == Some("10.0.6")
 }
+/// Zotero's external, library-scoped key. Never used as a ResearchClip global ID.
+pub(crate) fn new_foreign_annotation_key() -> Result<String, &'static str> {
+    use sha2::{Digest, Sha256};
+    const ALPHABET: &[u8] = b"23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+    let nonce =
+        researchclip_clipper_protocol::random_token().map_err(|_| "无法生成批注局部键。")?;
+    let bytes = Sha256::digest(nonce.as_bytes());
+    Ok(bytes[..8]
+        .iter()
+        .map(|n| ALPHABET[*n as usize % ALPHABET.len()] as char)
+        .collect())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -242,10 +262,12 @@ mod tests {
     fn validates_scoped_foreign_identity_version_content_and_unverified_clients() {
         assert!(validate_identity("../bad", 1).is_err());
         assert!(validate_identity("ANN00001", 0).is_err());
-        assert!(validate_content("note", "#ffd400", "", "文字便签").is_ok());
-        assert!(validate_content("note", "#ffd400", "不允许annotationText", "评论").is_err());
-        assert!(validate_content("highlight", "url(x)", "选文", "").is_err());
-        assert!(validate_content("highlight", "#ffd400", "选文", &"x".repeat(65537)).is_err());
+        assert!(validate_content("note", "#ffd400", "", "文字便签", true).is_ok());
+        assert!(validate_content("note", "#ffd400", "不允许annotationText", "评论", true).is_err());
+        assert!(validate_content("highlight", "url(x)", "选文", "", true).is_err());
+        assert!(
+            validate_content("highlight", "#ffd400", "选文", &"x".repeat(65537), true).is_err()
+        );
         assert!(tested_write_version(Some("10.0.6")));
         for v in [
             None,

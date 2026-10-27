@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {annotationFixture} from './zotero-annotations-fixture.mjs';
 export function writeFixture(){
- const rows=new Map(),authorized=new Set();let version=40,committedUnknown=false;
+ const rows=new Map(),authorized=new Set();let version=40,committedUnknown=false,changedMode='';
  const list=library=>{const scope=library.type+library.id;if(!rows.has(scope)){const items=annotationFixture(library,0,'normal').slice(0,3);for(const a of items)if(a.data.annotationType==='note')delete a.data.annotationText;rows.set(scope,new Map(items.map(a=>[a.key,a])));}return rows.get(scope);};
  return async(req,res,library,mode,path)=>{
   if(mode!=='writeVerifyUnavailable')committedUnknown=false;
@@ -12,6 +12,8 @@ export function writeFixture(){
   const reply=(status,body)=>{res.writeHead(status);res.end(body===undefined?'':JSON.stringify(body));return true;};
   const store=list(library),key=path.split('/').at(-1);
   if(req.method==='GET'){
+   if(mode!==changedMode&&['syncRemoteChange','syncRemoteDelete'].includes(mode)){const target=store.get('UN000001');if(target){if(mode==='syncRemoteDelete')store.delete('UN000001');else{target.data.annotationComment='远端客户端B保留的修改';target.version=++version;target.data.dateModified='2026-10-27 10:30:00';}}changedMode=mode;}
+   if(mode==='normal')changedMode='';
    if(path.endsWith('/children'))return reply(200,[...store.values()]);
    if(mode==='writeVerifyUnavailable'&&committedUnknown)return reply(503,{error:'fictional interrupted reread'});
    return store.has(key)?reply(200,store.get(key)):reply(404);
@@ -21,7 +23,7 @@ export function writeFixture(){
   if(!authorized.has(req.headers['zotero-api-key']))return reply(401);
   if(mode==='writeForbidden'||library.type==='group')return reply(403);
   if(req.method==='POST'){
-   const data=body[0];assert.equal(Object.keys(data)[0],'annotationType');if(mode==='writeItemDenied')return reply(200,{successful:{},failed:{0:{code:403,message:'fictional item denial'}}});
+   const data=body[0];if(store.has(data.key))return reply(412);assert.equal(Object.keys(data)[0],'annotationType');if(mode==='writeItemDenied')return reply(200,{successful:{},failed:{0:{code:403,message:'fictional item denial'}}});
    const item={key:data.key,version:++version,library,data};store.set(data.key,item);if(mode==='writeVerifyUnavailable')committedUnknown=true;return reply(200,{successful:{0:item},failed:{}});
   }
   const old=store.get(key);if(!old)return reply(404);

@@ -1,3 +1,5 @@
+v4.2.7 Step16：沿用模块化单体与现有Zotero适配，schema20增量保存标准批注待处理意图、处理修订和来源刷新设置；详见[同步决策](architecture/ZOTERO_ANNOTATION_SYNC_STEP16.md)与[实际验收](qa/RELEASE-4.2.7.md)。
+
 v4.2.6 Step15：复用Zotero只读适配和schema19，增加官方Local API受控授权与写入、条件版本和复读确认；详见[写入决策](architecture/ZOTERO_ANNOTATION_WRITES_STEP15.md)与[实际验收](qa/RELEASE-4.2.6.md)。
 
 # ResearchClip 架构设计
