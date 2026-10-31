@@ -1,3 +1,7 @@
+> **本仓库已迁移并归档，只读保留。**
+> 后续开发、问题反馈和下载请使用 [ResearchClip-Codex](https://github.com/wpy-sketch/ResearchClip-Codex)。
+> [v5.1.0 正式版](https://github.com/wpy-sketch/ResearchClip-Codex/releases/tag/v5.1.0) · [历版说明与去重附件归档](https://github.com/wpy-sketch/ResearchClip-Codex/releases/tag/researchclip-history-20261030)。原文件名、版本与 SHA-256 映射已保留；本仓库不再维护。
+
 > **v4.2.7 · Zotero标准批注双向同步**：本地持久待处理、六种同步状态、条件写入、三方冲突比较与独立处理历史。自动刷新只读且默认关闭。指南33章。[本版说明](docs/RELEASE-NOTES-4.2.7.md) · [实际验收](docs/qa/RELEASE-4.2.7.md)。
 
 > **v4.1.9 · 原生工作区PDF阅读器**：本地只读PDF标签、连续单双页、缩放旋转、目录缩略图、文字复制和全文搜索，保存阅读位置并与Markdown并排；SQLite15。见[本版说明](docs/RELEASE-NOTES-4.1.9.md)、[Step10验收](docs/qa/PDF_READER_STEP10.md)与[发布检查](docs/qa/RELEASE-4.1.9.md)。
